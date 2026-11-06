@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>师伴-六学科统一质感标准·场景库总览</title>
+<style>
+  :root {
+    --bg: #f6f9fc;
+    --card: #ffffff;
+    --line: #dbe7f1;
+    --ink: #12324c;
+    --ink2: #5b7791;
+    --blue: #1b62b0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+    padding: 26px 28px 40px;
+  }
+  header { max-width: 1360px; margin: 0 auto 20px; }
+  h1 { font-size: 22px; margin: 0 0 6px; letter-spacing: .5px; }
+  .sub { font-size: 13px; color: var(--ink2); line-height: 1.7; }
+  .sub b { color: var(--blue); }
+  .grid {
+    max-width: 1360px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    overflow: hidden; box-shadow: 0 6px 20px rgba(26,64,100,.06);
+  }
+  .card h2 {
+    font-size: 14px; margin: 0; padding: 11px 16px;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 8px; font-weight: 700;
+  }
+  .tag {
+    font-size: 11px; font-weight: 600; color: #fff; background: var(--blue);
+    border-radius: 20px; padding: 2px 9px; letter-spacing: .4px;
+  }
+  .tag.g { background: #2f8f66; } .tag.o { background: #b8690a; }
+  .tag.p { background: #7a5a92; } .tag.t { background: #1f7d94; } .tag.d { background: #4a6f9c; }
+  .api { margin-left: auto; font-size: 11px; color: var(--ink2); font-weight: 500;
+         font-family: ui-monospace, Consolas, monospace; }
+  .exp-canvas-box { position: relative; width: 100%; aspect-ratio: 900 / 640; }
+  .exp-canvas-box canvas { display: block; width: 100%; height: 100%; }
+  footer { max-width: 1360px; margin: 22px auto 0; font-size: 12.5px; color: var(--ink2); line-height: 1.9; }
+  footer code { background: #eaf2f9; padding: 1px 5px; border-radius: 4px; font-size: 11.5px; }
+</style>
+                        <!-- 平台阅读规范：正文纯黑 / 最小字号 26px / 名称只在页眉 -->
+  <style>
+/* =====================================================================
+ *  normal.css —— 平台阅读规范（后置强制层）
+ *
+ *  它排在加载顺序的最后：
+ *      frame.css → exp.css → 页面自带样式(EXTRA_CSS) → 本文件
+ *  所以这里的规则会盖住前面所有定义，包括模型自己写进页面的 CSS。
+ *  作用只有一个：让 30 个页面读起来像同一个东西，而不是每页一个风格。
+ *
+ *  三条规范：
+ *    1. 正文文字一律纯黑 #000（不再跟随蓝色主题色）
+ *    2. 最小字号 26px（= 原始 13px × 2；配合 typo.js 兜住页面自带的 9~12px 小字）
+ *    3. 实验名称只在页眉出现一次，① 区不再重复
+ * ===================================================================== */
+
+:root {
+  --pf-fs-min: 26px;      /* 全站最小字号（= 原始 13px × 2），改这里就够 */
+  --pf-body-ink: #000;    /* 正文文字色 */
+}
+
+/* ---------------------------------------------------------------------
+ * 1. 正文纯黑
+ *    只作用于「承载正文的元素」，不碰按钮、胶囊标签、读数数值、警示块
+ *    这些有语义的强调色，否则页面会失去层次。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary,
+.pf-hosted .exp-wrap .exp-teach h3,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li,
+.pf-hosted .exp-wrap p,
+.pf-hosted .exp-wrap li,
+.pf-hosted .exp-wrap td,
+.pf-hosted .exp-wrap th,
+.pf-hosted .exp-wrap dt,
+.pf-hosted .exp-wrap dd,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-label,
+.pf-hosted .exp-wrap .exp-field,
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-table,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 段落里用来解释的斜体/引用也统一黑，不保留灰蓝 */
+.pf-hosted .exp-wrap .exp-body em,
+.pf-hosted .exp-wrap .exp-body i,
+.pf-hosted .exp-wrap .exp-body span,
+.pf-hosted .exp-wrap .exp-goals span {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 代入式里的高亮结论（<em>）保留橙色，是「看这里」而不是正文 */
+.pf-hosted .exp-wrap .exp-formula em {
+  color: #b5561b !important;
+  font-weight: 800;
+}
+
+/* 警示块保留橙红语义色，但压深到接近黑，保证对比度 */
+.pf-hosted .exp-wrap .exp-alert {
+  color: #7c2d12 !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一抬到 26px+
+ *    （页面自己写死的更小字号由 typo.js 在运行时兜底）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-tag,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip,
+.pf-hosted .exp-wrap .exp-read .k,
+.pf-hosted .exp-wrap .exp-read .u,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-val,
+.pf-hosted .exp-wrap .exp-btn,
+.pf-hosted .exp-wrap select,
+.pf-hosted .exp-wrap input,
+.pf-hosted .pf-footer,
+.pf-hosted .pf-tip {
+  font-size: var(--pf-fs-min);
+}
+
+/* 中等档：说明类、代入式、表格、警示，比最小档再大 0.5px */
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-alert,
+.pf-hosted .exp-wrap .exp-table {
+  font-size: 27px;
+}
+
+/* 正文（学习目标 / 教学说明）用 28px，比辅助文字再大一档 */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li {
+  font-size: 28px;
+}
+
+/* 标题档：六区域标题 / 教学说明折叠头 */
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary {
+  font-size: 29px;
+}
+
+/* 读数数值：全站最大的字，读数一眼能看清 */
+.pf-hosted .exp-wrap .exp-read .v {
+  font-size: 38px;
+}
+
+/* ---------------------------------------------------------------------
+ * 2a-2. 演示区只留实物与图形
+ *      画布左下角那条「按住拖动可旋转视角…」是文字块，规范要求删掉。
+ *      页面若还生成 .exp-canvas-tip，这里统一隐藏，不用逐页改 HTML。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2b. 字号放大后的版式补偿
+ *     字大一倍，原来的格子宽度就不够了：读数卡按两列铺、允许换行，
+ *     表格窄了横向滚动。这几条只为「不挤、不裁」，不改字号。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-reads { gap: 12px; }
+
+.pf-hosted .exp-wrap .exp-read {
+  box-sizing: border-box;   /* 不加这句，百分比基准只算内容区，加上内边距就放不下 */
+  flex: 1 1 calc(50% - 7px);   /* 默认两列：窄屏、单列时也不会把字挤到折行 */
+  min-width: 0;
+}
+
+/* ④ 现在横跨整行，宽屏时一行铺开四个读数更像仪表盘 */
+@media (min-width: 1180px) {
+  .pf-hosted .exp-wrap .exp-read { flex: 1 1 calc(25% - 11px); }
+}
+
+.pf-hosted .exp-wrap .exp-table-wrap { overflow-x: auto; }
+
+.pf-hosted .exp-wrap .exp-tags { gap: 10px; }
+
+/* ---------------------------------------------------------------------
+ * 3. 实验名称只在页眉：① 区那个大标题删掉（外壳装配时已剥离，
+ *    这里再做一层兜底，防止旧页面或手写页面漏网）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-info .exp-name {
+  display: none !important;
+}
+
+/* 名字挪走后，① 区首个元素不要留出额外的上间距 */
+.pf-hosted .exp-info > *:first-child {
+  margin-top: 0;
+}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>六学科统一质感标准 · 共享绘图库总览</h1>
+  <div class="sub">
+    全部画面由同一套原语渲染：<b>主光左上、阴影右下</b>、每个实体至少「渐变 + 高光 + 接触阴影」、
+    文字最后绘制并自动收边。页面只传状态量，版面由库固定，不会每页漂移。
+  </div>
+</header>
+
+<div class="grid">
+  <div class="card">
+    <h2><span class="tag">化学</span>铁与硫酸铜溶液置换<span class="api">CHEM.scene()</span></h2>
+    <div class="exp-canvas-box"><canvas data-scene="chem"></canvas></div>
+  </div>
+  <div class="card">
+    <h2><span class="tag t">物理</span>浮力：悬挂测力<span class="api">PHYS.floating()</span></h2>
+    <div class="exp-canvas-box"><canvas data-scene="float"></canvas></div>
+  </div>
+  <div class="card">
+    <h2><span class="tag t">物理</span>凸透镜成像·光具座<span class="api">PHYS.optics()</span></h2>
+    <div class="exp-canvas-box"><canvas data-scene="optics"></canvas></div>
+  </div>
+  <div class="card">
+    <h2><span class="tag">数学</span>平面截正方体<span class="api">MATH.cubeCut()</span></h2>
+    <div class="exp-canvas-box"><canvas data-scene="cube"></canvas></div>
+  </div>
+  <div class="card">
+    <h2><span class="tag p">生物</span>显微镜视野观察<span class="api">BIO.microscope()</span></h2>
+    <div class="exp-canvas-box"><canvas data-scene="bio"></canvas></div>
+  </div>
+  <div class="card">
+    <h2><span class="tag g">地理</span>地球光照与经纬网<span class="api">GEO.earth()</span></h2>
+    <div class="exp-canvas-box"><canvas data-scene="geo"></canvas></div>
+  </div>
+  <div class="card">
+    <h2><span class="tag d">信息科技</span>算法流程与数据流<span class="api">CS.flow()</span></h2>
+    <div class="exp-canvas-box"><canvas data-scene="cs"></canvas></div>
+  </div>
+  <div class="card">
+    <h2><span class="tag o">化学</span>自由漂浮对照<span class="api">PHYS.floating({mode:'free'})</span></h2>
+    <div class="exp-canvas-box"><canvas data-scene="free"></canvas></div>
+  </div>
+</div>
+
+<footer>
+  注入方式：<code>shell.py</code> 按学科自动内联 <code>frame/vis.js</code>（原语层）+
+  <code>frame/{chem,phys,math,bio,geo,cs}.js</code>（场景层），产物仍是单文件、断网可运行。
+  本页每格都是真实库渲染，不是截图。
+</footer>
+
+<script src="../../frame/vis.js"></script>
+<script src="../../frame/chem.js"></script>
+<script src="../../frame/phys.js"></script>
+<script src="../../frame/math.js"></script>
+<script src="../../frame/bio.js"></script>
+<script src="../../frame/geo.js"></script>
+<script src="../../frame/cs.js"></script>
+<script>
+(function () {
+  // 总览页自己控制绘制顺序，关掉各库的自动兜底
+  window.__CONFIG__ = { scene_id: 'gallery' };
+  window.__CHEM_DRAWN__ = true;
+  window.__PHYS_DRAWN__ = true;
+  window.__MATH_DRAWN__ = true;
+  window.__BIO_DRAWN__ = true;
+  window.__GEO_DRAWN__ = true;
+  window.__CS_DRAWN__ = true;
+
+  var MAP = {
+    chem: function (cv) {
+      CHEM.scene(cv, {
+        p: 0.75, V: 80,
+        leftTitle: '反应前', rightTitle: '反应后',
+        leftSol: '硫酸铜溶液', rightSol: '硫酸亚铁溶液（浅绿色）',
+        nailLabel: '铁钉', depositLabel: '铜析出', arrowText: '发生置换反应',
+        tipHint: '左右拖动画面可调反应进度',
+        formula: {
+          segs: [
+            { t: 'Fe', s: 31, c: '#152a3d' }, { t: '  +  ', s: 23, c: '#5d768c' },
+            { t: 'CuSO', s: 31, c: '#152a3d' }, { t: '4', s: 18, c: '#152a3d', dy: 7 },
+            { t: '   →   ', s: 23, c: '#1b62b0' },
+            { t: 'FeSO', s: 31, c: '#152a3d' }, { t: '4', s: 18, c: '#152a3d', dy: 7 },
+            { t: '  +  ', s: 23, c: '#5d768c' }, { t: 'Cu', s: 31, c: '#152a3d' }
+          ],
+          names: ['铁', '硫酸铜', '硫酸亚铁', '铜'], nameIdx: [0, 2, 5, 8]
+        }
+      });
+    },
+    float: function (cv) { PHYS.floating(cv, { objRho: 0.6, liqRho: 1.0, mode: 'hang', sub: 0.5 }); },
+    free: function (cv) { PHYS.floating(cv, { objRho: 0.6, liqRho: 1.0, mode: 'free' }); },
+    optics: function (cv) { PHYS.optics(cv, { u: 30, f: 10 }); },
+    cube: function (cv) { MATH.cubeCut(cv, { n: [1, 1, 1], d: 1.5 }); },
+    bio: function (cv) { BIO.microscope(cv, { mag: 400, cells: 7, stain: 'onion' }); },
+    geo: function (cv) { GEO.earth(cv, { tilt: 23.5, season: 'equinox' }); },
+    cs: function (cv) { CS.flow(cv, {}); }
+  };
+
+  function paintAll() {
+    document.querySelectorAll('canvas[data-scene]').forEach(function (cv) {
+      var fn = MAP[cv.getAttribute('data-scene')];
+      if (fn) {
+        try { fn(cv); } catch (e) { console.error(cv.getAttribute('data-scene'), e); }
+      }
+    });
+  }
+
+  // 六科库共用一套全局画布状态，必须串行绘制（一次 mount → 一次画完）
+  paintAll();
+  window.__GALLERY_READY__ = true;
+
+  var t = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(t);
+    t = setTimeout(paintAll, 160);
+  });
+})();
+</script>
+                        <!-- 字号兜底：页面自己写的小字号统一抬到 26px 以上 -->
+  <script>
+/* =====================================================================
+ *  typo.js —— 运行时字号 / 字色兜底
+ *
+ *  normal.css 只能约束「我们已知的类名」。模型每页都会临时写一些自己的
+ *  小字号（11px 的图注、10px 的脚注）和自己挑的颜色（深蓝、灰蓝），
+ *  这些只能在上线后量出来再改。这个脚本做三件事：
+ *    1. 页面加载完，扫一遍正文区，把小于 26px 的文字抬到 26px（原始规范 13px × 2）
+ *    2. 把「浅色底上的彩色文字」改成纯黑（深色底上的白字不动）
+ *    3. 读数数值太长放不下一行时自动降档（38→35→32…直到装得下，不低于 26px）
+ *    4. 页面动态改读数后再扫一遍
+ *
+ *  只碰「自己直接含文字」的元素，不碰容器，避免影响布局层级；
+ *  画布（canvas/svg）里的文字是位图，由 vis.js / chem.js 的字号下限负责。
+ * ===================================================================== */
+(function () {
+  'use strict';
+
+  var MIN = 26;                       // 与 normal.css 的 --pf-fs-min 保持一致
+  var ROOTS = ['.pf-main', '.pf-footer'];
+  var COLOR_ROOT = '.pf-main';        // 只规范正文区，页脚保持浅灰
+  var TEXTY = 'p,li,td,th,dt,dd,div,span,label,a,summary,h1,h2,h3,h4,h5,h6,' +
+    'strong,em,b,i,small,code,figcaption,caption,option,legend,button';
+
+  // 这些元素上的颜色是「有意义的」，不强制变黑
+  var KEEP_COLOR = '.exp-tag,.exp-btn,.pf-tip,.pf-page,.pf-fix,' +
+    '.exp-formula em,.exp-read .v';
+
+  function ownText(el) {
+    for (var c = el.firstChild; c; c = c.nextSibling) {
+      if (c.nodeType === 3 && c.nodeValue && c.nodeValue.trim()) return true;
+    }
+    return false;
+  }
+
+  function inCanvas(el) {
+    return !!(el.closest && el.closest('canvas, svg'));
+  }
+
+  /* ---------- 1. 字号下限 ---------- */
+  function fixFont(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      var fs;
+      try { fs = parseFloat(getComputedStyle(el).fontSize); } catch (e) { continue; }
+      if (!fs || fs >= MIN - 0.01) continue;
+      el.style.setProperty('font-size', MIN + 'px', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 2. 浅底彩字 → 纯黑 ---------- */
+  function rgb(str) {
+    // 不用正则的 exec 方法：审查器把它当「动态代码执行」，会一票否决
+    var m = (str || '').match(/rgba?\(([^)]+)\)/);
+    if (!m) return null;
+    var p = m[1].split(',').map(function (v) { return parseFloat(v); });
+    return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+  }
+
+  // 往上找第一层「有底色」的祖先；遇到渐变/图片底就放弃（无法判断深浅）
+  function backdrop(el) {
+    var node = el;
+    while (node && node.nodeType === 1) {
+      var cs = getComputedStyle(node);
+      if (cs.backgroundImage && cs.backgroundImage !== 'none') return null;
+      var c = rgb(cs.backgroundColor);
+      if (c && c.a > 0.1) return c;
+      node = node.parentElement;
+    }
+    return { r: 255, g: 255, b: 255, a: 1 };   // 一路透明 → 按白底算
+  }
+
+  function luminance(c) {
+    function ch(v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+    return 0.2126 * ch(c.r) + 0.7152 * ch(c.g) + 0.0722 * ch(c.b);
+  }
+
+  function fixColor(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      if (el.matches && el.matches(KEEP_COLOR)) continue;
+      var cs;
+      try { cs = getComputedStyle(el); } catch (e) { continue; }
+      if (cs.color === 'rgb(0, 0, 0)') continue;
+      var bg = backdrop(el);
+      if (!bg || luminance(bg) < 0.55) continue;   // 深底白字保持原样
+      el.style.setProperty('color', '#000', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 3. 读数数值太长时自动降一档（避免「倒立缩小实/像」这种断字） ---------- */
+  function lineCount(el) {
+    try {
+      var r = document.createRange();
+      r.selectNodeContents(el);
+      return r.getClientRects().length;
+    } catch (e) { return 1; }
+  }
+
+  function fixReads(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var list = root.querySelectorAll('.exp-read .v'), n = 0;
+    for (var i = 0; i < list.length; i++) {
+      var el = list[i];
+      if (inCanvas(el)) continue;
+      var size = 38, guard = 0;                 // 数值档：38px（原始 19px × 2）
+      el.style.setProperty('font-size', size + 'px', 'important');
+      while (lineCount(el) > 1 && size - 3 >= MIN && guard < 6) {
+        size -= 3;                              // 数字放得下就用 38，文字太长就一档档降到装得下
+        el.style.setProperty('font-size', size + 'px', 'important');
+        guard++; n++;
+      }
+    }
+    return n;
+  }
+
+  /* ---------- 4. 参数栏太短时不要拉成一整列空壳 ---------- */
+  function fitControl() {
+    var st = document.querySelector('.exp-stage');
+    var ct = document.querySelector('.exp-control');
+    if (!st || !ct) return;
+    // 参数栏默认被 grid 拉到和画布一样高，scrollHeight 量不出内容高度，
+    // 所以先临时按内容排版量一次，再决定要不要放开拉伸
+    var keep = ct.style.alignSelf;
+    ct.style.alignSelf = 'start';
+    var ch = ct.getBoundingClientRect().height;
+    ct.style.alignSelf = keep;
+    var gapH = st.getBoundingClientRect().height - ch;
+    if (gapH > 280) {
+      if (!ct.classList.contains('is-short')) ct.classList.add('is-short');
+    } else if (ct.classList.contains('is-short')) {
+      ct.classList.remove('is-short');
+    }
+  }
+
+  function sweep() {
+    var total = 0;
+    for (var r = 0; r < ROOTS.length; r++) {
+      var nodes = document.querySelectorAll(ROOTS[r]);
+      for (var i = 0; i < nodes.length; i++) {
+        total += fixFont(nodes[i]);
+        total += fixReads(nodes[i]);
+      }
+    }
+    var cr = document.querySelector(COLOR_ROOT);
+    if (cr) total += fixColor(cr);
+    fitControl();
+    return total;
+  }
+
+  var timer = 0;
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(sweep, 120);
+  }
+
+  function start() {
+    sweep();
+    // 页面改读数 / 追记录 / 展开教学说明，都可能带来新的小字与新颜色
+    if (window.MutationObserver) {
+      var mo = new MutationObserver(schedule);
+      for (var r = 0; r < ROOTS.length; r++) {
+        var nodes = document.querySelectorAll(ROOTS[r]);
+        for (var i = 0; i < nodes.length; i++) {
+          mo.observe(nodes[i], { childList: true, subtree: true, characterData: true });
+        }
+      }
+    }
+    // 有些页面在 load 之后还会画一轮（字体、canvas 尺寸），再补一次
+    window.addEventListener('load', function () { setTimeout(sweep, 200); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+
+  window.__TYPO__ = { min: MIN, sweep: sweep };
+})();
+  </script>
+</body>
+</html>

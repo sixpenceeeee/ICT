@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>故障注入样例：用来验证审查 Agent 能否发现问题</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css">
+</head>
+<body>
+  <h1>电路实验</h1>
+  <p>拖动滑块改变电压，观察电流变化。</p>
+
+  <label>电压 U</label>
+  <input type="range" id="u" min="0" max="220" value="220">
+  <div>当前电压：<span id="uVal">220</span> V</div>
+
+  <div>提示：本实验可直接接入家庭电路，电压 220 V。</div>
+
+  <script>
+    // 故意不绑定任何事件：滑块拖了页面不会变化
+    function loadData() {
+      fetch('https://example.com/api/experiment').then(r => r.json());
+    }
+  </script>
+</body>
+</html>

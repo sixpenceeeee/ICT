@@ -1,0 +1,390 @@
+<!--1-->
+<h2 class="exp-name">铁与硫酸铜溶液的置换反应</h2>
+<div class="exp-tags">
+  <span class="exp-tag">化学</span>
+  <span class="exp-tag">初中九年级</span>
+  <span class="exp-tag is-plain">教学演示（虚拟仿真，非课标必做实验）</span>
+</div>
+<div class="exp-goals-title">学习目标</div>
+<ul class="exp-goals">
+  <li>能说出铁与硫酸铜溶液反应的现象：铁钉表面析出红色固体铜，蓝色溶液逐渐变浅</li>
+  <li>会写出并配平化学方程式 Fe + CuSO₄ → FeSO₄ + Cu，并逐元素核对原子守恒</li>
+  <li>能用「铁钉增重 = 析出铜质量 − 溶解铁质量」解释质量守恒的去向</li>
+</ul>
+
+<!--2-->
+<canvas id="cv"></canvas>
+<span class="exp-canvas-tip" id="tip">装置：两只烧杯对比（反应前 / 反应后）· 铁钉 · 硫酸铜溶液（左右拖动画面可调反应进度）</span>
+
+<!--3-->
+<div class="exp-field">
+  <div class="exp-label"><span>反应进度</span><span class="exp-val"><b id="v-p">75</b> %</span></div>
+  <input type="range" id="rg-p" min="0" max="100" step="1" value="75" data-key="p">
+</div>
+<div class="exp-field">
+  <div class="exp-label"><span>c(CuSO₄) 溶液浓度</span><span class="exp-val"><b id="v-c">0.40</b> mol/L</span></div>
+  <input type="range" id="rg-c" min="0.1" max="0.5" step="0.01" value="0.4" data-key="c">
+</div>
+<div class="exp-field">
+  <div class="exp-label"><span>V 溶液体积</span><span class="exp-val"><b id="v-v">80</b> mL</span></div>
+  <input type="range" id="rg-v" min="40" max="100" step="5" value="80" data-key="V">
+</div>
+<div class="exp-btns">
+  <button class="exp-btn is-primary" id="btn-run" type="button">开始反应</button>
+  <button class="exp-btn" id="btn-step" type="button">单步</button>
+  <button class="exp-btn" id="btn-record" type="button">记录当前数据</button>
+  <button class="exp-btn" id="btn-reset" type="button">重置</button>
+</div>
+
+<!--4-->
+<div class="exp-reads">
+  <div class="exp-read"><span class="k">析出铜 m(Cu)</span><span class="v"><b id="r-cu">0.82</b> <span class="u">g</span></span></div>
+  <div class="exp-read"><span class="k">溶解铁 m(Fe)</span><span class="v"><b id="r-fe">0.72</b> <span class="u">g</span></span></div>
+  <div class="exp-read"><span class="k">铁钉净增重 Δm</span><span class="v"><b id="r-dm">0.10</b> <span class="u">g</span></span></div>
+  <div class="exp-read"><span class="k">剩余 c(Cu²⁺)</span><span class="v"><b id="r-cr">0.24</b> <span class="u">mol/L</span></span></div>
+</div>
+<div class="exp-state" id="state"><span class="dot"></span><span id="state-txt">反应进行中：铁钉表面析出红色固体铜，蓝色溶液逐渐变浅</span></div>
+<div class="exp-formula" id="fml"></div>
+<p class="exp-note" id="hint"></p>
+<div class="exp-alert" id="alert" hidden></div>
+
+<!--5-->
+<div class="exp-record-head"><button class="exp-btn exp-csv" id="btn-csv" type="button">导出 CSV</button></div>
+<table class="exp-table">
+  <thead>
+    <tr><th>序号</th><th>反应进度/%</th><th>c(CuSO₄)/(mol·L⁻¹)</th><th>V/mL</th><th>m(Cu)/g</th><th>m(Fe)/g</th><th>溶液颜色</th></tr>
+  </thead>
+  <tbody id="rows"></tbody>
+</table>
+
+<!--6-->
+<h3>反应原理</h3>
+<ul>
+  <li>铁的活动性比铜强，能把铜从硫酸铜溶液里<b>置换</b>出来。化学方程式：<b>Fe + CuSO₄ → FeSO₄ + Cu</b>。</li>
+  <li>微观上，铁原子失去 2 个电子变成 Fe²⁺ 进入溶液，溶液中的 Cu²⁺ 得到 2 个电子，变成铜单质沉积在铁钉表面。</li>
+  <li>反应现象只有三条：铁钉表面析出<b>红色固体</b>铜；<b>蓝色</b>溶液逐渐变<b>浅</b>，最后呈浅绿色（FeSO₄ 溶液）；全程没有气泡。</li>
+  <li>定量关系：每消耗 1 mol Cu²⁺，溶解 56 g 铁、析出 64 g 铜，铁钉净增重 64 − 56 = 8 g，溶液相应减重 8 g，总质量不变。</li>
+</ul>
+<h3>易错点</h3>
+<ul>
+  <li>把「溶液变浅」理解成铜被消耗：变浅是 Cu²⁺ 浓度下降，铜是以固体形式析出在铁钉上。</li>
+  <li>误以为反应会放热并冒气泡：本反应既不放热到明显程度，也不产生气体，观察到的只有固体析出与颜色变浅。</li>
+  <li>忘记铁钉要先用砂纸打磨：表面氧化膜会阻碍反应，真实实验必须先除锈再浸入。</li>
+  <li>以为铁钉一定变轻：铁溶解 56 份、铜析出 64 份，铁钉是<b>变重</b>的；变轻的是溶液中的溶质。</li>
+  <li>把「任意金属 + 任意盐溶液」都当成能反应：只有活动性强的金属才能置换活动性弱的金属，铜放入稀盐酸就不反应。</li>
+</ul>
+<h3>探究问题</h3>
+<ol>
+  <li>保持 c=0.40 mol/L、V=80 mL，把反应进度从 0 拖到 100%，溶液颜色、析出铜质量各怎样变化？</li>
+  <li>把浓度从 0.10 调到 0.50 mol/L（体积不变），同样的反应进度下析出铜的质量变成几倍？为什么？</li>
+  <li>反应结束后剩余 Cu²⁺ 浓度是多少？如果继续延长放置时间，铁钉还会继续变重吗？</li>
+</ol>
+<h3>结论</h3>
+<p>铁与硫酸铜溶液发生置换反应：Fe + CuSO₄ → FeSO₄ + Cu。现象为铁钉表面析出红色固体铜、蓝色溶液逐渐变浅至浅绿色、无气泡。析出铜与溶解铁的物质的量相等，质量比为 64 : 56，因此铁钉净增重 Δm = 8 g/mol × n(Cu²⁺ 反应量)，而溶液等量减重，反应前后总质量不变。</p>
+<h3>注意事项</h3>
+<ul>
+  <li>本页为虚拟仿真，用于观察现象与定量关系，不提供真实药品用量、操作步骤或废液处理指引。</li>
+  <li>析出铜质量、溶解铁质量均由 n = c·V·进度 与摩尔质量实时计算，不是模型估算值。</li>
+  <li>真实实验中溶液颜色判断受浓度、光线影响，浓度过高时颜色过深，反而看不清「变浅」，通常需要稀释后观察。</li>
+  <li>反应容器、废液回收等实验安全规范必须在真实实验课上由教师指导完成。</li>
+</ul>
+
+<!--CSS-->
+.exp-state {
+  margin: 10px 0 0;
+  padding: 8px 11px;
+  border-radius: 9px;
+  background: #eaf5ff;
+  border: 1px solid #cfe6f8;
+  font-size: 12.8px;
+  font-weight: 600;
+  color: #1b4f7a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.5;
+}
+.exp-state .dot {
+  flex: 0 0 auto;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #3f8fd2;
+  box-shadow: 0 0 0 3px rgba(63, 143, 210, 0.18);
+}
+.exp-state.is-warn { background: #fff6e9; border-color: #fbd6a8; color: #94530f; }
+.exp-state.is-warn .dot { background: #e08a24; box-shadow: 0 0 0 3px rgba(224, 138, 36, 0.18); }
+.exp-state.is-done { background: #eef8f1; border-color: #c9e8d5; color: #1d6b46; }
+.exp-state.is-done .dot { background: #2fa36b; box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.18); }
+.exp-record-head { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.exp-formula { white-space: pre-line; line-height: 1.75; }
+.exp-csv { flex: 0 0 auto; min-width: 0; padding: 6px 12px; font-size: 12.5px; }
+
+<!--JS-->
+(function () {
+  'use strict';
+
+  var cv = document.getElementById('cv');
+  if (!cv) return;
+  var ctx = cv.getContext('2d');
+
+  /* ---------------- 状态与物理量 ---------------- */
+  var DEF = { p: 75, c: 0.40, V: 80 };
+  var S = { p: DEF.p, c: DEF.c, V: DEF.V };
+  var timer = null;
+
+  function derived() {
+    var p = S.p / 100, c = S.c, V = S.V;
+    var n0 = c * V / 1000;          // Cu²⁺ 总物质的量
+    var n = n0 * p;                 // 已反应
+    return {
+      p: p, c: c, V: V, n0: n0, n: n,
+      mCu: n * 64.0, mFe: n * 56.0, dm: n * 8.0, cRem: c * (1 - p)
+    };
+  }
+  function colorName(p) {
+    if (p <= 0.001) return '蓝色';
+    if (p < 0.35) return '蓝色（略变浅）';
+    if (p < 0.7) return '蓝绿色（渐变中）';
+    if (p < 0.995) return '浅绿色（带青）';
+    return '浅绿色';
+  }
+
+  /* ---------------- 画面：交给共享绘图层 CHEM（frame/chem.js） ---------------- */
+  function draw(d) {
+    var rightSol;
+    if (d.p < 0.06) rightSol = '硫酸铜溶液（未反应）';
+    else if (d.p < 0.6) rightSol = '硫酸铜与硫酸亚铁混合液';
+    else rightSol = '硫酸亚铁溶液（浅绿色）';
+
+    CHEM.scene(cv, {
+      p: d.p,
+      V: S.V,
+      leftTitle: '反应前',
+      rightTitle: '反应后',
+      leftSol: '硫酸铜溶液',
+      rightSol: rightSol,
+      nailLabel: '铁钉',
+      depositLabel: '铜析出',
+      arrowText: '发生置换反应',
+      tipHint: '左右拖动画面可调反应进度',
+      formula: {
+        segs: [
+          { t: 'Fe', s: 31, c: '#152a3d' },
+          { t: '  +  ', s: 23, c: '#5d768c' },
+          { t: 'CuSO', s: 31, c: '#152a3d' },
+          { t: '4', s: 18, c: '#152a3d', dy: 7 },
+          { t: '   →   ', s: 23, c: '#1b62b0' },
+          { t: 'FeSO', s: 31, c: '#152a3d' },
+          { t: '4', s: 18, c: '#152a3d', dy: 7 },
+          { t: '  +  ', s: 23, c: '#5d768c' },
+          { t: 'Cu', s: 31, c: '#152a3d' }
+        ],
+        names: ['铁', '硫酸铜', '硫酸亚铁', '铜'],
+        nameIdx: [0, 2, 5, 8]
+      }
+    });
+  }
+
+  /* ---------------- 读数 / 公式 / 机读数据 ---------------- */
+  function setText(id, s) {
+    var el = document.getElementById(id);
+    if (el && el.textContent !== s) el.textContent = s;
+  }
+  function fmt(x, n) { return x.toFixed(n); }
+
+  function render() {
+    var d = derived();
+    setText('v-p', String(Math.round(S.p)));
+    setText('v-c', fmt(S.c, 2));
+    setText('v-v', String(S.V));
+    setText('r-cu', fmt(d.mCu, 2));
+    setText('r-fe', fmt(d.mFe, 2));
+    setText('r-dm', fmt(d.dm, 3));
+    setText('r-cr', fmt(d.cRem, 2));
+
+    var st = document.getElementById('state');
+    var txt;
+    if (S.p <= 0) {
+      st.className = 'exp-state';
+      txt = '反应尚未开始：蓝色 CuSO₄ 溶液中放入铁钉，溶液尚未出现明显变化';
+    } else if (S.p < 100) {
+      st.className = 'exp-state';
+      txt = '反应进行中：铁钉表面析出红色固体铜，蓝色溶液逐渐变浅，无气泡产生';
+    } else {
+      st.className = 'exp-state is-done';
+      txt = '反应完成：铁钉表面覆盖一层红色铜，溶液呈浅绿色（FeSO₄），铁钉比反应前重';
+    }
+    setText('state-txt', txt);
+
+    document.getElementById('fml').textContent =
+      'Cu²⁺ 总量：n总 = c × V = ' + fmt(S.c, 3) + ' × ' + fmt(S.V / 1000, 4) + ' = ' + fmt(d.n0, 4) + ' mol\n' +
+      '已反应量：n = n总 × 进度 = ' + fmt(d.n0, 4) + ' × ' + fmt(d.p, 2) + ' = ' + fmt(d.n, 4) + ' mol\n' +
+      '析出铜：m(Cu) = n × 64.0 = ' + fmt(d.n, 4) + ' × 64.0 = ' + fmt(d.mCu, 3) + ' g\n' +
+      '溶解铁：m(Fe) = n × 56.0 = ' + fmt(d.n, 4) + ' × 56.0 = ' + fmt(d.mFe, 3) + ' g，铁钉净增重 ' + fmt(d.dm, 3) + ' g';
+
+    setText('hint', '溶液颜色：' + colorName(d.p) + '；剩余 c(Cu²⁺) = ' + fmt(d.cRem, 3) + ' mol/L。' +
+      '铁钉增重来自「析出 64 g 铜 − 溶解 56 g 铁」，溶液等量减重，总质量不变。');
+
+    var alertBox = document.getElementById('alert');
+    if (d.cRem < 0.02 && S.p < 100) {
+      alertBox.hidden = false;
+      alertBox.textContent = '剩余 Cu²⁺ 已低于 0.02 mol/L，溶液接近无色，肉眼难以判断反应是否还在继续——这正是真实实验判断反应终点困难的原因。';
+    } else if (S.c > 0.45) {
+      alertBox.hidden = false;
+      alertBox.textContent = '浓度偏高：溶液颜色过深，「变浅」的过程反而不易观察，真实实验通常稀释到 0.1~0.4 mol/L。';
+    } else {
+      alertBox.hidden = true;
+    }
+
+    window.__DATA__ = {
+      experiment_id: 'fe_cuso4',
+      params: { p: S.p, c: S.c, V: S.V },
+      result: {
+        n_cu_total: +d.n0.toFixed(6),
+        n_reacted: +d.n.toFixed(6),
+        m_cu_g: +d.mCu.toFixed(4),
+        m_fe_g: +d.mFe.toFixed(4),
+        mass_gain_g: +d.dm.toFixed(4),
+        c_remaining: +d.cRem.toFixed(4),
+        solution_color: colorName(d.p)
+      },
+      atoms: {
+        left: { Fe: 1, Cu: 1, S: 1, O: 4 },
+        right: { Fe: 1, Cu: 1, S: 1, O: 4 }
+      },
+      checks: {
+        '原子数守恒（Fe/Cu/S/O = 1/1/1/4）': true,
+        '质量守恒（铁钉增重 = 溶液减重）': true
+      }
+    };
+    var stageHint = document.getElementById('pf-stage-hint');
+    if (stageHint) stageHint.textContent = '左右拖动画面可拖动反应进度';
+
+    window.__CONFIG__ = {
+      scene_id: 'fe_cuso4',
+      scene_engine: 'virtual_reaction',
+      subject: '化学',
+      experiment_id: '铁与硫酸铜溶液的置换反应'
+    };
+
+    draw(d);
+  }
+
+  /* ---------------- 实验记录 ---------------- */
+  var rowsEl = document.getElementById('rows');
+  function record() {
+    var d = derived();
+    var cells = [
+      String(rowsEl.children.length + 1),
+      String(Math.round(S.p)),
+      fmt(S.c, 2),
+      String(S.V),
+      fmt(d.mCu, 3),
+      fmt(d.mFe, 3),
+      colorName(d.p)
+    ];
+    var tr = document.createElement('tr');
+    for (var i = 0; i < cells.length; i++) {
+      var td = document.createElement('td');
+      if (i === 4 || i === 5) td.className = 'is-strong';
+      td.textContent = cells[i];
+      tr.appendChild(td);
+    }
+    rowsEl.appendChild(tr);
+    if (rowsEl.children.length > 30) rowsEl.removeChild(rowsEl.firstChild);
+  }
+  function csv() {
+    var lines = ['序号,反应进度(%),c(CuSO4)(mol/L),V(mL),m(Cu)(g),m(Fe)(g),溶液颜色'];
+    for (var i = 0; i < rowsEl.children.length; i++) {
+      var tds = rowsEl.children[i].children, arr = [];
+      for (var j = 0; j < tds.length; j++) {
+        var v = tds[j].textContent;
+        arr.push(/[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v);
+      }
+      lines.push(arr.join(','));
+    }
+    var blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '铁与硫酸铜置换反应记录.csv';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  }
+
+  /* ---------------- 控件 ---------------- */
+  function syncControls() {
+    document.getElementById('rg-p').value = String(S.p);
+    document.getElementById('rg-c').value = String(S.c);
+    document.getElementById('rg-v').value = String(S.V);
+  }
+  function stopTimer() {
+    if (timer) { clearInterval(timer); timer = null; }
+    document.getElementById('btn-run').textContent = '开始反应';
+  }
+
+  document.getElementById('rg-p').addEventListener('input', function () {
+    stopTimer();
+    S.p = +this.value;
+    render();
+  });
+  document.getElementById('rg-c').addEventListener('input', function () {
+    S.c = +this.value;
+    render();
+  });
+  document.getElementById('rg-v').addEventListener('input', function () {
+    S.V = +this.value;
+    render();
+  });
+  document.getElementById('btn-run').addEventListener('click', function () {
+    if (timer) { stopTimer(); return; }
+    if (S.p >= 100) S.p = 0;
+    this.textContent = '暂停反应';
+    timer = setInterval(function () {
+      S.p = Math.min(100, Math.round((S.p + 1.2) * 10) / 10);
+      syncControls();
+      render();
+      if (S.p >= 100) stopTimer();
+    }, 60);
+  });
+  document.getElementById('btn-step').addEventListener('click', function () {
+    stopTimer();
+    S.p = S.p + 10 > 100 ? 0 : S.p + 10;   // 到顶后回到起点，保证每次单步都换状态
+    syncControls();
+    render();
+  });
+  document.getElementById('btn-record').addEventListener('click', record);
+  document.getElementById('btn-csv').addEventListener('click', csv);
+  document.getElementById('btn-reset').addEventListener('click', function () {
+    stopTimer();
+    S.p = DEF.p; S.c = DEF.c; S.V = DEF.V;
+    rowsEl.innerHTML = '';
+    syncControls();
+    render();
+  });
+
+  /* ---------------- 拖动画面：切换左右观察位置 ---------------- */
+  var drag = null;
+  cv.style.cursor = 'grab';
+  cv.addEventListener('pointerdown', function (e) {
+    drag = { x: e.clientX, p: S.p };
+    cv.setPointerCapture(e.pointerId);
+    cv.style.cursor = 'grabbing';
+  });
+  cv.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var dp = (e.clientX - drag.x) * 0.35;
+    S.p = Math.min(100, Math.max(0, Math.round(drag.p + dp)));
+    syncControls();
+    render();
+  });
+  cv.addEventListener('pointerup', function () { drag = null; cv.style.cursor = 'grab'; });
+  cv.addEventListener('pointercancel', function () { drag = null; cv.style.cursor = 'grab'; });
+
+  /* ---------------- 启动 ---------------- */
+  window.addEventListener('resize', render);
+  if (window.ResizeObserver) {
+    new ResizeObserver(function () { render(); }).observe(cv.parentNode);
+  }
+  syncControls();
+  render();
+})();

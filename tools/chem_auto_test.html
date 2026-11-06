@@ -1,0 +1,17 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><title>auto</title>
+<style>body{margin:0;font-family:"Microsoft YaHei",sans-serif}
+#box{width:1000px;height:700px;position:relative}canvas{display:block}</style></head>
+<body>
+<div class="exp-canvas-box" id="box"><canvas id="cv"></canvas>
+<span class="exp-canvas-tip" id="tip">模型自己的提示</span></div>
+<div>铁钉 + 硫酸铜溶液（示意）</div>
+<script src="../frame/chem.js"></script>
+<script>
+  // 模拟模型乱画的画布
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  cv.width = 900; cv.height = 600;
+  ctx.fillStyle = '#dbe6f2'; ctx.fillRect(0, 0, 900, 600);
+  ctx.fillStyle = '#3b6fb0'; ctx.fillRect(300, 200, 300, 300);
+  window.__DATA__ = { params: { p: 0.5, V: 70 } };
+</script>
+</body></html>

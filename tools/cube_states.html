@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="dLO26MalEkonEjz1DaVnHK">
+<head data-page-node-id="9Y2y3Ag1BEl16ow1dkOZhh">
+<meta charset="utf-8" data-page-node-id="FUdflcP4wF3uc9c5FRNxM6"><title>截正方体状态测试</title>
+<style>
+  html,body{margin:0;background:#eef4fb;font-family:"Microsoft YaHei",system-ui,sans-serif}
+  .wrap{padding:16px}
+  canvas{display:block;width:100%;max-width:900px;height:auto;background:#fff;border-radius:14px;
+         box-shadow:0 6px 22px rgba(28,58,88,.14)}
+  .bar{margin:10px 0 14px;font-size:14px;color:#134f96}
+  .bar b{color:#c2610f}
+</style>
+</head>
+<body data-page-node-id="1oXCtTjKBnZJARyyr3rdUb">
+<div class="wrap" data-page-node-id="O6D64IvNQeOwc86fEEDXY0">
+  <div class="bar" data-page-node-id="w0zWMYuGTkQziRkzZPbeIM">状态：<b id="nm" data-page-node-id="okkAvZjJCuwQiRPMFLEQGA">—</b>　截面边数：<b id="sd" data-page-node-id="RRlUJc1IT56gHh3fN799yr">—</b>　越界：<b id="ob" data-page-node-id="ZyRBm7lEiNgSOIb0CwIOqW">—</b></div>
+  <canvas id="cv" width="900" height="640" data-page-node-id="Faj8ldqYsraALVFeCXJSDk"></canvas>
+</div>
+<script src="../frame/vis.js"></script>
+<script src="../frame/math.js"></script>
+<script>
+(function () {
+  var Q = new URLSearchParams(location.search);
+  var key = Q.get('s') || 'hex';
+  var CFG = {
+    // 过中心、法向 (1,1,1)/√3 → 正六边形
+    hex:   { theta: 54.7, phi: 45, t: 0 },
+    // 法向在 xz 平面内 → 只切 4 个侧面
+    quad:  { theta: 54.7, phi: 0,  t: -0.71 },
+    // 切到角上 → 三角形
+    tri:   { theta: 54.7, phi: 45, t: -1.55 },
+    // 介于三角与六边之间 → 五边形
+    penta: { theta: 45, phi: 15, t: -0.2 }
+  };
+  var cfg = CFG[key] || CFG.hex;
+  var cv = document.getElementById('cv');
+  window.__ERR__ = null;
+  try {
+    var r = MATH.cubeCut(cv, { a: 2, theta: cfg.theta, phi: cfg.phi, t: cfg.t });
+    document.getElementById('nm').textContent = key;
+    document.getElementById('sd').textContent = r.sides;
+    var g = window.__GEO__ || {};
+    document.getElementById('ob').textContent = g.in_bounds ? '否' : '是';
+    window.__OK__ = !!g.in_bounds && g.volume_ok === true;
+    window.__RES__ = { key: key, sides: r.sides, shape: r.shape, geo: g };
+  } catch (e) {
+    window.__ERR__ = String(e && e.stack || e);
+  }
+})();
+</script>
+</body>
+</html>

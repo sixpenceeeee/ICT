@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>场景库自测</title>
+<style>
+  html,body{margin:0;background:#fff;font-family:"Microsoft YaHei",system-ui,sans-serif}
+  #box{width:1086px;height:772px;position:relative}
+  canvas{display:block}
+  #tip{position:absolute;left:8px;bottom:6px;font-size:11px;color:#5b7791}
+</style></head>
+<body>
+<div class="exp-canvas-box" id="box"><canvas id="cv"></canvas><span class="exp-canvas-tip" id="tip"></span></div>
+<script src="../frame/vis.js"></script>
+<script src="../frame/phys.js"></script>
+<script src="../frame/math.js"></script>
+<script src="../frame/bio.js"></script>
+<script src="../frame/geo.js"></script>
+<script src="../frame/cs.js"></script>
+<script>
+  var cv = document.getElementById('cv');
+  var which = (location.search.replace(/^\?s=/, '') || 'float');
+  window.__CONFIG__ = { scene_id: 'test' };   // 避免各库的 auto 兜底误触发
+  try {
+    if (which.indexOf('step') === 0) { PHYS.floating(cv, { objRho: 0.6, liqRho: 1.0, step: +which.slice(4) }); }
+    else if (which === 'float_np') { VIS.mount(cv,{DW:900,DH:640}); VIS.clear(); VIS.wall({tableY:500,props:false}); PHYS.floating(cv,{objRho:0.6,liqRho:1.0}); }
+    else if (which === 'float_nw') {
+      // 只画白底 + 场景（不调 wall）
+      VIS.mount(cv,{DW:900,DH:640}); VIS.clear();
+      var c0 = cv.getContext('2d'); c0.fillStyle='#f7fbfe'; c0.fillRect(-400,-400,1700,1500);
+      PHYS.floating(cv,{objRho:0.6,liqRho:1.0});
+    }
+    else if (which === 'wall') { VIS.mount(cv, {DW:900,DH:640}); VIS.clear(); VIS.wall({tableY:500}); }
+    else if (which === 'float') PHYS.floating(cv, { objRho: 0.6, liqRho: 1.0, mode: 'hang', sub: 0.5 });
+    else if (which === 'free') PHYS.floating(cv, { objRho: 0.6, liqRho: 1.0, mode: 'free' });
+    else if (which === 'optics') PHYS.optics(cv, { u: 30, f: 10 });
+    else if (which === 'cube') MATH.cubeCut(cv, { n: [1, 1, 1], d: 1.5 });
+    else if (which === 'func') MATH.funcPlot(cv, { a: 1, b: -2, c: 0, shade: true });
+    else if (which === 'bio') BIO.microscope(cv, { mag: 400, cells: 7, stain: 'onion' });
+    else if (which === 'geo') GEO.earth(cv, { tilt: 23.5, season: 'summer' });
+    else if (which === 'cs') CS.flow(cv, {});
+    window.__OK__ = true;
+  } catch (e) {
+    window.__ERR__ = String(e && e.stack ? e.stack : e);
+    document.body.innerHTML = '<pre style="color:#c00;font-size:13px;padding:12px">' + window.__ERR__ + '</pre>';
+  }
+</script>
+</body></html>

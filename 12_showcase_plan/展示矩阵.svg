@@ -1,0 +1,106 @@
+<svg width="100%" viewBox="0 0 680 400" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>六学科展示清单矩阵</title>
+<desc>数学、物理、化学、生物、地理、信息科技各 5 篇，共 30 篇，按已完成、A 批、B 批着色。</desc>
+<text x="40" y="44" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#2C2C2A" dominant-baseline="central">数学</text>
+<rect x="110" y="22" width="102" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="161" y="37" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">二次函数</text>
+<text x="161" y="54" font-family="system-ui,sans-serif" font-size="12" fill="#185FA5" text-anchor="middle" dominant-baseline="central">J1</text>
+<rect x="216" y="22" width="102" height="44" rx="8" fill="#185FA5" stroke="#185FA5" stroke-width="0.5"/>
+<text x="267" y="37" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">截面形状</text>
+<text x="267" y="54" font-family="system-ui,sans-serif" font-size="12" fill="rgba(255,255,255,0.82)" text-anchor="middle" dominant-baseline="central">J4</text>
+<rect x="322" y="22" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="373" y="37" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">展开折叠</text>
+<text x="373" y="54" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J4</text>
+<rect x="428" y="22" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="479" y="37" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">勾股定理</text>
+<text x="479" y="54" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J2</text>
+<rect x="534" y="22" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="585" y="37" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">均值方差</text>
+<text x="585" y="54" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J7</text>
+<text x="40" y="96" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#2C2C2A" dominant-baseline="central">物理</text>
+<rect x="110" y="74" width="102" height="44" rx="8" fill="#185FA5" stroke="#185FA5" stroke-width="0.5"/>
+<text x="161" y="89" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">浮力</text>
+<text x="161" y="106" font-family="system-ui,sans-serif" font-size="12" fill="rgba(255,255,255,0.82)" text-anchor="middle" dominant-baseline="central">J1</text>
+<rect x="216" y="74" width="102" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="267" y="89" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">伏安法</text>
+<text x="267" y="106" font-family="system-ui,sans-serif" font-size="12" fill="#185FA5" text-anchor="middle" dominant-baseline="central">J1+J8</text>
+<rect x="322" y="74" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="373" y="89" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">凸透镜</text>
+<text x="373" y="106" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J2</text>
+<rect x="428" y="74" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="479" y="89" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">杠杆</text>
+<text x="479" y="106" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J7</text>
+<rect x="534" y="74" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="585" y="89" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">串并联</text>
+<text x="585" y="106" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J1</text>
+<text x="40" y="148" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#2C2C2A" dominant-baseline="central">化学</text>
+<rect x="110" y="126" width="102" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="161" y="141" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">铁铜置换</text>
+<text x="161" y="158" font-family="system-ui,sans-serif" font-size="12" fill="#185FA5" text-anchor="middle" dominant-baseline="central">J3+J8</text>
+<rect x="216" y="126" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="267" y="141" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">质量守恒</text>
+<text x="267" y="158" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J3</text>
+<rect x="322" y="126" width="102" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="373" y="141" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">金属活动性</text>
+<text x="373" y="158" font-family="system-ui,sans-serif" font-size="12" fill="#185FA5" text-anchor="middle" dominant-baseline="central">J3+J8</text>
+<rect x="428" y="126" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="479" y="141" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">溶解度</text>
+<text x="479" y="158" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J7</text>
+<rect x="534" y="126" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="585" y="141" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">pH 试纸</text>
+<text x="585" y="158" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J3+J8</text>
+<text x="40" y="200" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#2C2C2A" dominant-baseline="central">生物</text>
+<rect x="110" y="178" width="102" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="161" y="193" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">显微镜</text>
+<text x="161" y="210" font-family="system-ui,sans-serif" font-size="12" fill="#185FA5" text-anchor="middle" dominant-baseline="central">J5+J6</text>
+<rect x="216" y="178" width="102" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="267" y="193" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">孟德尔</text>
+<text x="267" y="210" font-family="system-ui,sans-serif" font-size="12" fill="#185FA5" text-anchor="middle" dominant-baseline="central">J3</text>
+<rect x="322" y="178" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="373" y="193" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">细胞对比</text>
+<text x="373" y="210" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J6</text>
+<rect x="428" y="178" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="479" y="193" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">种子萌发</text>
+<text x="479" y="210" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J5+J7</text>
+<rect x="534" y="178" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="585" y="193" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">光合作用</text>
+<text x="585" y="210" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J5+J7</text>
+<text x="40" y="252" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#2C2C2A" dominant-baseline="central">地理</text>
+<rect x="110" y="230" width="102" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="161" y="245" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">等高线</text>
+<text x="161" y="262" font-family="system-ui,sans-serif" font-size="12" fill="#185FA5" text-anchor="middle" dominant-baseline="central">J2</text>
+<rect x="216" y="230" width="102" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="267" y="245" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">公转四季</text>
+<text x="267" y="262" font-family="system-ui,sans-serif" font-size="12" fill="#185FA5" text-anchor="middle" dominant-baseline="central">J2</text>
+<rect x="322" y="230" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="373" y="245" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">正午高度</text>
+<text x="373" y="262" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J2</text>
+<rect x="428" y="230" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="479" y="245" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">海陆风</text>
+<text x="479" y="262" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J5</text>
+<rect x="534" y="230" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="585" y="245" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">气温统计</text>
+<text x="585" y="262" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J7</text>
+<text x="40" y="304" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#2C2C2A" dominant-baseline="central">信息科技</text>
+<rect x="110" y="282" width="102" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="161" y="297" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">冒泡排序</text>
+<text x="161" y="314" font-family="system-ui,sans-serif" font-size="12" fill="#185FA5" text-anchor="middle" dominant-baseline="central">J5</text>
+<rect x="216" y="282" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="267" y="297" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">二分查找</text>
+<text x="267" y="314" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J5</text>
+<rect x="322" y="282" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="373" y="297" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">汉诺塔</text>
+<text x="373" y="314" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J5</text>
+<rect x="428" y="282" width="102" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="479" y="297" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">进制转换</text>
+<text x="479" y="314" font-family="system-ui,sans-serif" font-size="12" fill="#185FA5" text-anchor="middle" dominant-baseline="central">J5+J3</text>
+<rect x="534" y="282" width="102" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="585" y="297" font-family="system-ui,sans-serif" font-size="13" font-weight="500" fill="#444441" text-anchor="middle" dominant-baseline="central">图像大小</text>
+<text x="585" y="314" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">J5+J3</text>
+<rect x="40" y="342" width="12" height="12" rx="3" fill="#185FA5" stroke="#185FA5" stroke-width="0.5"/>
+<text x="58" y="348" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" dominant-baseline="central">已完成 2 篇</text>
+<rect x="133" y="342" width="12" height="12" rx="3" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="151" y="348" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" dominant-baseline="central">A 批 · 判据现成 10 篇</text>
+<rect x="282" y="342" width="12" height="12" rx="3" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="300" y="348" font-family="system-ui,sans-serif" font-size="12" fill="#5F5E5A" dominant-baseline="central">B 批 · 需补场景 18 篇</text>
+</svg>

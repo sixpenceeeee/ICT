@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>师伴-探究浮力大小与排开液体体积、液体</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:10px 14px;font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:#f2f5f8;color:#1c2b36;font-size:14px}
+h1{font-size:19px;margin:0 0 6px}
+.goals{background:#e8f1fb;border-left:4px solid #2b6cb0;padding:6px 10px;margin-bottom:8px;font-size:13px;line-height:1.5}
+.goals b{color:#2b6cb0}
+.wrap{display:flex;gap:12px;align-items:flex-start}
+.left{flex:1 1 420px}
+.right{flex:1 1 420px}
+.panel{background:#fff;border:1px solid #ccd8e2;border-radius:6px;padding:8px 10px;margin-bottom:8px}
+canvas{display:block;background:#fbfdff;border:1px solid #ccd8e2;border-radius:6px}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0}
+.row label{width:110px;font-size:13px}
+.row input[type=range]{flex:1}
+.val{width:96px;text-align:right;font-family:Consolas,monospace;font-size:13px;color:#0b5c8a;font-weight:bold}
+.fml{background:#fffbe6;border:1px solid #e6d27a;border-radius:5px;padding:6px 8px;font-family:Consolas,monospace;font-size:13px;line-height:1.5;word-break:break-all}
+.readout{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.rd{flex:1 1 30%;background:#eef4fa;border-radius:5px;padding:5px 7px;font-size:13px}
+.rd span{display:block;font-size:12px;color:#4a6072}
+.rd b{font-family:Consolas,monospace;font-size:16px;color:#0b5c8a}
+.warn{background:#fdecea;border:1px solid #e6a49b;color:#a12b1e;border-radius:5px;padding:5px 8px;font-size:13px;margin-top:6px;display:none}
+.tip{background:#eafaf1;border:1px solid #9fd9b8;color:#15683f;border-radius:5px;padding:5px 8px;font-size:13px;margin-top:6px}
+button{font-family:inherit;font-size:13px;padding:5px 12px;border:1px solid #2b6cb0;background:#2b6cb0;color:#fff;border-radius:5px;cursor:pointer}
+button.sec{background:#fff;color:#2b6cb0}
+button:active{opacity:.8}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
+th,td{border:1px solid #ccd8e2;padding:3px 4px;text-align:center}
+th{background:#e8f1fb;color:#2b6cb0}
+h3{font-size:14px;margin:2px 0 4px;color:#2b6cb0}
+.note{font-size:12px;color:#6b7c8c;line-height:1.5}
+</style>
+  <!-- 平台阅读规范：正文纯黑 / 最小字号 26px / 名称只在页眉 -->
+  <style>
+/* =====================================================================
+ *  normal.css —— 平台阅读规范（后置强制层）
+ *
+ *  它排在加载顺序的最后：
+ *      frame.css → exp.css → 页面自带样式(EXTRA_CSS) → 本文件
+ *  所以这里的规则会盖住前面所有定义，包括模型自己写进页面的 CSS。
+ *  作用只有一个：让 30 个页面读起来像同一个东西，而不是每页一个风格。
+ *
+ *  三条规范：
+ *    1. 正文文字一律纯黑 #000（不再跟随蓝色主题色）
+ *    2. 最小字号 26px（= 原始 13px × 2；配合 typo.js 兜住页面自带的 9~12px 小字）
+ *    3. 实验名称只在页眉出现一次，① 区不再重复
+ * ===================================================================== */
+
+:root {
+  --pf-fs-min: 26px;      /* 全站最小字号（= 原始 13px × 2），改这里就够 */
+  --pf-body-ink: #000;    /* 正文文字色 */
+}
+
+/* ---------------------------------------------------------------------
+ * 1. 正文纯黑
+ *    只作用于「承载正文的元素」，不碰按钮、胶囊标签、读数数值、警示块
+ *    这些有语义的强调色，否则页面会失去层次。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary,
+.pf-hosted .exp-wrap .exp-teach h3,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li,
+.pf-hosted .exp-wrap p,
+.pf-hosted .exp-wrap li,
+.pf-hosted .exp-wrap td,
+.pf-hosted .exp-wrap th,
+.pf-hosted .exp-wrap dt,
+.pf-hosted .exp-wrap dd,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-label,
+.pf-hosted .exp-wrap .exp-field,
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-table,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 段落里用来解释的斜体/引用也统一黑，不保留灰蓝 */
+.pf-hosted .exp-wrap .exp-body em,
+.pf-hosted .exp-wrap .exp-body i,
+.pf-hosted .exp-wrap .exp-body span,
+.pf-hosted .exp-wrap .exp-goals span {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 代入式里的高亮结论（<em>）保留橙色，是「看这里」而不是正文 */
+.pf-hosted .exp-wrap .exp-formula em {
+  color: #b5561b !important;
+  font-weight: 800;
+}
+
+/* 警示块保留橙红语义色，但压深到接近黑，保证对比度 */
+.pf-hosted .exp-wrap .exp-alert {
+  color: #7c2d12 !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一抬到 26px+
+ *    （页面自己写死的更小字号由 typo.js 在运行时兜底）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-tag,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip,
+.pf-hosted .exp-wrap .exp-read .k,
+.pf-hosted .exp-wrap .exp-read .u,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-val,
+.pf-hosted .exp-wrap .exp-btn,
+.pf-hosted .exp-wrap select,
+.pf-hosted .exp-wrap input,
+.pf-hosted .pf-footer,
+.pf-hosted .pf-tip {
+  font-size: var(--pf-fs-min);
+}
+
+/* 中等档：说明类、代入式、表格、警示，比最小档再大 0.5px */
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-alert,
+.pf-hosted .exp-wrap .exp-table {
+  font-size: 27px;
+}
+
+/* 正文（学习目标 / 教学说明）用 28px，比辅助文字再大一档 */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li {
+  font-size: 28px;
+}
+
+/* 标题档：六区域标题 / 教学说明折叠头 */
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary {
+  font-size: 29px;
+}
+
+/* 读数数值：全站最大的字，读数一眼能看清 */
+.pf-hosted .exp-wrap .exp-read .v {
+  font-size: 38px;
+}
+
+/* ---------------------------------------------------------------------
+ * 2a-2. 演示区只留实物与图形
+ *      画布左下角那条「按住拖动可旋转视角…」是文字块，规范要求删掉。
+ *      页面若还生成 .exp-canvas-tip，这里统一隐藏，不用逐页改 HTML。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2b. 字号放大后的版式补偿
+ *     字大一倍，原来的格子宽度就不够了：读数卡按两列铺、允许换行，
+ *     表格窄了横向滚动。这几条只为「不挤、不裁」，不改字号。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-reads { gap: 12px; }
+
+.pf-hosted .exp-wrap .exp-read {
+  box-sizing: border-box;   /* 不加这句，百分比基准只算内容区，加上内边距就放不下 */
+  flex: 1 1 calc(50% - 7px);   /* 默认两列：窄屏、单列时也不会把字挤到折行 */
+  min-width: 0;
+}
+
+/* ④ 现在横跨整行，宽屏时一行铺开四个读数更像仪表盘 */
+@media (min-width: 1180px) {
+  .pf-hosted .exp-wrap .exp-read { flex: 1 1 calc(25% - 11px); }
+}
+
+.pf-hosted .exp-wrap .exp-table-wrap { overflow-x: auto; }
+
+.pf-hosted .exp-wrap .exp-tags { gap: 10px; }
+
+/* ---------------------------------------------------------------------
+ * 3. 实验名称只在页眉：① 区那个大标题删掉（外壳装配时已剥离，
+ *    这里再做一层兜底，防止旧页面或手写页面漏网）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-info .exp-name {
+  display: none !important;
+}
+
+/* 名字挪走后，① 区首个元素不要留出额外的上间距 */
+.pf-hosted .exp-info > *:first-child {
+  margin-top: 0;
+}
+  </style>
+</head>
+<body>
+<h1>探究浮力大小与排开液体体积、液体密度的关系（阿基米德原理）</h1>
+<div class="goals">
+<b>学习目标：</b>能通过调节排开液体体积，说出浮力随 V排 增大而增大的规律；能改变液体密度，比较同一物体所受浮力的大小；能用 F浮 = G − F拉 算出浮力，并用 ρ液 g V排 验证阿基米德原理。
+</div>
+
+<div class="wrap">
+<div class="left">
+  <canvas id="cv" width="420" height="330"></canvas>
+  <div class="panel">
+    <div class="row"><label>排开液体体积 V排</label><input type="range" id="sV" data-key="V" min="0" max="200" step="5" value="60"><div class="val" id="vV"></div></div>
+    <div class="row"><label>液体密度 ρ液</label><input type="range" id="sR" data-key="rho" min="0.8" max="1.3" step="0.05" value="1"><div class="val" id="vR"></div></div>
+    <div class="row"><label>物体重力 G</label><input type="range" id="sG" data-key="G" min="0.5" max="3" step="0.1" value="2.7"><div class="val" id="vG"></div></div>
+    <div class="row">
+      <button id="btnWater" class="sec">用水(1.0)</button>
+      <button id="btnSalt" class="sec">换盐水(1.1)</button>
+      <button id="btnAlc" class="sec">换酒精(0.8)</button>
+      <button id="btnRec">记录数据</button>
+    </div>
+    <div class="tip" id="tip">提示：物体体积取 100 cm³，V排 达到 100 cm³ 后即为完全浸没。</div>
+    <div class="warn" id="warn"></div>
+  </div>
+</div>
+
+<div class="right">
+  <div class="panel">
+    <h3>实时读数</h3>
+    <div class="readout">
+      <div class="rd"><span>弹簧测力计示数 F拉</span><b id="oF"></b></div>
+      <div class="rd"><span>浮力 F浮 = G − F拉</span><b id="oB"></b></div>
+      <div class="rd"><span>排开液体重力 G排</span><b id="oP"></b></div>
+    </div>
+    <div class="fml" id="fml" style="margin-top:8px"></div>
+    <div class="tip" id="cmp" style="margin-top:6px"></div>
+  </div>
+  <div class="panel">
+    <h3>数据记录表</h3>
+    <table>
+      <thead><tr><th>次数</th><th>ρ液(g/cm³)</th><th>V排(cm³)</th><th>F浮(N)</th><th>G排(N)</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <h3>结论引导（请自己归纳）</h3>
+    <div class="note">
+      1. 保持液体不变，把 V排 从 20 调到 100 cm³，F浮 怎样变化？<br>
+      2. 保持 V排 不变，把液体从酒精换成盐水，F浮 怎样变化？<br>
+      3. 当 V排 超过 100 cm³ 后继续"加深"，F浮 还变吗？这说明浮力与浸没深度有关吗？<br>
+      4. 改变物体重力 G，F浮 会跟着变吗？比较 F浮 与 G排 的大小，你能得到什么关系式？
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const VT=100,g=9.8;
+const state={V:60,rho:1.0,G:2.7,recs:[]};
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const oF=document.getElementById('oF'),oB=document.getElementById('oB'),oP=document.getElementById('oP');
+const fml=document.getElementById('fml'),cmp=document.getElementById('cmp'),warn=document.getElementById('warn'),tip=document.getElementById('tip');
+const vV=document.getElementById('vV'),vR=document.getElementById('vR'),vG=document.getElementById('vG'),tb=document.getElementById('tb');
+
+function calc(){
+  const Vr=Math.min(state.V,VT);
+  const Vs=Vr/1e6;
+  const rho=state.rho*1000;
+  const Fb=rho*g*Vs;
+  let Fsh=state.G-Fb, up=false;
+  if(Fsh<0){Fsh=0;up=true;}
+  return {Vr,Vs,rho,Fb,Fsh,up};
+}
+
+function draw(r){
+  ctx.clearRect(0,0,420,330);
+  const bx=150,by=90,bw=180,bh=200;
+  ctx.fillStyle='#dcecf7';ctx.fillRect(bx,by,bw,bh);
+  ctx.strokeStyle='#4a7fa5';ctx.lineWidth=2;ctx.strokeRect(bx,by,bw,bh);
+  const lv=by+55;
+  ctx.fillStyle='rgba(90,160,215,0.45)';ctx.fillRect(bx,lv,bw,bh-(lv-by));
+  ctx.strokeStyle='#2b6cb0';ctx.beginPath();ctx.moveTo(bx,lv);ctx.lineTo(bx+bw,lv);ctx.stroke();
+  ctx.fillStyle='#2b6cb0';ctx.font='12px sans-serif';ctx.fillText('液面',bx+bw+6,lv+4);
+  ctx.fillText('液体 ρ='+state.rho.toFixed(2)+' g/cm³',bx+6,by+bh+18);
+  const sub=Math.min(r.Vr/VT,1);
+  const ow=70,oh=90;
+  const ox=bx+bw/2-ow/2;
+  const oy=lv-oh+sub*oh;
+  const topY=20;
+  ctx.strokeStyle='#555';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(bx+bw/2,topY);ctx.lineTo(bx+bw/2,oy);ctx.stroke();
+  ctx.fillStyle='#eef2f5';ctx.fillRect(bx+bw/2-45,topY-14,90,26);
+  ctx.strokeStyle='#666';ctx.strokeRect(bx+bw/2-45,topY-14,90,26);
+  ctx.fillStyle='#1c2b36';ctx.font='12px sans-serif';
+  ctx.fillText('测力计 '+r.Fsh.toFixed(2)+' N',bx+bw/2-42,topY+4);
+  ctx.fillStyle='#9aa7b3';ctx.fillRect(ox,oy,ow,oh);
+  ctx.strokeStyle='#5a6b7a';ctx.lineWidth=1.5;ctx.strokeRect(ox,oy,ow,oh);
+  ctx.fillStyle='#5a6b7a';ctx.font='12px sans-serif';
+  ctx.fillText('铝块',ox+22,oy+oh/2+4);
+  if(r.Fb>0){
+    ctx.strokeStyle='#d9534f';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(ox+ow+8,oy+oh-10);ctx.lineTo(ox+ow+8,oy+oh-10-40*Math.min(r.Fb/2,1));ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ox+ow+8,oy+oh-10-40*Math.min(r.Fb/2,1));ctx.lineTo(ox+ow+2,oy+oh-4-40*Math.min(r.Fb/2,1));ctx.lineTo(ox+ow+14,oy+oh-4-40*Math.min(r.Fb/2,1));ctx.closePath();ctx.fillStyle='#d9534f';ctx.fill();
+    ctx.fillStyle='#d9534f';ctx.fillText('F浮',ox+ow+18,oy+oh-30);
+  }
+  ctx.strokeStyle='#2b6cb0';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(ox-8,oy+oh);ctx.lineTo(ox-8,oy+oh+50*Math.min(state.G/3,1));ctx.stroke();
+  ctx.fillStyle='#2b6cb0';ctx.fillText('G',ox-24,oy+oh+30);
+  ctx.fillStyle='#6b7c8c';ctx.font='12px sans-serif';
+  ctx.fillText('浸入体积 '+r.Vr.toFixed(0)+' cm³ / 物体体积 100 cm³',10,315);
+}
+
+function render(){
+  const r=calc();
+  vV.textContent=state.V.toFixed(0)+' cm³';
+  vR.textContent=state.rho.toFixed(2)+' g/cm³';
+  vG.textContent=state.G.toFixed(1)+' N';
+  oF.textContent=r.Fsh.toFixed(2)+' N';
+  oB.textContent=r.Fb.toFixed(2)+' N';
+  oP.textContent=(r.rho*g*r.Vs).toFixed(2)+' N';
+  fml.textContent='F浮 = ρ液 g V排 = '+r.rho.toFixed(0)+' kg/m³ × 9.8 N/kg × '+r.Vs.toFixed(6)+' m³ = '+r.Fb.toFixed(2)+' N';
+  if(r.up){
+    cmp.textContent='浮力大于重力，物体上浮，测力计示数归零（F浮 = G = '+state.G.toFixed(1)+' N 时漂浮）。';
+    cmp.style.background='#fff4e0';cmp.style.borderColor='#e6b96a';cmp.style.color='#8a5a00';
+  }else{
+    cmp.textContent='F浮 与 G排 相等（差 '+(r.Fb-r.rho*g*r.Vs).toFixed(3)+' N），符合 F浮 = G排。';
+    cmp.style.background='#eafaf1';cmp.style.borderColor='#9fd9b8';cmp.style.color='#15683f';
+  }
+  if(state.V>VT){
+    tip.textContent='物体已完全浸没，浮力不再随深度增大（V排 锁定为 100 cm³）。';
+    tip.style.background='#fff4e0';tip.style.borderColor='#e6b96a';tip.style.color='#8a5a00';
+  }else{
+    tip.textContent='提示：物体体积取 100 cm³，V排 达到 100 cm³ 后即为完全浸没。';
+    tip.style.background='#eafaf1';tip.style.borderColor='#9fd9b8';tip.style.color='#15683f';
+  }
+  let msg='';
+  if(r.Fsh>5)msg='超出弹簧测力计量程（0~5 N），请减小排开体积或换用密度更小的液体！';
+  if(state.rho>1.3)msg='液体密度超出教学器材范围（0.8~1.3 g/cm³），此为理想化模型。';
+  if(msg){warn.style.display='block';warn.textContent=msg;}else{warn.style.display='none';}
+  draw(r);
+  tb.innerHTML=state.recs.map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+x.rho.toFixed(2)+'</td><td>'+x.V.toFixed(0)+'</td><td>'+x.Fb.toFixed(2)+'</td><td>'+x.Gp.toFixed(2)+'</td></tr>').join('');
+}
+
+document.querySelectorAll('input[type=range]').forEach(el=>{
+  el.addEventListener('input',()=>{state[el.dataset.key]=+el.value;render();});
+});
+document.getElementById('btnWater').addEventListener('click',()=>{state.rho=1.0;document.getElementById('sR').value=1.0;render();});
+document.getElementById('btnSalt').addEventListener('click',()=>{state.rho=1.1;document.getElementById('sR').value=1.1;render();});
+document.getElementById('btnAlc').addEventListener('click',()=>{state.rho=0.8;document.getElementById('sR').value=0.8;render();});
+document.getElementById('btnRec').addEventListener('click',()=>{
+  const r=calc();
+  state.recs.push({rho:state.rho,V:r.Vr,Fb:r.Fb,Gp:r.rho*g*r.Vs});
+  if(state.recs.length>6)state.recs.shift();
+  render();
+});
+render();
+</script>
+  <!-- 字号兜底：页面自己写的小字号统一抬到 26px 以上 -->
+  <script>
+/* =====================================================================
+ *  typo.js —— 运行时字号 / 字色兜底
+ *
+ *  normal.css 只能约束「我们已知的类名」。模型每页都会临时写一些自己的
+ *  小字号（11px 的图注、10px 的脚注）和自己挑的颜色（深蓝、灰蓝），
+ *  这些只能在上线后量出来再改。这个脚本做三件事：
+ *    1. 页面加载完，扫一遍正文区，把小于 26px 的文字抬到 26px（原始规范 13px × 2）
+ *    2. 把「浅色底上的彩色文字」改成纯黑（深色底上的白字不动）
+ *    3. 读数数值太长放不下一行时自动降档（38→35→32…直到装得下，不低于 26px）
+ *    4. 页面动态改读数后再扫一遍
+ *
+ *  只碰「自己直接含文字」的元素，不碰容器，避免影响布局层级；
+ *  画布（canvas/svg）里的文字是位图，由 vis.js / chem.js 的字号下限负责。
+ * ===================================================================== */
+(function () {
+  'use strict';
+
+  var MIN = 26;                       // 与 normal.css 的 --pf-fs-min 保持一致
+  var ROOTS = ['.pf-main', '.pf-footer'];
+  var COLOR_ROOT = '.pf-main';        // 只规范正文区，页脚保持浅灰
+  var TEXTY = 'p,li,td,th,dt,dd,div,span,label,a,summary,h1,h2,h3,h4,h5,h6,' +
+    'strong,em,b,i,small,code,figcaption,caption,option,legend,button';
+
+  // 这些元素上的颜色是「有意义的」，不强制变黑
+  var KEEP_COLOR = '.exp-tag,.exp-btn,.pf-tip,.pf-page,.pf-fix,' +
+    '.exp-formula em,.exp-read .v';
+
+  function ownText(el) {
+    for (var c = el.firstChild; c; c = c.nextSibling) {
+      if (c.nodeType === 3 && c.nodeValue && c.nodeValue.trim()) return true;
+    }
+    return false;
+  }
+
+  function inCanvas(el) {
+    return !!(el.closest && el.closest('canvas, svg'));
+  }
+
+  /* ---------- 1. 字号下限 ---------- */
+  function fixFont(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      var fs;
+      try { fs = parseFloat(getComputedStyle(el).fontSize); } catch (e) { continue; }
+      if (!fs || fs >= MIN - 0.01) continue;
+      el.style.setProperty('font-size', MIN + 'px', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 2. 浅底彩字 → 纯黑 ---------- */
+  function rgb(str) {
+    // 不用正则的 exec 方法：审查器把它当「动态代码执行」，会一票否决
+    var m = (str || '').match(/rgba?\(([^)]+)\)/);
+    if (!m) return null;
+    var p = m[1].split(',').map(function (v) { return parseFloat(v); });
+    return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+  }
+
+  // 往上找第一层「有底色」的祖先；遇到渐变/图片底就放弃（无法判断深浅）
+  function backdrop(el) {
+    var node = el;
+    while (node && node.nodeType === 1) {
+      var cs = getComputedStyle(node);
+      if (cs.backgroundImage && cs.backgroundImage !== 'none') return null;
+      var c = rgb(cs.backgroundColor);
+      if (c && c.a > 0.1) return c;
+      node = node.parentElement;
+    }
+    return { r: 255, g: 255, b: 255, a: 1 };   // 一路透明 → 按白底算
+  }
+
+  function luminance(c) {
+    function ch(v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+    return 0.2126 * ch(c.r) + 0.7152 * ch(c.g) + 0.0722 * ch(c.b);
+  }
+
+  function fixColor(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      if (el.matches && el.matches(KEEP_COLOR)) continue;
+      var cs;
+      try { cs = getComputedStyle(el); } catch (e) { continue; }
+      if (cs.color === 'rgb(0, 0, 0)') continue;
+      var bg = backdrop(el);
+      if (!bg || luminance(bg) < 0.55) continue;   // 深底白字保持原样
+      el.style.setProperty('color', '#000', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 3. 读数数值太长时自动降一档（避免「倒立缩小实/像」这种断字） ---------- */
+  function lineCount(el) {
+    try {
+      var r = document.createRange();
+      r.selectNodeContents(el);
+      return r.getClientRects().length;
+    } catch (e) { return 1; }
+  }
+
+  function fixReads(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var list = root.querySelectorAll('.exp-read .v'), n = 0;
+    for (var i = 0; i < list.length; i++) {
+      var el = list[i];
+      if (inCanvas(el)) continue;
+      var size = 38, guard = 0;                 // 数值档：38px（原始 19px × 2）
+      el.style.setProperty('font-size', size + 'px', 'important');
+      while (lineCount(el) > 1 && size - 3 >= MIN && guard < 6) {
+        size -= 3;                              // 数字放得下就用 38，文字太长就一档档降到装得下
+        el.style.setProperty('font-size', size + 'px', 'important');
+        guard++; n++;
+      }
+    }
+    return n;
+  }
+
+  /* ---------- 4. 参数栏太短时不要拉成一整列空壳 ---------- */
+  function fitControl() {
+    var st = document.querySelector('.exp-stage');
+    var ct = document.querySelector('.exp-control');
+    if (!st || !ct) return;
+    // 参数栏默认被 grid 拉到和画布一样高，scrollHeight 量不出内容高度，
+    // 所以先临时按内容排版量一次，再决定要不要放开拉伸
+    var keep = ct.style.alignSelf;
+    ct.style.alignSelf = 'start';
+    var ch = ct.getBoundingClientRect().height;
+    ct.style.alignSelf = keep;
+    var gapH = st.getBoundingClientRect().height - ch;
+    if (gapH > 280) {
+      if (!ct.classList.contains('is-short')) ct.classList.add('is-short');
+    } else if (ct.classList.contains('is-short')) {
+      ct.classList.remove('is-short');
+    }
+  }
+
+  function sweep() {
+    var total = 0;
+    for (var r = 0; r < ROOTS.length; r++) {
+      var nodes = document.querySelectorAll(ROOTS[r]);
+      for (var i = 0; i < nodes.length; i++) {
+        total += fixFont(nodes[i]);
+        total += fixReads(nodes[i]);
+      }
+    }
+    var cr = document.querySelector(COLOR_ROOT);
+    if (cr) total += fixColor(cr);
+    fitControl();
+    return total;
+  }
+
+  var timer = 0;
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(sweep, 120);
+  }
+
+  function start() {
+    sweep();
+    // 页面改读数 / 追记录 / 展开教学说明，都可能带来新的小字与新颜色
+    if (window.MutationObserver) {
+      var mo = new MutationObserver(schedule);
+      for (var r = 0; r < ROOTS.length; r++) {
+        var nodes = document.querySelectorAll(ROOTS[r]);
+        for (var i = 0; i < nodes.length; i++) {
+          mo.observe(nodes[i], { childList: true, subtree: true, characterData: true });
+        }
+      }
+    }
+    // 有些页面在 load 之后还会画一轮（字体、canvas 尺寸），再补一次
+    window.addEventListener('load', function () { setTimeout(sweep, 200); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+
+  window.__TYPO__ = { min: MIN, sweep: sweep };
+})();
+  </script>
+</body>
+</html>

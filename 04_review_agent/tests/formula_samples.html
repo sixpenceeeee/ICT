@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>公式解析探针</title>
+<style>body{font-family:"Microsoft YaHei",sans-serif;background:#fff;color:#111;padding:24px}</style>
+</head>
+<body>
+<h1>浮力实验</h1>
+<p>学习目标：能说出浮力与排开液体体积的关系。</p>
+<p>液体密度 1000 kg/m³，重力加速度 10 N/kg，排开体积 200 mL。</p>
+<p id="f1">F浮 = ρ液 g V排 = 1000 kg/m³ × 10 N/kg × 0.0002 m³ = 2.00 N</p>
+<p id="f2">同理：1.0×10³ kg/m³ × 10 N/kg × 2.0×10⁻⁴ m³ = 2.00 N</p>
+<p id="f3">⚠ 注意：实验用水不可入口，玻璃器皿轻拿轻放。</p>
+<label>排开体积 <input type="range" min="0" max="200" value="120" id="v"></label>
+<p id="out">当前 V排 120 mL</p>
+<canvas id="c" width="200" height="100"></canvas>
+<script>
+const v = document.getElementById('v'), out = document.getElementById('out');
+const c = document.getElementById('c').getContext('2d');
+function render(){
+  out.textContent = '当前 V排 ' + v.value + ' mL';
+  c.fillStyle = '#2b7';c.fillRect(0, 20, +v.value, 40);
+}
+v.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>

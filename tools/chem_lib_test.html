@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>chem.js 自测</title>
+<style>
+  body{margin:0;background:#fff;font-family:"Microsoft YaHei",system-ui,sans-serif}
+  #box{width:1086px;height:940px;position:relative}
+  canvas{display:block}
+</style></head>
+<body>
+<div id="box"><canvas id="cv"></canvas></div>
+<script src="../frame/chem.js"></script>
+<script>
+  var cv = document.getElementById('cv');
+  CHEM.scene(cv, { p: 0.75, V: 80 });
+  window.__ok = !!(window.CHEM);
+</script>
+</body></html>

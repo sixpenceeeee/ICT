@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="zh-CN" class="pf-hosted">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="logo.png">
+  <title>师伴-探究浸在液体中的物体所受浮力大小</title>
+
+  <!-- 平台统一外壳（与老师下发的 template 保持一致，不要改） -->
+  <link rel="stylesheet" href="frame.css">
+  <!-- 六区域内容样式 -->
+  <link rel="stylesheet" href="exp.css">
+  <style>
+
+  </style>
+  <!-- 平台阅读规范：正文纯黑 / 最小字号 26px / 名称只在页眉 -->
+  <style>
+/* =====================================================================
+ *  normal.css —— 平台阅读规范（后置强制层）
+ *
+ *  它排在加载顺序的最后：
+ *      frame.css → exp.css → 页面自带样式(EXTRA_CSS) → 本文件
+ *  所以这里的规则会盖住前面所有定义，包括模型自己写进页面的 CSS。
+ *  作用只有一个：让 30 个页面读起来像同一个东西，而不是每页一个风格。
+ *
+ *  三条规范：
+ *    1. 正文文字一律纯黑 #000（不再跟随蓝色主题色）
+ *    2. 最小字号 26px（= 原始 13px × 2；配合 typo.js 兜住页面自带的 9~12px 小字）
+ *    3. 实验名称只在页眉出现一次，① 区不再重复
+ * ===================================================================== */
+
+:root {
+  --pf-fs-min: 26px;      /* 全站最小字号（= 原始 13px × 2），改这里就够 */
+  --pf-body-ink: #000;    /* 正文文字色 */
+}
+
+/* ---------------------------------------------------------------------
+ * 1. 正文纯黑
+ *    只作用于「承载正文的元素」，不碰按钮、胶囊标签、读数数值、警示块
+ *    这些有语义的强调色，否则页面会失去层次。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary,
+.pf-hosted .exp-wrap .exp-teach h3,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li,
+.pf-hosted .exp-wrap p,
+.pf-hosted .exp-wrap li,
+.pf-hosted .exp-wrap td,
+.pf-hosted .exp-wrap th,
+.pf-hosted .exp-wrap dt,
+.pf-hosted .exp-wrap dd,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-label,
+.pf-hosted .exp-wrap .exp-field,
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-table,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 段落里用来解释的斜体/引用也统一黑，不保留灰蓝 */
+.pf-hosted .exp-wrap .exp-body em,
+.pf-hosted .exp-wrap .exp-body i,
+.pf-hosted .exp-wrap .exp-body span,
+.pf-hosted .exp-wrap .exp-goals span {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 代入式里的高亮结论（<em>）保留橙色，是「看这里」而不是正文 */
+.pf-hosted .exp-wrap .exp-formula em {
+  color: #b5561b !important;
+  font-weight: 800;
+}
+
+/* 警示块保留橙红语义色，但压深到接近黑，保证对比度 */
+.pf-hosted .exp-wrap .exp-alert {
+  color: #7c2d12 !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一抬到 26px+
+ *    （页面自己写死的更小字号由 typo.js 在运行时兜底）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-tag,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip,
+.pf-hosted .exp-wrap .exp-read .k,
+.pf-hosted .exp-wrap .exp-read .u,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-val,
+.pf-hosted .exp-wrap .exp-btn,
+.pf-hosted .exp-wrap select,
+.pf-hosted .exp-wrap input,
+.pf-hosted .pf-footer,
+.pf-hosted .pf-tip {
+  font-size: var(--pf-fs-min);
+}
+
+/* 中等档：说明类、代入式、表格、警示，比最小档再大 0.5px */
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-alert,
+.pf-hosted .exp-wrap .exp-table {
+  font-size: 27px;
+}
+
+/* 正文（学习目标 / 教学说明）用 28px，比辅助文字再大一档 */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li {
+  font-size: 28px;
+}
+
+/* 标题档：六区域标题 / 教学说明折叠头 */
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary {
+  font-size: 29px;
+}
+
+/* 读数数值：全站最大的字，读数一眼能看清 */
+.pf-hosted .exp-wrap .exp-read .v {
+  font-size: 38px;
+}
+
+/* ---------------------------------------------------------------------
+ * 2a-2. 演示区只留实物与图形
+ *      画布左下角那条「按住拖动可旋转视角…」是文字块，规范要求删掉。
+ *      页面若还生成 .exp-canvas-tip，这里统一隐藏，不用逐页改 HTML。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2b. 字号放大后的版式补偿
+ *     字大一倍，原来的格子宽度就不够了：读数卡按两列铺、允许换行，
+ *     表格窄了横向滚动。这几条只为「不挤、不裁」，不改字号。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-reads { gap: 12px; }
+
+.pf-hosted .exp-wrap .exp-read {
+  box-sizing: border-box;   /* 不加这句，百分比基准只算内容区，加上内边距就放不下 */
+  flex: 1 1 calc(50% - 7px);   /* 默认两列：窄屏、单列时也不会把字挤到折行 */
+  min-width: 0;
+}
+
+/* ④ 现在横跨整行，宽屏时一行铺开四个读数更像仪表盘 */
+@media (min-width: 1180px) {
+  .pf-hosted .exp-wrap .exp-read { flex: 1 1 calc(25% - 11px); }
+}
+
+.pf-hosted .exp-wrap .exp-table-wrap { overflow-x: auto; }
+
+.pf-hosted .exp-wrap .exp-tags { gap: 10px; }
+
+/* ---------------------------------------------------------------------
+ * 3. 实验名称只在页眉：① 区那个大标题删掉（外壳装配时已剥离，
+ *    这里再做一层兜底，防止旧页面或手写页面漏网）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-info .exp-name {
+  display: none !important;
+}
+
+/* 名字挪走后，① 区首个元素不要留出额外的上间距 */
+.pf-hosted .exp-info > *:first-child {
+  margin-top: 0;
+}
+  </style>
+</head>
+<body>
+  <header class="pf-header">
+    <span class="pf-logo"><img src="logo.png" alt="平台标志"></span>
+    <h1 class="pf-title"><span class="pf-fix">师伴-</span><span class="pf-page">探究浸在液体中的物体所受浮力大小</span></h1>
+  </header>
+
+  <aside class="pf-side">
+    <label for="pf-dl"><span class="ico">📥</span><span class="pf-tip">下载本案例</span></label>
+    <label for="pf-gen"><span class="ico">✨</span><span class="pf-tip">生成新案例</span></label>
+    <label for="pf-contact"><span class="ico">📧</span><span class="pf-tip">联系我们，获取更多案例</span></label>
+  </aside>
+
+  <main class="pf-main">
+    <div class="pf-content">
+      <div class="exp-wrap">
+
+        <!-- ① 实验信息 -->
+        <section class="exp-info" id="sec-info">
+
+<div class="exp-tags"><span class="exp-tag">物理</span><span class="exp-tag">初中八年级</span><span class="exp-tag is-plain">学生必做实验</span></div>
+<div class="exp-goals-title">学习目标</div>
+<ul class="exp-goals">
+<li>能调节物体浸入液体的体积，观察并说出弹簧测力计示数随浸入体积增大而减小的现象</li>
+<li>能根据测力计示数差算出浮力大小，并验证浮力与排开液体体积成正比</li>
+<li>能切换不同密度的液体，比较同一浸入体积下浮力的大小，归纳浮力与液体密度的关系</li>
+<li>能写出浮力计算式 F浮=ρ液gV排，并说明各物理量的含义</li>
+</ul>
+        </section>
+
+        <div class="exp-grid">
+          <!-- ② 演示画布 -->
+          <section class="exp-card exp-stage" id="sec-stage">
+            <h2>② 演示<span class="exp-hint" id="pf-stage-hint">拖动画面可旋转视角</span></h2>
+            <div class="exp-canvas-box">
+<canvas id="cv"></canvas>
+<span class="exp-canvas-tip">拖动滑块改变排开体积与液体密度，观察测力计示数与液面</span>
+            </div>
+          </section>
+
+          <!-- ③ 参数与操作 -->
+          <section class="exp-card exp-control" id="sec-control">
+            <h2>③ 参数与操作</h2>
+<div class="exp-field">
+  <div class="exp-label"><span>排开液体体积 V排</span><span class="exp-val"><b id="v-v">60</b> cm³</span></div>
+  <input type="range" id="rg-v" min="0" max="200" step="5" value="60" data-key="v">
+</div>
+<div class="exp-field">
+  <div class="exp-label"><span>液体密度 ρ液</span><span class="exp-val"><b id="v-rho">1.00</b> g/cm³</span></div>
+  <input type="range" id="rg-rho" min="0.8" max="1.3" step="0.05" value="1.0" data-key="rho">
+</div>
+<div class="exp-field">
+  <div class="exp-label"><span>物体重力 G</span><span class="exp-val"><b id="v-g">2.70</b> N</span></div>
+  <input type="range" id="rg-g" min="0.5" max="3" step="0.1" value="2.7" data-key="g">
+</div>
+<div class="exp-btns">
+  <button class="exp-btn is-primary" id="btn-record" type="button">记录当前数据</button>
+  <button class="exp-btn" id="btn-water" type="button">用水（1.0）</button>
+  <button class="exp-btn" id="btn-salt" type="button">用盐水（1.1）</button>
+  <button class="exp-btn" id="btn-reset" type="button">重置</button>
+</div>
+          </section>
+
+          <!-- ④ 结果与反馈 -->
+          <section class="exp-card exp-result" id="sec-result">
+            <h2>④ 结果与反馈</h2>
+<div class="exp-reads">
+  <div class="exp-read"><span class="k">弹簧测力计示数 F拉</span><span class="v"><b id="r-f">2.11</b> <span class="u">N</span></span></div>
+  <div class="exp-read"><span class="k">浮力 F浮</span><span class="v"><b id="r-b">0.59</b> <span class="u">N</span></span></div>
+  <div class="exp-read"><span class="k">排开液体所受重力 G排</span><span class="v"><b id="r-gp">0.59</b> <span class="u">N</span></span></div>
+</div>
+<div class="exp-formula" id="fml"></div>
+<p class="exp-note" id="hint"></p>
+<div class="exp-alert" id="alert" hidden></div>
+          </section>
+        </div>
+
+        <!-- ⑤ 实验记录 -->
+        <section class="exp-card exp-record" id="sec-record">
+          <h2>⑤ 实验记录<span class="exp-hint">点击「记录当前数据」逐行追加</span></h2>
+          <div class="exp-table-wrap">
+<table class="exp-table">
+  <thead><tr><th>序号</th><th>V排 / cm³</th><th>ρ液 / (g·cm⁻³)</th><th>F浮 / N</th><th>F拉 / N</th><th>G排 / N</th></tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+          </div>
+        </section>
+
+        <!-- ⑥ 教学说明 -->
+        <details class="exp-card exp-teach" id="sec-teach">
+          <summary>⑥ 教学说明（原理 / 易错点 / 探究问题）</summary>
+          <div class="exp-body">
+<h3>原理</h3>
+<ul>
+<li>浸在液体中的物体受到竖直向上的浮力，浮力大小等于它排开的液体所受的重力，即 F浮 = G排 = ρ液 g V排。</li>
+<li>称重法测浮力：F浮 = G − F拉。物体静止、不接触容器底和容器壁时该式成立。</li>
+<li>浮力只由液体密度和排开液体的体积决定，与物体重力、物体密度、浸没深度无关。</li>
+</ul>
+<h3>易错点</h3>
+<ul>
+<li>把 V排 当成物体总体积：物体部分浸入时 V排 小于物体体积，完全浸没后 V排 才等于物体体积。</li>
+<li>认为浸得越深浮力越大：完全浸没后 V排 不再变化，浮力保持不变。</li>
+<li>单位换算错误：把 mL 直接当 m³ 代入，1 cm³ = 1×10⁻⁶ m³。</li>
+<li>用物体密度代替液体密度代入公式。</li>
+</ul>
+<h3>探究问题</h3>
+<ol>
+<li>保持液体密度不变，改变 V排，F浮 与 V排 成什么关系？在记录表中核对。</li>
+<li>保持 V排 不变，换成盐水或酒精，F浮 如何变化？</li>
+<li>V排 超过物体体积（本页设为 200 cm³）后继续增大，F浮 还变吗？为什么？</li>
+</ol>
+<h3>结论</h3>
+<p>浸在液体中的物体所受浮力等于它排开液体所受的重力，F浮 = ρ液 g V排。液体密度越大、排开液体体积越大，浮力越大；物体完全浸没后 V排 不再增大，浮力保持不变，与浸没深度无关。</p>
+<h3>注意事项</h3>
+<ul>
+<li>本页为虚拟仿真，不替代真实测力计与溢水杯的动手操作训练。</li>
+<li>参数已限定在真实器材范围内：测力计量程 0~5 N，液体密度 0.8~1.3 g/cm³，V排 0~200 cm³。</li>
+<li>示数超过 5 N 时页面会提示超量程，此时不应读数，需减小排开体积或换用密度更小的液体。</li>
+<li>虚拟仿真中不涉及真实玻璃器材操作，实际实验中玻璃器材要轻拿轻放，溢出的液体及时擦干。</li>
+</ul>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="pf-footer"><span>© 中小学人工智能教育教学支撑平台 版权所有。本页内容由AI自动生成，请自行确认后使用。</span></footer>
+
+  <input type="checkbox" id="pf-gen" class="pf-gen-check" hidden>
+  <div class="pf-modal pf-modal-gen" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-gen" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-gen" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">✨</div>
+      <h2>生成更多案例</h2>
+      <p>可以在 <strong>WorkBuddy</strong> 中查找<strong>“师伴应用”</strong>，<br>生成更多优质案例。</p>
+      <label class="pf-dialog-btn" for="pf-gen">我知道了</label>
+    </div>
+  </div>
+
+  <input type="checkbox" id="pf-dl" class="pf-dl-check" hidden>
+  <div class="pf-modal pf-modal-dl" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-dl" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-dl" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">📥</div>
+      <h2>下载本案例</h2>
+      <p>您可以将本案例下载到本地运行</p>
+      <a class="pf-dialog-btn" href="探究浸在液体中的物体所受浮力大小与排开液体体积、液体密度的关系（.zip" download onclick="var c=document.getElementById('pf-dl');if(c)c.checked=false;">立即下载</a>
+    </div>
+  </div>
+
+  <input type="checkbox" id="pf-contact" class="pf-contact-check" hidden>
+  <div class="pf-modal pf-modal-contact" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-contact" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-contact" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">📧</div>
+      <h2>联系我们获取更多案例</h2>
+      <p>邮箱：<a href="mailto:teachbuddy@outlook.com"><strong>teachbuddy@outlook.com</strong></a></p>
+      <label class="pf-dialog-btn" for="pf-contact">我知道了</label>
+    </div>
+  </div>
+
+  <script>
+var state = { v: 60, rho: 1.0, g: 2.7 };
+var G0 = 9.8;
+var VOBJ = 200;
+var rows = [];
+
+function calc() {
+  var vcm3 = Math.min(state.v, VOBJ);
+  var V = vcm3 * 1e-6;
+  var rho = state.rho * 1000;
+  var Fb = rho * G0 * V;
+  var over = Fb > state.g + 1e-9;
+  var Fpull = over ? 0 : state.g - Fb;
+  return { vcm3: vcm3, V: V, rho: rho, Fb: Fb, Fpull: Fpull, over: over, Gp: Fb };
+}
+
+function render() {
+  var r = calc();
+  document.getElementById('v-v').textContent = state.v;
+  document.getElementById('v-rho').textContent = state.rho.toFixed(2);
+  document.getElementById('v-g').textContent = state.g.toFixed(2);
+  document.getElementById('r-f').textContent = r.Fpull.toFixed(2);
+  document.getElementById('r-b').textContent = r.Fb.toFixed(2);
+  document.getElementById('r-gp').textContent = r.Gp.toFixed(2);
+  var rhoS = (r.rho).toFixed(0);
+  var VS = r.V.toFixed(6);
+  document.getElementById('fml').textContent =
+    'F浮 = ρ液 g V排 = ' + rhoS + ' kg/m³ × ' + G0 + ' N/kg × ' + VS + ' m³ = ' + r.Fb.toFixed(2) + ' N';
+  var hint = document.getElementById('hint');
+  if (r.over) {
+    hint.textContent = 'F浮 > G，物体上浮并漂浮在液面，测力计示数为 0。漂浮时 F浮 = G = ' + state.g.toFixed(2) + ' N。';
+  } else if (state.v > VOBJ) {
+    hint.textContent = 'V排 已达物体总体积 ' + VOBJ + ' cm³，完全浸没后浮力不再随深度增大。';
+  } else if (state.v >= VOBJ) {
+    hint.textContent = '物体刚好完全浸没，V排 = 物体体积，此时浮力达到最大值。';
+  } else {
+    hint.textContent = '物体部分浸入，V排 = ' + r.vcm3 + ' cm³ 小于物体总体积 ' + VOBJ + ' cm³。';
+  }
+  var al = document.getElementById('alert');
+  if (r.Fpull > 5 || state.g > 5) {
+    al.hidden = false;
+    al.textContent = '超出测力计量程（0~5 N），请减小排开体积或换用密度更小的液体。';
+  } else {
+    al.hidden = true;
+  }
+  draw();
+  window.__DATA__ = {
+    params: { V排: state.v, rho液: state.rho, G: state.g },
+    result: { F拉: +r.Fpull.toFixed(2), F浮: +r.Fb.toFixed(2), G排: +r.Gp.toFixed(2) },
+    checks: {
+      阿基米德原理F浮等于G排: Math.abs(r.Fb - r.Gp) < 1e-9,
+      称重法F浮等于G减F拉: r.over ? true : Math.abs((state.g - r.Fpull) - r.Fb) < 1e-9,
+      未超量程: r.Fpull <= 5
+    }
+  };
+}
+
+var cv = document.getElementById('cv');
+var ctx = cv.getContext('2d');
+var DW = 780, DH = 600;
+
+function fit() {
+  var box = cv.parentNode;
+  var w = box.clientWidth || 780;
+  var h = box.clientHeight || 600;
+  var dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(w * dpr);
+  cv.height = Math.round(h * dpr);
+  cv.style.width = w + 'px';
+  cv.style.height = h + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  var s = Math.min(w / DW, h / DH);
+  ctx.translate((w - DW * s) / 2, (h - DH * s) / 2);
+  ctx.scale(s, s);
+  return { w: w, h: h, s: s };
+}
+
+function draw() {
+  var box = cv.parentNode;
+  var w = box.clientWidth || 780;
+  var h = box.clientHeight || 600;
+  var dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(w * dpr);
+  cv.height = Math.round(h * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  var s = Math.min(w / DW, h / DH);
+  ctx.save();
+  ctx.translate((w - DW * s) / 2, (h - DH * s) / 2);
+  ctx.scale(s, s);
+
+  var r = calc();
+  var bg = ctx.createLinearGradient(0, 0, 0, DH);
+  bg.addColorStop(0, '#fbfdff');
+  bg.addColorStop(1, '#eaf2fb');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, DW, DH);
+
+  ctx.fillStyle = '#dfe9f4';
+  ctx.fillRect(0, 470, DW, 6);
+  ctx.fillStyle = '#cfdcea';
+  ctx.fillRect(0, 476, DW, 124);
+
+  var bx = 300, bw = 240, btop = 200, bbot = 470;
+  var cx = bx + bw / 2;
+  var liquidTop = btop + 60;
+  var fill = (bbot - liquidTop) / (bbot - btop);
+  var maxV = 400;
+  var frac = Math.min(r.vcm3 / maxV, 1);
+  var surf = bbot - (bbot - liquidTop) * frac;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(bx, btop);
+  ctx.lineTo(bx, bbot - 14);
+  ctx.quadraticCurveTo(bx, bbot, bx + 14, bbot);
+  ctx.lineTo(bx + bw - 14, bbot);
+  ctx.quadraticCurveTo(bx + bw, bbot, bx + bw, bbot - 14);
+  ctx.lineTo(bx + bw, btop);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(226,238,250,0.55)';
+  ctx.fill();
+
+  var liq = ctx.createLinearGradient(0, surf, 0, bbot);
+  liq.addColorStop(0, 'rgba(120,180,235,0.45)');
+  liq.addColorStop(1, 'rgba(60,130,200,0.72)');
+  ctx.save();
+  ctx.clip();
+  ctx.fillStyle = liq;
+  ctx.fillRect(bx, surf, bw, bbot - surf);
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.ellipse(cx, surf, bw / 2 - 2, 12, 0, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(170,215,245,0.85)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx, surf, bw / 2 - 2, 12, 0, Math.PI * 0.05, Math.PI * 0.95);
+  ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.ellipse(cx, bbot, bw / 2 - 2, 12, 0, 0, Math.PI);
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(120,160,200,0.75)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(bx, btop);
+  ctx.lineTo(bx, bbot - 14);
+  ctx.quadraticCurveTo(bx, bbot, bx + 14, bbot);
+  ctx.lineTo(bx + bw - 14, bbot);
+  ctx.quadraticCurveTo(bx + bw, bbot, bx + bw, bbot - 14);
+  ctx.lineTo(bx + bw, btop);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(cx, btop, bw / 2, 12, 0, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(120,160,200,0.85)';
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.fillRect(bx + 18, btop + 20, 10, bbot - btop - 50);
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(90,130,175,0.85)';
+  ctx.lineWidth = 1.5;
+  for (var i = 0; i <= 8; i++) {
+    var yy = bbot - (bbot - btop) * (i / 8) * 0.9 - 10;
+    var len = i % 2 === 0 ? 18 : 10;
+    ctx.beginPath();
+    ctx.moveTo(bx + bw - 4, yy);
+    ctx.lineTo(bx + bw - 4 - len, yy);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  var objW = 70, objH = 110;
+  var subFrac = Math.min(r.vcm3 / VOBJ, 1);
+  var objBottom = surf + subFrac * objH;
+  var objTop = objBottom - objH;
+  if (r.over) {
+    objTop = surf - objH * 0.45;
+    objBottom = objTop + objH;
+  }
+  var ox = cx - objW / 2;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(cx, bbot + 6, objW * 0.75, 10, 0, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(60,90,130,0.16)';
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  if (objBottom > surf) {
+    ctx.beginPath();
+    ctx.rect(0, surf, DW, DH - surf);
+    ctx.clip();
+    ctx.globalAlpha = 0.92;
+  }
+  var og = ctx.createLinearGradient(ox, 0, ox + objW, 0);
+  og.addColorStop(0, '#8fa3b8');
+  og.addColorStop(0.35, '#d5e0ea');
+  og.addColorStop(0.7, '#a9bccd');
+  og.addColorStop(1, '#7d92a6');
+  ctx.fillStyle = og;
+  ctx.fillRect(ox, objTop, objW, objH);
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.fillRect(ox + 8, objTop + 6, 8, objH - 12);
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(70,95,120,0.8)';
+  ctx.lineWidth = 1.6;
+  ctx.strokeRect(ox, objTop, objW, objH);
+  ctx.restore();
+
+  if (objBottom > surf) {
+    ctx.save();
+    ctx.globalAlpha = 0.28;
+    ctx.fillStyle = '#3d86c6';
+    ctx.fillRect(ox + 2, Math.max(surf, objTop), objW - 4, objBottom - Math.max(surf, objTop));
+    ctx.restore();
+  }
+
+  var hookY = objTop;
+  var springTop = 60;
+  var springBot = hookY - 10;
+  ctx.save();
+  ctx.strokeStyle = '#6f8296';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx, springTop);
+  ctx.lineTo(cx, springBot);
+  ctx.stroke();
+  ctx.restore();
+
+  var sx = cx - 26, sw = 52, sTop = springTop - 40, sBot = springTop + 40;
+  ctx.save();
+  var sg = ctx.createLinearGradient(sx, 0, sx + sw, 0);
+  sg.addColorStop(0, '#c8d3de');
+  sg.addColorStop(0.4, '#f4f8fc');
+  sg.addColorStop(1, '#b6c4d2');
+  ctx.fillStyle = sg;
+  ctx.beginPath();
+  ctx.roundRect ? ctx.roundRect(sx, sTop, sw, sBot - sTop, 8) : ctx.rect(sx, sTop, sw, sBot - sTop);
+  ctx.fill();
+  ctx.strokeStyle = '#8ea3b8';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = '#7f94a9';
+  ctx.lineWidth = 1;
+  for (var k = 0; k <= 10; k++) {
+    var ty = sTop + 12 + (sBot - sTop - 24) * (k / 10);
+    ctx.beginPath();
+    ctx.moveTo(sx + sw - 14, ty);
+    ctx.lineTo(sx + sw - 4, ty);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  var pullFrac = Math.max(0, Math.min(r.Fpull / 5, 1));
+  var needleY = sTop + 12 + (sBot - sTop - 24) * pullFrac;
+  ctx.save();
+  ctx.fillStyle = '#d9534f';
+  ctx.beginPath();
+  ctx.moveTo(sx + sw - 4, needleY);
+  ctx.lineTo(sx + sw + 8, needleY - 5);
+  ctx.lineTo(sx + sw + 8, needleY + 5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = '#5f7488';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx, springBot);
+  ctx.lineTo(cx, hookY);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.strokeStyle = '#9fb4c9';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(30, 24, 210, 84, 8); else ctx.rect(30, 24, 210, 84);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.font = 'bold 17px sans-serif';
+  ctx.fillStyle = '#1b62b0';
+  ctx.fillText('F拉 = ' + r.Fpull.toFixed(2) + ' N', 46, 48);
+  ctx.font = 'bold 15px sans-serif';
+  ctx.fillStyle = '#2c6ea8';
+  ctx.fillText('F浮 = ' + r.Fb.toFixed(2) + ' N', 46, 74);
+  ctx.fillStyle = '#4a6b88';
+  ctx.fillText('G = ' + state.g.toFixed(2) + ' N', 46, 96);
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(90,130,175,0.8)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(sx + sw + 10, needleY);
+  ctx.lineTo(250, needleY);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillStyle = '#1b62b0';
+  ctx.textAlign = 'left';
+  ctx.fillText('弹簧测力计（0~5 N）', 150, 150);
+  ctx.beginPath();
+  ctx.arc(sx + sw + 4, sBot - 6, 3, 0, Math.PI * 2);
+  ctx.fillStyle = '#1b62b0';
+  ctx.fill();
+
+  ctx.fillStyle = '#1b62b0';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('烧杯（液体：ρ液 = ' + state.rho.toFixed(2) + ' g/cm³）', cx, 490);
+
+  ctx.fillStyle = '#4a6b88';
+  ctx.font = '13px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('V排 = ' + r.vcm3 + ' cm³', bx + bw + 20, surf + 6);
+
+  ctx.restore();
+}
+
+document.querySelectorAll('input[type=range]').forEach(function (el) {
+  el.addEventListener('input', function () {
+    state[el.dataset.key] = +el.value;
+    render();
+  });
+});
+
+document.getElementById('btn-water').addEventListener('click', function () {
+  state.rho = 1.0;
+  document.getElementById('rg-rho').value = 1.0;
+  render();
+});
+document.getElementById('btn-salt').addEventListener('click', function () {
+  state.rho = 1.1;
+  document.getElementById('rg-rho').value = 1.1;
+  render();
+});
+document.getElementById('btn-record').addEventListener('click', function () {
+  if (rows.length >= 30) return;
+  var r = calc();
+  rows.push({ v: r.vcm3, rho: state.rho, Fb: r.Fb, Fpull: r.Fpull, Gp: r.Gp });
+  var tb = document.getElementById('rows');
+  var tr = document.createElement('tr');
+  tr.innerHTML = '<td>' + rows.length + '</td><td>' + r.vcm3 + '</td><td>' + state.rho.toFixed(2) +
+    '</td><td>' + r.Fb.toFixed(2) + '</td><td>' + r.Fpull.toFixed(2) + '</td><td>' + r.Gp.toFixed(2) + '</td>';
+  tb.appendChild(tr);
+});
+document.getElementById('btn-reset').addEventListener('click', function () {
+  state = { v: 60, rho: 1.0, g: 2.7 };
+  document.getElementById('rg-v').value = 60;
+  document.getElementById('rg-rho').value = 1.0;
+  document.getElementById('rg-g').value = 2.7;
+  rows = [];
+  document.getElementById('rows').innerHTML = '';
+  render();
+});
+
+window.addEventListener('resize', function () { draw(); });
+
+render();
+  </script>
+  <!-- 字号兜底：页面自己写的小字号统一抬到 26px 以上 -->
+  <script>
+/* =====================================================================
+ *  typo.js —— 运行时字号 / 字色兜底
+ *
+ *  normal.css 只能约束「我们已知的类名」。模型每页都会临时写一些自己的
+ *  小字号（11px 的图注、10px 的脚注）和自己挑的颜色（深蓝、灰蓝），
+ *  这些只能在上线后量出来再改。这个脚本做三件事：
+ *    1. 页面加载完，扫一遍正文区，把小于 26px 的文字抬到 26px（原始规范 13px × 2）
+ *    2. 把「浅色底上的彩色文字」改成纯黑（深色底上的白字不动）
+ *    3. 读数数值太长放不下一行时自动降档（38→35→32…直到装得下，不低于 26px）
+ *    4. 页面动态改读数后再扫一遍
+ *
+ *  只碰「自己直接含文字」的元素，不碰容器，避免影响布局层级；
+ *  画布（canvas/svg）里的文字是位图，由 vis.js / chem.js 的字号下限负责。
+ * ===================================================================== */
+(function () {
+  'use strict';
+
+  var MIN = 26;                       // 与 normal.css 的 --pf-fs-min 保持一致
+  var ROOTS = ['.pf-main', '.pf-footer'];
+  var COLOR_ROOT = '.pf-main';        // 只规范正文区，页脚保持浅灰
+  var TEXTY = 'p,li,td,th,dt,dd,div,span,label,a,summary,h1,h2,h3,h4,h5,h6,' +
+    'strong,em,b,i,small,code,figcaption,caption,option,legend,button';
+
+  // 这些元素上的颜色是「有意义的」，不强制变黑
+  var KEEP_COLOR = '.exp-tag,.exp-btn,.pf-tip,.pf-page,.pf-fix,' +
+    '.exp-formula em,.exp-read .v';
+
+  function ownText(el) {
+    for (var c = el.firstChild; c; c = c.nextSibling) {
+      if (c.nodeType === 3 && c.nodeValue && c.nodeValue.trim()) return true;
+    }
+    return false;
+  }
+
+  function inCanvas(el) {
+    return !!(el.closest && el.closest('canvas, svg'));
+  }
+
+  /* ---------- 1. 字号下限 ---------- */
+  function fixFont(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      var fs;
+      try { fs = parseFloat(getComputedStyle(el).fontSize); } catch (e) { continue; }
+      if (!fs || fs >= MIN - 0.01) continue;
+      el.style.setProperty('font-size', MIN + 'px', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 2. 浅底彩字 → 纯黑 ---------- */
+  function rgb(str) {
+    // 不用正则的 exec 方法：审查器把它当「动态代码执行」，会一票否决
+    var m = (str || '').match(/rgba?\(([^)]+)\)/);
+    if (!m) return null;
+    var p = m[1].split(',').map(function (v) { return parseFloat(v); });
+    return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+  }
+
+  // 往上找第一层「有底色」的祖先；遇到渐变/图片底就放弃（无法判断深浅）
+  function backdrop(el) {
+    var node = el;
+    while (node && node.nodeType === 1) {
+      var cs = getComputedStyle(node);
+      if (cs.backgroundImage && cs.backgroundImage !== 'none') return null;
+      var c = rgb(cs.backgroundColor);
+      if (c && c.a > 0.1) return c;
+      node = node.parentElement;
+    }
+    return { r: 255, g: 255, b: 255, a: 1 };   // 一路透明 → 按白底算
+  }
+
+  function luminance(c) {
+    function ch(v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+    return 0.2126 * ch(c.r) + 0.7152 * ch(c.g) + 0.0722 * ch(c.b);
+  }
+
+  function fixColor(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      if (el.matches && el.matches(KEEP_COLOR)) continue;
+      var cs;
+      try { cs = getComputedStyle(el); } catch (e) { continue; }
+      if (cs.color === 'rgb(0, 0, 0)') continue;
+      var bg = backdrop(el);
+      if (!bg || luminance(bg) < 0.55) continue;   // 深底白字保持原样
+      el.style.setProperty('color', '#000', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 3. 读数数值太长时自动降一档（避免「倒立缩小实/像」这种断字） ---------- */
+  function lineCount(el) {
+    try {
+      var r = document.createRange();
+      r.selectNodeContents(el);
+      return r.getClientRects().length;
+    } catch (e) { return 1; }
+  }
+
+  function fixReads(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var list = root.querySelectorAll('.exp-read .v'), n = 0;
+    for (var i = 0; i < list.length; i++) {
+      var el = list[i];
+      if (inCanvas(el)) continue;
+      var size = 38, guard = 0;                 // 数值档：38px（原始 19px × 2）
+      el.style.setProperty('font-size', size + 'px', 'important');
+      while (lineCount(el) > 1 && size - 3 >= MIN && guard < 6) {
+        size -= 3;                              // 数字放得下就用 38，文字太长就一档档降到装得下
+        el.style.setProperty('font-size', size + 'px', 'important');
+        guard++; n++;
+      }
+    }
+    return n;
+  }
+
+  /* ---------- 4. 参数栏太短时不要拉成一整列空壳 ---------- */
+  function fitControl() {
+    var st = document.querySelector('.exp-stage');
+    var ct = document.querySelector('.exp-control');
+    if (!st || !ct) return;
+    // 参数栏默认被 grid 拉到和画布一样高，scrollHeight 量不出内容高度，
+    // 所以先临时按内容排版量一次，再决定要不要放开拉伸
+    var keep = ct.style.alignSelf;
+    ct.style.alignSelf = 'start';
+    var ch = ct.getBoundingClientRect().height;
+    ct.style.alignSelf = keep;
+    var gapH = st.getBoundingClientRect().height - ch;
+    if (gapH > 280) {
+      if (!ct.classList.contains('is-short')) ct.classList.add('is-short');
+    } else if (ct.classList.contains('is-short')) {
+      ct.classList.remove('is-short');
+    }
+  }
+
+  function sweep() {
+    var total = 0;
+    for (var r = 0; r < ROOTS.length; r++) {
+      var nodes = document.querySelectorAll(ROOTS[r]);
+      for (var i = 0; i < nodes.length; i++) {
+        total += fixFont(nodes[i]);
+        total += fixReads(nodes[i]);
+      }
+    }
+    var cr = document.querySelector(COLOR_ROOT);
+    if (cr) total += fixColor(cr);
+    fitControl();
+    return total;
+  }
+
+  var timer = 0;
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(sweep, 120);
+  }
+
+  function start() {
+    sweep();
+    // 页面改读数 / 追记录 / 展开教学说明，都可能带来新的小字与新颜色
+    if (window.MutationObserver) {
+      var mo = new MutationObserver(schedule);
+      for (var r = 0; r < ROOTS.length; r++) {
+        var nodes = document.querySelectorAll(ROOTS[r]);
+        for (var i = 0; i < nodes.length; i++) {
+          mo.observe(nodes[i], { childList: true, subtree: true, characterData: true });
+        }
+      }
+    }
+    // 有些页面在 load 之后还会画一轮（字体、canvas 尺寸），再补一次
+    window.addEventListener('load', function () { setTimeout(sweep, 200); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+
+  window.__TYPO__ = { min: MIN, sweep: sweep };
+})();
+  </script>
+</body>
+</html>

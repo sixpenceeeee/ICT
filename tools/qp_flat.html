@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>扁平对照页</title>
+<style>body{margin:0;background:#eef4fb;font-family:sans-serif}canvas{display:block;margin:20px}</style>
+</head><body>
+<div class="exp-info"><h2>扁平绘制对照</h2><p>用于验证质感红线能否识别纯色块拼出的器材。</p></div>
+<canvas id="cv" width="653" height="420"></canvas>
+<div class="exp-control"><input type="range" min="0" max="10" value="5"></div>
+<script>
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+function draw(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.fillStyle = '#f7fafd'; ctx.fillRect(0,0,653,420);
+  ctx.fillStyle = '#d8e3f0'; ctx.fillRect(0,330,653,90);
+  // 烧杯：纯色矩形拼
+  ctx.fillStyle = 'rgba(180,205,230,0.45)'; ctx.fillRect(210,120,180,200);
+  ctx.fillStyle = '#5b9bd5'; ctx.fillRect(214,190,172,126);
+  ctx.strokeStyle = '#8aa8c4'; ctx.lineWidth = 2; ctx.strokeRect(210,120,180,200);
+  // 铁钉：纯色矩形
+  ctx.fillStyle = '#8b8b8b'; ctx.fillRect(290,205,16,90);
+  ctx.fillStyle = '#6d6d6d'; ctx.fillRect(282,196,32,12);
+  // 刻度
+  ctx.strokeStyle = '#9ab'; ctx.beginPath();
+  for(let i=0;i<5;i++){ ctx.moveTo(370,200+i*25); ctx.lineTo(388,200+i*25); }
+  ctx.stroke();
+  ctx.fillStyle = '#22364a'; ctx.font = '14px sans-serif';
+  ctx.fillText('硫酸铜溶液', 214, 185);
+  ctx.fillText('铁钉', 300, 315);
+}
+draw();
+document.querySelector('input').addEventListener('input', draw);
+</script>
+</body></html>

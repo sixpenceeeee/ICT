@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh" data-page-node-id="T1x3dJOBrLwzF4BAissGaZ">
+<head data-page-node-id="GVcVnvxLHndNjLtGNR3RQb"><meta charset="utf-8" data-page-node-id="xtaGydhBtYRuDtL2uGLZY0"><title>文字遮挡反例</title></head>
+<body style="margin:0;font-family:sans-serif" data-page-node-id="SkkKMTOQMQLbO3S0TIepQv">
+  <!-- 反例 1：canvas 绝对定位盖住 DOM 文字（应触发 G2-10） -->
+  <div style="position:relative;width:400px;height:300px" data-page-node-id="WmC2zlEYd7mA3Dz7TJEkeK">
+    <p id="victim" style="margin:120px 0 0 40px" data-page-node-id="4ZbS2jsCAcqq0tnKEoMt95">这段参数文字会被画布盖住</p>
+    <canvas id="cover" width="400" height="300"
+            style="position:absolute;left:0;top:0;width:400px;height:300px" data-page-node-id="MJP8uUMFymTr3pmz0gAOZ0"></canvas>
+  </div>
+  <script>
+    var c = document.getElementById('cover').getContext('2d');
+    // 反例 2：先写字再画矩形盖住它（应触发 G2-11）
+    c.fillStyle = '#333';
+    c.font = '16px sans-serif';
+    c.fillText('被矩形盖住的标注', 40, 40);
+    c.fillStyle = '#4a90d9';
+    c.fillRect(30, 20, 140, 40);
+    // 反例 3：文字画出画布边界（应触发 G2-12）
+    c.fillText('这个标签远远超出右边界这个标签远远超出右边界', 300, 200);
+  </script>
+</body>
+</html>

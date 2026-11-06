@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="zh-CN" class="pf-hosted" data-page-node-id="fbXJV10ZjUM9WKoj4NF0l7">
+<head data-page-node-id="HH5ql3YKCjjWJINuEZrV7k">
+  <meta charset="UTF-8" data-page-node-id="FKWv1lOZFGEBBC2Q4blbex">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="Eb4C3T5uwjwJfkyHEytCKC">
+  <link rel="icon" type="image/png" href="logo.png" data-page-node-id="qZWjuoCGkkwaMcUD5jE48O">
+  <title>师伴-平面截正方体</title>
+
+  <!-- 平台统一外壳（与老师下发的 template 保持一致，不要改） -->
+  <link rel="stylesheet" href="frame.css" data-page-node-id="BIwKn8kHoSa03vmi1Sj1Z6">
+  <!-- 六区域内容样式 -->
+  <link rel="stylesheet" href="exp.css" data-page-node-id="IyGXYnwxQvt7OzDmeRuDaj">
+  <style>
+
+  </style>
+                        <!-- 平台阅读规范：正文纯黑 / 最小字号 26px / 名称只在页眉 -->
+  <style>
+/* =====================================================================
+ *  normal.css —— 平台阅读规范（后置强制层）
+ *
+ *  它排在加载顺序的最后：
+ *      frame.css → exp.css → 页面自带样式(EXTRA_CSS) → 本文件
+ *  所以这里的规则会盖住前面所有定义，包括模型自己写进页面的 CSS。
+ *  作用只有一个：让 30 个页面读起来像同一个东西，而不是每页一个风格。
+ *
+ *  三条规范：
+ *    1. 正文文字一律纯黑 #000（不再跟随蓝色主题色）
+ *    2. 最小字号 26px（= 原始 13px × 2；配合 typo.js 兜住页面自带的 9~12px 小字）
+ *    3. 实验名称只在页眉出现一次，① 区不再重复
+ * ===================================================================== */
+
+:root {
+  --pf-fs-min: 26px;      /* 全站最小字号（= 原始 13px × 2），改这里就够 */
+  --pf-body-ink: #000;    /* 正文文字色 */
+}
+
+/* ---------------------------------------------------------------------
+ * 1. 正文纯黑
+ *    只作用于「承载正文的元素」，不碰按钮、胶囊标签、读数数值、警示块
+ *    这些有语义的强调色，否则页面会失去层次。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary,
+.pf-hosted .exp-wrap .exp-teach h3,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li,
+.pf-hosted .exp-wrap p,
+.pf-hosted .exp-wrap li,
+.pf-hosted .exp-wrap td,
+.pf-hosted .exp-wrap th,
+.pf-hosted .exp-wrap dt,
+.pf-hosted .exp-wrap dd,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-label,
+.pf-hosted .exp-wrap .exp-field,
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-table,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 段落里用来解释的斜体/引用也统一黑，不保留灰蓝 */
+.pf-hosted .exp-wrap .exp-body em,
+.pf-hosted .exp-wrap .exp-body i,
+.pf-hosted .exp-wrap .exp-body span,
+.pf-hosted .exp-wrap .exp-goals span {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 代入式里的高亮结论（<em>）保留橙色，是「看这里」而不是正文 */
+.pf-hosted .exp-wrap .exp-formula em {
+  color: #b5561b !important;
+  font-weight: 800;
+}
+
+/* 警示块保留橙红语义色，但压深到接近黑，保证对比度 */
+.pf-hosted .exp-wrap .exp-alert {
+  color: #7c2d12 !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一抬到 26px+
+ *    （页面自己写死的更小字号由 typo.js 在运行时兜底）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-tag,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip,
+.pf-hosted .exp-wrap .exp-read .k,
+.pf-hosted .exp-wrap .exp-read .u,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-val,
+.pf-hosted .exp-wrap .exp-btn,
+.pf-hosted .exp-wrap select,
+.pf-hosted .exp-wrap input,
+.pf-hosted .pf-footer,
+.pf-hosted .pf-tip {
+  font-size: var(--pf-fs-min);
+}
+
+/* 中等档：说明类、代入式、表格、警示，比最小档再大 0.5px */
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-alert,
+.pf-hosted .exp-wrap .exp-table {
+  font-size: 27px;
+}
+
+/* 正文（学习目标 / 教学说明）用 28px，比辅助文字再大一档 */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li {
+  font-size: 28px;
+}
+
+/* 标题档：六区域标题 / 教学说明折叠头 */
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary {
+  font-size: 29px;
+}
+
+/* 读数数值：全站最大的字，读数一眼能看清 */
+.pf-hosted .exp-wrap .exp-read .v {
+  font-size: 38px;
+}
+
+/* ---------------------------------------------------------------------
+ * 2a-2. 演示区只留实物与图形
+ *      画布左下角那条「按住拖动可旋转视角…」是文字块，规范要求删掉。
+ *      页面若还生成 .exp-canvas-tip，这里统一隐藏，不用逐页改 HTML。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2b. 字号放大后的版式补偿
+ *     字大一倍，原来的格子宽度就不够了：读数卡按两列铺、允许换行，
+ *     表格窄了横向滚动。这几条只为「不挤、不裁」，不改字号。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-reads { gap: 12px; }
+
+.pf-hosted .exp-wrap .exp-read {
+  box-sizing: border-box;   /* 不加这句，百分比基准只算内容区，加上内边距就放不下 */
+  flex: 1 1 calc(50% - 7px);   /* 默认两列：窄屏、单列时也不会把字挤到折行 */
+  min-width: 0;
+}
+
+/* ④ 现在横跨整行，宽屏时一行铺开四个读数更像仪表盘 */
+@media (min-width: 1180px) {
+  .pf-hosted .exp-wrap .exp-read { flex: 1 1 calc(25% - 11px); }
+}
+
+.pf-hosted .exp-wrap .exp-table-wrap { overflow-x: auto; }
+
+.pf-hosted .exp-wrap .exp-tags { gap: 10px; }
+
+/* ---------------------------------------------------------------------
+ * 3. 实验名称只在页眉：① 区那个大标题删掉（外壳装配时已剥离，
+ *    这里再做一层兜底，防止旧页面或手写页面漏网）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-info .exp-name {
+  display: none !important;
+}
+
+/* 名字挪走后，① 区首个元素不要留出额外的上间距 */
+.pf-hosted .exp-info > *:first-child {
+  margin-top: 0;
+}
+  </style>
+</head>
+<body data-page-node-id="HR5PCPGH3AFJGUuqo6PYwV">
+  <header class="pf-header" data-page-node-id="Y3BTajhT8dgQyGs9ghtqFI">
+    <span class="pf-logo" data-page-node-id="PaB40IGuh2dGHefJ4LJ1hK"><img src="logo.png" alt="平台标志" data-page-node-id="z1nZkOCDxwy2w2FpYWkPPe"></span>
+    <h1 class="pf-title" data-page-node-id="pPkxbTa7xokmrIoj43u5Ie"><span class="pf-fix" data-page-node-id="aFCz6aomkpHQ7nK1nkoZJ4">师伴-</span><span class="pf-page" data-page-node-id="mQ2v6dbYTkKaJCUYz1xKAI">平面截正方体</span></h1>
+  </header>
+
+  <aside class="pf-side" data-page-node-id="8rkXNYeq6tcMCHuuE5CC1t">
+    <label for="pf-dl" data-page-node-id="2sVHm0Vp2JQ6mTDoBDcI4x"><span class="ico" data-page-node-id="jsQwFDtVLxcPyQsyzaOPZ6">📥</span><span class="pf-tip" data-page-node-id="qIDDFgEF9GEC23qzeg8nHE">下载本案例</span></label>
+    <label for="pf-gen" data-page-node-id="Th0QQ7VWB0FvZgtQDYLJxy"><span class="ico" data-page-node-id="xFQvR0iOhjjCS65ZSGnOO5">✨</span><span class="pf-tip" data-page-node-id="HgamR3IGQAxXP8DUb8eOT4">生成新案例</span></label>
+    <label for="pf-contact" data-page-node-id="XdPPI9CVYjdBChuKu1hCsL"><span class="ico" data-page-node-id="rK8GZ5fVbXFUC5RJ2Uz7nq">📧</span><span class="pf-tip" data-page-node-id="LwqtcdEMYwNL4YBaArLnQp">联系我们，获取更多案例</span></label>
+  </aside>
+
+  <main class="pf-main" data-page-node-id="fc8RBa28Q2EgSBWXWq6Du0">
+    <div class="pf-content" data-page-node-id="Vb9gcwJear4R2YpzOH1qAk">
+      <div class="exp-wrap" data-page-node-id="JWd20f6afJwh1swQv78a7B">
+
+        <!-- ① 实验信息 -->
+        <section class="exp-info" id="sec-info" data-page-node-id="DZ23Kqd9JYseaBx2WBEaNw">
+
+<div class="exp-tags" data-page-node-id="GGFYRU4m90NfrKjRXNRGVh">
+  <span class="exp-tag" data-page-node-id="jb1bOyQaRqu5tSFLrMU19l">数学</span>
+  <span class="exp-tag" data-page-node-id="67wnwD6utkvBqvxoTjl4iN">初中拓展 / 高中必修</span>
+  <span class="exp-tag is-plain" data-page-node-id="QzDcMfQM1T0rr5DdkZQl1A">教学演示（非课标必做实验）</span>
+</div>
+<div class="exp-goals-title" data-page-node-id="q2tvSu4OroLOlE07FA8JeW">学习目标</div>
+<ul class="exp-goals" data-page-node-id="twmHubXPYAJ27I5DLxc9h4">
+  <li data-page-node-id="Ld3GBZbn4UHCBxi0nuk3Cc">能说出截面边数随平面倾斜角与位置变化的规律</li>
+  <li data-page-node-id="mhluHjw26DwE57qsmgrCla">能说明截面为什么最多只有六条边</li>
+  <li data-page-node-id="B9zkCZGEP86n1M3E5dGlny">能用体积相加验证截面把正方体恰好分成两部分</li>
+</ul>
+        </section>
+
+        <div class="exp-grid" data-page-node-id="wvMkGO5WZjnCtgL8Cx2qj8">
+          <!-- ② 演示画布 -->
+          <section class="exp-card exp-stage" id="sec-stage" data-page-node-id="6N4N58pVnN0ajzddd2GkOp">
+            <h2 data-page-node-id="wLstHXWROb51GRHvVrL468">② 演示<span class="exp-hint" data-page-node-id="c0qZnFmRNCSKmFeWVb24yw">拖动画面可旋转视角</span></h2>
+            <div class="exp-canvas-box" data-page-node-id="eSpB3yUEwtG1ZXQ7IyrprT">
+<canvas id="cv" data-page-node-id="azWkRYvbpaJVEilVLhghxF"></canvas>
+<span class="exp-canvas-tip" data-page-node-id="ZzyMk3Qx9ZGCEwREOv2mdC">按住拖动可旋转视角 · 滚轮缩放</span>
+            </div>
+          </section>
+
+          <!-- ③ 参数与操作 -->
+          <section class="exp-card exp-control" id="sec-control" data-page-node-id="jD6mOJ067oQX5Vgusw6n5X">
+            <h2 data-page-node-id="yCXTCFM7BIspN8e7qJ6YE6">③ 参数与操作</h2>
+<div class="exp-field" data-page-node-id="KMdoXECbiyCvPZjaQRUdyj">
+  <div class="exp-label" data-page-node-id="3qOpRXTkutyJnJJNMRei6n"><span data-page-node-id="fQjhFgV3cFTVAlZ6CnvFsO">平面倾角 θ</span><span class="exp-val" data-page-node-id="EACGeuXvZRABVU0IRIheOy"><b id="v-theta" data-page-node-id="hykBcPXbX4wvxnuypTZXed">35</b>°</span></div>
+  <input type="range" id="rg-theta" min="0" max="90" step="1" value="35" data-key="theta" data-page-node-id="NiSI8pOm6lYgdvl3DtIsA3">
+</div>
+<div class="exp-field" data-page-node-id="q7Fgp7VLcO9FqX3Cpjs3z2">
+  <div class="exp-label" data-page-node-id="R7Ci5O5uNEB9BP9tI2m2m4"><span data-page-node-id="PvstdenqdTIvHVF9rLb65A">平面到中心的距离 d</span><span class="exp-val" data-page-node-id="Rulhbvo2LQEDfGig8u6mHY"><b id="v-d" data-page-node-id="b1kyZL3fJTILHIw0U5IoO2">0.00</b> a</span></div>
+  <input type="range" id="rg-d" min="-860" max="860" step="10" value="0" data-key="d" data-page-node-id="krIB03ThIli2krMGQ1pJqK">
+</div>
+<div class="exp-btns" data-page-node-id="kNVQ3uD1EPjGoEqiZzWYyZ">
+  <button class="exp-btn is-on" id="btn-split" type="button" data-page-node-id="ILHCsC7yyeFVT5At9ydJKm">分离显示：开</button>
+  <button class="exp-btn" id="btn-auto" type="button" data-page-node-id="c7fCmvWBVd8DN2vu5NENj3">自动扫描</button>
+  <button class="exp-btn is-primary" id="btn-record" type="button" data-page-node-id="wAtm5bMUPMoOJQ7xp8S6Zd">记录当前数据</button>
+  <button class="exp-btn" id="btn-reset" type="button" data-page-node-id="EkfsPsqcVrDkSgueBiFAFE">重置</button>
+</div>
+          </section>
+
+          <!-- ④ 结果与反馈 -->
+          <section class="exp-card exp-result" id="sec-result" data-page-node-id="LZSwNNfGz1E6VPcZzaQyb1">
+            <h2 data-page-node-id="OaBYOaXF6UAeOQHEHCXYkL">④ 结果与反馈</h2>
+<div class="exp-reads" data-page-node-id="Yhzp8wk06zB80zwg865nXc">
+  <div class="exp-read" data-page-node-id="1kVbH9zZWM7NgN9i44Cqpu"><span class="k" data-page-node-id="UDEf3FCsAGshpILMr9fKPS">截面边数</span><span class="v" data-page-node-id="vD5BWChAVdOH8PQCc1t9bK"><b id="r-n" data-page-node-id="nONWOHY0RY8IJZYDlygLxR">4</b> 边</span></div>
+  <div class="exp-read" data-page-node-id="2E88JO5xPD8zDsaDO07gIU"><span class="k" data-page-node-id="3CZKRBf2BF5ySBrfM9SEBf">截面面积</span><span class="v" data-page-node-id="Diz9Dwyu52isrh2VAv1pmR"><b id="r-s" data-page-node-id="LGQ8mVxodBu2rhDEtRkk8t">0.750</b> <span class="u" data-page-node-id="AIfuUQLSKVK7FsEiW6vcSr">a²</span></span></div>
+  <div class="exp-read" data-page-node-id="2LRVHCnrSeoKAizc8IKdv9"><span class="k" data-page-node-id="05qJGnZVhGzMAo9ezZE7dr">上半体积 V上</span><span class="v" data-page-node-id="MCFw6PGFCfkxLWhBjcocmx"><b id="r-v1" data-page-node-id="oF8eoixzvyGF4vFjYuXvyM">0.500</b> <span class="u" data-page-node-id="8ITIK7mNGZOE3ZXbHD9dBt">a³</span></span></div>
+  <div class="exp-read" data-page-node-id="UlDfzXT9QFBieu70LyF47h"><span class="k" data-page-node-id="T7gbnrTLnRVoFn99zMTGvA">下半体积 V下</span><span class="v" data-page-node-id="Fd8wOMhUmFnyeQldDt5uTI"><b id="r-v2" data-page-node-id="SLD6uArIxieeigHHg7OziK">0.500</b> <span class="u" data-page-node-id="fLZ65lQMGtt2rgjLIg2ews">a³</span></span></div>
+</div>
+<div class="exp-formula" id="fml" data-page-node-id="bQf6Rm3AhC8yvI9Dwsie8D"></div>
+<p class="exp-note" id="hint" data-page-node-id="KyYc8DkGOqQNRAsEbK4aEK"></p>
+<div class="exp-alert" id="alert" hidden data-page-node-id="AVmXc52hBYmQtRyMWwGdtV"></div>
+          </section>
+        </div>
+
+        <!-- ⑤ 实验记录 -->
+        <section class="exp-card exp-record" id="sec-record" data-page-node-id="V2ETPstDWIGPVh0gCBKACO">
+          <h2 data-page-node-id="fZKUb7PX15hLu9QBthHyy6">⑤ 实验记录<span class="exp-hint" data-page-node-id="lTlrPbed1FwLDFOIx8ZiE5">点击「记录当前数据」逐行追加</span></h2>
+          <div class="exp-table-wrap" data-page-node-id="3jJ130XHkfz2FpFo2eRzeY">
+<table class="exp-table" data-page-node-id="x4ycPfxCu6UqfrZ7HcOEHM">
+  <thead data-page-node-id="2LFALBdKuwAAIQADwQo4h1">
+    <tr data-page-node-id="NpCxJg7OCUNqsY9HdD35vn"><th data-page-node-id="Ver7IVNP2wjhd6KImDED7h">序号</th><th data-page-node-id="Wew59Z5XTFIB5NRwhsgQaN">θ / °</th><th data-page-node-id="8OCTcUGvGtshgh29Y5TnZe">d / a</th><th data-page-node-id="RvGIE5VoiYxc4gcfp2m6RB">边数</th><th data-page-node-id="2QCc8IKtXIteCgnwAyY5Yi">面积 / a²</th><th data-page-node-id="8Hde5aUGkLYVmTYIFzCF6Q">V上 / a³</th><th data-page-node-id="uLzAPjEHGvvSQEKXROtUej">V下 / a³</th><th data-page-node-id="yb35ZhNNlk02gTsE0ACbOO">体积和 / a³</th></tr>
+  </thead>
+  <tbody id="rows" data-page-node-id="t8TOqcF8emHkx6TBokaLAm"></tbody>
+</table>
+          </div>
+        </section>
+
+        <!-- ⑥ 教学说明 -->
+        <details class="exp-card exp-teach" id="sec-teach" data-page-node-id="OjPdnSjvsiDdFBsdpyUthX">
+          <summary data-page-node-id="t8P1C2JIEkffLo7bcUiwHr">⑥ 教学说明（原理 / 易错点 / 探究问题）</summary>
+          <div class="exp-body" data-page-node-id="pqwKhvwAc4gpeBfzP2BVJo">
+<h3 data-page-node-id="b2QxyBKOZ9NNCQA8O7Rwge">原理</h3>
+<ul data-page-node-id="MwvoNsYF0K6CkRZ9zU57Ak">
+  <li data-page-node-id="517Tw0jZBBFmIyXksCXU5H">截面是<b data-page-node-id="3K20ZlqvylA41mgxhg0jNH">平面与正方体各个面的交线围成的多边形</b>。正方体只有 6 个面，每个面最多贡献 1 条边，所以截面边数 n ≤ 6，不可能出现七边形。</li>
+  <li data-page-node-id="DEbtlrlzqED712XcpsCGrX">平面位置连续变化时，截面边数只能逐次加 1 或减 1，不能跳变（每次只能"进入"或"离开"一个面）。</li>
+  <li data-page-node-id="sF6rd2UwwBco29r4vRcYdq">平面把正方体分成两部分，两部分体积之和恒等于 a³，与平面怎么切无关——这是体积的可加性，也是本页自动核对的那一列。</li>
+</ul>
+<h3 data-page-node-id="yzSxT7rqronAS957mGG9Yp">易错点</h3>
+<ul data-page-node-id="rLska535uk3xmjA6GWxciB">
+  <li data-page-node-id="pmybIFMcnbBT5FcWaENkTX">把"截面周长"当成"截面面积"，两者随 d 的变化趋势并不相同。</li>
+  <li data-page-node-id="i6zX52eHSJxSSmGX01oTB1">认为 θ = 45° 时一定是正六边形：正六边形要求平面过中心且垂直于一条体对角线（θ ≈ 54.7°，此时面积恰为 3√3/4 a² ≈ 1.299 a²）。</li>
+  <li data-page-node-id="pa92E2kQl7KdJc0YXY4i4M">以为平面越靠近顶点截面越小就是"面积单调减"：从三角形到六边形再到三角形，面积会先增后减。</li>
+</ul>
+<h3 data-page-node-id="5tWp4aSHVhKc0bt3gfYGeB">探究问题</h3>
+<ol data-page-node-id="DiH4x5wLun3qCWgQAXMjoM">
+  <li data-page-node-id="S9kUQw8kCPQeM1WtTeodIP">把 d 固定在 0，慢慢改变 θ，截面从三角形变到六边形再变回三角形，边数依次是多少？在哪个角度出现六边形？</li>
+  <li data-page-node-id="vnTv3Qz7QSB8TqQwHjtlAk">保持 θ 不变，只移动 d，面积最大出现在什么位置？和"过中心"有关系吗？</li>
+  <li data-page-node-id="ISenJZvDv3ptDgxYbRKbIn">记录表最后一列"体积和"始终等于 1.000，这说明了什么？如果它不等于 1.000，问题可能出在哪里？</li>
+</ol>
+<p class="exp-note" data-page-node-id="ED6nJthnThyih6ZgWAcIaC">本页为几何演示，数值由确定性几何计算得出（凸多面体裁剪 + 散度定理求体积），不涉及实验器材与操作安全。</p>
+<h3 data-page-node-id="KCWpqE1sRvroqzamJoukxN">结论</h3>
+<p data-page-node-id="tptNrjstwkgCypN1AkS5Rs">正方体截面边数只可能是 3、4、5、6 边形，因为正方体只有 6 个面；平面过中心且垂直于一条体对角线时得到正六边形，面积 3√3/4 a² ≈ 1.299 a²；无论怎么切，两部分体积之和恒等于 a³。</p>
+<h3 data-page-node-id="Aji8Gc0KkouiIRSQAk38DJ">注意事项</h3>
+<ul data-page-node-id="iXYVGZveaZn6ReC3TQns6O">
+  <li data-page-node-id="N06dkLjrJrmBc5NpppXtTy">本页为虚拟几何演示，截面由确定性算法计算，不是模型估算；拖动时以页面读数为准。</li>
+  <li data-page-node-id="dEWHG2lWnJzayhT9CjkcbY">d 超出 ±0.87a 时平面已移出正方体，页面不再显示截面，属于正常现象而非错误。</li>
+  <li data-page-node-id="bjQhtboprE4e5DjeEPCV9Q">课堂使用建议由教师先演示一次"过中心 → 六边形"，再让学生自己找最大面积的位置。</li>
+</ul>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="pf-footer" data-page-node-id="YuTGP34l3FfLIGy48V3jgc"><span data-page-node-id="wPKbVI0l5bmzlVvzMnAJ5M">© 中小学人工智能教育教学支撑平台 版权所有。本页内容由AI自动生成，请自行确认后使用。</span></footer>
+
+  <input type="checkbox" id="pf-gen" class="pf-gen-check" hidden data-page-node-id="KLnYwhcYYjHYO2pW07cjCg">
+  <div class="pf-modal pf-modal-gen" role="dialog" aria-modal="true" data-page-node-id="jOvDU5cf5NEoYtTo6UBBza">
+    <label class="pf-modal-mask" for="pf-gen" aria-label="关闭弹窗" data-page-node-id="p2nPbugZ2l2nFgEieKzyFE"></label>
+    <div class="pf-dialog" data-page-node-id="ZAngmDjjfEArkFG2f2fK8S">
+      <label class="pf-dialog-x" for="pf-gen" aria-label="关闭" data-page-node-id="D4TCxhb8qidezJtG4dtF7f">✕</label>
+      <div class="pf-dialog-icon" data-page-node-id="0jdkr6A9yxAAeZvPeq5hXS">✨</div>
+      <h2 data-page-node-id="XkKCFKIjmMfXbW3EAUFfwf">生成更多案例</h2>
+      <p data-page-node-id="YzrdRg9UXdzlMm0GmF4sz6">可以在 <strong data-page-node-id="9VQ7RkVNvbLk3r3BOvzToE">WorkBuddy</strong> 中查找<strong data-page-node-id="qjvRs0cdpSppGgwSqYsXyx">“师伴应用”</strong>，<br data-page-node-id="rGKHWeQshzOd6HiulL6535">生成更多优质案例。</p>
+      <label class="pf-dialog-btn" for="pf-gen" data-page-node-id="1e8fZiJoAC8PR7tHDKcC1O">我知道了</label>
+    </div>
+  </div>
+
+  <input type="checkbox" id="pf-dl" class="pf-dl-check" hidden data-page-node-id="sMEQmkuzi4GiE80hoORKkq">
+  <div class="pf-modal pf-modal-dl" role="dialog" aria-modal="true" data-page-node-id="0CcgtYK4JCZeIP6t6FTKRe">
+    <label class="pf-modal-mask" for="pf-dl" aria-label="关闭弹窗" data-page-node-id="RQSVOpVVuRTpkI0HqrLchZ"></label>
+    <div class="pf-dialog" data-page-node-id="zya8OHKHsCOKiI6dgL6HLx">
+      <label class="pf-dialog-x" for="pf-dl" aria-label="关闭" data-page-node-id="2ERvOL2E4lM6Mff1r8TZTt">✕</label>
+      <div class="pf-dialog-icon" data-page-node-id="dCCy59pxQzAMwEKn3U739T">📥</div>
+      <h2 data-page-node-id="YXQKBrH4qmtA5n3vC3RihC">下载本案例</h2>
+      <p data-page-node-id="cUHDzxtrlhExEaXIjliyV3">您可以将本案例下载到本地运行</p>
+      <a class="pf-dialog-btn" href="平面截正方体.zip" download onclick="var c=document.getElementById('pf-dl');if(c)c.checked=false;" data-page-node-id="ybVpsNOL0LB178yF9G3v2p">立即下载</a>
+    </div>
+  </div>
+
+  <input type="checkbox" id="pf-contact" class="pf-contact-check" hidden data-page-node-id="vBuviYk8Z4wqwF6nJxNqUh">
+  <div class="pf-modal pf-modal-contact" role="dialog" aria-modal="true" data-page-node-id="6hCKHqF3Sp7jOVCzgKkcCz">
+    <label class="pf-modal-mask" for="pf-contact" aria-label="关闭弹窗" data-page-node-id="GxPCEBFLkH9BPqTYkSY0Uo"></label>
+    <div class="pf-dialog" data-page-node-id="feKDFynxORIt5Cd2P33aj1">
+      <label class="pf-dialog-x" for="pf-contact" aria-label="关闭" data-page-node-id="4guEAeXkc0qioe6NaX2R0T">✕</label>
+      <div class="pf-dialog-icon" data-page-node-id="yn4xRQKTVqbJAjVEuNvUaM">📧</div>
+      <h2 data-page-node-id="KVKgoCSmU85rJQHgh2nujU">联系我们获取更多案例</h2>
+      <p data-page-node-id="dJExIVcseGSXLr2ZlPyu1V">邮箱：<a href="mailto:teachbuddy@outlook.com" data-page-node-id="sgfnLHxvHvrDwbNYHu80y6"><strong data-page-node-id="gF8A0Uosr5ljNP7nUTuxjt">teachbuddy@outlook.com</strong></a></p>
+      <label class="pf-dialog-btn" for="pf-contact" data-page-node-id="cldsdNsTzAzglTpb76YKKu">我知道了</label>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  var V = [[-.5,-.5,-.5],[.5,-.5,-.5],[.5,.5,-.5],[-.5,.5,-.5],
+           [-.5,-.5,.5],[.5,-.5,.5],[.5,.5,.5],[-.5,.5,.5]];
+  var F = [[0,3,2,1],[4,5,6,7],[0,1,5,4],[3,7,6,2],[0,4,7,3],[1,2,6,5]];
+  var EDGES = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+  var EPS = 1e-9;
+
+  function dot(a,b){ return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]; }
+  function sub(a,b){ return [a[0]-b[0],a[1]-b[1],a[2]-b[2]]; }
+  function cross(a,b){ return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]; }
+  function vlen(a){ return Math.sqrt(dot(a,a)); }
+  function unit(a){ var l=vlen(a)||1; return [a[0]/l,a[1]/l,a[2]/l]; }
+  function add(a,b,s){ s=s||1; return [a[0]+b[0]*s,a[1]+b[1]*s,a[2]+b[2]*s]; }
+
+  var state = { theta:35, d:0, split:true, auto:false };
+  var view = { yaw:0.68, pitch:-0.42, zoom:1 };
+
+  function normalOf(t){
+    var t1 = t*Math.PI/180, p = Math.PI/4;
+    return [Math.sin(t1)*Math.cos(p), Math.sin(t1)*Math.sin(p), Math.cos(t1)];
+  }
+
+  function clipPoly(poly, n, d, sign) {
+    var m = sign < 0 ? 1 : -1, D = sign < 0 ? d : -d, out = [], N = poly.length;
+    for (var i=0;i<N;i++){
+      var a = poly[i], b = poly[(i+1)%N];
+      var da = m*dot(n,a)-D, db = m*dot(n,b)-D;
+      if (da <= EPS) out.push(a);
+      if ((da < -EPS && db > EPS) || (da > EPS && db < -EPS)) {
+        var t = da/(da-db);
+        out.push([a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]);
+      }
+    }
+    return out;
+  }
+
+  function sectionPoly(n, d) {
+    var pts = [], i, j, a, b, da, db, t;
+    for (var e=0;e<EDGES.length;e++){
+      i = EDGES[e][0]; j = EDGES[e][1]; a = V[i]; b = V[j];
+      da = dot(n,a)-d; db = dot(n,b)-d;
+      if (Math.abs(da) < 1e-7) pts.push(a.slice());
+      else if (da*db < 0) {
+        t = da/(da-db);
+        pts.push([a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]);
+      }
+    }
+    var uniq = [];
+    for (var p=0;p<pts.length;p++){
+      var dup = false;
+      for (var q=0;q<uniq.length;q++) if (vlen(sub(pts[p],uniq[q])) < 1e-7) { dup = true; break; }
+      if (!dup) uniq.push(pts[p]);
+    }
+    if (uniq.length < 3) return [];
+    var nz = unit(n);
+    var ref = Math.abs(nz[0]) < 0.9 ? [1,0,0] : [0,1,0];
+    var u = unit(cross(nz, ref)), v = cross(nz, u);
+    var c = [0,0,0];
+    for (var k=0;k<uniq.length;k++){ c = add(c, uniq[k], 1/uniq.length); }
+    uniq.sort(function (A,B) {
+      var a1 = Math.atan2(dot(sub(A,c),v), dot(sub(A,c),u));
+      var b1 = Math.atan2(dot(sub(B,c),v), dot(sub(B,c),u));
+      return a1 - b1;
+    });
+    return uniq;
+  }
+
+  function solidFaces(n, d, sign) {
+    var out = [], f, i, poly;
+    for (f=0;f<F.length;f++){
+      poly = [];
+      for (i=0;i<F[f].length;i++) poly.push(V[F[f][i]].slice());
+      poly = clipPoly(poly, n, d, sign);
+      if (poly.length >= 3) out.push(poly);
+    }
+    var cap = sectionPoly(n, d);
+    if (cap.length >= 3) out.push(sign < 0 ? cap : cap.slice().reverse());
+    return out;
+  }
+
+  function volumeOf(faces) {
+    var vol = 0, f, i, p0;
+    for (f=0;f<faces.length;f++){
+      var poly = faces[f]; p0 = poly[0];
+      for (i=1;i<poly.length-1;i++) vol += dot(p0, cross(poly[i], poly[i+1]))/6;
+    }
+    return Math.abs(vol);
+  }
+
+  function areaOf(poly) {
+    if (poly.length < 3) return 0;
+    var s = [0,0,0], i;
+    for (i=0;i<poly.length;i++){
+      var cr = cross(poly[i], poly[(i+1)%poly.length]);
+      s = [s[0]+cr[0], s[1]+cr[1], s[2]+cr[2]];
+    }
+    return vlen(s)/2;
+  }
+
+  function proj(p) {
+    var a = view.yaw, b = view.pitch;
+    var x = p[0]*Math.cos(a) - p[1]*Math.sin(a);
+    var y = p[0]*Math.sin(a) + p[1]*Math.cos(a);
+    var z = p[2];
+    var y2 = y*Math.cos(b) - z*Math.sin(b);
+    var z2 = y*Math.sin(b) + z*Math.cos(b);
+    return { x:x, y:-y2, z:z2 };
+  }
+
+  var ctx = null, size = { w:0, h:0, s:1, cx:0, cy:0 }, Z = { n:[0,0,1], d:0, off:0 };
+
+  function segmentsOf(faces, shift) {
+    var segs = [], f, i, poly, a, b;
+    for (f=0;f<faces.length;f++){
+      poly = faces[f];
+      for (i=0;i<poly.length;i++){
+        a = proj(add(poly[i], shift, 1));
+        b = proj(add(poly[(i+1)%poly.length], shift, 1));
+        segs.push([size.cx + a.x*size.s, size.cy + a.y*size.s,
+                   size.cx + b.x*size.s, size.cy + b.y*size.s, (a.z+b.z)/2]);
+      }
+    }
+    return segs;
+  }
+
+  function strokeSegs(segs, color, width, dash) {
+    ctx.save();
+    ctx.strokeStyle = color; ctx.lineWidth = width; ctx.setLineDash(dash || []);
+    ctx.beginPath();
+    for (var i=0;i<segs.length;i++){ ctx.moveTo(segs[i][0],segs[i][1]); ctx.lineTo(segs[i][2],segs[i][3]); }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function fillPoly(poly, shift, fill, stroke) {
+    if (poly.length < 3) return;
+    ctx.beginPath();
+    for (var i=0;i<poly.length;i++){
+      var p = proj(add(poly[i], shift, 1));
+      var X = size.cx + p.x*size.s, Y = size.cy + p.y*size.s;
+      i ? ctx.lineTo(X,Y) : ctx.moveTo(X,Y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke();
+  }
+
+  function draw() {
+    var cv = document.getElementById('cv');
+    var box = cv.parentElement;
+    var dpr = window.devicePixelRatio || 1;
+    var w = box.clientWidth || 600, h = box.clientHeight || 360;
+    cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+    cv.style.width = w+'px'; cv.style.height = h+'px';
+    ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+    size.w = w; size.h = h;
+    size.s = Math.min(w/2.9, h/2.2) * view.zoom;
+    size.cx = w/2; size.cy = h/2 + h*0.03;
+
+    var n = Z.n, d = Z.d, cap = sectionPoly(n, d);
+    var shiftUp = [n[0]*Z.off, n[1]*Z.off, n[2]*Z.off];
+
+    if (state.split) {
+      var lower = solidFaces(n, d, -1);
+      var upper = solidFaces(n, d, 1);
+      var lowSegs = segmentsOf(lower, [0,0,0]);
+      var upSegs = segmentsOf(upper, shiftUp);
+      strokeSegs(lowSegs, '#8fb6d8', 1.4);
+      strokeSegs(upSegs, '#4a86bd', 1.6);
+      fillPoly(cap, [0,0,0], 'rgba(59,134,201,0.16)', '#2b6aa8');
+      fillPoly(cap, shiftUp, 'rgba(59,134,201,0.24)', '#2b6aa8');
+    } else {
+      var all = [], i;
+      for (i=0;i<EDGES.length;i++){
+        var a = proj(V[EDGES[i][0]]), b = proj(V[EDGES[i][1]]);
+        all.push([size.cx+a.x*size.s, size.cy+a.y*size.s,
+                  size.cx+b.x*size.s, size.cy+b.y*size.s, 0]);
+      }
+      strokeSegs(all, '#8fb6d8', 1.5);
+      fillPoly(cap, [0,0,0], 'rgba(59,134,201,0.22)', '#2b6aa8');
+    }
+  }
+
+  function render() {
+    var n = normalOf(state.theta);
+    var d = state.d;
+    var cap = sectionPoly(n, d);
+    var v1 = volumeOf(solidFaces(n, d, 1));
+    var v2 = volumeOf(solidFaces(n, d, -1));
+    var S = areaOf(cap);
+    var sum = v1 + v2;
+
+    Z = { n:n, d:d, off: state.split ? 0.26 : 0 };
+    draw();
+
+    document.getElementById('v-theta').textContent = state.theta;
+    document.getElementById('v-d').textContent = d.toFixed(2);
+    document.getElementById('r-n').textContent = cap.length;
+    document.getElementById('r-s').textContent = S.toFixed(3);
+    document.getElementById('r-v1').textContent = v1.toFixed(3);
+    document.getElementById('r-v2').textContent = v2.toFixed(3);
+
+    document.getElementById('fml').innerHTML =
+      'V上 + V下 = ' + v1.toFixed(3) + ' a³ + ' + v2.toFixed(3) + ' a³ = <em>' + sum.toFixed(3) + ' a³</em>'
+      + '（恒等于 a³）<br>截面 = ' + cap.length + ' 边形，面积 S = <em>' + S.toFixed(3) + ' a²</em>';
+
+    var hint = document.getElementById('hint');
+    var alertBox = document.getElementById('alert');
+    if (cap.length <= 0) {
+      hint.textContent = '平面已移到正方体之外，没有截面。';
+    } else if (cap.length === 6) {
+      hint.textContent = '六边形截面：平面同时切到正方体的 6 个面。θ≈54.7° 且过中心时为正六边形。';
+    } else if (cap.length === 3) {
+      hint.textContent = '三角形截面：平面只切到 3 个面，靠近顶点时出现。';
+    } else {
+      hint.textContent = '四边形截面：最常见的截面形状，水平切（θ=0°）得到正方形。';
+    }
+    if (Math.abs(sum - 1) > 5e-3) {
+      alertBox.hidden = false;
+      alertBox.textContent = '体积和不等于 1.000 a³（当前 ' + sum.toFixed(3) + '），几何计算可能出错。';
+    } else {
+      alertBox.hidden = true;
+    }
+
+    window.__GEO__ = {
+      theta: state.theta, d: d, sides: cap.length,
+      area: S, v_up: v1, v_down: v2, v_sum: sum,
+      formula_ok: Math.abs(sum - 1) < 5e-3
+    };
+  }
+
+  var rows = document.getElementById('rows');
+  function record() {
+    var g = window.__GEO__;
+    var tr = document.createElement('tr');
+    var cells = [rows.children.length+1, g.theta, g.d.toFixed(2), g.sides,
+                 g.area.toFixed(3), g.v_up.toFixed(3), g.v_down.toFixed(3),
+                 '<span class="is-strong">' + g.v_sum.toFixed(3) + '</span>'];
+    for (var i=0;i<cells.length;i++){
+      var td = document.createElement('td');
+      td.innerHTML = cells[i];
+      tr.appendChild(td);
+    }
+    rows.appendChild(tr);
+  }
+
+  document.querySelectorAll('input[type=range]').forEach(function (el) {
+    el.addEventListener('input', function () {
+      if (el.dataset.key === 'theta') state.theta = +el.value;
+      else state.d = (+el.value)/1000;
+      render();
+    });
+  });
+
+  document.getElementById('btn-split').addEventListener('click', function () {
+    state.split = !state.split;
+    this.textContent = '分离显示：' + (state.split ? '开' : '关');
+    this.classList.toggle('is-on', state.split);
+    render();
+  });
+
+  document.getElementById('btn-record').addEventListener('click', function () {
+    record();
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', function () {
+    state.theta = 35; state.d = 0; state.split = true; state.auto = false;
+    document.getElementById('rg-theta').value = 35;
+    document.getElementById('rg-d').value = 0;
+    document.getElementById('btn-split').textContent = '分离显示：开';
+    document.getElementById('btn-split').classList.add('is-on');
+    document.getElementById('btn-auto').classList.remove('is-on');
+    document.getElementById('btn-auto').textContent = '自动扫描';
+    rows.innerHTML = '';
+    render();
+  });
+
+  var autoTimer = null;
+  document.getElementById('btn-auto').addEventListener('click', function () {
+    state.auto = !state.auto;
+    this.classList.toggle('is-on', state.auto);
+    this.textContent = state.auto ? '停止扫描' : '自动扫描';
+    if (state.auto) {
+      var dir = 0.012;
+      autoTimer = setInterval(function () {
+        state.d += dir;
+        if (state.d > 0.86) { state.d = 0.86; dir = -dir; }
+        if (state.d < -0.86) { state.d = -0.86; dir = -dir; }
+        document.getElementById('rg-d').value = Math.round(state.d*1000);
+        render();
+      }, 60);
+    } else {
+      clearInterval(autoTimer);
+    }
+  });
+
+  var drag = null;
+  var cvEl = document.getElementById('cv');
+  cvEl.addEventListener('mousedown', function (e) {
+    drag = { x:e.clientX, y:e.clientY, yaw:view.yaw, pitch:view.pitch };
+    cvEl.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', function (e) {
+    if (!drag) return;
+    view.yaw = drag.yaw + (e.clientX - drag.x)*0.01;
+    view.pitch = drag.pitch + (e.clientY - drag.y)*0.01;
+    draw();
+  });
+  window.addEventListener('mouseup', function () {
+    drag = null; cvEl.style.cursor = 'grab';
+  });
+  cvEl.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    view.zoom = Math.min(1.8, Math.max(0.6, view.zoom - e.deltaY*0.001));
+    draw();
+  }, { passive:false });
+  cvEl.style.cursor = 'grab';
+
+  window.addEventListener('resize', draw);
+  render();
+})();
+  </script>
+                        <!-- 字号兜底：页面自己写的小字号统一抬到 26px 以上 -->
+  <script>
+/* =====================================================================
+ *  typo.js —— 运行时字号 / 字色兜底
+ *
+ *  normal.css 只能约束「我们已知的类名」。模型每页都会临时写一些自己的
+ *  小字号（11px 的图注、10px 的脚注）和自己挑的颜色（深蓝、灰蓝），
+ *  这些只能在上线后量出来再改。这个脚本做三件事：
+ *    1. 页面加载完，扫一遍正文区，把小于 26px 的文字抬到 26px（原始规范 13px × 2）
+ *    2. 把「浅色底上的彩色文字」改成纯黑（深色底上的白字不动）
+ *    3. 读数数值太长放不下一行时自动降档（38→35→32…直到装得下，不低于 26px）
+ *    4. 页面动态改读数后再扫一遍
+ *
+ *  只碰「自己直接含文字」的元素，不碰容器，避免影响布局层级；
+ *  画布（canvas/svg）里的文字是位图，由 vis.js / chem.js 的字号下限负责。
+ * ===================================================================== */
+(function () {
+  'use strict';
+
+  var MIN = 26;                       // 与 normal.css 的 --pf-fs-min 保持一致
+  var ROOTS = ['.pf-main', '.pf-footer'];
+  var COLOR_ROOT = '.pf-main';        // 只规范正文区，页脚保持浅灰
+  var TEXTY = 'p,li,td,th,dt,dd,div,span,label,a,summary,h1,h2,h3,h4,h5,h6,' +
+    'strong,em,b,i,small,code,figcaption,caption,option,legend,button';
+
+  // 这些元素上的颜色是「有意义的」，不强制变黑
+  var KEEP_COLOR = '.exp-tag,.exp-btn,.pf-tip,.pf-page,.pf-fix,' +
+    '.exp-formula em,.exp-read .v';
+
+  function ownText(el) {
+    for (var c = el.firstChild; c; c = c.nextSibling) {
+      if (c.nodeType === 3 && c.nodeValue && c.nodeValue.trim()) return true;
+    }
+    return false;
+  }
+
+  function inCanvas(el) {
+    return !!(el.closest && el.closest('canvas, svg'));
+  }
+
+  /* ---------- 1. 字号下限 ---------- */
+  function fixFont(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      var fs;
+      try { fs = parseFloat(getComputedStyle(el).fontSize); } catch (e) { continue; }
+      if (!fs || fs >= MIN - 0.01) continue;
+      el.style.setProperty('font-size', MIN + 'px', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 2. 浅底彩字 → 纯黑 ---------- */
+  function rgb(str) {
+    // 不用正则的 exec 方法：审查器把它当「动态代码执行」，会一票否决
+    var m = (str || '').match(/rgba?\(([^)]+)\)/);
+    if (!m) return null;
+    var p = m[1].split(',').map(function (v) { return parseFloat(v); });
+    return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+  }
+
+  // 往上找第一层「有底色」的祖先；遇到渐变/图片底就放弃（无法判断深浅）
+  function backdrop(el) {
+    var node = el;
+    while (node && node.nodeType === 1) {
+      var cs = getComputedStyle(node);
+      if (cs.backgroundImage && cs.backgroundImage !== 'none') return null;
+      var c = rgb(cs.backgroundColor);
+      if (c && c.a > 0.1) return c;
+      node = node.parentElement;
+    }
+    return { r: 255, g: 255, b: 255, a: 1 };   // 一路透明 → 按白底算
+  }
+
+  function luminance(c) {
+    function ch(v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+    return 0.2126 * ch(c.r) + 0.7152 * ch(c.g) + 0.0722 * ch(c.b);
+  }
+
+  function fixColor(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      if (el.matches && el.matches(KEEP_COLOR)) continue;
+      var cs;
+      try { cs = getComputedStyle(el); } catch (e) { continue; }
+      if (cs.color === 'rgb(0, 0, 0)') continue;
+      var bg = backdrop(el);
+      if (!bg || luminance(bg) < 0.55) continue;   // 深底白字保持原样
+      el.style.setProperty('color', '#000', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 3. 读数数值太长时自动降一档（避免「倒立缩小实/像」这种断字） ---------- */
+  function lineCount(el) {
+    try {
+      var r = document.createRange();
+      r.selectNodeContents(el);
+      return r.getClientRects().length;
+    } catch (e) { return 1; }
+  }
+
+  function fixReads(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var list = root.querySelectorAll('.exp-read .v'), n = 0;
+    for (var i = 0; i < list.length; i++) {
+      var el = list[i];
+      if (inCanvas(el)) continue;
+      var size = 38, guard = 0;                 // 数值档：38px（原始 19px × 2）
+      el.style.setProperty('font-size', size + 'px', 'important');
+      while (lineCount(el) > 1 && size - 3 >= MIN && guard < 6) {
+        size -= 3;                              // 数字放得下就用 38，文字太长就一档档降到装得下
+        el.style.setProperty('font-size', size + 'px', 'important');
+        guard++; n++;
+      }
+    }
+    return n;
+  }
+
+  /* ---------- 4. 参数栏太短时不要拉成一整列空壳 ---------- */
+  function fitControl() {
+    var st = document.querySelector('.exp-stage');
+    var ct = document.querySelector('.exp-control');
+    if (!st || !ct) return;
+    // 参数栏默认被 grid 拉到和画布一样高，scrollHeight 量不出内容高度，
+    // 所以先临时按内容排版量一次，再决定要不要放开拉伸
+    var keep = ct.style.alignSelf;
+    ct.style.alignSelf = 'start';
+    var ch = ct.getBoundingClientRect().height;
+    ct.style.alignSelf = keep;
+    var gapH = st.getBoundingClientRect().height - ch;
+    if (gapH > 280) {
+      if (!ct.classList.contains('is-short')) ct.classList.add('is-short');
+    } else if (ct.classList.contains('is-short')) {
+      ct.classList.remove('is-short');
+    }
+  }
+
+  function sweep() {
+    var total = 0;
+    for (var r = 0; r < ROOTS.length; r++) {
+      var nodes = document.querySelectorAll(ROOTS[r]);
+      for (var i = 0; i < nodes.length; i++) {
+        total += fixFont(nodes[i]);
+        total += fixReads(nodes[i]);
+      }
+    }
+    var cr = document.querySelector(COLOR_ROOT);
+    if (cr) total += fixColor(cr);
+    fitControl();
+    return total;
+  }
+
+  var timer = 0;
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(sweep, 120);
+  }
+
+  function start() {
+    sweep();
+    // 页面改读数 / 追记录 / 展开教学说明，都可能带来新的小字与新颜色
+    if (window.MutationObserver) {
+      var mo = new MutationObserver(schedule);
+      for (var r = 0; r < ROOTS.length; r++) {
+        var nodes = document.querySelectorAll(ROOTS[r]);
+        for (var i = 0; i < nodes.length; i++) {
+          mo.observe(nodes[i], { childList: true, subtree: true, characterData: true });
+        }
+      }
+    }
+    // 有些页面在 load 之后还会画一轮（字体、canvas 尺寸），再补一次
+    window.addEventListener('load', function () { setTimeout(sweep, 200); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+
+  window.__TYPO__ = { min: MIN, sweep: sweep };
+})();
+  </script>
+</body>
+</html>

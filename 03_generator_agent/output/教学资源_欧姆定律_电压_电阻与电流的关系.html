@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>师伴-欧姆定律</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --line:#e5e7eb;
+    --ink:#1f2328; --ink2:#5b6570; --ink3:#8b949e;
+    --blue:#2563eb; --blue-bg:#eff4ff;
+    --red:#dc2626; --amber:#b45309; --green:#15803d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",system-ui,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; padding:24px 16px 60px;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+  header{margin-bottom:20px}
+  h1{font-size:24px;font-weight:600;letter-spacing:.5px}
+  .meta{color:var(--ink2);font-size:13px;margin-top:6px}
+  .goal{
+    margin-top:12px;background:var(--blue-bg);border-left:3px solid var(--blue);
+    padding:10px 14px;border-radius:6px;font-size:13px;color:#1e3a8a;
+  }
+  .goal b{font-weight:600}
+  .grid{display:grid;grid-template-columns:1.05fr 1fr;gap:16px}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .card h2{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--ink)}
+  .card h2 span{font-weight:400;color:var(--ink3);font-size:12px;margin-left:6px}
+
+  .circuit{width:100%;height:auto;display:block}
+  .wire{stroke:#374151;stroke-width:2.5;fill:none;stroke-linecap:round}
+  .lbl{font-size:12px;fill:#5b6570}
+  .val{font-size:13px;fill:#1f2328;font-weight:600}
+
+  .row{margin-bottom:18px}
+  .row:last-child{margin-bottom:0}
+  .row-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .row-h label{font-size:13px;color:var(--ink2)}
+  .row-h output{font-family:ui-monospace,Consolas,monospace;font-size:15px;font-weight:600;color:var(--blue)}
+  input[type=range]{
+    -webkit-appearance:none;width:100%;height:6px;border-radius:3px;background:#e5e7eb;outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+    background:var(--blue);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:16px;height:16px;border-radius:50%;background:var(--blue);border:2px solid #fff;cursor:pointer;
+  }
+  .readout{
+    margin-top:14px;background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:12px 14px;
+  }
+  .readout .big{font-size:28px;font-weight:600;font-family:ui-monospace,Consolas,monospace;color:var(--ink)}
+  .readout .unit{font-size:14px;color:var(--ink2);margin-left:4px}
+  .readout small{display:block;color:var(--ink2);font-size:12px;margin-top:2px}
+  .formula{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:var(--ink2);margin-top:8px}
+
+  .warn{
+    margin-top:10px;font-size:12.5px;padding:8px 12px;border-radius:6px;
+    background:#fffbeb;color:var(--amber);border:1px solid #fde68a;display:none;
+  }
+  .warn.on{display:block}
+  .warn.danger{background:#fef2f2;color:var(--red);border-color:#fecaca}
+
+  canvas{width:100%;height:260px;display:block}
+  .chart-hint{font-size:12px;color:var(--ink3);margin-top:8px}
+
+  .actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  button{
+    font-family:inherit;font-size:13px;padding:8px 14px;border-radius:7px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;color:var(--ink);transition:.15s;
+  }
+  button:hover{background:#f3f4f6}
+  button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+  button.primary:hover{background:#1d4ed8}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px}
+  th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line)}
+  th{font-weight:500;color:var(--ink2);background:#fafafa;font-size:12px}
+  th:first-child,td:first-child{text-align:left}
+  tbody tr:hover{background:#fafafa}
+  .empty{color:var(--ink3);font-size:13px;padding:14px 0;text-align:center}
+
+  .concl{margin-top:16px}
+  .concl textarea{
+    width:100%;min-height:64px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;
+    font-family:inherit;font-size:13px;resize:vertical;outline:none;
+  }
+  .concl textarea:focus{border-color:var(--blue)}
+  .answer{
+    display:none;margin-top:10px;padding:10px 14px;background:#f0fdf4;border:1px solid #bbf7d0;
+    border-radius:8px;font-size:13px;color:var(--green);
+  }
+  .answer.on{display:block}
+  footer{margin-top:22px;font-size:12px;color:var(--ink3);text-align:center}
+</style>
+  <!-- 平台阅读规范：正文纯黑 / 最小字号 26px / 名称只在页眉 -->
+  <style>
+/* =====================================================================
+ *  normal.css —— 平台阅读规范（后置强制层）
+ *
+ *  它排在加载顺序的最后：
+ *      frame.css → exp.css → 页面自带样式(EXTRA_CSS) → 本文件
+ *  所以这里的规则会盖住前面所有定义，包括模型自己写进页面的 CSS。
+ *  作用只有一个：让 30 个页面读起来像同一个东西，而不是每页一个风格。
+ *
+ *  三条规范：
+ *    1. 正文文字一律纯黑 #000（不再跟随蓝色主题色）
+ *    2. 最小字号 26px（= 原始 13px × 2；配合 typo.js 兜住页面自带的 9~12px 小字）
+ *    3. 实验名称只在页眉出现一次，① 区不再重复
+ * ===================================================================== */
+
+:root {
+  --pf-fs-min: 26px;      /* 全站最小字号（= 原始 13px × 2），改这里就够 */
+  --pf-body-ink: #000;    /* 正文文字色 */
+}
+
+/* ---------------------------------------------------------------------
+ * 1. 正文纯黑
+ *    只作用于「承载正文的元素」，不碰按钮、胶囊标签、读数数值、警示块
+ *    这些有语义的强调色，否则页面会失去层次。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary,
+.pf-hosted .exp-wrap .exp-teach h3,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li,
+.pf-hosted .exp-wrap p,
+.pf-hosted .exp-wrap li,
+.pf-hosted .exp-wrap td,
+.pf-hosted .exp-wrap th,
+.pf-hosted .exp-wrap dt,
+.pf-hosted .exp-wrap dd,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-label,
+.pf-hosted .exp-wrap .exp-field,
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-table,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 段落里用来解释的斜体/引用也统一黑，不保留灰蓝 */
+.pf-hosted .exp-wrap .exp-body em,
+.pf-hosted .exp-wrap .exp-body i,
+.pf-hosted .exp-wrap .exp-body span,
+.pf-hosted .exp-wrap .exp-goals span {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 代入式里的高亮结论（<em>）保留橙色，是「看这里」而不是正文 */
+.pf-hosted .exp-wrap .exp-formula em {
+  color: #b5561b !important;
+  font-weight: 800;
+}
+
+/* 警示块保留橙红语义色，但压深到接近黑，保证对比度 */
+.pf-hosted .exp-wrap .exp-alert {
+  color: #7c2d12 !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一抬到 26px+
+ *    （页面自己写死的更小字号由 typo.js 在运行时兜底）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-tag,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip,
+.pf-hosted .exp-wrap .exp-read .k,
+.pf-hosted .exp-wrap .exp-read .u,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-val,
+.pf-hosted .exp-wrap .exp-btn,
+.pf-hosted .exp-wrap select,
+.pf-hosted .exp-wrap input,
+.pf-hosted .pf-footer,
+.pf-hosted .pf-tip {
+  font-size: var(--pf-fs-min);
+}
+
+/* 中等档：说明类、代入式、表格、警示，比最小档再大 0.5px */
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-alert,
+.pf-hosted .exp-wrap .exp-table {
+  font-size: 27px;
+}
+
+/* 正文（学习目标 / 教学说明）用 28px，比辅助文字再大一档 */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li {
+  font-size: 28px;
+}
+
+/* 标题档：六区域标题 / 教学说明折叠头 */
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary {
+  font-size: 29px;
+}
+
+/* 读数数值：全站最大的字，读数一眼能看清 */
+.pf-hosted .exp-wrap .exp-read .v {
+  font-size: 38px;
+}
+
+/* ---------------------------------------------------------------------
+ * 2a-2. 演示区只留实物与图形
+ *      画布左下角那条「按住拖动可旋转视角…」是文字块，规范要求删掉。
+ *      页面若还生成 .exp-canvas-tip，这里统一隐藏，不用逐页改 HTML。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2b. 字号放大后的版式补偿
+ *     字大一倍，原来的格子宽度就不够了：读数卡按两列铺、允许换行，
+ *     表格窄了横向滚动。这几条只为「不挤、不裁」，不改字号。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-reads { gap: 12px; }
+
+.pf-hosted .exp-wrap .exp-read {
+  box-sizing: border-box;   /* 不加这句，百分比基准只算内容区，加上内边距就放不下 */
+  flex: 1 1 calc(50% - 7px);   /* 默认两列：窄屏、单列时也不会把字挤到折行 */
+  min-width: 0;
+}
+
+/* ④ 现在横跨整行，宽屏时一行铺开四个读数更像仪表盘 */
+@media (min-width: 1180px) {
+  .pf-hosted .exp-wrap .exp-read { flex: 1 1 calc(25% - 11px); }
+}
+
+.pf-hosted .exp-wrap .exp-table-wrap { overflow-x: auto; }
+
+.pf-hosted .exp-wrap .exp-tags { gap: 10px; }
+
+/* ---------------------------------------------------------------------
+ * 3. 实验名称只在页眉：① 区那个大标题删掉（外壳装配时已剥离，
+ *    这里再做一层兜底，防止旧页面或手写页面漏网）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-info .exp-name {
+  display: none !important;
+}
+
+/* 名字挪走后，① 区首个元素不要留出额外的上间距 */
+.pf-hosted .exp-info > *:first-child {
+  margin-top: 0;
+}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>欧姆定律：电压、电阻与电流的关系</h1>
+    <div class="meta">初中九年级 · 物理 · 拖动滑块观察电流如何变化</div>
+    <div class="goal"><b>本课目标：</b>理解电压是推动电流的原因，电阻是对电流的阻碍；能通过调节滑动变阻器改变电阻，观察电流变化；能用 I=U/R 解释观察到的现象</div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>电路示意 <span>改变电压与电阻，看电流怎么响应</span></h2>
+      <svg class="circuit" viewBox="0 0 460 260" role="img" aria-label="串联电路示意图">
+        <path class="wire" d="M80 70 H190"/>
+        <path class="wire" d="M270 70 H380 V190"/>
+        <path class="wire" d="M380 190 H242"/>
+        <path class="wire" d="M222 190 H80"/>
+        <path class="wire" d="M80 190 V147"/>
+        <path class="wire" d="M80 113 V70"/>
+
+        <rect x="190" y="58" width="80" height="24" rx="3" fill="#fff" stroke="#374151" stroke-width="2.5"/>
+        <text x="230" y="48" text-anchor="middle" class="lbl">定值电阻 R</text>
+        <text x="230" y="104" text-anchor="middle" class="val" id="svgR">20 Ω</text>
+
+        <circle cx="80" cy="130" r="17" fill="#fff" stroke="#374151" stroke-width="2.5"/>
+        <text x="80" y="131" text-anchor="middle" dominant-baseline="central" class="lbl">A</text>
+        <text x="80" y="170" text-anchor="middle" class="val" id="svgI">0.150 A</text>
+
+        <path class="wire" d="M222 176 V204"/>
+        <path class="wire" d="M242 183 V197"/>
+        <text x="232" y="222" text-anchor="middle" class="lbl">电源</text>
+        <text x="232" y="242" text-anchor="middle" class="val" id="svgU">3.0 V</text>
+
+        <polygon points="150,64 161,70 150,76" fill="#2563eb"/>
+        <polygon points="330,184 319,190 330,196" fill="#2563eb"/>
+        <text x="168" y="58" class="lbl" fill="#2563eb">I</text>
+      </svg>
+
+      <div class="row" style="margin-top:8px">
+        <div class="row-h"><label>电源电压 U</label><output id="uOut">3.0 V</output></div>
+        <input type="range" id="uRange" min="0.5" max="6" step="0.1" value="3">
+      </div>
+      <div class="row">
+        <div class="row-h"><label>定值电阻 R</label><output id="rOut">20 Ω</output></div>
+        <input type="range" id="rRange" min="5" max="50" step="5" value="20">
+      </div>
+
+      <div class="readout">
+        <div><span class="big" id="iOut">0.150</span><span class="unit">A</span></div>
+        <small id="iMa">＝ 150 mA</small>
+        <div class="formula" id="formula">I = U / R = 3.0 V ÷ 20 Ω = 0.150 A</div>
+      </div>
+
+      <div class="warn" id="warnBox"></div>
+    </section>
+
+    <section class="card">
+      <h2>数据记录 <span>至少记录 3 组再下结论</span></h2>
+      <div class="actions" style="margin:0 0 10px">
+        <button class="primary" id="recBtn">记录当前数据</button>
+        <button id="csvBtn">导出 CSV</button>
+        <button id="clrBtn">清空</button>
+      </div>
+      <table>
+        <thead>
+          <tr><th>次数</th><th>U / V</th><th>R / Ω</th><th>I / A</th><th>U ÷ I</th></tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="5" class="empty">还没有数据，拖动滑块后点"记录当前数据"</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:16px">
+    <h2>电流—电压图像 <span>固定电阻时，应该是过原点的一条直线</span></h2>
+    <canvas id="chart"></canvas>
+    <div class="chart-hint" id="chartHint">蓝线为当前电阻下的理论 I-U 关系，圆点为已记录的数据。</div>
+  </section>
+
+  <section class="card concl">
+    <h2>我的结论</h2>
+    <textarea id="conclInput" placeholder="提示：写结论时必须说明前提，例如「在电阻一定时……」"></textarea>
+    <div class="actions">
+      <button id="checkBtn">对照参考答案</button>
+    </div>
+    <div class="answer" id="answerBox">
+      <b>参考答案：</b>在电阻一定时，通过导体的电流跟导体两端的电压成正比；
+      在电压一定时，通过导体的电流跟导体的电阻成反比。这就是欧姆定律 I = U / R。
+    </div>
+  </section>
+
+  <footer>
+    实验安全：本模拟使用 0.5~6 V 低压直流电源，真实实验必须在教师指导下进行，禁止私自接线。
+    <br>本页面为离线单文件资源，无需联网即可运行。
+  </footer>
+</div>
+
+<script>
+(function(){
+  var uRange = document.getElementById('uRange');
+  var rRange = document.getElementById('rRange');
+  var uOut = document.getElementById('uOut');
+  var rOut = document.getElementById('rOut');
+  var iOut = document.getElementById('iOut');
+  var iMa = document.getElementById('iMa');
+  var formula = document.getElementById('formula');
+  var warnBox = document.getElementById('warnBox');
+  var svgU = document.getElementById('svgU');
+  var svgR = document.getElementById('svgR');
+  var svgI = document.getElementById('svgI');
+  var tbody = document.getElementById('tbody');
+  var chart = document.getElementById('chart');
+  var ctx = chart.getContext('2d');
+
+  var records = [];
+  var state = { u: 3, r: 20 };
+
+  function current(){ return state.u / state.r; }
+
+  function render(){
+    var U = state.u, R = state.r, I = current();
+
+    uOut.textContent = U.toFixed(1) + ' V';
+    rOut.textContent = R.toFixed(0) + ' Ω';
+    iOut.textContent = I.toFixed(3);
+    iMa.textContent = '＝ ' + Math.round(I * 1000) + ' mA';
+    formula.textContent = 'I = U / R = ' + U.toFixed(1) + ' V ÷ ' + R.toFixed(0) + ' Ω = ' + I.toFixed(3) + ' A';
+
+    svgU.textContent = U.toFixed(1) + ' V';
+    svgR.textContent = R.toFixed(0) + ' Ω';
+    svgI.textContent = I.toFixed(3) + ' A';
+
+    if (I > 0.6){
+      warnBox.className = 'warn danger on';
+      warnBox.textContent = '电流已达 ' + I.toFixed(2) + ' A，超过本实验器材的安全范围（约 0.6 A）。请减小电压或增大电阻。';
+    } else if (I > 0.4){
+      warnBox.className = 'warn on';
+      warnBox.textContent = '电流偏大（' + I.toFixed(2) + ' A），注意通电时间不宜过长，避免电阻发热。';
+    } else {
+      warnBox.className = 'warn';
+    }
+
+    draw();
+  }
+
+  function draw(){
+    var dpr = window.devicePixelRatio || 1;
+    var w = chart.clientWidth, h = chart.clientHeight;
+    if (chart.width !== w * dpr || chart.height !== h * dpr){
+      chart.width = w * dpr; chart.height = h * dpr;
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    var pad = { l: 52, r: 16, t: 16, b: 34 };
+    var pw = w - pad.l - pad.r, ph = h - pad.t - pad.b;
+    var maxU = 6, maxI = 1.2;
+
+    function X(u){ return pad.l + (u / maxU) * pw; }
+    function Y(i){ return pad.t + ph - (i / maxI) * ph; }
+
+    ctx.strokeStyle = '#eef0f3'; ctx.lineWidth = 1;
+    ctx.fillStyle = '#8b949e'; ctx.font = '11px system-ui'; ctx.textAlign = 'right';
+    for (var u = 0; u <= maxU; u += 1){
+      ctx.beginPath(); ctx.moveTo(X(u), pad.t); ctx.lineTo(X(u), pad.t + ph); ctx.stroke();
+      ctx.fillText(u.toString(), X(u), pad.t + ph + 16);
+    }
+    ctx.textAlign = 'right';
+    for (var i = 0; i <= maxI + 0.001; i += 0.2){
+      ctx.beginPath(); ctx.moveTo(pad.l, Y(i)); ctx.lineTo(pad.l + pw, Y(i)); ctx.stroke();
+      ctx.fillText(i.toFixed(1), pad.l - 8, Y(i) + 4);
+    }
+
+    ctx.strokeStyle = '#9ca3af'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(pad.l, pad.t + ph); ctx.lineTo(pad.l + pw, pad.t + ph); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + ph); ctx.stroke();
+
+    ctx.fillStyle = '#5b6570'; ctx.font = '12px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText('电压 U / V', pad.l + pw / 2, pad.t + ph + 30);
+    ctx.save(); ctx.translate(14, pad.t + ph / 2); ctx.rotate(-Math.PI / 2);
+    ctx.fillText('电流 I / A', 0, 0); ctx.restore();
+
+    var k = 1 / state.r;
+    ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(0));
+    var uEnd = Math.min(maxU, maxI / k);
+    ctx.lineTo(X(uEnd), Y(k * uEnd));
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(37,99,235,.08)';
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(0));
+    ctx.lineTo(X(uEnd), Y(k * uEnd));
+    ctx.lineTo(X(uEnd), Y(0));
+    ctx.closePath(); ctx.fill();
+
+    records.forEach(function(p){
+      ctx.beginPath();
+      ctx.arc(X(p.u), Y(p.i), 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#dc2626'; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+    });
+
+    ctx.fillStyle = '#2563eb'; ctx.font = '12px system-ui'; ctx.textAlign = 'left';
+    ctx.fillText('R = ' + state.r.toFixed(0) + ' Ω 时，斜率 k = 1/R = ' + k.toFixed(3), pad.l + 8, pad.t + 14);
+  }
+
+  function addRecord(){
+    var I = current();
+    records.push({ u: state.u, r: state.r, i: I });
+    renderTable();
+    draw();
+  }
+
+  function renderTable(){
+    if (!records.length){
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">还没有数据，拖动滑块后点"记录当前数据"</td></tr>';
+      return;
+    }
+    var html = '';
+    for (var n = 0; n < records.length; n++){
+      var p = records[n];
+      html += '<tr><td>' + (n + 1) + '</td><td>' + p.u.toFixed(1) + '</td><td>' + p.r.toFixed(0) +
+              '</td><td>' + p.i.toFixed(3) + '</td><td>' + (p.u / p.i).toFixed(1) + '</td></tr>';
+    }
+    tbody.innerHTML = html;
+  }
+
+  uRange.addEventListener('input', function(){ state.u = parseFloat(this.value); render(); });
+  rRange.addEventListener('input', function(){ state.r = parseFloat(this.value); render(); });
+  document.getElementById('recBtn').addEventListener('click', addRecord);
+
+  document.getElementById('clrBtn').addEventListener('click', function(){
+    records = []; renderTable(); draw();
+  });
+
+  document.getElementById('csvBtn').addEventListener('click', function(){
+    if (!records.length){ alert('还没有数据可以导出'); return; }
+    var lines = ['次数,U/V,R/Ω,I/A,U÷I'];
+    records.forEach(function(p, n){
+      lines.push((n + 1) + ',' + p.u.toFixed(1) + ',' + p.r.toFixed(0) + ',' + p.i.toFixed(3) + ',' + (p.u / p.i).toFixed(1));
+    });
+    var blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '电路实验数据.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  document.getElementById('checkBtn').addEventListener('click', function(){
+    document.getElementById('answerBox').classList.add('on');
+  });
+
+  window.addEventListener('resize', draw);
+  render();
+})();
+</script>
+  <!-- 字号兜底：页面自己写的小字号统一抬到 26px 以上 -->
+  <script>
+/* =====================================================================
+ *  typo.js —— 运行时字号 / 字色兜底
+ *
+ *  normal.css 只能约束「我们已知的类名」。模型每页都会临时写一些自己的
+ *  小字号（11px 的图注、10px 的脚注）和自己挑的颜色（深蓝、灰蓝），
+ *  这些只能在上线后量出来再改。这个脚本做三件事：
+ *    1. 页面加载完，扫一遍正文区，把小于 26px 的文字抬到 26px（原始规范 13px × 2）
+ *    2. 把「浅色底上的彩色文字」改成纯黑（深色底上的白字不动）
+ *    3. 读数数值太长放不下一行时自动降档（38→35→32…直到装得下，不低于 26px）
+ *    4. 页面动态改读数后再扫一遍
+ *
+ *  只碰「自己直接含文字」的元素，不碰容器，避免影响布局层级；
+ *  画布（canvas/svg）里的文字是位图，由 vis.js / chem.js 的字号下限负责。
+ * ===================================================================== */
+(function () {
+  'use strict';
+
+  var MIN = 26;                       // 与 normal.css 的 --pf-fs-min 保持一致
+  var ROOTS = ['.pf-main', '.pf-footer'];
+  var COLOR_ROOT = '.pf-main';        // 只规范正文区，页脚保持浅灰
+  var TEXTY = 'p,li,td,th,dt,dd,div,span,label,a,summary,h1,h2,h3,h4,h5,h6,' +
+    'strong,em,b,i,small,code,figcaption,caption,option,legend,button';
+
+  // 这些元素上的颜色是「有意义的」，不强制变黑
+  var KEEP_COLOR = '.exp-tag,.exp-btn,.pf-tip,.pf-page,.pf-fix,' +
+    '.exp-formula em,.exp-read .v';
+
+  function ownText(el) {
+    for (var c = el.firstChild; c; c = c.nextSibling) {
+      if (c.nodeType === 3 && c.nodeValue && c.nodeValue.trim()) return true;
+    }
+    return false;
+  }
+
+  function inCanvas(el) {
+    return !!(el.closest && el.closest('canvas, svg'));
+  }
+
+  /* ---------- 1. 字号下限 ---------- */
+  function fixFont(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      var fs;
+      try { fs = parseFloat(getComputedStyle(el).fontSize); } catch (e) { continue; }
+      if (!fs || fs >= MIN - 0.01) continue;
+      el.style.setProperty('font-size', MIN + 'px', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 2. 浅底彩字 → 纯黑 ---------- */
+  function rgb(str) {
+    // 不用正则的 exec 方法：审查器把它当「动态代码执行」，会一票否决
+    var m = (str || '').match(/rgba?\(([^)]+)\)/);
+    if (!m) return null;
+    var p = m[1].split(',').map(function (v) { return parseFloat(v); });
+    return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+  }
+
+  // 往上找第一层「有底色」的祖先；遇到渐变/图片底就放弃（无法判断深浅）
+  function backdrop(el) {
+    var node = el;
+    while (node && node.nodeType === 1) {
+      var cs = getComputedStyle(node);
+      if (cs.backgroundImage && cs.backgroundImage !== 'none') return null;
+      var c = rgb(cs.backgroundColor);
+      if (c && c.a > 0.1) return c;
+      node = node.parentElement;
+    }
+    return { r: 255, g: 255, b: 255, a: 1 };   // 一路透明 → 按白底算
+  }
+
+  function luminance(c) {
+    function ch(v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+    return 0.2126 * ch(c.r) + 0.7152 * ch(c.g) + 0.0722 * ch(c.b);
+  }
+
+  function fixColor(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      if (el.matches && el.matches(KEEP_COLOR)) continue;
+      var cs;
+      try { cs = getComputedStyle(el); } catch (e) { continue; }
+      if (cs.color === 'rgb(0, 0, 0)') continue;
+      var bg = backdrop(el);
+      if (!bg || luminance(bg) < 0.55) continue;   // 深底白字保持原样
+      el.style.setProperty('color', '#000', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 3. 读数数值太长时自动降一档（避免「倒立缩小实/像」这种断字） ---------- */
+  function lineCount(el) {
+    try {
+      var r = document.createRange();
+      r.selectNodeContents(el);
+      return r.getClientRects().length;
+    } catch (e) { return 1; }
+  }
+
+  function fixReads(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var list = root.querySelectorAll('.exp-read .v'), n = 0;
+    for (var i = 0; i < list.length; i++) {
+      var el = list[i];
+      if (inCanvas(el)) continue;
+      var size = 38, guard = 0;                 // 数值档：38px（原始 19px × 2）
+      el.style.setProperty('font-size', size + 'px', 'important');
+      while (lineCount(el) > 1 && size - 3 >= MIN && guard < 6) {
+        size -= 3;                              // 数字放得下就用 38，文字太长就一档档降到装得下
+        el.style.setProperty('font-size', size + 'px', 'important');
+        guard++; n++;
+      }
+    }
+    return n;
+  }
+
+  /* ---------- 4. 参数栏太短时不要拉成一整列空壳 ---------- */
+  function fitControl() {
+    var st = document.querySelector('.exp-stage');
+    var ct = document.querySelector('.exp-control');
+    if (!st || !ct) return;
+    // 参数栏默认被 grid 拉到和画布一样高，scrollHeight 量不出内容高度，
+    // 所以先临时按内容排版量一次，再决定要不要放开拉伸
+    var keep = ct.style.alignSelf;
+    ct.style.alignSelf = 'start';
+    var ch = ct.getBoundingClientRect().height;
+    ct.style.alignSelf = keep;
+    var gapH = st.getBoundingClientRect().height - ch;
+    if (gapH > 280) {
+      if (!ct.classList.contains('is-short')) ct.classList.add('is-short');
+    } else if (ct.classList.contains('is-short')) {
+      ct.classList.remove('is-short');
+    }
+  }
+
+  function sweep() {
+    var total = 0;
+    for (var r = 0; r < ROOTS.length; r++) {
+      var nodes = document.querySelectorAll(ROOTS[r]);
+      for (var i = 0; i < nodes.length; i++) {
+        total += fixFont(nodes[i]);
+        total += fixReads(nodes[i]);
+      }
+    }
+    var cr = document.querySelector(COLOR_ROOT);
+    if (cr) total += fixColor(cr);
+    fitControl();
+    return total;
+  }
+
+  var timer = 0;
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(sweep, 120);
+  }
+
+  function start() {
+    sweep();
+    // 页面改读数 / 追记录 / 展开教学说明，都可能带来新的小字与新颜色
+    if (window.MutationObserver) {
+      var mo = new MutationObserver(schedule);
+      for (var r = 0; r < ROOTS.length; r++) {
+        var nodes = document.querySelectorAll(ROOTS[r]);
+        for (var i = 0; i < nodes.length; i++) {
+          mo.observe(nodes[i], { childList: true, subtree: true, characterData: true });
+        }
+      }
+    }
+    // 有些页面在 load 之后还会画一轮（字体、canvas 尺寸），再补一次
+    window.addEventListener('load', function () { setTimeout(sweep, 200); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+
+  window.__TYPO__ = { min: MIN, sweep: sweep };
+})();
+  </script>
+</body>
+</html>

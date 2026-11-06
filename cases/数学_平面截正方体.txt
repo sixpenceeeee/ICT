@@ -1,0 +1,406 @@
+<!--1-->
+<h2 class="exp-name">平面截正方体：截面形状与体积分割</h2>
+<div class="exp-tags">
+  <span class="exp-tag">数学</span>
+  <span class="exp-tag">初中拓展 / 高中必修</span>
+  <span class="exp-tag is-plain">教学演示（非课标必做实验）</span>
+</div>
+<div class="exp-goals-title">学习目标</div>
+<ul class="exp-goals">
+  <li>能说出截面边数随平面倾斜角与位置变化的规律</li>
+  <li>能说明截面为什么最多只有六条边</li>
+  <li>能用体积相加验证截面把正方体恰好分成两部分</li>
+</ul>
+
+<!--2-->
+<canvas id="cv"></canvas>
+<span class="exp-canvas-tip">按住拖动可旋转视角 · 滚轮缩放</span>
+
+<!--3-->
+<div class="exp-field">
+  <div class="exp-label"><span>平面倾角 θ</span><span class="exp-val"><b id="v-theta">35</b>°</span></div>
+  <input type="range" id="rg-theta" min="0" max="90" step="1" value="35" data-key="theta">
+</div>
+<div class="exp-field">
+  <div class="exp-label"><span>平面到中心的距离 d</span><span class="exp-val"><b id="v-d">0.00</b> a</span></div>
+  <input type="range" id="rg-d" min="-860" max="860" step="10" value="0" data-key="d">
+</div>
+<div class="exp-btns">
+  <button class="exp-btn is-on" id="btn-split" type="button">分离显示：开</button>
+  <button class="exp-btn" id="btn-auto" type="button">自动扫描</button>
+  <button class="exp-btn is-primary" id="btn-record" type="button">记录当前数据</button>
+  <button class="exp-btn" id="btn-reset" type="button">重置</button>
+</div>
+
+<!--4-->
+<div class="exp-reads">
+  <div class="exp-read"><span class="k">截面边数</span><span class="v"><b id="r-n">4</b> 边</span></div>
+  <div class="exp-read"><span class="k">截面面积</span><span class="v"><b id="r-s">0.750</b> <span class="u">a²</span></span></div>
+  <div class="exp-read"><span class="k">上半体积 V上</span><span class="v"><b id="r-v1">0.500</b> <span class="u">a³</span></span></div>
+  <div class="exp-read"><span class="k">下半体积 V下</span><span class="v"><b id="r-v2">0.500</b> <span class="u">a³</span></span></div>
+</div>
+<div class="exp-formula" id="fml"></div>
+<p class="exp-note" id="hint"></p>
+<div class="exp-alert" id="alert" hidden></div>
+
+<!--5-->
+<table class="exp-table">
+  <thead>
+    <tr><th>序号</th><th>θ / °</th><th>d / a</th><th>边数</th><th>面积 / a²</th><th>V上 / a³</th><th>V下 / a³</th><th>体积和 / a³</th></tr>
+  </thead>
+  <tbody id="rows"></tbody>
+</table>
+
+<!--6-->
+<h3>原理</h3>
+<ul>
+  <li>截面是<b>平面与正方体各个面的交线围成的多边形</b>。正方体只有 6 个面，每个面最多贡献 1 条边，所以截面边数 n ≤ 6，不可能出现七边形。</li>
+  <li>平面位置连续变化时，截面边数只能逐次加 1 或减 1，不能跳变（每次只能"进入"或"离开"一个面）。</li>
+  <li>平面把正方体分成两部分，两部分体积之和恒等于 a³，与平面怎么切无关——这是体积的可加性，也是本页自动核对的那一列。</li>
+</ul>
+<h3>易错点</h3>
+<ul>
+  <li>把"截面周长"当成"截面面积"，两者随 d 的变化趋势并不相同。</li>
+  <li>认为 θ = 45° 时一定是正六边形：正六边形要求平面过中心且垂直于一条体对角线（θ ≈ 54.7°，此时面积恰为 3√3/4 a² ≈ 1.299 a²）。</li>
+  <li>以为平面越靠近顶点截面越小就是"面积单调减"：从三角形到六边形再到三角形，面积会先增后减。</li>
+</ul>
+<h3>探究问题</h3>
+<ol>
+  <li>把 d 固定在 0，慢慢改变 θ，截面从三角形变到六边形再变回三角形，边数依次是多少？在哪个角度出现六边形？</li>
+  <li>保持 θ 不变，只移动 d，面积最大出现在什么位置？和"过中心"有关系吗？</li>
+  <li>记录表最后一列"体积和"始终等于 1.000，这说明了什么？如果它不等于 1.000，问题可能出在哪里？</li>
+</ol>
+<p class="exp-note">本页为几何演示，数值由确定性几何计算得出（凸多面体裁剪 + 散度定理求体积），不涉及实验器材与操作安全。</p>
+<h3>结论</h3>
+<p>正方体截面边数只可能是 3、4、5、6 边形，因为正方体只有 6 个面；平面过中心且垂直于一条体对角线时得到正六边形，面积 3√3/4 a² ≈ 1.299 a²；无论怎么切，两部分体积之和恒等于 a³。</p>
+<h3>注意事项</h3>
+<ul>
+  <li>本页为虚拟几何演示，截面由确定性算法计算，不是模型估算；拖动时以页面读数为准。</li>
+  <li>d 超出 ±0.87a 时平面已移出正方体，页面不再显示截面，属于正常现象而非错误。</li>
+  <li>课堂使用建议由教师先演示一次"过中心 → 六边形"，再让学生自己找最大面积的位置。</li>
+</ul>
+
+<!--JS-->
+(function () {
+  var V = [[-.5,-.5,-.5],[.5,-.5,-.5],[.5,.5,-.5],[-.5,.5,-.5],
+           [-.5,-.5,.5],[.5,-.5,.5],[.5,.5,.5],[-.5,.5,.5]];
+  var F = [[0,3,2,1],[4,5,6,7],[0,1,5,4],[3,7,6,2],[0,4,7,3],[1,2,6,5]];
+  var EDGES = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+  var EPS = 1e-9;
+
+  function dot(a,b){ return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]; }
+  function sub(a,b){ return [a[0]-b[0],a[1]-b[1],a[2]-b[2]]; }
+  function cross(a,b){ return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]; }
+  function vlen(a){ return Math.sqrt(dot(a,a)); }
+  function unit(a){ var l=vlen(a)||1; return [a[0]/l,a[1]/l,a[2]/l]; }
+  function add(a,b,s){ s=s||1; return [a[0]+b[0]*s,a[1]+b[1]*s,a[2]+b[2]*s]; }
+
+  var state = { theta:35, d:0, split:true, auto:false };
+  var view = { yaw:0.68, pitch:-0.42, zoom:1 };
+
+  function normalOf(t){
+    var t1 = t*Math.PI/180, p = Math.PI/4;
+    return [Math.sin(t1)*Math.cos(p), Math.sin(t1)*Math.sin(p), Math.cos(t1)];
+  }
+
+  function clipPoly(poly, n, d, sign) {
+    var m = sign < 0 ? 1 : -1, D = sign < 0 ? d : -d, out = [], N = poly.length;
+    for (var i=0;i<N;i++){
+      var a = poly[i], b = poly[(i+1)%N];
+      var da = m*dot(n,a)-D, db = m*dot(n,b)-D;
+      if (da <= EPS) out.push(a);
+      if ((da < -EPS && db > EPS) || (da > EPS && db < -EPS)) {
+        var t = da/(da-db);
+        out.push([a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]);
+      }
+    }
+    return out;
+  }
+
+  function sectionPoly(n, d) {
+    var pts = [], i, j, a, b, da, db, t;
+    for (var e=0;e<EDGES.length;e++){
+      i = EDGES[e][0]; j = EDGES[e][1]; a = V[i]; b = V[j];
+      da = dot(n,a)-d; db = dot(n,b)-d;
+      if (Math.abs(da) < 1e-7) pts.push(a.slice());
+      else if (da*db < 0) {
+        t = da/(da-db);
+        pts.push([a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]);
+      }
+    }
+    var uniq = [];
+    for (var p=0;p<pts.length;p++){
+      var dup = false;
+      for (var q=0;q<uniq.length;q++) if (vlen(sub(pts[p],uniq[q])) < 1e-7) { dup = true; break; }
+      if (!dup) uniq.push(pts[p]);
+    }
+    if (uniq.length < 3) return [];
+    var nz = unit(n);
+    var ref = Math.abs(nz[0]) < 0.9 ? [1,0,0] : [0,1,0];
+    var u = unit(cross(nz, ref)), v = cross(nz, u);
+    var c = [0,0,0];
+    for (var k=0;k<uniq.length;k++){ c = add(c, uniq[k], 1/uniq.length); }
+    uniq.sort(function (A,B) {
+      var a1 = Math.atan2(dot(sub(A,c),v), dot(sub(A,c),u));
+      var b1 = Math.atan2(dot(sub(B,c),v), dot(sub(B,c),u));
+      return a1 - b1;
+    });
+    return uniq;
+  }
+
+  function solidFaces(n, d, sign) {
+    var out = [], f, i, poly;
+    for (f=0;f<F.length;f++){
+      poly = [];
+      for (i=0;i<F[f].length;i++) poly.push(V[F[f][i]].slice());
+      poly = clipPoly(poly, n, d, sign);
+      if (poly.length >= 3) out.push(poly);
+    }
+    var cap = sectionPoly(n, d);
+    if (cap.length >= 3) out.push(sign < 0 ? cap : cap.slice().reverse());
+    return out;
+  }
+
+  function volumeOf(faces) {
+    var vol = 0, f, i, p0;
+    for (f=0;f<faces.length;f++){
+      var poly = faces[f]; p0 = poly[0];
+      for (i=1;i<poly.length-1;i++) vol += dot(p0, cross(poly[i], poly[i+1]))/6;
+    }
+    return Math.abs(vol);
+  }
+
+  function areaOf(poly) {
+    if (poly.length < 3) return 0;
+    var s = [0,0,0], i;
+    for (i=0;i<poly.length;i++){
+      var cr = cross(poly[i], poly[(i+1)%poly.length]);
+      s = [s[0]+cr[0], s[1]+cr[1], s[2]+cr[2]];
+    }
+    return vlen(s)/2;
+  }
+
+  function proj(p) {
+    var a = view.yaw, b = view.pitch;
+    var x = p[0]*Math.cos(a) - p[1]*Math.sin(a);
+    var y = p[0]*Math.sin(a) + p[1]*Math.cos(a);
+    var z = p[2];
+    var y2 = y*Math.cos(b) - z*Math.sin(b);
+    var z2 = y*Math.sin(b) + z*Math.cos(b);
+    return { x:x, y:-y2, z:z2 };
+  }
+
+  var ctx = null, size = { w:0, h:0, s:1, cx:0, cy:0 }, Z = { n:[0,0,1], d:0, off:0 };
+
+  function segmentsOf(faces, shift) {
+    var segs = [], f, i, poly, a, b;
+    for (f=0;f<faces.length;f++){
+      poly = faces[f];
+      for (i=0;i<poly.length;i++){
+        a = proj(add(poly[i], shift, 1));
+        b = proj(add(poly[(i+1)%poly.length], shift, 1));
+        segs.push([size.cx + a.x*size.s, size.cy + a.y*size.s,
+                   size.cx + b.x*size.s, size.cy + b.y*size.s, (a.z+b.z)/2]);
+      }
+    }
+    return segs;
+  }
+
+  function strokeSegs(segs, color, width, dash) {
+    ctx.save();
+    ctx.strokeStyle = color; ctx.lineWidth = width; ctx.setLineDash(dash || []);
+    ctx.beginPath();
+    for (var i=0;i<segs.length;i++){ ctx.moveTo(segs[i][0],segs[i][1]); ctx.lineTo(segs[i][2],segs[i][3]); }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function fillPoly(poly, shift, fill, stroke) {
+    if (poly.length < 3) return;
+    ctx.beginPath();
+    for (var i=0;i<poly.length;i++){
+      var p = proj(add(poly[i], shift, 1));
+      var X = size.cx + p.x*size.s, Y = size.cy + p.y*size.s;
+      i ? ctx.lineTo(X,Y) : ctx.moveTo(X,Y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke();
+  }
+
+  function draw() {
+    var cv = document.getElementById('cv');
+    var box = cv.parentElement;
+    var dpr = window.devicePixelRatio || 1;
+    var w = box.clientWidth || 600, h = box.clientHeight || 360;
+    cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+    cv.style.width = w+'px'; cv.style.height = h+'px';
+    ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+    size.w = w; size.h = h;
+    size.s = Math.min(w/2.9, h/2.2) * view.zoom;
+    size.cx = w/2; size.cy = h/2 + h*0.03;
+
+    var n = Z.n, d = Z.d, cap = sectionPoly(n, d);
+    var shiftUp = [n[0]*Z.off, n[1]*Z.off, n[2]*Z.off];
+
+    if (state.split) {
+      var lower = solidFaces(n, d, -1);
+      var upper = solidFaces(n, d, 1);
+      var lowSegs = segmentsOf(lower, [0,0,0]);
+      var upSegs = segmentsOf(upper, shiftUp);
+      strokeSegs(lowSegs, '#8fb6d8', 1.4);
+      strokeSegs(upSegs, '#4a86bd', 1.6);
+      fillPoly(cap, [0,0,0], 'rgba(59,134,201,0.16)', '#2b6aa8');
+      fillPoly(cap, shiftUp, 'rgba(59,134,201,0.24)', '#2b6aa8');
+    } else {
+      var all = [], i;
+      for (i=0;i<EDGES.length;i++){
+        var a = proj(V[EDGES[i][0]]), b = proj(V[EDGES[i][1]]);
+        all.push([size.cx+a.x*size.s, size.cy+a.y*size.s,
+                  size.cx+b.x*size.s, size.cy+b.y*size.s, 0]);
+      }
+      strokeSegs(all, '#8fb6d8', 1.5);
+      fillPoly(cap, [0,0,0], 'rgba(59,134,201,0.22)', '#2b6aa8');
+    }
+  }
+
+  function render() {
+    var n = normalOf(state.theta);
+    var d = state.d;
+    var cap = sectionPoly(n, d);
+    var v1 = volumeOf(solidFaces(n, d, 1));
+    var v2 = volumeOf(solidFaces(n, d, -1));
+    var S = areaOf(cap);
+    var sum = v1 + v2;
+
+    Z = { n:n, d:d, off: state.split ? 0.26 : 0 };
+    draw();
+
+    document.getElementById('v-theta').textContent = state.theta;
+    document.getElementById('v-d').textContent = d.toFixed(2);
+    document.getElementById('r-n').textContent = cap.length;
+    document.getElementById('r-s').textContent = S.toFixed(3);
+    document.getElementById('r-v1').textContent = v1.toFixed(3);
+    document.getElementById('r-v2').textContent = v2.toFixed(3);
+
+    document.getElementById('fml').innerHTML =
+      'V上 + V下 = ' + v1.toFixed(3) + ' a³ + ' + v2.toFixed(3) + ' a³ = <em>' + sum.toFixed(3) + ' a³</em>'
+      + '（恒等于 a³）<br>截面 = ' + cap.length + ' 边形，面积 S = <em>' + S.toFixed(3) + ' a²</em>';
+
+    var hint = document.getElementById('hint');
+    var alertBox = document.getElementById('alert');
+    if (cap.length <= 0) {
+      hint.textContent = '平面已移到正方体之外，没有截面。';
+    } else if (cap.length === 6) {
+      hint.textContent = '六边形截面：平面同时切到正方体的 6 个面。θ≈54.7° 且过中心时为正六边形。';
+    } else if (cap.length === 3) {
+      hint.textContent = '三角形截面：平面只切到 3 个面，靠近顶点时出现。';
+    } else {
+      hint.textContent = '四边形截面：最常见的截面形状，水平切（θ=0°）得到正方形。';
+    }
+    if (Math.abs(sum - 1) > 5e-3) {
+      alertBox.hidden = false;
+      alertBox.textContent = '体积和不等于 1.000 a³（当前 ' + sum.toFixed(3) + '），几何计算可能出错。';
+    } else {
+      alertBox.hidden = true;
+    }
+
+    window.__GEO__ = {
+      theta: state.theta, d: d, sides: cap.length,
+      area: S, v_up: v1, v_down: v2, v_sum: sum,
+      formula_ok: Math.abs(sum - 1) < 5e-3
+    };
+  }
+
+  var rows = document.getElementById('rows');
+  function record() {
+    var g = window.__GEO__;
+    var tr = document.createElement('tr');
+    var cells = [rows.children.length+1, g.theta, g.d.toFixed(2), g.sides,
+                 g.area.toFixed(3), g.v_up.toFixed(3), g.v_down.toFixed(3),
+                 '<span class="is-strong">' + g.v_sum.toFixed(3) + '</span>'];
+    for (var i=0;i<cells.length;i++){
+      var td = document.createElement('td');
+      td.innerHTML = cells[i];
+      tr.appendChild(td);
+    }
+    rows.appendChild(tr);
+  }
+
+  document.querySelectorAll('input[type=range]').forEach(function (el) {
+    el.addEventListener('input', function () {
+      if (el.dataset.key === 'theta') state.theta = +el.value;
+      else state.d = (+el.value)/1000;
+      render();
+    });
+  });
+
+  document.getElementById('btn-split').addEventListener('click', function () {
+    state.split = !state.split;
+    this.textContent = '分离显示：' + (state.split ? '开' : '关');
+    this.classList.toggle('is-on', state.split);
+    render();
+  });
+
+  document.getElementById('btn-record').addEventListener('click', function () {
+    record();
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', function () {
+    state.theta = 35; state.d = 0; state.split = true; state.auto = false;
+    document.getElementById('rg-theta').value = 35;
+    document.getElementById('rg-d').value = 0;
+    document.getElementById('btn-split').textContent = '分离显示：开';
+    document.getElementById('btn-split').classList.add('is-on');
+    document.getElementById('btn-auto').classList.remove('is-on');
+    document.getElementById('btn-auto').textContent = '自动扫描';
+    rows.innerHTML = '';
+    render();
+  });
+
+  var autoTimer = null;
+  document.getElementById('btn-auto').addEventListener('click', function () {
+    state.auto = !state.auto;
+    this.classList.toggle('is-on', state.auto);
+    this.textContent = state.auto ? '停止扫描' : '自动扫描';
+    if (state.auto) {
+      var dir = 0.012;
+      autoTimer = setInterval(function () {
+        state.d += dir;
+        if (state.d > 0.86) { state.d = 0.86; dir = -dir; }
+        if (state.d < -0.86) { state.d = -0.86; dir = -dir; }
+        document.getElementById('rg-d').value = Math.round(state.d*1000);
+        render();
+      }, 60);
+    } else {
+      clearInterval(autoTimer);
+    }
+  });
+
+  var drag = null;
+  var cvEl = document.getElementById('cv');
+  cvEl.addEventListener('mousedown', function (e) {
+    drag = { x:e.clientX, y:e.clientY, yaw:view.yaw, pitch:view.pitch };
+    cvEl.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', function (e) {
+    if (!drag) return;
+    view.yaw = drag.yaw + (e.clientX - drag.x)*0.01;
+    view.pitch = drag.pitch + (e.clientY - drag.y)*0.01;
+    draw();
+  });
+  window.addEventListener('mouseup', function () {
+    drag = null; cvEl.style.cursor = 'grab';
+  });
+  cvEl.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    view.zoom = Math.min(1.8, Math.max(0.6, view.zoom - e.deltaY*0.001));
+    draw();
+  }, { passive:false });
+  cvEl.style.cursor = 'grab';
+
+  window.addEventListener('resize', draw);
+  render();
+})();

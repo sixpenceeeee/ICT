@@ -1,0 +1,906 @@
+<!--1-->
+<h2 class="exp-name">凸透镜成像规律</h2>
+<div class="exp-tags">
+  <span class="exp-tag">物理</span>
+  <span class="exp-tag">初中八年级</span>
+  <span class="exp-tag is-plain">教学演示（非课标必做实验）</span>
+</div>
+<div class="exp-goals-title">学习目标</div>
+<ul class="exp-goals">
+  <li>会用成像公式 1/f = 1/u + 1/v 由物距、焦距算出像距</li>
+  <li>能区分 u＞2f、u=2f、f＜u＜2f、u=f、u＜f 五种成像情况</li>
+  <li>会移动光屏寻找清晰像，并用放大率 m = v/u 比较像与物的大小</li>
+</ul>
+
+<!--2-->
+<canvas id="cv"></canvas>
+<span class="exp-canvas-tip" id="tip">装置：光具座（0~80 cm）· 凸透镜 · 物屏 · 光屏（左右拖动画面可移动光屏）</span>
+
+<!--3-->
+<div class="exp-field">
+  <div class="exp-label"><span>物距 u（物到透镜）</span><span class="exp-val"><b id="v-u">30.0</b> cm</span></div>
+  <input type="range" id="rg-u" min="6" max="34" step="0.5" value="30" data-key="u">
+</div>
+<div class="exp-field">
+  <div class="exp-label"><span>焦距 f（凸透镜）</span><span class="exp-val"><b id="v-f">10.0</b> cm</span></div>
+  <input type="range" id="rg-f" min="5" max="15" step="0.5" value="10" data-key="f">
+</div>
+<div class="exp-field">
+  <div class="exp-label"><span>光屏位置（刻度）</span><span class="exp-val"><b id="v-scr">55.0</b> cm</span></div>
+  <input type="range" id="rg-scr" min="42" max="76" step="0.5" value="55" data-key="scr">
+</div>
+<div class="exp-btns">
+  <button class="exp-btn is-primary" id="btn-snap" type="button">对准清晰像</button>
+  <button class="exp-btn" id="btn-step" type="button">微调光屏</button>
+  <button class="exp-btn" id="btn-record" type="button">记录当前数据</button>
+  <button class="exp-btn" id="btn-reset" type="button">重置</button>
+</div>
+
+<!--4-->
+<div class="exp-reads">
+  <div class="exp-read"><span class="k">像距 v</span><span class="v"><b id="r-v">15.0</b> <span class="u">cm</span></span></div>
+  <div class="exp-read"><span class="k">放大率 m = v/u</span><span class="v"><b id="r-m">0.50</b></span></div>
+  <div class="exp-read"><span class="k">像的性质</span><span class="v" id="r-kind">倒立缩小实像</span></div>
+  <div class="exp-read"><span class="k">光屏上的像</span><span class="v" id="r-sharp">清晰</span></div>
+</div>
+<div class="exp-state" id="state"><span class="dot"></span><span id="state-txt">u ＞ 2f：成倒立、缩小的实像（照相机原理）</span></div>
+<div class="exp-formula" id="fml"></div>
+<p class="exp-note" id="hint"></p>
+<div class="exp-alert" id="alert" hidden></div>
+
+<!--5-->
+<div class="exp-record-head"><button class="exp-btn exp-csv" id="btn-csv" type="button">导出 CSV</button></div>
+<table class="exp-table">
+  <thead>
+    <tr><th>序号</th><th>物距 u/cm</th><th>焦距 f/cm</th><th>像距 v/cm</th><th>放大率 m</th><th>像的性质</th><th>光屏清晰度</th></tr>
+  </thead>
+  <tbody id="rows"></tbody>
+</table>
+
+<!--6-->
+<h3>原理</h3>
+<ul>
+  <li>凸透镜对光有<b>会聚</b>作用：平行于主光轴的光经凸透镜后会聚于焦点 F′，焦点到光心 O 的距离就是焦距 f。</li>
+  <li>三条特殊光线可确定像的位置：平行主光轴的光线折射后过焦点；过光心的光线传播方向不变；过焦点的光线折射后平行主光轴。作图时用前两条即可。</li>
+  <li>成像公式：<b>1/f = 1/u + 1/v</b>（u 物距、v 像距，实像 v 取正、虚像 v 取负）。放大率 <b>m = v/u</b>，实像 m 取绝对值。</li>
+  <li>虚实判断：实像是实际光线会聚成的，<b>能</b>呈现在光屏上；虚像是折射光线的反向延长线相交得到的，光屏承接不到，只能透过透镜用眼睛观察。</li>
+</ul>
+<h3>易错点</h3>
+<ul>
+  <li>在光屏上找像时随手一放就读数：应左右微调光屏，直到像最清晰、边缘最小再记录，否则像距误差很大。</li>
+  <li>忘记虚像的符号约定：u＜f 时 v 为负值，表示像与物在透镜<b>同侧</b>，且是正立、放大的。</li>
+  <li>以为物越靠近透镜像越小：恰好相反，f＜u＜2f 范围内减小 u，像距和像都在变大；u 接近 f 时像距急剧增大，光具座可能不够长，屏上承接到的是模糊光斑。</li>
+  <li>把 u=f 时屏上的大光斑当成「像」：u=f 时折射光是平行光，根本不会成像，光斑只是光束的截面。</li>
+  <li>实验中烛焰越烧越短，像会逐渐偏离光屏中心：真实实验要及时调节烛焰或透镜高度，本页固定物高就是为了排除这一干扰。</li>
+</ul>
+<h3>探究问题</h3>
+<ol>
+  <li>保持 f=10 cm，把 u 从 30 cm 逐渐减小到 12 cm，像距和放大率各怎样变化？像的性质变了吗？</li>
+  <li>把 u 调到 8 cm（u＜f），光屏上还能承接到像吗？透过透镜朝物的方向看，看到的是什么样的像？</li>
+  <li>更换 f=5 cm 的透镜并保持 u=30 cm 不变，像距变成多少？和 f=10 cm 时相比，像变大还是变小？</li>
+</ol>
+<h3>结论</h3>
+<p>成像性质由物距与焦距的关系决定：u＞2f，倒立缩小实像（照相机）；u=2f，倒立等大实像；f＜u＜2f，倒立放大实像（投影仪）；u=f，不成像；u＜f，正立放大虚像（放大镜）。实像位置由 1/f = 1/u + 1/v 确定，放大率 m = v/u；一倍焦距分虚实，二倍焦距分大小。</p>
+<h3>注意事项</h3>
+<ul>
+  <li>本页为虚拟实验，像距与放大率由成像公式 1/f = 1/u + 1/v 实时计算，不是模型估算；物高固定为 4.4 cm。</li>
+  <li>光具座量程 0~80 cm：u 接近 f 时像距会超出量程，此时屏上只有模糊光斑，属于实验本身的现象，不是页面故障。</li>
+  <li>真实实验中，烛焰、凸透镜光心、光屏中心应调到同一高度（共轴调节），否则像会成在光屏范围之外。</li>
+  <li>虚拟演示不能替代真实操作，共轴调节、遮焦判断虚实等技能仍需在实验室完成。</li>
+</ul>
+
+<!--CSS-->
+.exp-state {
+  margin: 10px 0 0;
+  padding: 8px 11px;
+  border-radius: 9px;
+  background: #eaf5ff;
+  border: 1px solid #cfe6f8;
+  font-size: 12.8px;
+  font-weight: 600;
+  color: #1b4f7a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.5;
+}
+.exp-state .dot {
+  flex: 0 0 auto;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #3f8fd2;
+  box-shadow: 0 0 0 3px rgba(63, 143, 210, 0.18);
+}
+.exp-state.is-warn { background: #fff6e9; border-color: #fbd6a8; color: #94530f; }
+.exp-state.is-warn .dot { background: #e08a24; box-shadow: 0 0 0 3px rgba(224, 138, 36, 0.18); }
+.exp-state.is-virt { background: #f1ecfb; border-color: #d9cbf2; color: #5b3fa0; }
+.exp-state.is-virt .dot { background: #7e57d6; box-shadow: 0 0 0 3px rgba(126, 87, 214, 0.16); }
+.exp-record-head { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.exp-csv { flex: 0 0 auto; min-width: 0; padding: 6px 12px; font-size: 12.5px; }
+.exp-field .exp-val em { font-style: normal; font-weight: 600; color: var(--pf-muted); }
+
+<!--JS-->
+(function () {
+  'use strict';
+
+  var cv = document.getElementById('cv');
+  if (!cv) return;
+  var ctx = cv.getContext('2d');
+
+  /* ---------------- 设计坐标 880×540 ---------------- */
+  var DW = 880, DH = 540;
+  var PX = 9.6;                 // 水平 1 cm = 9.6 px（光具座 0~80 cm）
+  var PY = 15;                  // 竖直 1 cm = 15 px
+  var RX0 = 60;                 // 0 cm 刻度
+  var axisY = 204;              // 主光轴
+  var railTop = 368, railH = 26;
+  var OH = 4.4;                 // 物高 cm
+  var OBJ_PX = OH * PY;         // 物高 66 px
+
+  function railX(cm) { return RX0 + cm * PX; }
+  var LX = railX(40);           // 透镜固定在 40 cm 刻度
+
+  var DEF = { u: 30, f: 10, scr: 55 };
+  var S = { u: DEF.u, f: DEF.f, scr: DEF.scr, scrTouched: false, stepDir: 1 };
+  var view = { w: 0, h: 0, s: 1, ox: 0, oy: 0, dpr: 1 };
+
+  /* ---------------- 物理计算 ---------------- */
+  function derived() {
+    var u = S.u, f = S.f;
+    var kind, v, m, note = '';
+    if (Math.abs(u - f) < 1e-9) {
+      kind = 'noimg'; v = Infinity; m = Infinity;
+    } else {
+      v = u * f / (u - f);              // 实像为正，虚像为负
+      m = Math.abs(v) / u;
+      if (u > 2 * f + 1e-9) kind = 'shrunk';
+      else if (Math.abs(u - 2 * f) <= 1e-9 + 0.001) kind = 'equal';
+      else if (u > f) kind = 'magnified';
+      else kind = 'virtual';
+    }
+    var imgX = 40 + v;                  // 像的刻度位置
+    var onBench = kind !== 'noimg' && imgX <= 78.5 && imgX >= 2 && m <= 3.2;
+    var delta = 0;
+    var sharp = 0;
+    if (kind !== 'noimg' && kind !== 'virtual' && isFinite(v)) {
+      delta = Math.abs(S.scr - imgX);
+      sharp = Math.max(0, 1 - delta / 6);
+    }
+    return { u: u, f: f, v: v, m: m, kind: kind, imgX: imgX, onBench: onBench,
+             delta: delta, sharp: sharp, note: note };
+  }
+
+  function kindText(d) {
+    switch (d.kind) {
+      case 'shrunk': return '倒立缩小实像';
+      case 'equal': return '倒立等大实像';
+      case 'magnified': return '倒立放大实像';
+      case 'virtual': return '正立放大虚像';
+      default: return '不成像';
+    }
+  }
+  function sharpText(d) {
+    if (d.kind === 'noimg') return '屏上无像';
+    if (d.kind === 'virtual') return '承接不到';
+    if (!d.onBench) return '像超出量程';
+    return d.delta <= 0.75 ? '清晰' : '模糊（' + Math.round(d.sharp * 100) + '%）';
+  }
+
+  /* ---------------- 绘图工具 ---------------- */
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function fit() {
+    var box = cv.parentNode;
+    var w = box.clientWidth || 700;
+    var h = box.clientHeight || 460;
+    view.dpr = window.devicePixelRatio || 1;
+    view.w = w; view.h = h;
+    cv.width = Math.max(1, Math.round(w * view.dpr));
+    cv.height = Math.max(1, Math.round(h * view.dpr));
+    cv.style.width = w + 'px';
+    cv.style.height = h + 'px';
+    view.s = Math.min(w / DW, h / DH);
+    view.ox = (w - DW * view.s) / 2;
+    view.oy = (h - DH * view.s) / 2;
+  }
+  function begin() {
+    ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
+    ctx.clearRect(0, 0, view.w, view.h);
+    ctx.translate(view.ox, view.oy);
+    ctx.scale(view.s, view.s);
+  }
+  function seg(x1, y1, x2, y2, opt) {
+    opt = opt || {};
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = opt.color || '#f28c1e';
+    ctx.lineWidth = opt.lw || 2.4;
+    if (opt.dash) ctx.setLineDash(opt.dash);
+    if (opt.glow !== false) {
+      ctx.shadowColor = 'rgba(242,140,30,0.35)';
+      ctx.shadowBlur = 5;
+    }
+    ctx.stroke();
+    ctx.restore();
+    if (opt.arrow !== false) {
+      var t = opt.at === undefined ? 0.55 : opt.at;
+      var ax = x1 + (x2 - x1) * t, ay = y1 + (y2 - y1) * t;
+      var ang = Math.atan2(y2 - y1, x2 - x1);
+      ctx.save();
+      ctx.translate(ax, ay);
+      ctx.rotate(ang);
+      ctx.beginPath();
+      ctx.moveTo(3.5, 0);
+      ctx.lineTo(-6.5, -4.4);
+      ctx.lineTo(-6.5, 4.4);
+      ctx.closePath();
+      ctx.fillStyle = opt.color || '#f28c1e';
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+  function mount(x, topY) {
+    ctx.save();
+    var g = ctx.createLinearGradient(x - 5, 0, x + 5, 0);
+    g.addColorStop(0, '#1f262e');
+    g.addColorStop(0.5, '#4a545f');
+    g.addColorStop(1, '#222931');
+    ctx.fillStyle = g;
+    ctx.fillRect(x - 4, topY, 8, railTop - topY - 2);          // 立柱
+    roundRect(x - 14, railTop - 4, 28, 9, 3);                   // 底座
+    ctx.fillStyle = '#2c333b';
+    ctx.fill();
+    ctx.strokeStyle = '#151a20';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();                                            // 旋钮
+    ctx.arc(x + 8, topY + 10, 3.2, 0, Math.PI * 2);
+    ctx.fillStyle = '#5d6873';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* ---------------- 场景绘制 ---------------- */
+  function drawBG() {
+    var g = ctx.createLinearGradient(0, 0, 0, DH);
+    g.addColorStop(0, '#f7fafd');
+    g.addColorStop(1, '#e9f0f8');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, DW, DH);
+  }
+  function drawChip(d) {
+    ctx.save();
+    roundRect(14, 12, 320, 42, 10);
+    ctx.fillStyle = 'rgba(255,255,255,0.88)';
+    ctx.fill();
+    ctx.strokeStyle = '#c9dcf0';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.font = '600 15.5px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.fillStyle = '#1d5fae';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    var vt = isFinite(d.v) ? d.v.toFixed(1) : '∞';
+    ctx.fillText('u=' + d.u.toFixed(1) + ' cm   f=' + d.f.toFixed(1) + ' cm   v=' + vt + ' cm', 28, 34);
+    ctx.restore();
+  }
+  function drawRail() {
+    ctx.save();
+    // 支脚
+    ctx.fillStyle = '#2b323a';
+    [[railX(4)], [railX(76)]].forEach(function (p) {
+      var x = p[0];
+      ctx.beginPath();
+      ctx.moveTo(x - 26, 394);
+      ctx.lineTo(x + 26, 394);
+      ctx.lineTo(x + 18, 410);
+      ctx.lineTo(x - 18, 410);
+      ctx.closePath();
+      ctx.fill();
+    });
+    // 导轨主体（铝合金质感）
+    var g = ctx.createLinearGradient(0, railTop, 0, railTop + railH);
+    g.addColorStop(0, '#eef2f7');
+    g.addColorStop(0.35, '#cbd5df');
+    g.addColorStop(0.7, '#dee5ec');
+    g.addColorStop(1, '#b7c2cd');
+    roundRect(40, railTop, 790, railH, 5);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = '#8b99a7';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(90,104,118,0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(46, railTop + 5);
+    ctx.lineTo(824, railTop + 5);
+    ctx.stroke();
+    // 刻度
+    ctx.font = '600 9.5px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    for (var cm = 0; cm <= 80; cm++) {
+      var x = railX(cm);
+      var major = cm % 10 === 0;
+      ctx.beginPath();
+      ctx.moveTo(x, railTop + (major ? 8 : 11));
+      ctx.lineTo(x, railTop + railH - 4);
+      ctx.strokeStyle = major ? '#57656f' : 'rgba(87,101,111,0.4)';
+      ctx.lineWidth = major ? 1.2 : 0.8;
+      ctx.stroke();
+      if (major) {
+        ctx.fillStyle = '#42505c';
+        ctx.fillText(String(cm), x, railTop + 20);
+      }
+    }
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#42505c';
+    ctx.font = '700 10px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.fillText('cm', 836, railTop + 20);
+    ctx.restore();
+  }
+  function drawAxis() {
+    ctx.save();
+    ctx.strokeStyle = '#a9c9e8';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(30, axisY);
+    ctx.lineTo(848, axisY);
+    ctx.stroke();
+    ctx.font = '600 13px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.fillStyle = '#8fb7dd';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('主光轴', 846, axisY - 8);
+    ctx.restore();
+  }
+  function drawMarkers(d) {
+    // 只画圆点，标签统一放到最后（避免被透镜/光屏/光线盖住）
+    ctx.save();
+    var f = d.f;
+    [[40 - 2 * f, '2F'], [40 - f, 'F'], [40 + f, "F'"], [40 + 2 * f, "2F'"]].forEach(function (p) {
+      if (p[0] < 1 || p[0] > 79) return;
+      var x = railX(p[0]);
+      ctx.beginPath();
+      ctx.arc(x, axisY, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#2e6fd8';
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+  function drawMarkerLabels(d) {
+    // 所有标注在最后绘制；靠近透镜或光屏时自动错到下一行，避免压在器材上
+    ctx.save();
+    var f = d.f;
+    var lensX = railX(40), scrX = railX(S.scr);
+    ctx.font = '600 13px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    [[40 - 2 * f, '2F'], [40 - f, 'F'], [40 + f, "F'"], [40 + 2 * f, "2F'"]].forEach(function (p) {
+      if (p[0] < 1 || p[0] > 79) return;
+      var x = railX(p[0]);
+      var near = Math.abs(x - lensX) < 26 || Math.abs(x - scrX) < 24;
+      var y = near ? axisY + 38 : axisY + 20;
+      // 白描边保证压在浅色图元（导轨/液体/光线）上也能读清
+      ctx.lineWidth = 3.2;
+      ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+      ctx.strokeText(p[1], x, y);
+      ctx.fillStyle = '#2e6fd8';
+      ctx.fillText(p[1], x, y);
+    });
+    ctx.restore();
+  }
+  function drawObject(d) {
+    var x = railX(40 - d.u);
+    mount(x, axisY + 8);
+    ctx.save();
+    // 立体箭头（物）
+    var tipY = axisY - OBJ_PX, w = 13;
+    ctx.shadowColor = 'rgba(255,150,40,0.45)';
+    ctx.shadowBlur = 8;
+    var g = ctx.createLinearGradient(x - w, 0, x + w, 0);
+    g.addColorStop(0, '#d97a06');
+    g.addColorStop(0.45, '#ffa733');
+    g.addColorStop(1, '#c96a00');
+    ctx.fillStyle = g;
+    ctx.fillRect(x - 5, tipY + 15, 10, OBJ_PX - 15);
+    ctx.beginPath();
+    ctx.moveTo(x, tipY);
+    ctx.lineTo(x + w, tipY + 17);
+    ctx.lineTo(x - w, tipY + 17);
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(160,84,0,0.55)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - 5, tipY + 15, 10, OBJ_PX - 15);
+    // 标签
+    ctx.font = '700 15px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(247,250,253,0.9)';
+    ctx.strokeText('物', x, axisY + 26);
+    ctx.fillStyle = '#17324f';
+    ctx.fillText('物', x, axisY + 26);
+    ctx.restore();
+  }
+  function drawLens() {
+    mount(LX, axisY + 112);
+    ctx.save();
+    var top = axisY - 112, bot = axisY + 112, hw = 17;
+    ctx.beginPath();
+    ctx.moveTo(LX, top);
+    ctx.quadraticCurveTo(LX + hw * 2.1, axisY, LX, bot);
+    ctx.quadraticCurveTo(LX - hw * 2.1, axisY, LX, top);
+    ctx.closePath();
+    var g = ctx.createLinearGradient(LX - hw, 0, LX + hw, 0);
+    g.addColorStop(0, 'rgba(190,224,248,0.55)');
+    g.addColorStop(0.4, 'rgba(226,242,252,0.72)');
+    g.addColorStop(1, 'rgba(168,209,240,0.6)');
+    ctx.fillStyle = g;
+    ctx.shadowColor = 'rgba(120,175,220,0.4)';
+    ctx.shadowBlur = 7;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#84b4da';
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+    // 高光
+    ctx.beginPath();
+    ctx.moveTo(LX - 6, top + 26);
+    ctx.quadraticCurveTo(LX - 13, axisY, LX - 6, bot - 26);
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.lineWidth = 2.2;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(LX + 5, top + 40);
+    ctx.quadraticCurveTo(LX + 10, axisY, LX + 5, bot - 40);
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+    ctx.restore();
+  }
+  function drawScreen(d) {
+    var x = railX(S.scr);
+    var top = axisY - 74, bot = axisY + 74;
+    mount(x, bot + 2);
+    ctx.save();
+    // 顶部夹持臂
+    ctx.fillStyle = '#2c333b';
+    roundRect(x - 9, top - 7, 18, 8, 3);
+    ctx.fill();
+    // 屏板
+    roundRect(x - 6, top, 12, bot - top, 2);
+    ctx.fillStyle = 'rgba(251,253,255,0.94)';
+    ctx.fill();
+    ctx.strokeStyle = '#aab8c5';
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(210,224,238,0.5)';
+    ctx.fillRect(x - 4, top + 4, 2.4, bot - top - 8);
+    // 屏上的像
+    var label = '光屏';
+    if (d.kind === 'noimg' || d.kind === 'virtual') {
+      ctx.font = '600 11.5px "Microsoft YaHei", system-ui, sans-serif';
+      ctx.fillStyle = '#9fb0c0';
+      ctx.textAlign = 'center';
+      ctx.fillText('屏上无像', x, axisY - 8);
+    } else if (d.onBench) {
+      var ih = Math.min(OBJ_PX * d.m, bot - axisY - 4);
+      var isSharp = d.delta <= 0.75;
+      var cx = x;
+      if (isSharp) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255,150,40,0.5)';
+        ctx.shadowBlur = 7;
+        ctx.fillStyle = 'rgba(255,167,51,0.92)';
+        ctx.fillRect(cx - 3.4, axisY + 6, 6.8, ih - 6);
+        ctx.beginPath();
+        ctx.moveTo(cx, axisY + ih);
+        ctx.lineTo(cx + 8, axisY + ih - 11);
+        ctx.lineTo(cx - 8, axisY + ih - 11);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      } else {
+        var bw = Math.min(30, 5 + d.delta * 5.5);
+        var bg = ctx.createRadialGradient(cx, axisY + ih * 0.6, 1, cx, axisY + ih * 0.6, bw);
+        bg.addColorStop(0, 'rgba(255,160,50,0.6)');
+        bg.addColorStop(1, 'rgba(255,160,50,0)');
+        ctx.fillStyle = bg;
+        ctx.beginPath();
+        ctx.ellipse(cx, axisY + ih * 0.6, bw, bw * 1.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      label = '光屏·实像';
+    } else {
+      ctx.font = '600 11.5px "Microsoft YaHei", system-ui, sans-serif';
+      ctx.fillStyle = '#9fb0c0';
+      ctx.textAlign = 'center';
+      ctx.fillText('像超出量程', x, axisY - 8);
+    }
+    ctx.font = '600 13px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.fillStyle = '#1f66c4';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, bot + 16);
+    ctx.restore();
+  }
+  function drawRays(d) {
+    var ox = railX(40 - d.u);
+    var tipY = axisY - OBJ_PX;
+    var A = [LX, tipY];
+
+    if (d.kind === 'noimg') {
+      seg(ox, tipY, A[0], A[1]);
+      seg(ox, tipY, 852, axisY + (axisY - tipY) * ((852 - ox) / (LX - ox)), { at: 0.62 });
+      ctx.save();
+      ctx.font = '600 13px "Microsoft YaHei", system-ui, sans-serif';
+      ctx.fillStyle = '#b0650a';
+      ctx.textAlign = 'left';
+      ctx.fillText('u = f：折射后为平行光，不成像', LX + 24, tipY - 10);
+      ctx.restore();
+      return;
+    }
+    if (d.kind === 'virtual') {
+      var vimgX = railX(d.imgX), vimgH = OBJ_PX * d.m;
+      var V = [vimgX, axisY - Math.min(vimgH, 210)];
+      // 折射光线（发散）
+      var fpr = railX(40 + d.f);
+      var dirY = (A[1] - axisY) / (LX - fpr);
+      var ex = 852;
+      var ey = A[1] + dirY * (ex - LX);
+      seg(ox, tipY, A[0], A[1], { at: 0.5 });
+      seg(A[0], A[1], ex, ey, { at: 0.45 });
+      seg(ox, tipY, ex, axisY + (axisY - tipY) * ((ex - ox) / (LX - ox)), { at: 0.6, color: '#e97e10' });
+      // 反向延长线（虚）
+      seg(A[0], A[1], V[0], V[1], { dash: [6, 5], color: 'rgba(242,140,30,0.75)', arrow: false, glow: false });
+      seg(ex, ey, V[0], V[1], { dash: [6, 5], color: 'rgba(242,140,30,0.75)', arrow: false, glow: false });
+      // 虚像箭头（正立放大，虚线）
+      if (vimgX > 26 && vimgH <= 210) {
+        ctx.save();
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = '#ef8b1c';
+        ctx.fillStyle = 'rgba(255,167,51,0.35)';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(V[0], axisY);
+        ctx.lineTo(V[0], V[1]);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(V[0], axisY);
+        ctx.lineTo(V[0] + 9, axisY);
+        ctx.lineTo(V[0], V[1]);
+        ctx.closePath();
+        ctx.fill();
+        ctx.setLineDash([]);
+        ctx.font = '600 12.5px "Microsoft YaHei", system-ui, sans-serif';
+        ctx.fillStyle = '#b0650a';
+        ctx.textAlign = 'center';
+        ctx.fillText('虚像', V[0], V[1] - 8);
+        ctx.restore();
+      } else {
+        ctx.save();
+        ctx.font = '600 12.5px "Microsoft YaHei", system-ui, sans-serif';
+        ctx.fillStyle = '#b0650a';
+        ctx.textAlign = 'right';
+        ctx.fillText('虚像过大，超出画面', 846, axisY - 130);
+        ctx.restore();
+      }
+      return;
+    }
+    // 实像
+    var I = [railX(d.imgX), axisY + OBJ_PX * d.m];
+    seg(ox, tipY, A[0], A[1], { at: 0.5 });                       // ①平行主光轴
+    seg(A[0], A[1], I[0], I[1], { at: 0.62 });                    // ①折射过 F'
+    seg(ox, tipY, I[0], I[1], { at: 0.5, color: '#e97e10' });     // ②过光心
+    // 会聚点辉光
+    if (I[0] < 846 && I[1] < DH - 8) {
+      ctx.save();
+      var cg = ctx.createRadialGradient(I[0], I[1], 0.5, I[0], I[1], 9);
+      cg.addColorStop(0, 'rgba(255,170,60,0.85)');
+      cg.addColorStop(1, 'rgba(255,170,60,0)');
+      ctx.fillStyle = cg;
+      ctx.beginPath();
+      ctx.arc(I[0], I[1], 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+  function drawDistances(d) {
+    ctx.save();
+    var y = 442, ly = 466;
+    var ox = railX(40 - d.u);
+    function guide(x) {
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = 'rgba(120,150,185,0.75)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(x, 402);
+      ctx.lineTo(x, y - 6);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    function arrow2(x1, x2, dash) {
+      if (Math.abs(x2 - x1) < 14) return;
+      ctx.save();
+      if (dash) ctx.setLineDash([6, 4]);
+      ctx.strokeStyle = '#2e6fd8';
+      ctx.fillStyle = '#2e6fd8';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(x1 + (x2 > x1 ? 4 : -4), y);
+      ctx.lineTo(x2 - (x2 > x1 ? 4 : -4), y);
+      ctx.stroke();
+      [[x1, x2 > x1 ? -1 : 1], [x2, x2 > x1 ? 1 : -1]].forEach(function (p) {
+        ctx.beginPath();
+        ctx.moveTo(p[0] + p[1] * 7, y);
+        ctx.lineTo(p[0], y - 4.5);
+        ctx.lineTo(p[0], y + 4.5);
+        ctx.closePath();
+        ctx.fill();
+      });
+      ctx.restore();
+    }
+    ctx.font = '600 15px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    // u
+    guide(ox); guide(LX);
+    arrow2(ox, LX);
+    ctx.fillStyle = '#2e6fd8';
+    ctx.fillText('u=' + d.u.toFixed(1) + ' cm', (ox + LX) / 2, ly);
+    // v
+    if (d.kind === 'noimg') return;
+    var ix = railX(d.imgX);
+    if (d.imgX >= 1 && d.imgX <= 79) {
+      guide(ix);
+      arrow2(LX, ix, d.kind === 'virtual');
+      var vt = (d.kind === 'virtual' ? '-' : '') + Math.abs(d.imgX - 40).toFixed(1);
+      ctx.fillStyle = d.kind === 'virtual' ? '#7e57d6' : '#2e6fd8';
+      ctx.fillText('v=' + vt + ' cm' + (d.kind === 'virtual' ? '（虚）' : ''), (LX + ix) / 2, ly);
+    } else {
+      ctx.fillStyle = '#8296ab';
+      ctx.fillText('v=' + d.v.toFixed(1) + ' cm（超出光具座量程）', (LX + 700) / 2, ly);
+    }
+    ctx.restore();
+  }
+
+  function draw(d) {
+    begin();
+    drawBG();
+    drawRail();
+    drawDistances(d);
+    drawAxis();
+    drawMarkers(d);
+    drawObject(d);
+    drawLens();
+    drawScreen(d);
+    drawRays(d);
+    drawMarkerLabels(d);   // 标注最后画：任何图元都不能盖住文字
+    drawChip(d);
+    ctx.restore();
+  }
+
+  /* ---------------- 读数 / 公式 / 机读数据 ---------------- */
+  function setText(id, s) {
+    var el = document.getElementById(id);
+    if (el && el.textContent !== s) el.textContent = s;
+  }
+  function fmt1(x) { return x.toFixed(1); }
+
+  function render() {
+    var d = derived();
+    var isReal = d.kind === 'shrunk' || d.kind === 'equal' || d.kind === 'magnified';
+
+    setText('v-u', fmt1(S.u));
+    setText('v-f', fmt1(S.f));
+    setText('v-scr', fmt1(S.scr));
+    setText('r-v', isFinite(d.v) ? (d.kind === 'virtual' ? '-' : '') + Math.abs(d.v).toFixed(1) : '∞');
+    setText('r-m', isFinite(d.m) ? d.m.toFixed(2) : '—');
+    setText('r-kind', kindText(d));
+    setText('r-sharp', sharpText(d));
+
+    var stateEl = document.getElementById('state');
+    stateEl.className = 'exp-state' + (d.kind === 'virtual' ? ' is-virt' : (d.kind === 'noimg' ? ' is-warn' : ''));
+    var st = {
+      shrunk: 'u ＞ 2f：成倒立、缩小的实像（照相机原理）',
+      equal: 'u = 2f：成倒立、等大的实像（像与物一样大）',
+      magnified: 'f ＜ u ＜ 2f：成倒立、放大的实像（投影仪原理）',
+      noimg: 'u = f：折射后是平行光，不成像，屏上只有同样亮的光斑',
+      virtual: 'u ＜ f：成正立、放大的虚像（放大镜原理），光屏承接不到'
+    }[d.kind];
+    if (isReal && d.delta > 0.75) st += '；光屏未对准像距，左右微调到最清晰再读数';
+    setText('state-txt', st);
+
+    var fml = document.getElementById('fml');
+    if (isReal) {
+      var invF = 1 / d.f, invU = 1 / d.u, invV = invF - invU;
+      fml.innerHTML =
+        '成像公式：1/f = 1/u + 1/v（实像 v 取正）<br>' +
+        '复算：' + invF.toFixed(3) + ' − ' + invU.toFixed(3) + ' = ' + invV.toFixed(3) +
+        ' cm⁻¹，v = ' + Math.abs(d.v).toFixed(1) + ' cm<br>' +
+        '放大率：' + Math.abs(d.v).toFixed(1) + ' ÷ ' + d.u.toFixed(1) + ' = ' + d.m.toFixed(3) +
+        '（m = v ÷ u），像高 = 物高 4.4 cm 的 ' + d.m.toFixed(2) + ' 倍';
+    } else if (d.kind === 'virtual') {
+      fml.innerHTML =
+        '成像公式：1/f = 1/u + 1/v → 1/v = 1/f − 1/u（u＜f 时结果为负，像与物同侧）<br>' +
+        '本状态：v = ' + d.v.toFixed(1) + ' cm，m = ' + d.m.toFixed(2) + '（m = |v| ÷ u），虚像不能呈现在光屏上';
+    } else {
+      fml.innerHTML = 'u = f：1/v = 1/f − 1/u = 0，出射为平行光，v 趋于无穷大，不成像';
+    }
+
+    var alertBox = document.getElementById('alert');
+    if (isReal && d.delta > 0.75 && d.onBench) {
+      alertBox.hidden = false;
+      alertBox.textContent = '光屏不在像距处：像会聚在 v = ' + Math.abs(d.v).toFixed(1) +
+        ' cm 处，屏上看到的是模糊光斑。点「对准清晰像」或微调光屏。';
+    } else if (isReal && !d.onBench) {
+      alertBox.hidden = false;
+      alertBox.textContent = '像距 v = ' + d.v.toFixed(1) + ' cm 超出光具座量程（0~80 cm），屏上承接不到清晰像。u 再远离 f 一点即可。';
+    } else {
+      alertBox.hidden = true;
+    }
+
+    setText('tip', '装置：光具座（0~80 cm）· 凸透镜（f=' + d.f.toFixed(1) + ' cm）· 物屏（物高 4.4 cm）· 光屏');
+    var hintEl = document.getElementById('pf-stage-hint');
+    if (hintEl) hintEl.textContent = '左右拖动画面可移动光屏';
+
+    window.__DATA__ = {
+      experiment_id: 'lens_imaging',
+      u: d.u,
+      f: d.f,
+      v: isFinite(d.v) ? Number(d.v.toFixed(3)) : null,
+      magnification: isFinite(d.m) ? Number(d.m.toFixed(4)) : null,
+      screen_pos: S.scr,
+      image_type: kindText(d),
+      screen_state: sharpText(d),
+      object_height_cm: OH,
+      checks: {
+        '透镜公式复算': isFinite(d.v) ? Math.abs(1 / d.f - (1 / d.u + 1 / d.v)) < 1e-9 : true,
+        '放大率自洽': isFinite(d.v) ? Math.abs(d.m - Math.abs(d.v) / d.u) < 1e-9 : true,
+        '虚实判断一致': (d.kind === 'virtual') === (d.v < 0)
+      }
+    };
+    window.__CONFIG__ = {
+      scene_id: 'lens_imaging',
+      scene_engine: 'ray_optics',
+      subject: '物理',
+      experiment_id: '凸透镜成像规律'
+    };
+
+    draw(d);
+  }
+
+  /* ---------------- 实验记录 ---------------- */
+  var rowsEl = document.getElementById('rows');
+  function record() {
+    var d = derived();
+    var cells = [
+      String(rowsEl.children.length + 1),
+      d.u.toFixed(1),
+      d.f.toFixed(1),
+      isFinite(d.v) ? d.v.toFixed(1) : '∞',
+      isFinite(d.m) ? d.m.toFixed(2) : '—',
+      kindText(d),
+      sharpText(d)
+    ];
+    var tr = document.createElement('tr');
+    for (var i = 0; i < cells.length; i++) {
+      var td = document.createElement('td');
+      if (i === 3 || i === 4) td.className = 'is-strong';
+      td.textContent = cells[i];
+      tr.appendChild(td);
+    }
+    rowsEl.appendChild(tr);
+  }
+  function csv() {
+    var lines = ['序号,物距u(cm),焦距f(cm),像距v(cm),放大率m,像的性质,光屏清晰度'];
+    for (var i = 0; i < rowsEl.children.length; i++) {
+      var tds = rowsEl.children[i].children, arr = [];
+      for (var j = 0; j < tds.length; j++) {
+        var v = tds[j].textContent;
+        arr.push(/[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v);
+      }
+      lines.push(arr.join(','));
+    }
+    var blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '凸透镜成像实验记录.csv';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  }
+
+  /* ---------------- 控件 ---------------- */
+  function syncControls() {
+    document.getElementById('rg-u').value = String(S.u);
+    document.getElementById('rg-f').value = String(S.f);
+    document.getElementById('rg-scr').value = String(S.scr);
+  }
+  document.getElementById('rg-u').addEventListener('input', function () {
+    S.u = +this.value;
+    render();
+  });
+  document.getElementById('rg-f').addEventListener('input', function () {
+    S.f = +this.value;
+    render();
+  });
+  document.getElementById('rg-scr').addEventListener('input', function () {
+    S.scr = +this.value;
+    S.scrTouched = true;
+    render();
+  });
+  document.getElementById('btn-snap').addEventListener('click', function () {
+    var d = derived();
+    if (d.kind !== 'shrunk' && d.kind !== 'equal' && d.kind !== 'magnified') return;
+    if (!d.onBench) return;
+    S.scr = Math.round((40 + d.v) * 2) / 2;
+    S.scr = Math.min(76, Math.max(42, S.scr));
+    syncControls();
+    render();
+  });
+  document.getElementById('btn-step').addEventListener('click', function () {
+    var d = derived();
+    var isReal = d.kind === 'shrunk' || d.kind === 'equal' || d.kind === 'magnified';
+    if (isReal && d.onBench) {
+      // 在清晰像位置附近来回微调，便于演示「最清晰」的那一格
+      var diff = 40 + d.v - S.scr;
+      if (S.stepDir > 0 && diff <= 0.5) S.stepDir = -1;   // 已扫到最清晰，往回走
+      if (S.stepDir < 0 && diff >= 4) S.stepDir = 1;      // 离开足够远后回头
+      S.scr += 0.5 * S.stepDir;
+    } else {
+      S.scr += 0.5 * S.stepDir;
+      if (S.scr >= 76) { S.scr = 76; S.stepDir = -1; }
+      if (S.scr <= 42) { S.scr = 42; S.stepDir = 1; }
+    }
+    S.scr = Math.min(76, Math.max(42, S.scr));
+    S.scrTouched = true;
+    syncControls();
+    render();
+  });
+  document.getElementById('btn-record').addEventListener('click', record);
+  document.getElementById('btn-csv').addEventListener('click', csv);
+  document.getElementById('btn-reset').addEventListener('click', function () {
+    S.u = DEF.u; S.f = DEF.f; S.scr = DEF.scr;
+    S.scrTouched = false; S.stepDir = 1;
+    rowsEl.innerHTML = '';
+    syncControls();
+    render();
+  });
+
+  /* ---------------- 拖动光屏 ---------------- */
+  var drag = null;
+  cv.addEventListener('pointerdown', function (e) {
+    drag = { x: e.clientX, scr: S.scr };
+    cv.setPointerCapture(e.pointerId);
+    cv.style.cursor = 'grabbing';
+  });
+  cv.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var dcm = (e.clientX - drag.x) / view.s / PX;
+    S.scr = Math.min(76, Math.max(42, Math.round((drag.scr + dcm) * 2) / 2));
+    S.scrTouched = true;
+    document.getElementById('rg-scr').value = String(S.scr);
+    render();
+  });
+  cv.addEventListener('pointerup', function () { drag = null; cv.style.cursor = 'ew-resize'; });
+  cv.addEventListener('pointercancel', function () { drag = null; cv.style.cursor = 'ew-resize'; });
+  cv.style.cursor = 'ew-resize';
+
+  /* ---------------- 启动 ---------------- */
+  window.addEventListener('resize', function () { fit(); render(); });
+  fit();
+  syncControls();
+  render();
+})();

@@ -1,0 +1,3047 @@
+<!doctype html>
+<html lang="zh-CN" class="pf-hosted">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="logo.png">
+  <title>师伴-浮力样张</title>
+
+  <!-- 平台统一外壳（与老师下发的 template 保持一致，不要改） -->
+  <link rel="stylesheet" href="frame.css">
+  <!-- 六区域内容样式 -->
+  <link rel="stylesheet" href="exp.css">
+  <style>
+.exp-state {
+  margin: 10px 0 0;
+  padding: 8px 11px;
+  border-radius: 9px;
+  background: #eaf5ff;
+  border: 1px solid #cfe6f8;
+  font-size: 12.8px;
+  font-weight: 600;
+  color: #1b4f7a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.5;
+}
+.exp-state .dot {
+  flex: 0 0 auto;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #3f8fd2;
+  box-shadow: 0 0 0 3px rgba(63, 143, 210, 0.18);
+}
+.exp-state.is-warn { background: #fff6e9; border-color: #fbd6a8; color: #94530f; }
+.exp-state.is-warn .dot { background: #e08a24; box-shadow: 0 0 0 3px rgba(224, 138, 36, 0.18); }
+.exp-state.is-sink { background: #f2f5f9; border-color: #dbe4ee; color: #3f556e; }
+.exp-state.is-sink .dot { background: #64798f; box-shadow: 0 0 0 3px rgba(100, 121, 143, 0.16); }
+.exp-record-head { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.exp-csv { flex: 0 0 auto; min-width: 0; padding: 6px 12px; font-size: 12.5px; }
+.exp-field .exp-val em { font-style: normal; font-weight: 600; color: var(--pf-muted); }
+  </style>
+</head>
+<body>
+  <header class="pf-header">
+    <span class="pf-logo"><img src="logo.png" alt="平台标志"></span>
+    <h1 class="pf-title"><span class="pf-fix">师伴-</span><span class="pf-page">浮力样张</span></h1>
+  </header>
+
+  <aside class="pf-side">
+    <label for="pf-dl"><span class="ico">📥</span><span class="pf-tip">下载本案例</span></label>
+    <label for="pf-gen"><span class="ico">✨</span><span class="pf-tip">生成新案例</span></label>
+    <label for="pf-contact"><span class="ico">📧</span><span class="pf-tip">联系我们，获取更多案例</span></label>
+  </aside>
+
+  <main class="pf-main">
+    <div class="pf-content">
+      <div class="exp-wrap">
+
+        <!-- ① 实验信息 -->
+        <section class="exp-info" id="sec-info">
+<h2 class="exp-name">浮力：阿基米德原理与浮沉条件</h2>
+<div class="exp-tags">
+  <span class="exp-tag">物理</span>
+  <span class="exp-tag">初中八年级</span>
+  <span class="exp-tag is-plain">教学演示（非课标必做实验）</span>
+</div>
+<div class="exp-goals-title">学习目标</div>
+<ul class="exp-goals">
+  <li>会用称重法测浮力：F浮 = G - F示</li>
+  <li>能说明浮力只与液体密度、排开液体体积有关</li>
+  <li>能由 ρ物 与 ρ液 的大小判断上浮、悬浮、下沉</li>
+</ul>
+        </section>
+
+        <div class="exp-grid">
+          <!-- ② 演示画布 -->
+          <section class="exp-card exp-stage" id="sec-stage">
+            <h2>② 演示<span class="exp-hint" id="pf-stage-hint">拖动画面可旋转视角</span></h2>
+            <div class="exp-canvas-box">
+<canvas id="cv"></canvas>
+<span class="exp-canvas-tip" id="tip">装置：弹簧测力计（0~5 N）· 量筒（1000 mL）· 水 · 物块</span>
+            </div>
+          </section>
+
+          <!-- ③ 参数与操作 -->
+          <section class="exp-card exp-control" id="sec-control">
+            <h2>③ 参数与操作</h2>
+<div class="exp-field">
+  <div class="exp-label"><span>液体</span><span class="exp-val" id="v-liq">水 1.00 g/cm³</span></div>
+  <select id="sel-liq">
+    <option value="1.00" selected>水（1.00 g/cm³）</option>
+    <option value="0.80">酒精（0.80 g/cm³）</option>
+    <option value="1.20">盐水（1.20 g/cm³）</option>
+    <option value="1.30">浓盐水（1.30 g/cm³）</option>
+  </select>
+</div>
+<div class="exp-field">
+  <div class="exp-label"><span>物块密度 ρ物</span><span class="exp-val"><b id="v-rho">2.70</b> g/cm³ <em id="v-mat">铝块</em></span></div>
+  <input type="range" id="rg-rho" min="0.2" max="3" step="0.1" value="2.7" data-key="rho">
+</div>
+<div class="exp-field">
+  <div class="exp-label"><span>物块体积 V物</span><span class="exp-val"><b id="v-vol">100</b> cm³</span></div>
+  <input type="range" id="rg-vol" min="50" max="150" step="10" value="100" data-key="vol">
+</div>
+<div class="exp-field">
+  <div class="exp-label"><span>浸入深度（悬挂时）</span><span class="exp-val"><b id="v-sub">2.8</b> cm</span></div>
+  <input type="range" id="rg-sub" min="0" max="100" step="1" value="60" data-key="sub">
+</div>
+<div class="exp-btns">
+  <button class="exp-btn is-on" id="btn-mode" type="button">模式：测力计悬挂</button>
+  <button class="exp-btn" id="btn-soak" type="button">缓慢浸入</button>
+  <button class="exp-btn" id="btn-step" type="button">单步</button>
+  <button class="exp-btn is-primary" id="btn-record" type="button">记录当前数据</button>
+  <button class="exp-btn" id="btn-reset" type="button">重置</button>
+</div>
+          </section>
+
+          <!-- ④ 结果与反馈 -->
+          <section class="exp-card exp-result" id="sec-result">
+            <h2>④ 结果与反馈</h2>
+<div class="exp-reads">
+  <div class="exp-read"><span class="k">浮力 F浮</span><span class="v"><b id="r-fb">0.60</b> <span class="u">N</span></span></div>
+  <div class="exp-read"><span class="k">测力计示数</span><span class="v"><b id="r-ft">2.10</b> <span class="u">N</span></span></div>
+  <div class="exp-read"><span class="k">排开液体 V排</span><span class="v"><b id="r-vp">60.0</b> <span class="u">cm³</span></span></div>
+  <div class="exp-read"><span class="k">浸入深度</span><span class="v"><b id="r-s">2.8</b> <span class="u">cm</span></span></div>
+</div>
+<div class="exp-state" id="state"><span class="dot"></span><span id="state-txt">部分浸入：V排 &lt; V物，示数随浸入减小</span></div>
+<div class="exp-formula" id="fml"></div>
+<p class="exp-note" id="hint"></p>
+<div class="exp-alert" id="alert" hidden></div>
+          </section>
+        </div>
+
+        <!-- ⑤ 实验记录 -->
+        <section class="exp-card exp-record" id="sec-record">
+          <h2>⑤ 实验记录<span class="exp-hint">点击「记录当前数据」逐行追加</span></h2>
+          <div class="exp-table-wrap">
+<div class="exp-record-head"><button class="exp-btn exp-csv" id="btn-csv" type="button">导出 CSV</button></div>
+<table class="exp-table">
+  <thead>
+    <tr><th>序号</th><th>液体</th><th>ρ液 / g·cm⁻³</th><th>ρ物 / g·cm⁻³</th><th>V物 / cm³</th><th>V排 / cm³</th><th>F浮 / N</th><th>F示 / N</th><th>状态</th></tr>
+  </thead>
+  <tbody id="rows"></tbody>
+</table>
+          </div>
+        </section>
+
+        <!-- ⑥ 教学说明 -->
+        <details class="exp-card exp-teach" id="sec-teach">
+          <summary>⑥ 教学说明（原理 / 易错点 / 探究问题）</summary>
+          <div class="exp-body">
+<h3>原理</h3>
+<ul>
+  <li>浸在液体中的物体受到竖直向上的<b>浮力</b>，大小等于它<b>排开</b>的液体所受的重力，即 F浮 = ρ液 g V排——这就是阿基米德原理。</li>
+  <li>用弹簧测力计悬挂物块：空气中示数等于重力 G，浸入后示数变小，减少的部分就是浮力，所以 F浮 = G - F示，这叫称重法。</li>
+  <li>物块浸入后要占据液体原本的空间，量筒内液面会上升；上升的体积正好等于排开液体的体积 V排。</li>
+  <li>浮沉由 ρ物 与 ρ液 的关系决定：ρ物 &lt; ρ液 上浮至漂浮（此时 F浮 = G）；ρ物 = ρ液 悬浮；ρ物 &gt; ρ液 下沉沉底。</li>
+</ul>
+<h3>易错点</h3>
+<ul>
+  <li>以为"浸得越深浮力越大"：浸没以后 V排 不再增加，浮力与深度无关。</li>
+  <li>把物块的体积当成 V排：没有浸没时 V排 只是物块浸入那部分的体积。</li>
+  <li>忘记单位换算：1 cm³ = 1×10⁻⁶ m³，1 g/cm³ = 1000 kg/m³，代入式里必须统一成国际单位。</li>
+  <li>误以为漂浮时浮力会"不够用"：漂浮时二力平衡，F浮 恰好等于 G，一点也不会少。</li>
+</ul>
+<h3>探究问题</h3>
+<ol>
+  <li>把物块完全浸没后继续加深，测力计示数还变吗？这说明浮力和深度有关吗？</li>
+  <li>保持物块不变，把液体从水换成浓盐水，F浮 怎么变？此时物块是上浮还是下沉？</li>
+  <li>把 ρ物 调到 0.6 g/cm³ 再切到"自由浮沉"，物块最终露出液面的体积占总体积的几分之几？</li>
+</ol>
+<h3>结论</h3>
+<p>浮力大小只由液体密度和排开液体的体积决定，与物体浸没的深度无关；称重法把浮力变成两次读数之差，便于测量；物体上浮、悬浮还是下沉，取决于物体密度与液体密度的大小关系，漂浮时 F浮 = G。</p>
+<h3>注意事项</h3>
+<ul>
+  <li>本页为虚拟实验，读数由 F浮 = ρ液 g V排 实时计算（g 取 10 N/kg），不是模型估算。</li>
+  <li>弹簧测力计量程 0~5 N：物块密度与体积调到很大时示数可能超出量程，实际实验应换用量程更大的测力计。</li>
+  <li>真实实验中物块要完全浸没且不接触容器底与侧壁，否则示数会偏小。</li>
+  <li>虚拟演示不能替代真实操作，实验技能与误差分析仍需在实验室完成。</li>
+</ul>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="pf-footer"><span>© 中小学人工智能教育教学支撑平台 版权所有。本页内容由AI自动生成，请自行确认后使用。</span></footer>
+
+  <input type="checkbox" id="pf-gen" class="pf-gen-check" hidden>
+  <div class="pf-modal pf-modal-gen" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-gen" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-gen" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">✨</div>
+      <h2>生成更多案例</h2>
+      <p>可以在 <strong>WorkBuddy</strong> 中查找<strong>“师伴应用”</strong>，<br>生成更多优质案例。</p>
+      <label class="pf-dialog-btn" for="pf-gen">我知道了</label>
+    </div>
+  </div>
+
+  <input type="checkbox" id="pf-dl" class="pf-dl-check" hidden>
+  <div class="pf-modal pf-modal-dl" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-dl" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-dl" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">📥</div>
+      <h2>下载本案例</h2>
+      <p>您可以将本案例下载到本地运行</p>
+      <a class="pf-dialog-btn" href="浮力样张.zip" download onclick="var c=document.getElementById('pf-dl');if(c)c.checked=false;">立即下载</a>
+    </div>
+  </div>
+
+  <input type="checkbox" id="pf-contact" class="pf-contact-check" hidden>
+  <div class="pf-modal pf-modal-contact" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-contact" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-contact" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">📧</div>
+      <h2>联系我们获取更多案例</h2>
+      <p>邮箱：<a href="mailto:teachbuddy@outlook.com"><strong>teachbuddy@outlook.com</strong></a></p>
+      <label class="pf-dialog-btn" for="pf-contact">我知道了</label>
+    </div>
+  </div>
+
+  <script>
+/* vis.js —— 全学科共享的「2.5D 实验室」视觉原语层（外壳注入，离线可用）
+ *
+ * 为什么要这一层：
+ *   化学那版「双烧杯」之所以好看，不是因为画了烧杯，而是因为一套固定的光影规则——
+ *   主光从左上来、接触阴影偏右下、玻璃是半透明叠层加内侧阴影、液体上浅下深、
+ *   文字最后画且永远带白描边。这些规则对所有学科都成立。
+ *   所以把「规则」抽成原语，各学科只组合原语，不再各画各的。
+ *
+ * 不变量（所有页面自动继承）：
+ *   ① 空间：一切立体物用斜投影（正面 + 顶面 + 右侧面），顶面最亮、右侧最暗
+ *   ② 光影：每个实体至少 3 处——渐变、高光、接触阴影
+ *   ③ 材质：MAT 表里定死，不各页自创
+ *   ④ 文字：统一走 VIS.text，白描边 + 包围盒自动收进画布 8px
+ *
+ * 对外接口（页面脚本直接用，不必自己写 canvas 细节）：
+ *   VIS.mount(cv, {DW, DH})        绑定画布（设计坐标 + DPR + 等比缩放）
+ *   VIS.clear()                     清屏并应用变换
+ *   VIS.wall({tableY})              景深背景：墙面 / 虚化器皿 / 窗光 / 台面
+ *   VIS.glass(cfg) VIS.liquid(cfg) VIS.glassFront(cfg)   玻璃容器三段式
+ *   VIS.box(cfg) VIS.sphere(cfg) VIS.cyl(cfg)            立体实体
+ *   VIS.spring(cfg) VIS.stand(cfg) VIS.rail(cfg) VIS.post(cfg)
+ *   VIS.lens(cfg) VIS.ray(cfg) VIS.magnifier(cfg)
+ *   VIS.pill(cfg) VIS.leader(cfg) VIS.card(cfg) VIS.panel(cfg)
+ *   VIS.arrow(cfg) VIS.ruler(cfg) VIS.hatch(cfg) VIS.text(cfg)
+ *   VIS.responsive(cv, draw)        容器变化时重绘
+ */
+(function () {
+  'use strict';
+
+  var S = {
+    cv: null, ctx: null, DW: 900, DH: 640,
+    w: 0, h: 0, s: 1, ox: 0, oy: 0, dpr: 1,
+    cur: null            // 当前容器几何（glass → liquid → glassFront 之间传递）
+  };
+
+  /* ============================ 基础工具 ============================ */
+
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function parseColor(c) {
+    if (typeof c !== 'string') return [0, 0, 0];
+    if (c.charAt(0) === '#') {
+      var hx = c.substr(1);
+      if (hx.length === 3) hx = hx[0] + hx[0] + hx[1] + hx[1] + hx[2] + hx[2];
+      return [parseInt(hx.substr(0, 2), 16), parseInt(hx.substr(2, 2), 16), parseInt(hx.substr(4, 2), 16)];
+    }
+    var m = String(c).match(/(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)/);
+    return m ? [+m[1], +m[2], +m[3]] : [0, 0, 0];
+  }
+  function rgba(c, a) {
+    var p = parseColor(c);
+    return 'rgba(' + p[0] + ',' + p[1] + ',' + p[2] + ',' + a + ')';
+  }
+  function mix(c1, c2, t) {
+    var a = parseColor(c1), b = parseColor(c2);
+    return 'rgb(' + Math.round(lerp(a[0], b[0], t)) + ',' +
+      Math.round(lerp(a[1], b[1], t)) + ',' + Math.round(lerp(a[2], b[2], t)) + ')';
+  }
+  function shade(c, k) {
+    var p = parseColor(c);
+    if (k >= 0) return 'rgb(' + [0, 1, 2].map(function (i) { return Math.round(lerp(p[i], 255, k)); }).join(',') + ')';
+    return 'rgb(' + [0, 1, 2].map(function (i) { return Math.round(lerp(p[i], 0, -k)); }).join(',') + ')';
+  }
+  function rr(x, y, w, h, r) {
+    r = Math.min(r, Math.abs(w) / 2, Math.abs(h) / 2);
+    var ctx = S.ctx;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  /* 材质表：全学科同一套，避免每页自创颜色 */
+  var MAT = {
+    iron:     { rgb: '#9aa6b2', name: '铁' },
+    steel:    { rgb: '#b7c2cd', name: '钢' },
+    aluminum: { rgb: '#c8d2dc', name: '铝' },
+    copper:   { rgb: '#c1702f', name: '铜' },
+    brass:    { rgb: '#c9a227', name: '黄铜' },
+    wood:     { rgb: '#c99a63', name: '木' },
+    plastic:  { rgb: '#5b9bd5', name: '塑料' },
+    rubber:   { rgb: '#4a5560', name: '橡胶' },
+    glass:    { rgb: '#d7ecfa', name: '玻璃' },
+    stone:    { rgb: '#a8a29b', name: '石' },
+    ice:      { rgb: '#cfe8f7', name: '冰' },
+    liquid:   { rgb: '#5fb3e0', name: '液体' },
+    orange:   { rgb: '#f0a03c', name: '橙色' },
+    green:    { rgb: '#57a97e', name: '绿色' }
+  };
+
+  /* 确定性伪随机：纹理每次重绘一致（不能用 Math.random，否则画面会闪） */
+  var SPK = [];
+  (function () {
+    var s = 20240;
+    for (var i = 0; i < 512; i++) { s = (s * 9301 + 49297) % 233280; SPK.push(s / 233280); }
+  })();
+  function spk(i) { return SPK[((i % 512) + 512) % 512]; }
+
+  /* ============================ 画布与背景 ============================ */
+
+  function mount(cv, opt) {
+    opt = opt || {};
+    S.cv = cv;
+    S.ctx = cv.getContext('2d');
+    S.DW = opt.DW || 900;
+    S.DH = opt.DH || 640;
+    return resize();
+  }
+
+  function resize() {
+    if (!S.cv) return false;
+    var box = S.cv.parentNode || S.cv;
+    var w = box.clientWidth || 720;
+    var h = box.clientHeight || 480;
+    if (w < 4 || h < 4) return false;
+    S.w = w; S.h = h;
+    S.dpr = window.devicePixelRatio || 1;
+    S.cv.width = Math.max(1, Math.round(w * S.dpr));
+    S.cv.height = Math.max(1, Math.round(h * S.dpr));
+    S.cv.style.width = w + 'px';
+    S.cv.style.height = h + 'px';
+    S.s = Math.min(w / S.DW, h / S.DH);
+    S.ox = (w - S.DW * S.s) / 2;
+    S.oy = (h - S.DH * S.s) / 2;
+    return true;
+  }
+
+  function clear() {
+    var ctx = S.ctx;
+    ctx.setTransform(S.dpr, 0, 0, S.dpr, 0, 0);
+    ctx.clearRect(0, 0, S.w, S.h);
+    ctx.translate(S.ox, S.oy);
+    ctx.scale(S.s, S.s);
+    // 视觉边界（供 text 自动收边使用）
+    S.margin = 8;
+  }
+
+  /* 背景：墙面渐变 + 虚化器材剪影 + 窗格光带 + 台面（景深的来源） */
+  function wall(cfg) {
+    cfg = cfg || {};
+    var ctx = S.ctx;
+    var tableY = cfg.tableY == null ? S.DH * 0.52 : cfg.tableY;
+    var warm = cfg.tone === 'warm';
+    var topC = warm ? '#fdfaf4' : '#f9fcfe';
+    var midC = warm ? '#f4ecdf' : '#eaf2f9';
+    var botC = warm ? '#e8ddca' : '#dfe9f3';
+
+    var g = ctx.createLinearGradient(0, 0, 0, S.DH);
+    g.addColorStop(0, topC);
+    g.addColorStop(0.55, midC);
+    g.addColorStop(1, botC);
+    ctx.fillStyle = g;
+    // 外扩 ±420：等比缩放后不会在上下留白
+    ctx.fillRect(-420, -420, S.DW + 840, S.DH + 840);
+
+    // 左上方向光
+    var rg = ctx.createRadialGradient(S.DW * 0.24, S.DH * 0.1, 20, S.DW * 0.24, S.DH * 0.1, S.DW * 0.8);
+    rg.addColorStop(0, 'rgba(255,255,255,0.85)');
+    rg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = rg;
+    ctx.fillRect(-420, -420, S.DW + 840, S.DH + 840);
+
+    // 虚化器皿剪影：制造景深，别让背景是纯色
+    if (cfg.props !== false) {
+      ctx.save();
+      ctx.filter = 'blur(3px)';
+      ctx.globalAlpha = 0.4;
+      var cols = ['#cbdbe9', '#d6e4f0', '#c4d6e6'];
+      for (var i = 0; i < 8; i++) {
+        var bx = 8 + i * (S.DW / 8);
+        var bh = 40 + spk(i + 3) * 34;
+        rr(bx, tableY - bh - 44, 15 + spk(i + 20) * 9, bh, 4);
+        ctx.fillStyle = cols[i % 3];
+        ctx.fill();
+      }
+      for (var k = 0; k < 3; k++) {
+        rr(S.DW * 0.08 + k * S.DW * 0.33, tableY - 96, 34, 44, 5);
+        ctx.fillStyle = 'rgba(224,236,246,0.8)';
+        ctx.fill();
+      }
+      ctx.filter = 'none';
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = '#d7e4f0';
+      ctx.fillRect(-420, tableY - 56, S.DW + 840, 5);
+      ctx.restore();
+    }
+
+    // 窗格光带
+    ctx.save();
+    var lg = ctx.createLinearGradient(0, 0, S.DW, 0);
+    lg.addColorStop(0, 'rgba(255,255,255,0)');
+    lg.addColorStop(0.4, 'rgba(255,255,255,0.5)');
+    lg.addColorStop(0.64, 'rgba(255,255,255,0)');
+    ctx.fillStyle = lg;
+    ctx.fillRect(-420, 0, S.DW + 840, tableY);
+    ctx.restore();
+
+    // 台面
+    var tg = ctx.createLinearGradient(0, tableY, 0, S.DH);
+    if (warm) {
+      tg.addColorStop(0, '#f0e8d9'); tg.addColorStop(0.3, '#e4d9c6'); tg.addColorStop(1, '#cfc2ad');
+    } else {
+      tg.addColorStop(0, '#f2f7fb'); tg.addColorStop(0.4, '#e3ecf5'); tg.addColorStop(1, '#d2dfeb');
+    }
+    ctx.fillStyle = tg;
+    ctx.fillRect(-420, tableY, S.DW + 840, S.DH + 420);
+    ctx.strokeStyle = warm ? 'rgba(176,161,140,0.8)' : 'rgba(176,198,218,0.85)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(-420, tableY + 0.5);
+    ctx.lineTo(S.DW + 420, tableY + 0.5);
+    ctx.stroke();
+    // 台面反光
+    var rg2 = ctx.createLinearGradient(0, tableY + 2, 0, tableY + 110);
+    rg2.addColorStop(0, 'rgba(255,255,255,0.7)');
+    rg2.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = rg2;
+    ctx.fillRect(-420, tableY + 2, S.DW + 840, 108);
+
+    return tableY;
+  }
+
+  /* 接触阴影：主光左上 → 影子偏右下，这是全库统一的光照约定 */
+  function shadow(x, y, rx, ry, a) {
+    var ctx = S.ctx;
+    var g = ctx.createRadialGradient(x + 6, y + 2, 2, x + 6, y + 2, Math.max(rx, ry) * 1.5);
+    g.addColorStop(0, 'rgba(26,54,84,' + (a == null ? 0.24 : a) + ')');
+    g.addColorStop(0.6, 'rgba(26,54,84,' + (a == null ? 0.24 : a) * 0.4 + ')');
+    g.addColorStop(1, 'rgba(26,54,84,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(x + 6, y + 2, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  /* ============================ 玻璃容器 ============================ */
+  /* 三段式：glass（背）→ liquid（液体）→ glassFront（前壁/刻度）
+   * cfg: { x, base, hw, h, r, kind:'beaker'|'cylinder'|'tube', tick, mouth, pour }
+   */
+
+  function glassBodyPath(cfg) {
+    var ctx = S.ctx;
+    var hw = cfg.hw, h = cfg.h, r = cfg.r == null ? 14 : cfg.r;
+    var kind = cfg.kind || 'beaker';
+    ctx.beginPath();
+    if (kind === 'tube') {
+      ctx.moveTo(-hw, 0);
+      ctx.lineTo(-hw, -h + hw);
+      ctx.arc(0, -h + hw, hw, Math.PI, 0, false);
+      ctx.lineTo(hw, 0);
+      ctx.closePath();
+    } else if (kind === 'cylinder') {
+      ctx.moveTo(-hw, 0);
+      ctx.lineTo(-hw, -h + r);
+      ctx.quadraticCurveTo(-hw, -h, -hw + r, -h);
+      ctx.lineTo(hw - r, -h);
+      ctx.quadraticCurveTo(hw, -h, hw, -h + r);
+      ctx.lineTo(hw, 0);
+      ctx.closePath();
+    } else {
+      ctx.moveTo(-hw, -h);
+      ctx.lineTo(-hw, -r);
+      ctx.quadraticCurveTo(-hw, 0, -hw + r, 0);
+      ctx.lineTo(hw - r, 0);
+      ctx.quadraticCurveTo(hw, 0, hw, -r);
+      ctx.lineTo(hw, -h);
+      ctx.closePath();
+    }
+  }
+
+  function glass(cfg) {
+    var ctx = S.ctx;
+    var base = cfg.base, x = cfg.x, hw = cfg.hw, h = cfg.h;
+    var ry = cfg.ry == null ? Math.max(4, hw * 0.19) : cfg.ry;
+    var kind = cfg.kind || 'beaker';
+
+    ctx.save();
+    ctx.translate(x, base);
+
+    // 台面投影 + 杯体倒影
+    shadow(0, 8, hw * 1.32, 14, 0.22);
+    var rf = ctx.createLinearGradient(0, 2, 0, 58);
+    rf.addColorStop(0, 'rgba(255,255,255,0.5)');
+    rf.addColorStop(0.45, 'rgba(198,226,244,0.26)');
+    rf.addColorStop(1, 'rgba(198,226,244,0)');
+    ctx.fillStyle = rf;
+    ctx.beginPath();
+    ctx.moveTo(-hw + 5, 3);
+    ctx.lineTo(hw - 5, 3);
+    ctx.lineTo(hw - 16, 54);
+    ctx.lineTo(-hw + 16, 54);
+    ctx.closePath();
+    ctx.fill();
+
+    // 玻璃杯体
+    var gg = ctx.createLinearGradient(-hw, 0, hw, 0);
+    gg.addColorStop(0, 'rgba(224,239,249,0.62)');
+    gg.addColorStop(0.16, 'rgba(255,255,255,0.34)');
+    gg.addColorStop(0.62, 'rgba(238,247,253,0.20)');
+    gg.addColorStop(1, 'rgba(203,224,241,0.58)');
+    glassBodyPath({ hw: hw, h: h, r: cfg.r, kind: kind });
+    ctx.fillStyle = gg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(146,180,208,0.95)';
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+
+    // 倾倒口（只给烧杯）
+    if (cfg.pour) {
+      ctx.beginPath();
+      ctx.moveTo(-hw + 9, -h - 2);
+      ctx.quadraticCurveTo(-hw - 6, -h - 1, -hw - 11, -h + 9);
+      ctx.quadraticCurveTo(-hw - 6, -h + 6, -hw + 3, -h + 7);
+      ctx.quadraticCurveTo(-hw + 7, -h + 4, -hw + 9, -h - 2);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(240,249,254,0.92)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(150,182,206,0.8)';
+      ctx.lineWidth = 1.3;
+      ctx.stroke();
+    }
+
+    // 杯口后缘（前缘在 glassFront 画）
+    if (kind !== 'tube') {
+      ctx.beginPath();
+      ctx.ellipse(0, -h, hw, ry, 0, Math.PI, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(146,182,210,0.9)';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    S.cur = {
+      x: x, base: base, hw: hw, h: h, ry: ry, kind: kind,
+      top: base - h, cfg: cfg,
+      clipPath: function () {
+        S.ctx.save();
+        S.ctx.translate(base === base ? 0 : 0, 0);
+      }
+    };
+    return S.cur;
+  }
+
+  /* 液体：clip 到容器内壁，上浅下深，加波纹 / 弯月面 / 悬浮颗粒 / 气泡 */
+  function liquid(cfg) {
+    var ctx = S.ctx;
+    var g0 = S.cur;
+    if (!g0) return null;
+    var lv = cfg.level == null ? 0.6 : clamp(cfg.level, 0, 1);
+    var top = typeof cfg.top === 'string' ? cfg.top : '#7fd8f7';
+    var bot = typeof cfg.bot === 'string' ? cfg.bot : '#0b6aa8';
+    var hw = g0.hw, h = g0.h, base = g0.base, x = g0.x;
+    var ySurf = base - Math.max(6, h * lv);
+
+    ctx.save();
+    ctx.translate(x, base);
+    glassBodyPath({ hw: hw - 1.5, h: h - 1.5, r: g0.cfg.r, kind: g0.kind });
+    ctx.clip();
+
+    var lg = ctx.createLinearGradient(0, -h * lv, 0, 0);
+    lg.addColorStop(0, rgba(top, 0.94));
+    lg.addColorStop(0.6, rgba(mix(top, bot, 0.55), 0.95));
+    lg.addColorStop(1, rgba(bot, 0.97));
+    ctx.fillStyle = lg;
+    ctx.fillRect(-hw, -(h * lv), hw * 2, h * lv);
+
+    // 后壁折射亮带
+    ctx.fillStyle = 'rgba(255,255,255,0.16)';
+    ctx.fillRect(-hw + 7, -(h * lv), 10, h * lv);
+
+    // 悬浮颗粒
+    for (var i = 0; i < 24; i++) {
+      var px = (spk(i + 11) - 0.5) * hw * 1.7;
+      var py = -6 - spk(i + 61) * (h * lv - 10);
+      ctx.beginPath();
+      ctx.arc(px, py, 0.5 + spk(i + 111) * 1.1, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.08 + spk(i + 151) * 0.16) + ')';
+      ctx.fill();
+    }
+    // 杯底折射加深
+    var lb = ctx.createLinearGradient(0, 0, 0, -18);
+    lb.addColorStop(0, 'rgba(20,70,110,0.22)');
+    lb.addColorStop(1, 'rgba(20,70,110,0)');
+    ctx.fillStyle = lb;
+    ctx.fillRect(-hw, -18, hw * 2, 18);
+
+    // 气泡（由状态驱动相位，非随机）
+    var bub = cfg.bubbles || 0;
+    for (var b = 0; b < bub; b++) {
+      var ph = ((cfg.t || 0) * 0.32 + b * 0.31) % 1;
+      var bx = (spk(b + 5) - 0.5) * hw * 1.3;
+      var by = -6 - ph * (h * lv - 12);
+      ctx.beginPath();
+      ctx.arc(bx + Math.sin((cfg.t || 0) * 1.4 + b) * 2.5, by, 1 + (b % 3) * 0.7, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.34 * (1 - ph)) + ')';
+      ctx.fill();
+    }
+    ctx.restore();
+
+    // 液面椭圆
+    ctx.save();
+    ctx.translate(x, ySurf);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, hw - 1, g0.ry, 0, 0, Math.PI * 2);
+    var sg = ctx.createLinearGradient(-hw, -g0.ry, hw, g0.ry);
+    sg.addColorStop(0, 'rgba(255,255,255,0.96)');
+    sg.addColorStop(0.55, rgba(mix(top, '#ffffff', 0.45), 0.95));
+    sg.addColorStop(1, rgba(top, 0.96));
+    ctx.fillStyle = sg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(116,170,206,0.9)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // 弯月面
+    ctx.beginPath();
+    ctx.ellipse(0, 1.4, hw - 4, Math.max(2, g0.ry * 0.78), 0, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // 波纹
+    if (cfg.ripple !== false) {
+      var t = cfg.t || 0;
+      for (var w = 0; w < 3; w++) {
+        ctx.beginPath();
+        for (var sx = -hw + 8; sx <= hw - 8; sx += 4) {
+          var yy = 3 + w * 3.2 + Math.sin(sx * 0.16 + t * 1.7 + w) * (0.5 + w * 0.25);
+          if (sx === -hw + 8) ctx.moveTo(sx, yy); else ctx.lineTo(sx, yy);
+        }
+        ctx.strokeStyle = 'rgba(255,255,255,' + (0.32 - w * 0.08) + ')';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+
+    return { y: ySurf, hw: hw, ry: g0.ry };
+  }
+
+  /* 玻璃前壁：内侧阴影 + 杯口前缘 + 厚底亮弧 + 刻度 */
+  function glassFront(cfg) {
+    var ctx = S.ctx;
+    var g0 = S.cur;
+    if (!g0) return;
+    cfg = cfg || {};
+    var hw = g0.hw, h = g0.h, base = g0.base, x = g0.x, ry = g0.ry;
+
+    ctx.save();
+    ctx.translate(x, base);
+
+    // 内侧阴影（玻璃厚度）
+    var shl = ctx.createLinearGradient(-hw, 0, -hw + 15, 0);
+    shl.addColorStop(0, 'rgba(108,150,182,0.28)');
+    shl.addColorStop(1, 'rgba(108,150,182,0)');
+    ctx.fillStyle = shl;
+    ctx.fillRect(-hw, -h, 15, h);
+    var shr = ctx.createLinearGradient(hw, 0, hw - 15, 0);
+    shr.addColorStop(0, 'rgba(108,150,182,0.24)');
+    shr.addColorStop(1, 'rgba(108,150,182,0)');
+    ctx.fillStyle = shr;
+    ctx.fillRect(hw - 15, -h, 15, h);
+
+    // 左侧垂直高光带
+    var hg = ctx.createLinearGradient(-hw + 12, 0, -hw + 30, 0);
+    hg.addColorStop(0, 'rgba(255,255,255,0)');
+    hg.addColorStop(0.5, 'rgba(255,255,255,0.55)');
+    hg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hg;
+    ctx.fillRect(-hw + 12, -h + 16, 20, h - 40);
+    var hg2 = ctx.createLinearGradient(hw - 26, 0, hw - 14, 0);
+    hg2.addColorStop(0, 'rgba(255,255,255,0)');
+    hg2.addColorStop(0.5, 'rgba(255,255,255,0.3)');
+    hg2.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hg2;
+    ctx.fillRect(hw - 26, -h + 30, 12, h - 60);
+
+    // 杯口前缘
+    if (g0.kind !== 'tube') {
+      ctx.beginPath();
+      ctx.ellipse(0, -h, hw, ry, 0, 0, Math.PI);
+      ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(0, -h, hw, ry, 0, 0, Math.PI);
+      ctx.strokeStyle = 'rgba(146,182,210,0.55)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // 厚底亮弧
+    if (g0.kind !== 'tube') {
+      ctx.beginPath();
+      ctx.moveTo(-hw + 6, -5);
+      ctx.quadraticCurveTo(0, Math.max(2, ry * 0.5), hw - 6, -5);
+      ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+      ctx.lineWidth = 2.4;
+      ctx.stroke();
+    }
+
+    // 刻度（竖直，从底往上，0 在底）
+    var tk = cfg.tick;
+    if (tk) {
+      var max = tk.max || 100, step = tk.step || 20;
+      var unit = tk.unit === undefined ? 'mL' : tk.unit;
+      var inside = tk.side !== 'outside';
+      ctx.font = '600 10px "Microsoft YaHei", system-ui, sans-serif';
+      ctx.textBaseline = 'middle';
+      for (var v = 0; v <= max; v += step) {
+        if (v === 0) continue;
+        var y = -Math.max(6, h * (v / max) * (tk.fill == null ? 0.92 : tk.fill));
+        var major = (v % (step * 2) === 0);
+        ctx.beginPath();
+        ctx.moveTo(-hw + 2, y);
+        ctx.lineTo(-hw + (major ? 20 : 13), y);
+        ctx.strokeStyle = major ? 'rgba(86,124,150,0.85)' : 'rgba(86,124,150,0.45)';
+        ctx.lineWidth = major ? 1.2 : 0.9;
+        ctx.stroke();
+        if (major) {
+          ctx.fillStyle = 'rgba(58,94,120,0.9)';
+          ctx.textAlign = 'left';
+          if (inside) ctx.fillText(String(v), -hw + 23, y);
+          else ctx.fillText(String(v), -hw - 26, y);
+        }
+      }
+      if (unit) {
+        ctx.fillStyle = 'rgba(58,94,120,0.8)';
+        ctx.textAlign = 'left';
+        ctx.font = '600 9px "Microsoft YaHei", system-ui, sans-serif';
+        ctx.fillText(unit, -hw + 23, -Math.max(6, h * (tk.fill == null ? 0.92 : tk.fill)) - 12);
+      }
+    }
+    ctx.restore();
+  }
+
+  /* ============================ 立体实体 ============================ */
+  /* 斜投影立方体：正面 + 顶面 + 右侧面，顶面提亮 0.34、右侧压暗 0.28 */
+  function box(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, yTop = cfg.y, w = cfg.w, h = cfg.h;
+    var ox = cfg.ox == null ? w * 0.26 : cfg.ox;
+    var oy = cfg.oy == null ? w * 0.2 : cfg.oy;
+    var col = cfg.color || MAT.wood.rgb;
+    var tint = cfg.tint || 0;
+    var tintC = cfg.tintColor || '#3fa4d6';
+    var x0 = x - w / 2, x1 = x + w / 2, y1 = yTop + h;
+
+    function paint(pathFn, base, light) {
+      pathFn();
+      var c = light ? shade(base, light) : base;
+      if (tint) c = mix(c, tintC, tint);
+      ctx.fillStyle = c;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(38,58,78,' + (tint ? 0.3 : 0.42) + ')';
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+    }
+
+    // 右侧面
+    paint(function () {
+      ctx.beginPath();
+      ctx.moveTo(x1, yTop); ctx.lineTo(x1 + ox, yTop - oy);
+      ctx.lineTo(x1 + ox, y1 - oy); ctx.lineTo(x1, y1); ctx.closePath();
+    }, col, -0.28);
+    // 顶面
+    paint(function () {
+      ctx.beginPath();
+      ctx.moveTo(x0, yTop); ctx.lineTo(x1, yTop);
+      ctx.lineTo(x1 + ox, yTop - oy); ctx.lineTo(x0 + ox, yTop - oy); ctx.closePath();
+    }, col, 0.34);
+    // 正面
+    var g = ctx.createLinearGradient(x0, yTop, x1, y1);
+    var c1 = shade(col, 0.15), c2 = shade(col, -0.13);
+    if (tint) { c1 = mix(c1, tintC, tint); c2 = mix(c2, tintC, tint); }
+    g.addColorStop(0, c1);
+    g.addColorStop(1, c2);
+    ctx.fillStyle = g;
+    rr(x0, yTop, w, h, cfg.r == null ? 1.5 : cfg.r);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(38,58,78,' + (tint ? 0.32 : 0.45) + ')';
+    ctx.lineWidth = 1.1;
+    ctx.stroke();
+    // 正面高光
+    var hgd = ctx.createLinearGradient(x0, yTop, x0, yTop + h * 0.62);
+    hgd.addColorStop(0, 'rgba(255,255,255,0.26)');
+    hgd.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hgd;
+    ctx.fillRect(x0 + 1, yTop + 1, w - 2, h * 0.6);
+
+    return { top: yTop - oy, bottom: y1, cx: x + ox / 2 };
+  }
+
+  /* 球体：径向渐变 + 环境反光 + 高光点 */
+  function sphere(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, y = cfg.y, r = cfg.r;
+    var col = cfg.color || MAT.plastic.rgb;
+    shadow(x, y + r * 0.94, r * 1.1, r * 0.24, 0.2);
+    var g = ctx.createRadialGradient(x - r * 0.36, y - r * 0.4, r * 0.1, x, y, r * 1.05);
+    g.addColorStop(0, shade(col, 0.7));
+    g.addColorStop(0.42, shade(col, 0.14));
+    g.addColorStop(1, shade(col, -0.36));
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(38,58,78,0.28)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // 高光
+    ctx.beginPath();
+    ctx.ellipse(x - r * 0.34, y - r * 0.4, r * 0.26, r * 0.18, -0.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.fill();
+    // 底部环境反光
+    ctx.beginPath();
+    ctx.ellipse(x + r * 0.16, y + r * 0.52, r * 0.5, r * 0.2, 0.1, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+    ctx.fill();
+    return { top: y - r, bottom: y + r };
+  }
+
+  /* 圆柱：上椭圆 + 侧面渐变 + 下弧 */
+  function cyl(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, base = cfg.base, rw = cfg.rw, h = cfg.h;
+    var ry = cfg.ry == null ? rw * 0.22 : cfg.ry;
+    var col = cfg.color || MAT.steel.rgb;
+    shadow(x, base + 3, rw * 1.1, ry * 0.9, 0.2);
+    var g = ctx.createLinearGradient(x - rw, 0, x + rw, 0);
+    g.addColorStop(0, shade(col, -0.3));
+    g.addColorStop(0.22, shade(col, 0.3));
+    g.addColorStop(0.55, shade(col, 0.04));
+    g.addColorStop(1, shade(col, -0.34));
+    ctx.beginPath();
+    ctx.moveTo(x - rw, base - h);
+    ctx.lineTo(x - rw, base);
+    ctx.ellipse(x, base, rw, ry, 0, Math.PI, 0, true);
+    ctx.lineTo(x + rw, base - h);
+    ctx.closePath();
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(60,74,88,0.35)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // 顶面
+    ctx.beginPath();
+    ctx.ellipse(x, base - h, rw, ry, 0, 0, Math.PI * 2);
+    ctx.fillStyle = shade(col, 0.42);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(60,74,88,0.3)';
+    ctx.stroke();
+    return { top: base - h - ry, bottom: base };
+  }
+
+  /* 弹簧：分段螺旋，可伸长 */
+  function spring(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, y1 = cfg.y1, y2 = cfg.y2;
+    var r = cfg.r == null ? 9 : cfg.r;
+    var coils = cfg.coils || 14;
+    ctx.beginPath();
+    var n = coils * 12;
+    for (var i = 0; i <= n; i++) {
+      var t = i / n;
+      var y = lerp(y1, y2, t);
+      var px = x + Math.sin(t * Math.PI * 2 * coils) * r;
+      if (i === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
+    }
+    ctx.strokeStyle = 'rgba(120,134,148,0.95)';
+    ctx.lineWidth = 2.2;
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  /* 铁架台：底座 + 立柱 + 横杆 */
+  function stand(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, baseY = cfg.baseY, topY = cfg.topY;
+    // 底座
+    var bg = ctx.createLinearGradient(0, baseY - 10, 0, baseY + 8);
+    bg.addColorStop(0, '#a8b3be'); bg.addColorStop(0.45, '#7f8b98'); bg.addColorStop(1, '#5f6a76');
+    ctx.fillStyle = bg;
+    rr(x - 62, baseY - 8, 124, 17, 5);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(60,72,84,0.5)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.32)';
+    rr(x - 56, baseY - 5, 108, 3, 1.5);
+    ctx.fill();
+    // 立柱
+    var rg = ctx.createLinearGradient(x - 5, 0, x + 5, 0);
+    rg.addColorStop(0, '#9aa6b2'); rg.addColorStop(0.35, '#e3e9ef');
+    rg.addColorStop(0.7, '#b3bec9'); rg.addColorStop(1, '#78848f');
+    ctx.fillStyle = rg;
+    rr(x - 5, topY, 10, baseY - topY - 6, 4);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(80,95,110,0.32)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    return { x: x, topY: topY };
+  }
+
+  /* 光具座导轨（铝合金 + cm 刻度 + 黑色支脚） */
+  function rail(cfg) {
+    var ctx = S.ctx;
+    var x0 = cfg.x0, x1 = cfg.x1, y = cfg.y, h = cfg.h || 18;
+    var px = cfg.px;              // 每 cm 像素
+    // 支脚
+    ctx.fillStyle = '#2b323a';
+    [x0 + 30, x1 - 30].forEach(function (fx) {
+      ctx.beginPath();
+      ctx.moveTo(fx - 24, y + h);
+      ctx.lineTo(fx + 24, y + h);
+      ctx.lineTo(fx + 16, y + h + 15);
+      ctx.lineTo(fx - 16, y + h + 15);
+      ctx.closePath();
+      ctx.fill();
+    });
+    // 导轨主体
+    var g = ctx.createLinearGradient(0, y, 0, y + h);
+    g.addColorStop(0, '#eef2f7'); g.addColorStop(0.35, '#cbd5df');
+    g.addColorStop(0.7, '#dee5ec'); g.addColorStop(1, '#b7c2cd');
+    ctx.fillStyle = g;
+    rr(x0, y, x1 - x0, h, 4);
+    ctx.fill();
+    ctx.strokeStyle = '#8b99a7';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(90,104,118,0.45)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0 + 6, y + 4.5); ctx.lineTo(x1 - 6, y + 4.5);
+    ctx.stroke();
+    // 刻度
+    var cmMax = Math.round((x1 - x0 - 16) / px);
+    ctx.font = '600 9.5px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    for (var cm = 0; cm <= cmMax; cm++) {
+      var cx = x0 + 8 + cm * px;
+      var major = cm % 10 === 0;
+      ctx.beginPath();
+      ctx.moveTo(cx, y + (major ? 7 : 10));
+      ctx.lineTo(cx, y + h - 3);
+      ctx.strokeStyle = major ? '#57656f' : 'rgba(87,101,111,0.35)';
+      ctx.lineWidth = major ? 1.1 : 0.8;
+      ctx.stroke();
+      if (major) {
+        ctx.fillStyle = '#42505c';
+        ctx.fillText(String(cm), cx, y + h + 15);
+        ctx.strokeStyle = 'rgba(87,101,111,0.28)';
+        ctx.beginPath();
+        ctx.moveTo(cx, y + h + 19); ctx.lineTo(cx, y + h + 26);
+        ctx.stroke();
+      }
+    }
+    return { cmToX: function (cm) { return x0 + 8 + cm * px; }, y: y };
+  }
+
+  /* 黑色立柱支架（光学器材通用底座） */
+  function post(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, yTop = cfg.y, yBase = cfg.base;
+    var g = ctx.createLinearGradient(x - 3.5, 0, x + 3.5, 0);
+    g.addColorStop(0, '#1f262e'); g.addColorStop(0.4, '#4a545e'); g.addColorStop(1, '#171c22');
+    ctx.fillStyle = g;
+    rr(x - 3.5, yTop, 7, yBase - yTop, 2.5);
+    ctx.fill();
+    // 滑块底座
+    var bg = ctx.createLinearGradient(0, yBase - 8, 0, yBase + 6);
+    bg.addColorStop(0, '#5a646e'); bg.addColorStop(1, '#232a31');
+    ctx.fillStyle = bg;
+    rr(x - 15, yBase - 8, 30, 13, 3);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    rr(x - 12, yBase - 6, 24, 2.4, 1.2);
+    ctx.fill();
+  }
+
+  /* ============================ 光学 ============================ */
+
+  /* 双凸 / 平凸透镜：玻璃质感 + 高光弧 */
+  function lens(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, y = cfg.y, h = cfg.h, bulge = cfg.bulge == null ? 16 : cfg.bulge;
+    ctx.save();
+    // 玻璃体
+    ctx.beginPath();
+    ctx.moveTo(x, y - h / 2);
+    ctx.quadraticCurveTo(x + bulge, y, x, y + h / 2);
+    ctx.quadraticCurveTo(x - bulge, y, x, y - h / 2);
+    ctx.closePath();
+    var g = ctx.createLinearGradient(x - bulge, 0, x + bulge, 0);
+    g.addColorStop(0, 'rgba(208,232,250,0.9)');
+    g.addColorStop(0.4, 'rgba(246,253,255,0.95)');
+    g.addColorStop(1, 'rgba(196,224,246,0.88)');
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(118,164,198,0.9)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // 左缘高光弧
+    ctx.beginPath();
+    ctx.moveTo(x - 1, y - h / 2 + 6);
+    ctx.quadraticCurveTo(x - bulge * 0.72, y, x - 1, y + h / 2 - 6);
+    ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+    // 中轴细线
+    ctx.beginPath();
+    ctx.moveTo(x, y - h / 2);
+    ctx.lineTo(x, y + h / 2);
+    ctx.strokeStyle = 'rgba(160,196,220,0.5)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+    return { x: x, y: y, h: h };
+  }
+
+  /* 光线：折线 + 中点箭头，橙色系 */
+  function ray(cfg) {
+    var ctx = S.ctx;
+    var pts = cfg.pts || [];
+    if (pts.length < 2) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    if (cfg.glow !== false) {
+      ctx.shadowColor = 'rgba(255,150,40,0.4)';
+      ctx.shadowBlur = 6;
+    }
+    ctx.strokeStyle = cfg.color || '#f08a1e';
+    ctx.lineWidth = cfg.width || 1.9;
+    ctx.setLineDash(cfg.dash || []);
+    ctx.stroke();
+    ctx.restore();
+    // 箭头
+    if (cfg.arrow !== false) {
+      for (var k = 1; k < pts.length; k++) {
+        var ax = pts[k - 1][0], ay = pts[k - 1][1], bx = pts[k][0], by = pts[k][1];
+        var ang = Math.atan2(by - ay, bx - ax);
+        var mx = lerp(ax, bx, 0.52), my = lerp(ay, by, 0.52);
+        ctx.save();
+        ctx.translate(mx, my);
+        ctx.rotate(ang);
+        ctx.beginPath();
+        ctx.moveTo(5, 0); ctx.lineTo(-3.5, 3.2); ctx.lineTo(-3.5, -3.2);
+        ctx.closePath();
+        ctx.fillStyle = cfg.color || '#f08a1e';
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+  }
+
+  /* 圆形放大镜：白环 + 深底 + 内部纹理回调 */
+  function magnifier(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, y = cfg.y, r = cfg.r;
+    ctx.save();
+    // 外环
+    var ring = ctx.createLinearGradient(x - r, y - r, x + r, y + r);
+    ring.addColorStop(0, '#ffffff');
+    ring.addColorStop(0.5, '#dbe7f1');
+    ring.addColorStop(1, '#a9bacb');
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = ring;
+    ctx.fill();
+    // 视野
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x, y, r - 6, 0, Math.PI * 2);
+    ctx.clip();
+    var inner = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 2, x, y, r);
+    inner.addColorStop(0, cfg.bgLight || '#f5fafd');
+    inner.addColorStop(1, cfg.bgDark || '#d8e6f1');
+    ctx.fillStyle = inner;
+    ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    if (typeof cfg.draw === 'function') cfg.draw(ctx, x, y, r - 6);
+    ctx.restore();
+    // 玻璃反光
+    ctx.beginPath();
+    ctx.ellipse(x - r * 0.34, y - r * 0.42, r * 0.34, r * 0.16, -0.6, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* ============================ 标注系统 ============================ */
+  /* 所有文字统一走这里：白描边 + 自动收进画布 8px，保证不被图元压住、不出界 */
+
+  function text(cfg) {
+    var ctx = S.ctx;
+    var size = cfg.size || 13;
+    var weight = cfg.weight || 500;
+    var align = cfg.align || 'center';
+    var baseline = cfg.baseline || 'middle';
+    var col = cfg.color || '#1f3a52';
+    ctx.save();
+    ctx.font = weight + ' ' + size + 'px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+
+    var tx = cfg.x, ty = cfg.y;
+    var w = ctx.measureText(cfg.text).width;
+    var half = align === 'center' ? w / 2 : (align === 'right' ? w : 0);
+    var left = tx - half;
+    var right = left + w;
+    // 自动收边
+    var m = S.margin == null ? 8 : S.margin;
+    if (left < m) { tx += m - left; left = m; right = left + w; }
+    if (right > S.DW - m) { tx -= right - (S.DW - m); left = S.DW - m - w; right = S.DW - m; }
+
+    // 底衬（可选）
+    if (cfg.pad) {
+      var padX = cfg.padX == null ? 6 : cfg.padX;
+      var padY = cfg.padY == null ? 4 : cfg.padY;
+      rr(left - padX, ty - size * 0.72 - padY, w + padX * 2, size * 1.44 + padY * 2, 6);
+      ctx.fillStyle = cfg.pad === true ? 'rgba(255,255,255,0.82)' : cfg.pad;
+      ctx.fill();
+    }
+    // 描边：浅色场景用白描边，深色场景（星空/夜景）必须换成深色描边，
+    // 否则白边会把字糊成一个白块
+    if (cfg.stroke !== false) {
+      ctx.lineWidth = cfg.strokeWidth || Math.max(2.6, size * 0.24);
+      ctx.strokeStyle = cfg.strokeColor
+        || (cfg.onDark ? 'rgba(6,22,38,0.88)' : 'rgba(255,255,255,0.92)');
+      ctx.lineJoin = 'round';
+      ctx.strokeText(cfg.text, tx, ty + size * 0.35);
+    }
+    ctx.fillStyle = col;
+    ctx.fillText(cfg.text, tx, ty + size * 0.35);
+    ctx.restore();
+    return { left: left, right: right, w: w };
+  }
+
+  /* 胶囊标签（统一版式：实底圆角 + 白字 + 1.2px 描边） */
+  function pill(cfg) {
+    var ctx = S.ctx;
+    var text0 = cfg.text || '';
+    var size = cfg.size || 14;
+    var bg = cfg.bg || '#1b62b0';
+    var padX = size * 0.72, padY = size * 0.42;
+    ctx.save();
+    ctx.font = '700 ' + size + 'px "Microsoft YaHei", system-ui, sans-serif';
+    var tw = ctx.measureText(text0).width;
+    var h = size + padY * 2;
+    var w = tw + padX * 2;
+    var x = cfg.x - w / 2, y = cfg.y - h / 2;
+    // 收边
+    var m = S.margin == null ? 8 : S.margin;
+    if (x < m) x = m;
+    if (x + w > S.DW - m) x = S.DW - m - w;
+    // 投影
+    ctx.shadowColor = 'rgba(20,44,70,0.18)';
+    ctx.shadowBlur = 5;
+    ctx.shadowOffsetY = 1.5;
+    rr(x, y, w, h, h / 2);
+    ctx.fillStyle = bg;
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text0, x + w / 2, y + h / 2 + 0.5);
+    ctx.restore();
+    return { x: x, y: y, w: w, h: h, cx: x + w / 2, cy: y + h / 2 };
+  }
+
+  /* 引线：端点圆点 + 细线（虚线可选） */
+  function leader(cfg) {
+    var ctx = S.ctx;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cfg.x1, cfg.y1);
+    ctx.lineTo(cfg.x2, cfg.y2);
+    ctx.strokeStyle = cfg.color || 'rgba(70,100,130,0.55)';
+    ctx.lineWidth = cfg.width || 1.2;
+    if (cfg.dash) ctx.setLineDash([4, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.arc(cfg.x2, cfg.y2, 2.6, 0, Math.PI * 2);
+    ctx.fillStyle = cfg.dotColor || cfg.color || 'rgba(70,100,130,0.75)';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* 圆形端点（F、2F 之类的标记点） */
+  function dot(cfg) {
+    var ctx = S.ctx;
+    ctx.beginPath();
+    ctx.arc(cfg.x, cfg.y, cfg.r || 3.6, 0, Math.PI * 2);
+    ctx.fillStyle = cfg.color || '#2e6fd8';
+    ctx.fill();
+    if (cfg.ring) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+    }
+  }
+
+  /* 读数卡（左上角白底蓝字，光学/力学通用） */
+  function card(cfg) {
+    var ctx = S.ctx;
+    var rows = cfg.rows || [];
+    var title = cfg.title;
+    var size = cfg.size || 13;
+    var x = cfg.x == null ? 16 : cfg.x;
+    var y = cfg.y == null ? 14 : cfg.y;
+    var lineH = size + 9;
+    var w = cfg.w || 152;
+    var h = (title ? lineH : 0) + rows.length * lineH + 14;
+    ctx.save();
+    ctx.shadowColor = 'rgba(28,58,88,0.16)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 2;
+    rr(x, y, w, h, 10);
+    ctx.fillStyle = 'rgba(255,255,255,0.94)';
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.strokeStyle = 'rgba(150,190,220,0.85)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    var ty = y + 10 + size * 0.4;
+    if (title) {
+      ctx.font = '700 ' + (size + 1) + 'px "Microsoft YaHei", system-ui, sans-serif';
+      ctx.fillStyle = '#1b62b0';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillText(title, x + 12, ty);
+      ty += lineH;
+      ctx.strokeStyle = 'rgba(180,210,232,0.9)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x + 10, ty - size - 2);
+      ctx.lineTo(x + w - 10, ty - size - 2);
+      ctx.stroke();
+    }
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      ctx.font = '600 ' + size + 'px "Microsoft YaHei", system-ui, sans-serif';
+      ctx.fillStyle = '#5b7791';
+      ctx.fillText(r[0], x + 12, ty);
+      ctx.font = '700 ' + size + 'px "Microsoft YaHei", system-ui, sans-serif';
+      ctx.fillStyle = r[2] || '#123c5e';
+      ctx.textAlign = 'right';
+      ctx.fillText(r[1], x + w - 12, ty);
+      ctx.textAlign = 'left';
+      ty += lineH;
+    }
+    ctx.restore();
+    return { x: x, y: y, w: w, h: h };
+  }
+
+  /* 底部公式/结论面板 */
+  function panel(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, y = cfg.y, w = cfg.w, h = cfg.h;
+    ctx.save();
+    ctx.shadowColor = 'rgba(28,58,88,0.12)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 3;
+    rr(x, y, w, h, cfg.r == null ? 14 : cfg.r);
+    ctx.fillStyle = cfg.fill || 'rgba(238,246,253,0.96)';
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.strokeStyle = cfg.stroke || '#c5dcf0';
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+    ctx.restore();
+    return { x: x, y: y, w: w, h: h };
+  }
+
+  /* 粗箭头（过程指示） */
+  function arrow(cfg) {
+    var ctx = S.ctx;
+    var x1 = cfg.x1, x2 = cfg.x2, y = cfg.y, h = cfg.h || 13;
+    var col = cfg.color || '#1b62b0';
+    ctx.save();
+    var g = ctx.createLinearGradient(x1, 0, x2, 0);
+    g.addColorStop(0, rgba(col, 0.55));
+    g.addColorStop(1, rgba(col, 0.98));
+    ctx.fillStyle = g;
+    var headL = h * 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x1, y - h / 2);
+    ctx.lineTo(x2 - headL, y - h / 2);
+    ctx.lineTo(x2 - headL, y - h);
+    ctx.lineTo(x2, y);
+    ctx.lineTo(x2 - headL, y + h);
+    ctx.lineTo(x2 - headL, y + h / 2);
+    ctx.lineTo(x1, y + h / 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* 刻度尺（竖直，读数指针） */
+  function ruler(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, y = cfg.y, h = cfg.h, max = cfg.max, value = cfg.value;
+    var w = cfg.w || 34;
+    ctx.save();
+    var g = ctx.createLinearGradient(x, 0, x + w, 0);
+    g.addColorStop(0, '#fdfefe'); g.addColorStop(0.6, '#f0f5fa'); g.addColorStop(1, '#dde6ef');
+    rr(x, y, w, h, 4);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(150,172,192,0.8)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // 刻度：0 在下，max 在上
+    ctx.strokeStyle = 'rgba(90,112,132,0.5)';
+    for (var v = 0; v <= max; v += max / 20) {
+      var yy = y + h - (v / max) * h;
+      var major = Math.abs(v % (max / 4)) < 0.001 || Math.abs(v % (max / 4) - max / 4) < 0.001;
+      ctx.beginPath();
+      ctx.moveTo(x + w, yy);
+      ctx.lineTo(x + w - (major ? 12 : 6), yy);
+      ctx.lineWidth = major ? 1 : 0.7;
+      ctx.stroke();
+    }
+    // 指针
+    var py = y + h - clamp(value / max, 0, 1) * h;
+    ctx.beginPath();
+    ctx.moveTo(x + w, py);
+    ctx.lineTo(x + w + 9, py - 4);
+    ctx.lineTo(x + w + 9, py + 4);
+    ctx.closePath();
+    ctx.fillStyle = '#d9534f';
+    ctx.fill();
+    ctx.restore();
+    return { y: py };
+  }
+
+  /* 剖面斜线填充（数学截面、地理岩层） */
+  function hatch(cfg) {
+    var ctx = S.ctx;
+    ctx.save();
+    if (cfg.poly) {
+      ctx.beginPath();
+      ctx.moveTo(cfg.poly[0][0], cfg.poly[0][1]);
+      for (var i = 1; i < cfg.poly.length; i++) ctx.lineTo(cfg.poly[i][0], cfg.poly[i][1]);
+      ctx.closePath();
+      ctx.clip();
+    }
+    var gap = cfg.gap || 8;
+    var col = cfg.color || 'rgba(46,111,216,0.35)';
+    var x0 = cfg.x0 == null ? -200 : cfg.x0;
+    var x1 = cfg.x1 == null ? S.DW + 200 : cfg.x1;
+    var y0 = cfg.y0 == null ? -200 : cfg.y0;
+    var y1 = cfg.y1 == null ? S.DH + 200 : cfg.y1;
+    ctx.strokeStyle = col;
+    ctx.lineWidth = cfg.width || 1;
+    for (var k = y0 - (x1 - x0); k < y1; k += gap) {
+      ctx.beginPath();
+      ctx.moveTo(x0, k);
+      ctx.lineTo(x1, k + (x1 - x0));
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  /* 容器尺寸变化时重绘 */
+  function responsive(cv, draw) {
+    function run() {
+      if (resize()) draw();
+    }
+    window.addEventListener('resize', run);
+    if (window.ResizeObserver) {
+      try { new ResizeObserver(run).observe(cv.parentNode || cv); } catch (e) { /* 老浏览器忽略 */ }
+    }
+    return run;
+  }
+
+  window.VIS = {
+    /* 状态 */
+    S: S,
+    /* 基础 */
+    mount: mount, resize: resize, clear: clear, responsive: responsive,
+    wall: wall, shadow: shadow,
+    /* 容器 */
+    glass: glass, liquid: liquid, glassFront: glassFront,
+    /* 实体 */
+    box: box, sphere: sphere, cyl: cyl, spring: spring, stand: stand,
+    post: post, rail: rail,
+    /* 光学 */
+    lens: lens, ray: ray, magnifier: magnifier,
+    /* 标注 */
+    text: text, pill: pill, leader: leader, dot: dot, card: card, panel: panel,
+    arrow: arrow, ruler: ruler, hatch: hatch,
+    /* 工具 */
+    MAT: MAT, mix: mix, shade: shade, rgba: rgba, parseColor: parseColor, rr: rr,
+    clamp: clamp, lerp: lerp, spk: spk
+  };
+})();
+
+/* phys.js —— 物理学科场景库（基于 vis.js 原语，外壳注入，离线可用）
+ *
+ * 解决的问题：物理页最容易退化成「方框 + 箭头」的示意图。
+ * 这里把两类高频实验的「版面 + 光影 + 标注」固化成函数，页面只传状态量：
+ *
+ *   PHYS.floating(cv, {              // 浮力：阿基米德原理 / 浮沉条件
+ *     objRho: 0.6,                   // 物体密度 g/cm³
+ *     liqRho: 1.0,                   // 液体密度 g/cm³
+ *     side: 10,                      // 正方体边长 cm
+ *     level: 0.72,                   // 液面高度（占容器高度比例）
+ *     mode: 'hang' | 'free',         // 悬挂测力计 / 自由漂浮
+ *     sub: 0.6,                      // 悬挂时的浸没比例 0~1
+ *     t: 0                           // 时间（秒），驱动波纹与气泡
+ *   })
+ *
+ *   PHYS.optics(cv, {                // 凸透镜成像：光具座实景
+ *     u: 30, f: 10, scr: 15,         // 物距 / 焦距 / 光屏位置（cm）
+ *     lensAt: 45                     // 透镜在导轨上的位置 cm
+ *   })
+ *
+ * 两个函数都会把装置描述写进 canvas 的 aria-label 与 #tip，
+ * 保证「烧杯 / 物块 / 透镜 / 光屏」这些词出现在页面文字里。
+ */
+(function () {
+  'use strict';
+
+  var DW = 900, DH = 640;
+  var G = 10;                     // 取 g = 10 N/kg，与初中教材一致
+
+  function V() { return window.VIS; }
+  function say(cv, txt) {
+    cv.setAttribute('aria-label', txt);
+    var tip = document.getElementById('tip');
+    if (tip) tip.textContent = txt;
+  }
+
+  /* ============================================================
+   * 浮力：烧杯 + 液体 + 斜投影物块 + 弹簧测力计 + 铁架台
+   * ============================================================ */
+  var FL = {
+    cx: 380, base: 498, hw: 150, h: 298,   // 烧杯
+    px: 12.2,                               // 每 cm 像素
+    standX: 706, armY: 82
+  };
+
+  function floating(cv, cfg) {
+    var v = V();
+    cfg = cfg || {};
+    if (!v.mount(cv, { DW: DW, DH: DH })) return;
+    v.clear();
+    var ctx = v.S.ctx;
+
+    var objRho = cfg.objRho == null ? 0.60 : cfg.objRho;
+    var liqRho = cfg.liqRho == null ? 1.00 : cfg.liqRho;
+    var side = cfg.side == null ? 8 : cfg.side;
+    var level = v.clamp(cfg.level == null ? 0.58 : cfg.level, 0.12, 0.96);
+    var mode = cfg.mode === 'free' ? 'free' : 'hang';
+    var t = cfg.t || 0;
+
+    // ---- 物理量 ----
+    var Vcm3 = side * side * side;
+    var Gwt = objRho * Vcm3 * G / 1000;                 // 重力 N
+    var subFree = v.clamp(objRho / liqRho, 0, 1);       // 自由漂浮的浸没比
+    // 悬挂时浸没比不能超过「浮力 = 重力」的临界值，否则绳子会松弛（物理上不成立）
+    var subCap = Math.min(1, liqRho > 0 ? objRho / liqRho : 1);
+    var sub = mode === 'free' ? subFree
+      : v.clamp(cfg.sub == null ? 0.55 : cfg.sub, 0, Math.max(0.08, subCap));
+    var Fb = liqRho * Vcm3 * sub * G / 1000;            // 浮力 N
+    var reading = Math.max(0, Gwt - Fb);                // 测力计示数 N
+
+    var apo = side * FL.px;
+    var ySurf = FL.base - FL.h * level;
+    var bottom = ySurf + sub * apo;
+    var top = bottom - apo;
+
+    // ---- 背景 ----
+    v.wall({ tableY: FL.base + 2 });
+
+    // ---- 铁架台 ----
+    v.stand({ x: FL.standX, baseY: FL.base + 2, topY: 62 });
+    var ag = ctx.createLinearGradient(0, FL.armY - 5, 0, FL.armY + 5);
+    ag.addColorStop(0, '#d6dde5'); ag.addColorStop(0.4, '#aab6c2'); ag.addColorStop(1, '#7b8792');
+    ctx.fillStyle = ag;
+    v.rr(FL.cx - 7, FL.armY - 5, FL.standX - FL.cx + 7, 10, 4);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(80,95,110,0.35)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // ---- 烧杯（背面） ----
+    v.glass({ x: FL.cx, base: FL.base, hw: FL.hw, h: FL.h, kind: 'beaker', pour: true });
+
+    // ---- 液体 ----
+    var lc = cfg.liquid || {};
+    v.liquid({
+      level: level,
+      top: lc.top || '#63c0ed',
+      bot: lc.bot || '#0f63a3',
+      t: t,
+      ripple: true,
+      bubbles: cfg.bubbles == null ? (mode === 'free' ? 5 : 0) : cfg.bubbles
+    });
+
+    // ---- 物块（斜投影，水线上下分段绘制） ----
+    var mat = cfg.material || (objRho < 0.35 ? v.MAT.wood.rgb
+      : objRho < 0.75 ? v.MAT.plastic.rgb
+        : objRho < 1.6 ? v.MAT.glass.rgb : v.MAT.iron.rgb);
+    var ox = apo * 0.28, oy = apo * 0.2;
+
+    if (mode === 'free') v.shadow(FL.cx + 4, FL.base - 8, apo * 0.58, 7, 0.14);
+
+    function drawBlock(tint) {
+      v.box({
+        x: FL.cx, y: top, w: apo, h: apo,
+        ox: ox, oy: oy, color: mat, tint: tint, tintColor: '#2f8fc4',
+        r: 2
+      });
+    }
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, DW, ySurf);
+    ctx.clip();
+    drawBlock(0);
+    ctx.restore();
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, ySurf, DW, DH - ySurf);
+    ctx.clip();
+    ctx.translate(2.2, 0);
+    drawBlock(0.28);
+    ctx.restore();
+    ctx.beginPath();
+    ctx.moveTo(FL.cx - apo / 2 - 2, ySurf);
+    ctx.lineTo(FL.cx + apo / 2 + 2, ySurf);
+    ctx.strokeStyle = 'rgba(255,255,255,0.82)';
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+
+    // ---- 弹簧测力计（0 在上，刻度向下增大） ----
+    var sTop = 100, sBot = 214;
+    if (mode === 'hang') {
+      ctx.beginPath();
+      ctx.moveTo(FL.cx, sBot + 8);
+      ctx.lineTo(FL.cx, top - oy * 0.35);
+      ctx.strokeStyle = '#8a97a3';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    }
+    // 挂环：吊在横臂下沿（armY + 5）
+    ctx.beginPath();
+    ctx.arc(FL.cx, FL.armY + 10, 7, 0, Math.PI * 2);
+    ctx.strokeStyle = '#8a97a3';
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+
+    var sg = ctx.createLinearGradient(FL.cx - 26, 0, FL.cx + 26, 0);
+    sg.addColorStop(0, '#9fb0be'); sg.addColorStop(0.22, '#eef4f9');
+    sg.addColorStop(0.62, '#dbe5ee'); sg.addColorStop(1, '#9aa9b7');
+    v.rr(FL.cx - 27, sTop, 54, sBot - sTop, 9);
+    ctx.fillStyle = sg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(110,130,148,0.75)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // 透明观察窗
+    var winTop = sTop + 9, winBot = sBot - 8;
+    v.rr(FL.cx - 19, winTop, 38, winBot - winTop, 6);
+    ctx.fillStyle = 'rgba(255,255,255,0.94)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(150,175,196,0.7)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // 刻度数字（只标 0 / 4 / 8，避免糊）
+    [0, 4, 8].forEach(function (vn) {
+      var vy = winTop + 5 + (vn / maxN) * (winBot - winTop - 10);
+      v.text({
+        x: FL.cx + 15, y: vy, text: String(vn),
+        size: 8.5, weight: 700, color: '#5b7791', align: 'right', stroke: false
+      });
+    });
+
+    // 刻度 0~8 N：0 在窗顶，向下增大
+    var maxN = 8;
+    for (var n = 0; n <= maxN * 4; n++) {
+      var val = n / 4;
+      var yy = winTop + 5 + (val / maxN) * (winBot - winTop - 10);
+      var major = Math.abs(val - Math.round(val)) < 0.001;
+      ctx.beginPath();
+      ctx.moveTo(FL.cx - 18, yy);
+      ctx.lineTo(FL.cx - 18 + (major ? 10 : 5), yy);
+      ctx.strokeStyle = major ? 'rgba(70,92,112,0.85)' : 'rgba(70,92,112,0.32)';
+      ctx.lineWidth = major ? 1.1 : 0.8;
+      ctx.stroke();
+    }
+    // 内部弹簧：上端固定，随示数伸长
+    var spTopY = winTop + 8;
+    var spBotY = winTop + 5 + ((maxN - Math.min(reading, maxN)) / maxN) * (winBot - winTop - 10);
+    v.spring({ x: FL.cx + 4, y1: spTopY, y2: spBotY, r: 7, coils: 12 });
+    // 指针（红色三角，指向刻度）
+    ctx.beginPath();
+    ctx.moveTo(FL.cx - 20, spBotY);
+    ctx.lineTo(FL.cx - 5, spBotY - 4);
+    ctx.lineTo(FL.cx - 5, spBotY + 4);
+    ctx.closePath();
+    ctx.fillStyle = '#d9534f';
+    ctx.fill();
+
+    // ---- 玻璃前壁与刻度 ----
+    v.glassFront({ tick: { max: 1000, step: 200, unit: '', side: 'inside', fill: 0.86 } });
+
+    // ---- 底部公式面板 ----
+    // 面板底边留出 22px：DOM 的 .exp-canvas-tip 就在画布底部，不能被面板盖住
+    var pn = v.panel({ x: 196, y: 512, w: 478, h: 86 });
+    v.text({
+      x: pn.x + pn.w / 2, y: pn.y + 22,
+      text: 'F浮 = ρ液 g V排', size: 17, weight: 700, color: '#134f96', stroke: false
+    });
+    v.text({
+      x: pn.x + pn.w / 2, y: pn.y + 49,
+      text: '= ' + liqRho.toFixed(2) + ' × 10³ × 10 × ' + (Vcm3 * sub / 1e6).toFixed(5) + ' m³',
+      size: 13, color: '#3d6c92', stroke: false
+    });
+    v.text({
+      x: pn.x + pn.w / 2, y: pn.y + 71,
+      text: '= ' + Fb.toFixed(2) + ' N　　' +
+        (mode === 'free'
+          ? (Math.abs(objRho - liqRho) < 0.02 ? '悬浮：F浮 = G'
+            : objRho < liqRho ? '漂浮：F浮 = G = ' + Gwt.toFixed(2) + ' N'
+              : '下沉：F浮 < G')
+          : '测力计示数 F = G − F浮 = ' + reading.toFixed(2) + ' N'),
+      size: 13, weight: 700, color: '#0d4d7a', stroke: false
+    });
+
+    // ---- 读数卡 ----
+    v.card({
+      x: 16, y: 14, w: 178, title: '实时读数',
+      rows: [
+        ['ρ物', objRho.toFixed(2) + ' g/cm³'],
+        ['ρ液', liqRho.toFixed(2) + ' g/cm³'],
+        ['V排', (Vcm3 * sub).toFixed(0) + ' cm³'],
+        ['G', Gwt.toFixed(2) + ' N'],
+        ['F浮', Fb.toFixed(2) + ' N', '#c0392b']
+      ]
+    });
+
+    // ---- 状态标题（杯顶上方靠左，避开测力计） ----
+    v.text({
+      x: 226, y: 150,
+      text: mode === 'free' ? '自由漂浮' : '悬挂测力',
+      size: 14, weight: 700, color: '#134f96'
+    });
+
+    // ---- 标注（全部最后画，绝不与器材或彼此重叠） ----
+    // 物块：引线伸到杯外左侧
+    // 引线走物块下半部，避开杯壁上的 800 刻度数字
+    var midY = bottom - apo * 0.26;
+    var blockRight = FL.cx + apo / 2 + ox;
+    v.leader({ x1: 170, y1: midY, x2: FL.cx - apo / 2 - 6, y2: midY });
+    v.pill({ x: 104, y: midY, text: '物块 ρ=' + objRho.toFixed(2), bg: '#3d6c92', size: 12 });
+
+    // 液面：右侧留白处（物块右缘之外），引线落到液面
+    var surfX = Math.max(blockRight + 30, FL.cx + 60);
+    v.leader({ x1: surfX + 6, y1: ySurf - 44, x2: surfX - 24, y2: ySurf - 6 });
+    v.pill({ x: surfX + 62, y: ySurf - 50, text: '液面 ρ=' + liqRho.toFixed(2), bg: '#1877b8', size: 12 });
+
+    // 测力计：右侧，高度取测力计中段
+    if (mode === 'hang') {
+      var gy = (sTop + sBot) / 2;
+      v.leader({ x1: FL.cx + 30, y1: gy, x2: 500, y2: gy });
+      v.pill({ x: 592, y: gy, text: '测力计 ' + reading.toFixed(2) + ' N', bg: '#5f7183', size: 12 });
+    }
+
+    say(cv, '装置：烧杯（内装 ' + (lc.name || '液体') + '）· 物块 ρ=' + objRho.toFixed(2) +
+      ' · ' + (mode === 'free' ? '自由漂浮' : '弹簧测力计（0~8 N）') + ' · 液体 ρ=' + liqRho.toFixed(2));
+  }
+
+  /* ============================================================
+   * 凸透镜成像：光具座实景
+   * ============================================================ */
+  var OP = {
+    x0: 56, x1: 852, railY: 470, railH: 20,
+    axisY: 300, f: 10, lensAt: 45, objH: 58
+  };
+
+  function optics(cv, cfg) {
+    var v = V();
+    cfg = cfg || {};
+    if (!v.mount(cv, { DW: DW, DH: DH })) return;
+    v.clear();
+    var ctx = v.S.ctx;
+
+    var f = cfg.f == null ? OP.f : cfg.f;
+    var u = cfg.u == null ? 30 : cfg.u;
+    var lensAt = cfg.lensAt == null ? OP.lensAt : cfg.lensAt;
+    var px = (OP.x1 - OP.x0 - 16) / 80;            // 80 cm 导轨
+    function X(cm) { return OP.x0 + 8 + cm * px; }
+
+    // 成像公式：1/u + 1/v = 1/f
+    var vImg = (Math.abs(u - f) < 1e-6) ? Infinity : (u * f) / (u - f);
+    var isReal = isFinite(vImg) && vImg > 0;
+    var mag = isFinite(vImg) ? Math.abs(vImg / u) : 0;
+    var objTop = OP.axisY - OP.objH;
+
+    v.wall({ tableY: OP.railY + 34, tone: 'warm' });
+    v.rail({ x0: OP.x0, x1: OP.x1, y: OP.railY, h: OP.railH, px: px });
+
+    // ---- 主光轴（点划线） ----
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(30, OP.axisY);
+    ctx.lineTo(866, OP.axisY);
+    ctx.setLineDash([9, 6]);
+    ctx.strokeStyle = 'rgba(150,190,225,0.95)';
+    ctx.lineWidth = 1.3;
+    ctx.stroke();
+    ctx.restore();
+
+    var objX = X(lensAt - u);
+    var lensX = X(lensAt);
+    var scrCm = v.clamp(cfg.scr == null ? (isReal ? lensAt + vImg : lensAt + 20) : cfg.scr, 1, 79);
+    var scrX = X(scrCm);
+    var fL = X(lensAt - f), fR = X(lensAt + f);
+
+    /* ---- 三条特殊光线（先算，画在器材之下） ----
+     * ① 平行主光轴入射 → 过右侧焦点 F'
+     * ② 过光心 → 方向不变
+     * ③ 过左侧焦点 F → 出射平行主光轴
+     */
+    var rays = [];
+    // ① 平行入射 → 过 F'，延长到光屏
+    rays.push({ pts: [[objX, objTop], [lensX, objTop], [fR, OP.axisY]], extend: true, color: '#f08a1e' });
+    // ② 过光心 → 方向不变，延长到光屏
+    rays.push({ pts: [[objX, objTop], [lensX, OP.axisY]], extend: true, color: '#e07b12' });
+    // ③ 过 F → 出射平行主光轴（水平段必须显式给出，不能沿用前面的斜率）
+    var k3 = (OP.axisY - objTop) / Math.max(1, (fL - objX));
+    var y3 = objTop + k3 * (lensX - objX);
+    if (objX < fL - 2) {
+      rays.push({
+        pts: [[objX, objTop], [fL, OP.axisY], [lensX, y3], [scrX, y3]],
+        extend: false, color: 'rgba(236,140,50,0.88)'
+      });
+    }
+
+    var drawn = rays.map(function (r) {
+      var out = r.pts.slice();
+      if (!r.extend) return out;
+      var a = out[out.length - 2], b = out[out.length - 1];
+      var dx = b[0] - a[0], dy = b[1] - a[1];
+      if (Math.abs(dx) < 1e-6) return out;
+      var t = (scrX - b[0]) / dx;
+      if (t > 0) out.push([b[0] + dx * t, b[1] + dy * t]);
+      return out;
+    });
+    drawn.forEach(function (pts, i) {
+      v.ray({ pts: pts, color: rays[i].color, width: i === 2 ? 1.6 : 1.9 });
+    });
+
+    // ---- 物：立体箭头（柱 + 三角头） ----
+    v.post({ x: objX, y: OP.axisY, base: OP.railY + 4 });
+    var headH = 18, headW = 15, shaftW = 9;
+    ctx.save();
+    var og = ctx.createLinearGradient(objX - headW, 0, objX + headW, 0);
+    og.addColorStop(0, '#d97a06'); og.addColorStop(0.42, '#ffb04d'); og.addColorStop(1, '#c26500');
+    ctx.fillStyle = og;
+    ctx.shadowColor = 'rgba(255,150,40,0.38)';
+    ctx.shadowBlur = 7;
+    ctx.beginPath();
+    ctx.moveTo(objX - shaftW / 2, OP.axisY);
+    ctx.lineTo(objX - shaftW / 2, objTop);
+    ctx.lineTo(objX - headW, objTop);
+    ctx.lineTo(objX, objTop - headH);
+    ctx.lineTo(objX + headW, objTop);
+    ctx.lineTo(objX + shaftW / 2, objTop);
+    ctx.lineTo(objX + shaftW / 2, OP.axisY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    // 底座
+    ctx.fillStyle = '#8a6a45';
+    v.rr(objX - 14, OP.axisY - 2, 28, 8, 2);
+    ctx.fill();
+
+    // ---- 透镜 ----
+    v.post({ x: lensX, y: OP.axisY, base: OP.railY + 4 });
+    v.lens({ x: lensX, y: OP.axisY, h: 172, bulge: 22 });
+    ctx.fillStyle = '#3a444e';
+    v.rr(lensX - 10, OP.axisY - 96, 20, 11, 3); ctx.fill();
+    v.rr(lensX - 10, OP.axisY + 85, 20, 11, 3); ctx.fill();
+
+    // ---- 光屏 ----
+    v.post({ x: scrX, y: OP.axisY - 98, base: OP.railY + 4 });
+    var pg = ctx.createLinearGradient(scrX - 5, 0, scrX + 5, 0);
+    pg.addColorStop(0, '#ffffff'); pg.addColorStop(1, '#e6edf4');
+    ctx.fillStyle = pg;
+    v.rr(scrX - 5, OP.axisY - 98, 10, 196, 3);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(150,172,192,0.9)';
+    ctx.lineWidth = 1.1;
+    ctx.stroke();
+
+    // 光屏上的像（倒立）
+    if (isReal && Math.abs(vImg) > 0.05) {
+      var imgH = OP.objH * mag;
+      var iw = v.clamp(9 * mag, 6, 15);
+      ctx.save();
+      var ig = ctx.createLinearGradient(scrX - iw, 0, scrX + iw, 0);
+      ig.addColorStop(0, 'rgba(255,170,60,0.95)');
+      ig.addColorStop(0.5, 'rgba(255,214,130,0.98)');
+      ig.addColorStop(1, 'rgba(220,130,20,0.92)');
+      ctx.fillStyle = ig;
+      ctx.shadowColor = 'rgba(255,160,40,0.55)';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.moveTo(scrX - iw * 0.42, OP.axisY);
+      ctx.lineTo(scrX - iw * 0.42, OP.axisY + imgH);
+      ctx.lineTo(scrX - iw, OP.axisY + imgH);
+      ctx.lineTo(scrX, OP.axisY + imgH + 15);
+      ctx.lineTo(scrX + iw, OP.axisY + imgH);
+      ctx.lineTo(scrX + iw * 0.42, OP.axisY + imgH);
+      ctx.lineTo(scrX + iw * 0.42, OP.axisY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // ---- F / 2F 标记点 ----
+    var marks = [];
+    [[lensAt - 2 * f, '2F'], [lensAt - f, 'F'], [lensAt + f, "F'"], [lensAt + 2 * f, "2F'"]].forEach(function (m) {
+      if (m[0] < 0.5 || m[0] > 79.5) return;
+      v.dot({ x: X(m[0]), y: OP.axisY, r: 3.8, color: '#2e6fd8', ring: true });
+      marks.push([X(m[0]), m[1]]);
+    });
+
+    // ---- 距离标注（导轨下方，文字在线的上方） ----
+    var dY = OP.railY + 58;
+    function dim(xa, xb, label, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.3;
+      ctx.beginPath();
+      ctx.moveTo(xa, dY); ctx.lineTo(xb, dY);
+      ctx.stroke();
+      [[xa, 1], [xb, -1]].forEach(function (p) {
+        ctx.beginPath();
+        ctx.moveTo(p[0], dY);
+        ctx.lineTo(p[0] + p[1] * 6, dY - 4);
+        ctx.lineTo(p[0] + p[1] * 6, dY + 4);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+      });
+      ctx.strokeStyle = 'rgba(160,180,200,0.55)';
+      ctx.setLineDash([3, 3]);
+      [[xa], [xb]].forEach(function (p) {
+        ctx.beginPath();
+        ctx.moveTo(p[0], OP.railY + OP.railH);
+        ctx.lineTo(p[0], dY + 6);
+        ctx.stroke();
+      });
+      ctx.restore();
+      v.text({ x: (xa + xb) / 2, y: dY - 15, text: label, size: 12.5, weight: 700, color: color });
+    }
+    dim(objX, lensX, 'u = ' + u.toFixed(1) + ' cm', '#1b62b0');
+    if (isReal && isFinite(vImg)) dim(lensX, scrX, 'v = ' + Math.abs(vImg).toFixed(1) + ' cm', '#157a55');
+
+    // ---- 读数卡 ----
+    v.card({
+      x: 16, y: 14, w: 168, title: '成像参数',
+      rows: [
+        ['物距 u', u.toFixed(1) + ' cm'],
+        ['焦距 f', f.toFixed(1) + ' cm'],
+        ['像距 v', isFinite(vImg) ? Math.abs(vImg).toFixed(1) + ' cm' : '∞'],
+        ['放大率', isFinite(mag) ? mag.toFixed(2) + '×' : '—'],
+        ['性质', isReal ? '倒立实像' : (Math.abs(u - f) < 0.05 ? '不成像' : '正立虚像'),
+          isReal ? '#157a55' : '#c0392b']
+      ]
+    });
+
+    // ---- 文字层（最后画） ----
+    marks.forEach(function (m) {
+      v.text({ x: m[0], y: OP.axisY + 20, text: m[1], size: 13, weight: 700, color: '#2e6fd8' });
+    });
+    v.text({ x: 44, y: OP.axisY - 15, text: '主光轴', size: 12, weight: 600, color: '#7ba9d4', align: 'left' });
+    v.pill({ x: objX, y: objTop - headH - 24, text: '物（' + u.toFixed(0) + ' cm）', bg: '#b8690a', size: 12 });
+    v.pill({ x: lensX, y: OP.axisY - 122, text: '凸透镜 f=' + f.toFixed(0) + 'cm', bg: '#1b62b0', size: 12 });
+    v.pill({ x: scrX, y: OP.axisY - 120, text: '光屏', bg: '#5f7183', size: 12 });
+
+    v.text({
+      x: 450, y: OP.railY + 104,
+      text: isFinite(vImg)
+        ? (u > 2 * f ? 'u > 2f：倒立、缩小的实像'
+          : Math.abs(u - 2 * f) < 0.05 ? 'u = 2f：倒立、等大的实像'
+            : u > f ? 'f < u < 2f：倒立、放大的实像'
+              : Math.abs(u - f) < 0.05 ? 'u = f：不成像（出射光平行）'
+                : 'u < f：正立、放大的虚像（光屏上接不到）')
+        : 'u = f：不成像',
+      size: 15, weight: 700, color: '#134f96'
+    });
+
+    say(cv, '装置：光具座（0~80 cm）· 凸透镜 f=' + f.toFixed(0) + ' cm · 光屏 · 蜡烛，物距 ' +
+      u.toFixed(1) + ' cm，' + (isReal ? '成倒立实像' : '成正立虚像'));
+  }
+
+  /* ============================================================
+   * 兜底：物理页没调场景库时，按正文关键词补一版标准画面
+   * ============================================================ */
+  function auto() {
+    if (window.__PHYS_DRAWN__) return;
+    var cv = document.querySelector('.exp-canvas-box canvas') || document.querySelector('canvas');
+    if (!cv) return;
+    var txt = (document.body ? document.body.innerText : '') + ' ' + (document.title || '');
+    var cfg = window.__CONFIG__ || {};
+    var sid = String(cfg.scene_id || '');
+    var st = window.__DATA__ || {};
+    var pr = st.params || {};
+
+    if (/浮力|浮沉|阿基米德|排开/.test(txt) || /buoy|float/.test(sid)) {
+      floating(cv, {
+        objRho: pr.rho == null ? pr.objRho : pr.rho,
+        liqRho: pr.rhoL == null ? 1.0 : pr.rhoL,
+        side: 10,
+        level: 0.72,
+        mode: /漂浮|自由/.test(txt) ? 'free' : 'hang',
+        sub: 0.55
+      });
+      window.__PHYS_DRAWN__ = true;
+      return;
+    }
+    if (/凸透镜|光具座|成像/.test(txt) || /lens|optics/.test(sid)) {
+      optics(cv, { u: 30, f: 10 });
+      window.__PHYS_DRAWN__ = true;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { setTimeout(auto, 0); });
+  } else {
+    setTimeout(auto, 0);
+  }
+
+  window.PHYS = { floating: floating, optics: optics, auto: auto };
+})();
+
+(function () {
+  'use strict';
+
+  var cv = document.getElementById('cv');
+  if (!cv) return;
+  var ctx = cv.getContext('2d');
+
+  /* ---------------- 画布与场景尺寸（设计坐标 780×600） ---------------- */
+  var DW = 780, DH = 600;
+  var PX = 14;                 // 1 cm = 14 px
+  var G_ACC = 10;              // N/kg，教材取 10
+  var CX = 300;                // 量筒中心线
+  var Y_BOT = 512;             // 量筒底（台面）
+  var BEAKER_H = 16;           // 量筒高度 cm
+  var Y_TOP = Y_BOT - BEAKER_H * PX;
+  var R_IN = 62, R_OUT = 69;
+  var AB = 62.5;               // 量筒截面积 cm²（16 cm ≈ 1000 mL）
+  var H0 = 9.6;                // 初始液面高度 cm（600 mL）
+  var TABLE_Y = 512;
+  var STAND_X = 712;
+  var STRING = 80;             // 细线长度 px
+  var BODY_H = 150;            // 测力计刻度区高度 px
+
+  var view = { yaw: 0.35, k: 0.26, s: 1, ox: 0, oy: 0, w: 0, h: 0, dpr: 1 };
+
+  var DEF = { rhoL: 1.0, rho: 2.7, vol: 100, sub: 0.6 };
+  var S = {
+    rhoL: DEF.rhoL, rho: DEF.rho, vol: DEF.vol, sub: DEF.sub,
+    mode: 'hang', yb: 0, v: 0, playing: true, soak: false, t: 0, settle: 0, stepDir: 1
+  };
+
+  /* ---------------- 材质 / 液体外观 ---------------- */
+  function matOf(r) {
+    var list = [
+      [0.35, '软木', [216, 189, 143]],
+      [0.65, '木块', [198, 154, 99]],
+      [0.95, '冰块', [205, 233, 247]],
+      [1.15, '塑料', [127, 192, 163]],
+      [1.8, '蜡块', [236, 217, 168]],
+      [2.85, '铝块', [183, 193, 203]],
+      [9.99, '铁块', [152, 162, 174]]
+    ];
+    for (var i = 0; i < list.length; i++) {
+      if (r <= list[i][0] + 1e-9) return { name: list[i][1], rgb: list[i][2] };
+    }
+    return { name: '铁块', rgb: [152, 162, 174] };
+  }
+
+  function liqOf(r) {
+    if (r < 0.9) return { name: '酒精', top: [230, 243, 252], bot: [170, 212, 235] };
+    if (r < 1.1) return { name: '水', top: [201, 232, 250], bot: [140, 199, 232] };
+    if (r < 1.25) return { name: '盐水', top: [198, 232, 245], bot: [126, 191, 209] };
+    return { name: '浓盐水', top: [190, 228, 242], bot: [110, 179, 199] };
+  }
+
+  /* ---------------- 颜色工具 ---------------- */
+  function css(c, a) {
+    if (a === undefined) return 'rgb(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ')';
+    return 'rgba(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ',' + a + ')';
+  }
+  function shade(c, k) {
+    var o = [c[0], c[1], c[2]];
+    for (var i = 0; i < 3; i++) {
+      if (k >= 0) o[i] = o[i] + (255 - o[i]) * k;
+      else o[i] = o[i] * (1 + k);
+    }
+    return o;
+  }
+  function mix(c1, c2, t) {
+    return [c1[0] + (c2[0] - c1[0]) * t,
+            c1[1] + (c2[1] - c1[1]) * t,
+            c1[2] + (c2[2] - c1[2]) * t];
+  }
+  var WATER_TINT = [108, 168, 204];
+
+  /* ---------------- 物理计算 ---------------- */
+  function derived() {
+    var a = Math.cbrt(S.vol);              // 立方体边长 cm
+    var m = S.rho * S.vol / 1000;          // kg
+    var G = m * G_ACC;                     // N
+    var A = a * a;                         // 横截面积 cm²
+    var s, Vsub, h, Fb, T, yb;
+
+    if (S.mode === 'hang') {
+      s = S.sub * a;
+      Vsub = A * s;
+      h = H0 + Vsub / AB;
+      Fb = S.rhoL * 1000 * G_ACC * (Vsub / 1e6);
+      T = Math.max(0, G - Fb);
+      yb = h - s;
+    } else {
+      s = Math.min(a, Math.max(0, H0 - S.yb + (A * a) / AB * 0.5));
+      for (var i = 0; i < 5; i++) {
+        h = H0 + A * s / AB;
+        s = Math.min(a, Math.max(0, h - S.yb));
+      }
+      Vsub = A * s;
+      Fb = S.rhoL * 1000 * G_ACC * (Vsub / 1e6);
+      T = 0;
+      yb = S.yb;
+    }
+    return { a: a, m: m, G: G, A: A, s: s, Vsub: Vsub, h: h, Fb: Fb, T: T, yb: yb };
+  }
+
+  function stepPhysics(dt) {
+    var n = 8, hh = dt / n;
+    for (var i = 0; i < n; i++) {
+      var d = derived();
+      var c = 8 * d.m + 0.6;                       // 阻尼 N/(m/s)
+      var F = d.Fb - d.G - c * S.v;
+      var acc = F / Math.max(d.m, 0.01);
+      S.v += acc * hh;
+      S.yb += S.v * 100 * hh;                      // m/s → cm/s
+      if (S.yb < 0) { S.yb = 0; S.v = 0; }
+      if (S.yb > 17) { S.yb = 17; S.v = 0; }
+    }
+  }
+
+  function stateOf(d) {
+    var eps = 0.02;
+    if (S.mode === 'hang') {
+      if (S.sub <= 0.001) return { txt: '未入水：示数等于物块重力', cls: '' };
+      if (d.s >= d.a - 1e-6) {
+        if (d.Fb > d.G + 1e-6) return { txt: '浸没但仍上浮：细线松弛，示数为 0', cls: 'is-warn' };
+        return { txt: '浸没：V排 = V物，浮力达到最大', cls: '' };
+      }
+      return { txt: '部分浸入：V排 < V物，示数随浸入减小', cls: '' };
+    }
+    if (S.rho > S.rhoL + eps) {
+      return Math.abs(S.v) > 0.03 ? { txt: '下沉中：F浮 < G', cls: 'is-sink' } : { txt: '沉底：ρ物 > ρ液，F浮 < G', cls: 'is-sink' };
+    }
+    if (S.rho < S.rhoL - eps) {
+      return Math.abs(S.v) > 0.03 ? { txt: '上浮中：F浮 > G', cls: '' } : { txt: '漂浮：ρ物 < ρ液，F浮 = G', cls: '' };
+    }
+    return { txt: '悬浮：ρ物 ≈ ρ液，可停在任意深度', cls: '' };
+  }
+
+  /* ---------------- 画布适配 ---------------- */
+  function fit() {
+    var box = cv.parentNode;
+    var w = box.clientWidth || 700;
+    var h = box.clientHeight || 460;
+    view.dpr = window.devicePixelRatio || 1;
+    view.w = w; view.h = h;
+    cv.width = Math.max(1, Math.round(w * view.dpr));
+    cv.height = Math.max(1, Math.round(h * view.dpr));
+    cv.style.width = w + 'px';
+    cv.style.height = h + 'px';
+    view.s = Math.min(w / DW, h / DH);
+    view.ox = (w - DW * view.s) / 2;
+    view.oy = (h - DH * view.s) / 2;
+  }
+
+  function begin() {
+    ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
+    ctx.clearRect(0, 0, view.w, view.h);
+    ctx.save();
+    ctx.translate(view.ox, view.oy);
+    ctx.scale(view.s, view.s);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+  }
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function bodyPath(r, ry) {
+    ctx.beginPath();
+    ctx.moveTo(CX - r, Y_TOP);
+    ctx.lineTo(CX - r, Y_BOT - 12);
+    ctx.quadraticCurveTo(CX - r, Y_BOT, CX - r + 14, Y_BOT);
+    ctx.lineTo(CX + r - 14, Y_BOT);
+    ctx.quadraticCurveTo(CX + r, Y_BOT, CX + r, Y_BOT - 12);
+    ctx.lineTo(CX + r, Y_TOP);
+    ctx.closePath();
+  }
+
+  /* ---------------- 背景实验台 ---------------- */
+  function drawBG() {
+    var g = ctx.createLinearGradient(0, 0, 0, DH);
+    g.addColorStop(0, '#fcfdff');
+    g.addColorStop(0.55, '#f2f8fd');
+    g.addColorStop(1, '#e7f0f8');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, DW, DH);
+
+    var rg = ctx.createRadialGradient(200, 70, 30, 200, 70, 560);
+    rg.addColorStop(0, 'rgba(255,255,255,0.95)');
+    rg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = rg;
+    ctx.fillRect(0, 0, DW, DH);
+
+    // 台面
+    var tg = ctx.createLinearGradient(0, TABLE_Y, 0, DH);
+    tg.addColorStop(0, '#ece5d9');
+    tg.addColorStop(0.25, '#e2d9ca');
+    tg.addColorStop(1, '#cfc4b3');
+    ctx.fillStyle = tg;
+    ctx.fillRect(0, TABLE_Y, DW, DH - TABLE_Y);
+    ctx.strokeStyle = 'rgba(176,161,140,0.75)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, TABLE_Y + 0.5);
+    ctx.lineTo(DW, TABLE_Y + 0.5);
+    ctx.stroke();
+    // 台面反光
+    var sh = ctx.createLinearGradient(0, TABLE_Y, 0, TABLE_Y + 26);
+    sh.addColorStop(0, 'rgba(255,255,255,0.55)');
+    sh.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = sh;
+    ctx.fillRect(0, TABLE_Y, DW, 26);
+  }
+
+  function drawStand() {
+    // 底座
+    var bg = ctx.createLinearGradient(0, 494, 0, 514);
+    bg.addColorStop(0, '#a8b3be');
+    bg.addColorStop(0.45, '#7f8b98');
+    bg.addColorStop(1, '#5f6a76');
+    ctx.fillStyle = bg;
+    roundRect(650, 494, 122, 18, 6);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(60,72,84,0.55)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    roundRect(656, 497, 110, 3, 1.5);
+    ctx.fill();
+
+    // 立柱
+    var rg = ctx.createLinearGradient(STAND_X - 5, 0, STAND_X + 5, 0);
+    rg.addColorStop(0, '#9aa6b2');
+    rg.addColorStop(0.35, '#e3e9ef');
+    rg.addColorStop(0.7, '#b3bec9');
+    rg.addColorStop(1, '#78848f');
+    ctx.fillStyle = rg;
+    roundRect(STAND_X - 5, 84, 10, 414, 4);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(80,95,110,0.35)';
+    ctx.stroke();
+  }
+
+  function drawBeakerBack(ry) {
+    // 台下阴影
+    ctx.fillStyle = 'rgba(52,72,92,0.10)';
+    ctx.beginPath();
+    ctx.ellipse(CX + 8, TABLE_Y + 5, R_OUT + 34, 11, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(52,72,92,0.10)';
+    ctx.beginPath();
+    ctx.ellipse(CX + 3, TABLE_Y + 2, R_OUT + 12, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 玻璃筒身（背面）
+    bodyPath(R_IN, ry);
+    var g = ctx.createLinearGradient(CX - R_IN, 0, CX + R_IN, 0);
+    g.addColorStop(0, 'rgba(224,241,252,0.85)');
+    g.addColorStop(0.28, 'rgba(246,252,255,0.45)');
+    g.addColorStop(0.62, 'rgba(238,249,255,0.30)');
+    g.addColorStop(1, 'rgba(210,234,249,0.75)');
+    ctx.fillStyle = g;
+    ctx.fill();
+
+    // 筒口后半圈（在物块之后会被前半圈盖住）
+    ctx.beginPath();
+    ctx.ellipse(CX, Y_TOP, R_OUT, ry * R_OUT / R_IN, 0, Math.PI, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(146,182,210,0.95)';
+    ctx.lineWidth = 2.6;
+    ctx.stroke();
+  }
+
+  function drawLiquid(d, ry) {
+    var yW = Y_BOT - d.h * PX;
+    var lc = liqOf(S.rhoL);
+
+    ctx.save();
+    bodyPath(R_IN, ry);
+    ctx.clip();
+    var g = ctx.createLinearGradient(0, yW, 0, Y_BOT);
+    g.addColorStop(0, css(lc.top));
+    g.addColorStop(0.55, css(mix(lc.top, lc.bot, 0.55)));
+    g.addColorStop(1, css(lc.bot));
+    ctx.fillStyle = g;
+    ctx.fillRect(CX - R_IN, yW, R_IN * 2, Y_BOT - yW);
+
+    // 后壁折射亮带
+    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+    ctx.fillRect(CX - R_IN + 6, yW, 12, Y_BOT - yW);
+
+    // 气泡（自由浮沉时更明显）
+    if (S.mode === 'free') {
+      for (var i = 0; i < 6; i++) {
+        var ph = (S.t * 0.35 + i * 0.37) % 1;
+        var bx = CX - 30 + ((i * 37) % 60);
+        var by = Y_BOT - 6 - ph * (Y_BOT - yW - 10);
+        var br = 1.2 + (i % 3) * 0.7;
+        ctx.beginPath();
+        ctx.arc(bx + Math.sin(S.t * 1.5 + i) * 3, by, br, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,' + (0.35 * (1 - ph)) + ')';
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+
+    // 液面（上表面椭圆）
+    ctx.beginPath();
+    ctx.ellipse(CX, yW, R_IN, ry, 0, 0, Math.PI * 2);
+    var sg = ctx.createLinearGradient(CX - R_IN, yW - ry, CX + R_IN, yW + ry);
+    sg.addColorStop(0, 'rgba(255,255,255,0.98)');
+    sg.addColorStop(0.55, css(mix(lc.top, [255, 255, 255], 0.45)));
+    sg.addColorStop(1, css(lc.top));
+    ctx.fillStyle = sg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(116,170,206,0.9)';
+    ctx.lineWidth = 1.3;
+    ctx.stroke();
+
+    // 弯月面
+    ctx.beginPath();
+    ctx.ellipse(CX, yW + 1.4, R_IN - 3.5, Math.max(2, ry * 0.8), 0, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+
+    // 水面波纹
+    for (var w = 0; w < 3; w++) {
+      var amp = 0.9 + w * 0.5;
+      var yy = yW + 3 + w * 3.2;
+      ctx.beginPath();
+      for (var x = -R_IN + 6; x <= R_IN - 6; x += 4) {
+        var py = yy + Math.sin(x * 0.16 + S.t * 1.7 + w) * amp * 0.5;
+        if (x === -R_IN + 6) ctx.moveTo(CX + x, py);
+        else ctx.lineTo(CX + x, py);
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,' + (0.34 - w * 0.08) + ')';
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+    }
+  }
+
+  /* ---------------- 物块（斜投影立方体） ---------------- */
+  function drawCube(bottomY, ap, ox, oy, col, tint) {
+    var x0 = CX - ap / 2, x1 = CX + ap / 2;
+    var y0 = bottomY - ap, y1 = bottomY;
+
+    function fill(pathFn, base, light) {
+      pathFn();
+      var c = light ? shade(base, light) : base;
+      if (tint) c = mix(c, WATER_TINT, tint);
+      ctx.fillStyle = css(c);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(38,58,78,' + (tint ? 0.28 : 0.42) + ')';
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+    }
+
+    // 右侧面
+    fill(function () {
+      ctx.beginPath();
+      ctx.moveTo(x1, y0);
+      ctx.lineTo(x1 + ox, y0 - oy);
+      ctx.lineTo(x1 + ox, y1 - oy);
+      ctx.lineTo(x1, y1);
+      ctx.closePath();
+    }, col, -0.26);
+
+    // 顶面
+    fill(function () {
+      ctx.beginPath();
+      ctx.moveTo(x0, y0);
+      ctx.lineTo(x1, y0);
+      ctx.lineTo(x1 + ox, y0 - oy);
+      ctx.lineTo(x0 + ox, y0 - oy);
+      ctx.closePath();
+    }, col, 0.38);
+
+    // 正面
+    var g = ctx.createLinearGradient(x0, y0, x1, y1);
+    var c1 = shade(col, 0.14), c2 = shade(col, -0.12);
+    if (tint) { c1 = mix(c1, WATER_TINT, tint); c2 = mix(c2, WATER_TINT, tint); }
+    g.addColorStop(0, css(c1));
+    g.addColorStop(1, css(c2));
+    ctx.fillStyle = g;
+    ctx.fillRect(x0, y0, ap, ap);
+    ctx.strokeStyle = 'rgba(38,58,78,' + (tint ? 0.30 : 0.45) + ')';
+    ctx.lineWidth = 1.1;
+    ctx.strokeRect(x0, y0, ap, ap);
+
+    // 正面高光
+    var hg = ctx.createLinearGradient(x0, y0, x0, y1);
+    hg.addColorStop(0, 'rgba(255,255,255,0.28)');
+    hg.addColorStop(0.45, 'rgba(255,255,255,0.06)');
+    hg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hg;
+    ctx.fillRect(x0 + 1, y0 + 1, ap - 2, ap * 0.55);
+  }
+
+  function drawObject(d, ry) {
+    var ap = d.a * PX;
+    var yW = Y_BOT - d.h * PX;
+    var bottom;
+    if (S.mode === 'hang') bottom = yW + d.s * PX;
+    else bottom = Y_BOT - d.yb * PX;
+
+    var mat = matOf(S.rho);
+    var ox = 0.34 * ap * Math.cos(view.yaw);
+    var oy = 0.26 * ap;
+
+    // 水中投影
+    if (S.mode === 'free') {
+      ctx.beginPath();
+      ctx.ellipse(CX + ox * 0.4, Y_BOT - 4, ap * 0.62, ap * 0.14, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(40,70,95,0.14)';
+      ctx.fill();
+    }
+
+    // 水线以上部分
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, DW, yW);
+    ctx.clip();
+    drawCube(bottom, ap, ox, oy, mat.rgb, 0);
+    ctx.restore();
+
+    // 水线以下部分（带折射偏移与蓝色调）
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, yW, DW, DH - yW);
+    ctx.clip();
+    ctx.translate(2.4, 0);
+    drawCube(bottom, ap, ox, oy, mat.rgb, 0.30);
+    ctx.restore();
+
+    // 水线处的前半圈液面
+    ctx.beginPath();
+    ctx.ellipse(CX, yW, R_IN, ry, 0, 0, Math.PI);
+    ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+
+    return { top: bottom - ap - oy, mid: bottom - ap * 0.6 };
+  }
+
+  function drawRipples(d, ry) {
+    if (S.mode !== 'free' && !S.soak) return;
+    var yW = Y_BOT - d.h * PX;
+    for (var i = 0; i < 3; i++) {
+      var ph = (S.t * 0.55 + i / 3) % 1;
+      ctx.beginPath();
+      ctx.ellipse(CX, yW, R_IN * (0.35 + ph * 0.62), ry * (0.35 + ph * 0.62), 0, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,255,255,' + (0.5 * (1 - ph)) + ')';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+  }
+
+  function drawGlassFront(ry) {
+    // 玻璃前壁
+    ctx.save();
+    bodyPath(R_IN, ry);
+    ctx.clip();
+    var hg = ctx.createLinearGradient(CX - R_IN, 0, CX + R_IN, 0);
+    hg.addColorStop(0, 'rgba(255,255,255,0.52)');
+    hg.addColorStop(0.10, 'rgba(255,255,255,0.12)');
+    hg.addColorStop(0.42, 'rgba(255,255,255,0)');
+    hg.addColorStop(0.72, 'rgba(255,255,255,0.05)');
+    hg.addColorStop(0.92, 'rgba(255,255,255,0.22)');
+    hg.addColorStop(1, 'rgba(255,255,255,0.46)');
+    ctx.fillStyle = hg;
+    ctx.fillRect(CX - R_IN, Y_TOP, R_IN * 2, Y_BOT - Y_TOP);
+    ctx.restore();
+
+    // 筒壁轮廓（双线表示玻璃厚度）
+    bodyPath(R_IN, ry);
+    ctx.strokeStyle = 'rgba(126,166,196,0.85)';
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+
+    bodyPath(R_OUT, ry * R_OUT / R_IN);
+    ctx.strokeStyle = 'rgba(166,198,220,0.55)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // 筒口前半圈
+    ctx.beginPath();
+    ctx.ellipse(CX, Y_TOP, R_OUT, ry * R_OUT / R_IN, 0, 0, Math.PI);
+    ctx.strokeStyle = 'rgba(146,182,210,0.95)';
+    ctx.lineWidth = 2.6;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(CX, Y_TOP, R_IN, ry, 0, 0, Math.PI);
+    ctx.strokeStyle = 'rgba(120,164,196,0.7)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // 刻度（印在前壁，透过玻璃可见）
+    ctx.font = '600 10px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    for (var cm = 0; cm <= BEAKER_H; cm++) {
+      var y = Y_BOT - cm * PX;
+      var major = cm % 4 === 0;
+      ctx.beginPath();
+      ctx.moveTo(CX - R_IN + 4, y);
+      ctx.lineTo(CX - R_IN + (major ? 27 : 15), y);
+      ctx.strokeStyle = major ? 'rgba(56,100,138,0.8)' : 'rgba(72,116,152,0.45)';
+      ctx.lineWidth = major ? 1.5 : 1;
+      ctx.stroke();
+      if (major) {
+        ctx.fillStyle = 'rgba(48,90,126,0.9)';
+        ctx.fillText(String(cm * AB), CX - R_IN + 31, y);
+      }
+    }
+    ctx.fillStyle = 'rgba(48,90,126,0.75)';
+    ctx.font = '600 9.5px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.fillText('mL', CX - R_IN + 31, Y_TOP + 14);
+  }
+
+  /* ---------------- 弹簧测力计 ---------------- */
+  function drawScale(d, objTop) {
+    var hookY = objTop - STRING;
+    var bodyBottom = hookY - 12;
+    var bodyTop = bodyBottom - BODY_H;
+    var ringY = bodyTop - 9;
+    var alpha = S.mode === 'hang' ? 1 : 0.28;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    // 横臂（随夹持位置上下移动）
+    var armG = ctx.createLinearGradient(0, ringY - 4, 0, ringY + 4);
+    armG.addColorStop(0, '#c3ccd5');
+    armG.addColorStop(0.5, '#8e9aa6');
+    armG.addColorStop(1, '#6d7885');
+    ctx.strokeStyle = armG;
+    ctx.lineWidth = 7;
+    roundRect(CX - 4, ringY - 3.5, STAND_X - CX + 4, 7, 3.5);
+    ctx.fillStyle = armG;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(70,84,96,0.35)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // 挂钩环
+    ctx.beginPath();
+    ctx.arc(CX, ringY + 6, 6, 0, Math.PI * 2);
+    ctx.strokeStyle = '#8a96a2';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // 表身阴影
+    ctx.fillStyle = 'rgba(40,60,80,0.10)';
+    roundRect(CX - 29, bodyTop + 3, 62, BODY_H, 10);
+    ctx.fill();
+
+    // 表身
+    var bg = ctx.createLinearGradient(CX - 30, 0, CX + 30, 0);
+    bg.addColorStop(0, '#8e9aa6');
+    bg.addColorStop(0.09, '#eef2f6');
+    bg.addColorStop(0.5, '#ffffff');
+    bg.addColorStop(0.91, '#e6ebf1');
+    bg.addColorStop(1, '#9aa6b3');
+    ctx.fillStyle = bg;
+    roundRect(CX - 30, bodyTop, 60, BODY_H, 9);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(96,110,124,0.65)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // 刻度面
+    ctx.fillStyle = '#fcfdff';
+    roundRect(CX - 25, bodyTop + 5, 50, BODY_H - 10, 6);
+    ctx.fill();
+
+    // 刻度：0.1 N 一格，0.5 N 长刻度，整数标数字
+    var y0 = bodyTop + 14, y1 = bodyBottom - 14;
+    ctx.textBaseline = 'middle';
+    for (var i = 0; i <= 50; i++) {
+      var t = i / 10;                       // 0 ~ 5 N
+      var y = y0 + (t / 5) * (y1 - y0);
+      var half = i % 5 === 0;
+      var whole = i % 10 === 0;
+      ctx.beginPath();
+      ctx.moveTo(CX - 22, y);
+      ctx.lineTo(CX - (whole ? 6 : (half ? 10 : 15)), y);
+      ctx.strokeStyle = whole ? 'rgba(52,68,84,0.9)' : (half ? 'rgba(60,78,96,0.6)' : 'rgba(70,88,106,0.38)');
+      ctx.lineWidth = whole ? 1.5 : 1;
+      ctx.stroke();
+      if (whole) {
+        ctx.fillStyle = '#33465c';
+        ctx.font = '700 10.5px "Microsoft YaHei", system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(String(i / 10), CX - 1, y);
+      }
+    }
+
+    // 单位
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#5b6e84';
+    ctx.font = '700 10px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.fillText('N', CX + 13, bodyTop + 15);
+
+    // 指针（示数）：红色横线 + 左侧箭头
+    var T = Math.min(5, Math.max(0, d.T));
+    var py = y0 + (T / 5) * (y1 - y0) + Math.sin(S.t * 9) * 0.35;
+    ctx.beginPath();
+    ctx.moveTo(CX - 22, py);
+    ctx.lineTo(CX + 15, py);
+    ctx.strokeStyle = 'rgba(217,72,63,0.9)';
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(CX - 22, py);
+    ctx.lineTo(CX - 15, py - 3.2);
+    ctx.lineTo(CX - 15, py + 3.2);
+    ctx.closePath();
+    ctx.fillStyle = '#d9483f';
+    ctx.fill();
+
+    // 挂钩
+    ctx.beginPath();
+    ctx.moveTo(CX, bodyBottom);
+    ctx.lineTo(CX, bodyBottom + 5);
+    ctx.arc(CX, bodyBottom + 9, 4, -Math.PI / 2, Math.PI * 1.2);
+    ctx.strokeStyle = '#8a96a2';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // 细线
+    if (S.mode === 'hang') {
+      ctx.beginPath();
+      if (d.T > 0.02) {
+        ctx.moveTo(CX, bodyBottom + 13);
+        ctx.lineTo(CX, objTop);
+      } else {
+        // 细线松弛：画一段下垂的曲线
+        ctx.moveTo(CX, bodyBottom + 13);
+        ctx.quadraticCurveTo(CX + 12, (bodyBottom + objTop) / 2 + 8, CX, objTop);
+      }
+      ctx.strokeStyle = 'rgba(70,86,102,0.85)';
+      ctx.lineWidth = 1.3;
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    return { bodyTop: bodyTop, hookY: hookY, ringY: ringY };
+  }
+
+  /* ---------------- 浮沉条件面板 ---------------- */
+  function drawPanel(d) {
+    var x = 470, y = 196, w = 236, h = 136;
+    ctx.fillStyle = 'rgba(40,70,95,0.07)';
+    roundRect(x + 2, y + 4, w, h, 12);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255,255,255,0.94)';
+    roundRect(x, y, w, h, 12);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(196,216,234,0.9)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = '#2c5f8f';
+    ctx.font = '700 12.5px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('浮沉条件', x + 14, y + 18);
+
+    var mat = matOf(S.rho);
+    var lc = liqOf(S.rhoL);
+    var rows = [
+      { label: 'ρ物', val: S.rho, rgb: mat.rgb },
+      { label: 'ρ液', val: S.rhoL, rgb: lc.bot }
+    ];
+    for (var i = 0; i < rows.length; i++) {
+      var ry = y + 44 + i * 34;
+      ctx.fillStyle = '#5a7089';
+      ctx.font = '600 11px "Microsoft YaHei", system-ui, sans-serif';
+      ctx.fillText(rows[i].label, x + 14, ry);
+      ctx.fillStyle = '#23384c';
+      ctx.font = '700 12px "Microsoft YaHei", system-ui, sans-serif';
+      ctx.fillText(rows[i].val.toFixed(2), x + 44, ry);
+
+      var bx = x + 92, bw = 118, bh = 9;
+      ctx.fillStyle = 'rgba(214,228,240,0.9)';
+      roundRect(bx, ry - bh / 2, bw, bh, 4.5);
+      ctx.fill();
+      var frac = Math.min(1, rows[i].val / 3);
+      ctx.fillStyle = css(rows[i].rgb);
+      roundRect(bx, ry - bh / 2, Math.max(3, bw * frac), bh, 4.5);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(120,150,175,0.35)';
+      ctx.lineWidth = 0.8;
+      roundRect(bx, ry - bh / 2, bw, bh, 4.5);
+      ctx.stroke();
+    }
+
+    var verdict, color;
+    if (S.rho > S.rhoL + 0.02) { verdict = 'ρ物 > ρ液 → 下沉'; color = '#4b627a'; }
+    else if (S.rho < S.rhoL - 0.02) { verdict = 'ρ物 < ρ液 → 上浮'; color = '#1f6fae'; }
+    else { verdict = 'ρ物 = ρ液 → 悬浮'; color = '#2c7a5f'; }
+    ctx.fillStyle = color;
+    ctx.font = '700 12.5px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.fillText(verdict, x + 14, y + h - 18);
+  }
+
+  /* ---------------- 标注 ---------------- */
+  function leader(dotX, dotY, textX, textY, text, align) {
+    ctx.save();
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = 'rgba(96,116,136,0.55)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(dotX, dotY);
+    ctx.lineTo(textX + (align === 'right' ? 6 : -6), textY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = '#5b7186';
+    ctx.fill();
+    ctx.font = '600 12px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.fillStyle = '#3d5972';
+    ctx.textAlign = align || 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, textX, textY);
+    ctx.restore();
+  }
+
+  /* ---------------- 主绘制 ---------------- */
+  function draw(d) {
+    begin();
+    var ry = R_IN * view.k * (0.9 + 0.1 * Math.cos(view.yaw));
+    view.ry = ry;
+
+    drawBG();
+    drawStand();
+    drawBeakerBack(ry);
+    drawLiquid(d, ry);
+    drawRipples(d, ry);
+    var geo = drawObject(d, ry);
+    drawGlassFront(ry);
+    var sc = drawScale(d, geo.top);
+    drawPanel(d);
+
+    var lc = liqOf(S.rhoL);
+    var mat = matOf(S.rho);
+    var yW = Y_BOT - d.h * PX;
+
+    leader(CX + 27, sc.bodyTop + 26, CX + 50, sc.bodyTop + 16, '弹簧测力计（0~5 N）', 'left');
+    leader(CX + R_OUT + 2, Y_BOT - 24, CX + R_OUT + 22, Y_BOT - 18, '量筒（1000 mL）', 'left');
+    leader(CX + R_IN - 6, yW + 1, CX + R_IN + 20, yW - 8, lc.name + '（' + S.rhoL.toFixed(2) + ' g/cm³）', 'left');
+    leader(CX - d.a * PX / 2 - 4, geo.mid, CX - d.a * PX / 2 - 22, geo.mid + 4, '物块：' + mat.name, 'right');
+
+    ctx.restore();
+  }
+
+  /* ---------------- 读数 / 公式 / 机读数据 ---------------- */
+  function setText(id, s) {
+    var el = document.getElementById(id);
+    if (el && el.textContent !== s) el.textContent = s;
+  }
+
+  function render() {
+    var d = derived();
+    var a = d.a;
+
+    var Gs = Math.round(d.G * 100) / 100;
+    var Fbs = Math.round(d.Fb * 100) / 100;
+    var Ts = Math.max(0, Math.round((Gs - Fbs) * 100) / 100);
+    var VsubShow = Math.round(d.Vsub * 10) / 10;
+
+    setText('v-rho', S.rho.toFixed(2));
+    setText('v-mat', matOf(S.rho).name);
+    setText('v-vol', String(S.vol));
+    setText('v-sub', (S.sub * a).toFixed(1));
+    setText('v-liq', liqOf(S.rhoL).name + ' ' + S.rhoL.toFixed(2) + ' g/cm³');
+
+    setText('r-fb', Fbs.toFixed(2));
+    setText('r-ft', (S.mode === 'hang' ? Ts : 0).toFixed(2));
+    setText('r-vp', VsubShow.toFixed(1));
+    setText('r-s', d.s.toFixed(1));
+
+    var st = stateOf(d);
+    var stateEl = document.getElementById('state');
+    stateEl.className = 'exp-state' + (st.cls ? ' ' + st.cls : '');
+    setText('state-txt', st.txt);
+
+    // 代入式：所有数字都用「页面上显示的同一套」，保证读者能自己复算
+    var lines = [];
+    if (d.Vsub > 0.01) {
+      var vm3 = Number((d.Vsub / 1e6).toPrecision(4));
+      lines.push('F浮 = ρ液 g V排 = ' + (S.rhoL * 1000).toFixed(0) + ' kg/m³ × 10 N/kg × ' + String(vm3) + ' m³ = ' + Fbs.toFixed(2) + ' N');
+    } else {
+      lines.push('V排 = 0 cm³（物块尚未排开液体），F浮 = 0.00 N');
+    }
+    lines.push('G = m g = ' + (d.m).toFixed(3) + ' kg × 10 N/kg = ' + Gs.toFixed(2) + ' N');
+    if (S.mode === 'hang') {
+      if (Fbs < Gs - 0.005) {
+        lines.push('F示 = G - F浮 = ' + Gs.toFixed(2) + ' N - ' + Fbs.toFixed(2) + ' N = ' + Ts.toFixed(2) + ' N');
+      } else if (Fbs > Gs + 0.005) {
+        lines.push('F浮 - G = ' + Fbs.toFixed(2) + ' N - ' + Gs.toFixed(2) + ' N = ' + (Math.round((Fbs - Gs) * 100) / 100).toFixed(2) + ' N（净力向上，细线松弛，F示 = 0 N）');
+      }
+    } else {
+      lines.push('ρ物 = ' + S.rho.toFixed(2) + ' g/cm³，ρ液 = ' + S.rhoL.toFixed(2) + ' g/cm³ → ' + (S.rho > S.rhoL + 0.02 ? '下沉' : (S.rho < S.rhoL - 0.02 ? '上浮' : '悬浮')));
+    }
+    var fmlEl = document.getElementById('fml');
+    var fmlHtml = lines.join('<br>');
+    if (fmlEl.getAttribute('data-txt') !== fmlHtml) {
+      fmlEl.innerHTML = fmlHtml;
+      fmlEl.setAttribute('data-txt', fmlHtml);
+    }
+
+    var hint = document.getElementById('hint');
+    var alertBox = document.getElementById('alert');
+    if (S.mode === 'hang') {
+      if (d.s >= a - 1e-6) {
+        setText('hint', '物块已完全浸没：再加深深度，V排 不再增加，F浮 保持不变——浮力与深度无关。');
+      } else if (d.s <= 1e-6) {
+        setText('hint', '物块下表面刚接触液面，V排 = 0，此时测力计示数等于物块重力。');
+      } else {
+        setText('hint', '物块正在进入液体：浸得越深，排开的液体越多，F浮 越大，测力计示数越小。');
+      }
+      if (d.Fb >= d.G) {
+        alertBox.hidden = false;
+        alertBox.textContent = 'F浮 ≥ G：物块本身会浮起来，细线已经松弛，测力计示数为 0。这说明该物块密度小于液体密度。';
+      } else {
+        alertBox.hidden = true;
+      }
+    } else {
+      setText('hint', '松手后由合力决定运动：F浮 > G 上浮，F浮 < G 下沉，F浮 = G 悬浮。最终露出液面的比例由 ρ物 / ρ液 决定。');
+      alertBox.hidden = true;
+    }
+
+    var tip = document.getElementById('tip');
+    setText('tip', '装置：弹簧测力计（0~5 N）· 量筒（1000 mL）· ' + liqOf(S.rhoL).name + ' · 物块（' + matOf(S.rho).name + '）');
+
+    window.__DATA__ = {
+      experiment_id: 'buoyancy_measure',
+      rho_liquid: S.rhoL,
+      rho_object: S.rho,
+      volume: S.vol,
+      V_displaced: Number(d.Vsub.toFixed(2)),
+      F_buoy: Number(d.Fb.toFixed(3)),
+      F_spring: Number((S.mode === 'hang' ? d.T : 0).toFixed(3)),
+      G: Number(d.G.toFixed(3)),
+      immersion_depth: Number(d.s.toFixed(3)),
+      liquid_level: Number(d.h.toFixed(3)),
+      state: st.txt,
+      mode: S.mode,
+      checks: {
+        '浮力公式复算': Math.abs(d.Fb - S.rhoL * 1000 * G_ACC * d.Vsub / 1e6) < 1e-6,
+        '排开体积不超物体体积': d.Vsub <= S.vol + 1e-6,
+        '称重法自洽': S.mode !== 'hang' || Math.abs(Math.max(0, d.G - d.Fb) - d.T) < 1e-6
+      }
+    };
+    window.__CONFIG__ = {
+      scene_id: 'buoyancy_measure',
+      scene_engine: 'measurement',
+      subject: '物理',
+      experiment_id: '浮力测量'
+    };
+
+    draw(d);
+  }
+
+  /* ---------------- 实验记录 ---------------- */
+  var rowsEl = document.getElementById('rows');
+  function record() {
+    var d = derived();
+    var Gs = Math.round(d.G * 100) / 100;
+    var Fbs = Math.round(d.Fb * 100) / 100;
+    var Ts = Math.max(0, Math.round((Gs - Fbs) * 100) / 100);
+    var st = stateOf(d);
+    var cells = [
+      String(rowsEl.children.length + 1),
+      liqOf(S.rhoL).name,
+      S.rhoL.toFixed(2),
+      S.rho.toFixed(2),
+      String(S.vol),
+      (Math.round(d.Vsub * 10) / 10).toFixed(1),
+      Fbs.toFixed(2),
+      (S.mode === 'hang' ? Ts : 0).toFixed(2),
+      st.txt
+    ];
+    var tr = document.createElement('tr');
+    for (var i = 0; i < cells.length; i++) {
+      var td = document.createElement('td');
+      if (i === 6 || i === 7) td.className = 'is-strong';
+      td.textContent = cells[i];
+      tr.appendChild(td);
+    }
+    rowsEl.appendChild(tr);
+  }
+
+  function csv() {
+    var lines = ['序号,液体,ρ液(g/cm³),ρ物(g/cm³),V物(cm³),V排(cm³),F浮(N),F示(N),状态'];
+    for (var i = 0; i < rowsEl.children.length; i++) {
+      var tds = rowsEl.children[i].children, arr = [];
+      for (var j = 0; j < tds.length; j++) {
+        var v = tds[j].textContent;
+        arr.push(/[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v);
+      }
+      lines.push(arr.join(','));
+    }
+    var blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '浮力实验记录.csv';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  }
+
+  /* ---------------- 控件 ---------------- */
+  function syncControls() {
+    document.getElementById('rg-rho').value = String(S.rho);
+    document.getElementById('rg-vol').value = String(S.vol);
+    document.getElementById('rg-sub').value = String(Math.round(S.sub * 100));
+    document.getElementById('sel-liq').value = S.rhoL.toFixed(2);
+    var modeBtn = document.getElementById('btn-mode');
+    modeBtn.textContent = S.mode === 'hang' ? '模式：测力计悬挂' : '模式：自由浮沉';
+    modeBtn.classList.toggle('is-on', S.mode === 'hang');
+    document.getElementById('btn-soak').disabled = S.mode !== 'hang';
+    document.getElementById('btn-step').textContent = S.mode === 'hang' ? '单步浸入' : '单步推进';
+    var sub = document.getElementById('rg-sub');
+    sub.disabled = S.mode !== 'hang';
+  }
+
+  document.getElementById('rg-rho').addEventListener('input', function () {
+    S.rho = +this.value;
+    if (S.mode === 'free') { S.yb = 0; S.v = 0; }
+    render();
+  });
+  document.getElementById('rg-vol').addEventListener('input', function () {
+    S.vol = +this.value;
+    if (S.mode === 'free') { S.yb = 0; S.v = 0; }
+    render();
+  });
+  document.getElementById('rg-sub').addEventListener('input', function () {
+    S.sub = (+this.value) / 100;
+    S.soak = false;
+    render();
+  });
+  document.getElementById('sel-liq').addEventListener('change', function () {
+    S.rhoL = +this.value;
+    if (S.mode === 'free') { S.yb = 0; S.v = 0; }
+    render();
+  });
+
+  document.getElementById('btn-mode').addEventListener('click', function () {
+    S.mode = S.mode === 'hang' ? 'free' : 'hang';
+    S.yb = 0;
+    S.v = 0;
+    S.soak = false;
+    S.playing = S.mode === 'free';
+    syncControls();
+    render();
+  });
+
+  document.getElementById('btn-soak').addEventListener('click', function () {
+    if (S.mode !== 'hang') return;
+    S.sub = 0;
+    S.soak = true;
+    document.getElementById('rg-sub').value = '0';
+    render();
+  });
+
+  document.getElementById('btn-step').addEventListener('click', function () {
+    if (S.mode === 'hang') {
+      // 往返步进：0→100% 逐步浸入，到顶后逐步提起，便于反复演示
+      S.soak = false;
+      S.sub += 0.1 * S.stepDir;
+      if (S.sub >= 1 - 1e-9) { S.sub = 1; S.stepDir = -1; }
+      if (S.sub <= 1e-9) { S.sub = 0; S.stepDir = 1; }
+      document.getElementById('rg-sub').value = String(Math.round(S.sub * 100));
+    } else {
+      stepPhysics(0.4);
+    }
+    render();
+  });
+
+  document.getElementById('btn-record').addEventListener('click', record);
+  document.getElementById('btn-csv').addEventListener('click', csv);
+
+  document.getElementById('btn-reset').addEventListener('click', function () {
+    S.rhoL = DEF.rhoL;
+    S.rho = DEF.rho;
+    S.vol = DEF.vol;
+    S.sub = DEF.sub;
+    S.mode = 'hang';
+    S.yb = 0;
+    S.v = 0;
+    S.soak = false;
+    S.stepDir = 1;
+    S.playing = true;
+    document.getElementById('rg-sub').value = String(Math.round(DEF.sub * 100));
+    rowsEl.innerHTML = '';
+    syncControls();
+    render();
+  });
+
+  /* ---------------- 拖动旋转（伪 3D 视角） ---------------- */
+  var drag = null;
+  cv.addEventListener('pointerdown', function (e) {
+    drag = { x: e.clientX, yaw: view.yaw };
+    cv.setPointerCapture(e.pointerId);
+    cv.style.cursor = 'grabbing';
+  });
+  cv.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    view.yaw = Math.max(-0.9, Math.min(0.9, drag.yaw + (e.clientX - drag.x) * 0.006));
+    view.k = 0.26 - 0.055 * Math.abs(Math.sin(view.yaw * 0.9));
+    render();
+  });
+  cv.addEventListener('pointerup', function () { drag = null; cv.style.cursor = 'grab'; });
+  cv.addEventListener('pointercancel', function () { drag = null; cv.style.cursor = 'grab'; });
+  cv.style.cursor = 'grab';
+
+  /* ---------------- 启动 ---------------- */
+  window.addEventListener('resize', function () { fit(); render(); });
+
+  var last = performance.now();
+  function loop(now) {
+    var dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    S.t += dt;
+    if (S.mode === 'free' && S.playing) stepPhysics(dt);
+    if (S.soak) {
+      S.sub += dt / 5;
+      if (S.sub >= 1) { S.sub = 1; S.soak = false; }
+      document.getElementById('rg-sub').value = String(Math.round(S.sub * 100));
+    }
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  fit();
+  syncControls();
+  render();
+  requestAnimationFrame(loop);
+})();
+  </script>
+</body>
+</html>
