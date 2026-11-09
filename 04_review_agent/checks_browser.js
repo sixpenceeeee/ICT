@@ -202,6 +202,7 @@ async function main() {
     buttonsClicked: [],
     sections: [],
     machine: { has: false },
+    circuit: { initial: null, samples: [] },
     reset: { found: false, restored: null, textDiff: 0, dataDiff: false },
     steps: { found: false, count: 0, stuck: 0, sequence: [] },
     records: { before: 0, after: 0, added: 0 },
@@ -237,6 +238,22 @@ async function main() {
   result.loadMs = Date.now() - t0;
   await page.waitForTimeout(400);
   result.ok = true;
+  const captureCircuit = async label => {
+    const state = await page.evaluate(() => {
+      const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
+      const readings = Array.from(document.querySelectorAll('[data-circuit-current-for], [data-circuit-voltage-for]')).map(el => ({
+        kind: el.hasAttribute('data-circuit-current-for') ? 'current' : 'voltage',
+        component: el.getAttribute('data-circuit-current-for') || el.getAttribute('data-circuit-voltage-for') || '',
+        text: (el.textContent || '').trim(), value: parseFloat((el.textContent || '').replace(/,/g, '')),
+        bound: el.getAttribute('data-circuit-bound') === 'true'
+      }));
+      return { model: clone(window.__CIRCUIT_MODEL__), result: clone(window.__CIRCUIT_RESULT__), readings,
+        diagramSignature: window.__CIRCUIT_DRAW_SIGNATURE__ || null };
+    });
+    if (state.model && state.result) result.circuit.samples.push({ label, ...state });
+    return state.model && state.result ? state : null;
+  };
+  result.circuit.initial = await captureCircuit('initial');
 
   result.stageImages = await page.evaluate(() => {
     const stage = document.getElementById('sec-stage');
@@ -756,6 +773,7 @@ async function main() {
     info.changed = before !== await visualSig();
     result.ranges.details.push(info);
     if (info.changed) result.ranges.responsive++;
+    await captureCircuit('range-' + idx);
   }
 
   // ---- 6b. 离散选择器：确认切换选项确实切换实验状态 ----
@@ -788,6 +806,7 @@ async function main() {
     await page.waitForTimeout(180);
     result.selects.details.push(info);
     if (info.changed) result.selects.responsive++;
+      await captureCircuit('select-' + idx);
   }
 
   // 极值状态下的代入式（J1「极值下仍自洽」）

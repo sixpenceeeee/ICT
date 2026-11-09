@@ -48,7 +48,7 @@ except Exception as exc:                      # noqa: BLE001
     LLM_ERROR = str(exc)
 
 from prompts import GENERATOR_SYSTEM_PROMPT, build_user_prompt
-from scene_registry import required_scene_call, select_page_skeleton
+from scene_registry import required_scene_call, required_solver_call, select_page_skeleton
 
 
 # ============ 1. 找最新的输入文件 ============
@@ -127,10 +127,60 @@ def hard_validate(secs, req=None):
     visual = secs.get("2") or ""
     skeleton = select_page_skeleton(req or {})
     required_scene = required_scene_call(req or {})
+    required_solver = required_solver_call(req or {})
     js_code = re.sub(r"/\*.*?\*/|//[^\r\n]*", "", secs.get("js") or "", flags=re.S)
     if required_scene and not re.search(required_scene[0], js_code, re.I):
         problems.append("选定骨架 %s 要求页面脚本实际调用 %s，不能只在注释中提及或另写简化手绘"
                         % (skeleton["id"], required_scene[1]))
+    if required_solver:
+        if not re.search(required_solver[0], js_code, re.I):
+            problems.append("选定骨架 %s 必须在 render 中调用学科求解器 %s" % (skeleton["id"], required_solver[1]))
+        if skeleton.get("solver_api") == "CIRCUIT.solve":
+            if not re.search(r"CIRCUIT\s*\.\s*bindMeters\s*\(", js_code, re.I):
+                problems.append("电路表计读数必须由 CIRCUIT.bindMeters 从求解器结果直接写入，不能使用手写公式")
+            if not re.search(r"CIRCUIT\s*\.\s*draw\s*\(", js_code, re.I):
+                problems.append("电路图必须调用 CIRCUIT.draw(cv, model, solverResult)，确保导线拓扑来自求解模型")
+            if re.search(r"drawFallback\s*\(|\b(?:U|I)\s*=\s*6\s*(?:\*|/)\s*state\.", js_code, re.I):
+                problems.append("电路页仍有手写公式/绘图回退；求解失败时必须停止显示正常结果，不能用另一套算法代替求解器")
+            if not re.search(r"CIRCUIT\s*\.\s*meter\s*\(", js_code, re.I):
+                problems.append("电路页的公式与机读数据必须从 CIRCUIT.meter(solverResult, 元件ID, current/voltage) 取值，不能另算一遍")
+            if not re.search(r"type\s*:\s*['\"]voltage[_-]?source['\"]", js_code, re.I):
+                problems.append("电路网表缺少真实电源元件（voltage_source），不能只在文字或画布中标注电源")
+            if not re.search(r"type\s*:\s*['\"]ammeter['\"]", js_code, re.I):
+                problems.append("电路网表必须包含串联理想电流表元件 ammeter；不能用 current_source 冒充电流表")
+            if not re.search(r"volts\s*:\s*state\.[A-Za-z_$][\w$]*", js_code, re.I):
+                problems.append("电源电压必须从当前控件状态写入 voltage_source.volts；不能让滑块只改标签、不改仿真")
+            if not re.search(r"ohms\s*:\s*state\.[A-Za-z_$][\w$]*", js_code, re.I):
+                problems.append("被测电阻必须从当前控件状态写入 resistor.ohms；不能让参数控件与仿真脱节")
+            vm_ids = set(re.findall(r"id\s*:\s*['\"]([^'\"]+)['\"]\s*,\s*type\s*:\s*['\"]voltmeter['\"]", js_code, re.I))
+            voltage_binding = re.search(r"data-circuit-voltage-for\s*=\s*['\"]([^'\"]+)",
+                                        "\n".join((secs.get("3") or "", visual, secs.get("4") or "")), re.I)
+            if voltage_binding and voltage_binding.group(1) in vm_ids:
+                problems.append("电压表读数应绑定被测电阻支路（与 voltmeter 两端并联），不能绑定电压表自身元件")
+            if voltage_binding:
+                component_rows = []
+                for row in re.findall(r"\{[^{}]*\bid\s*:\s*['\"][^'\"]+['\"][^{}]*\}", js_code, re.S):
+                    def field(name):
+                        m = re.search(r"\b%s\s*:\s*['\"]([^'\"]+)['\"]" % name, row, re.I)
+                        return m.group(1) if m else None
+                    comp_id, comp_type = field("id"), field("type")
+                    if not comp_id or not comp_type:
+                        continue
+                    ends = field("from"), field("to")
+                    if not all(ends): ends = field("positive"), field("negative")
+                    component_rows.append((comp_id, comp_type.lower().replace("-", "_"), frozenset(ends)))
+                bound_id = voltage_binding.group(1)
+                target = next((x for x in component_rows if x[0] == bound_id and x[1] == "resistor"), None)
+                meters = [x for x in component_rows if x[1] == "voltmeter"]
+                if target and meters and not any(x[2] == target[2] for x in meters):
+                    problems.append("voltmeter 元件必须与 data-circuit-voltage-for 所指的被测电阻并联（两端节点完全相同）")
+        for marker in ("__CIRCUIT_MODEL__", "__CIRCUIT_RESULT__"):
+            if marker not in js_code:
+                problems.append("电路页必须暴露 %s，供独立审查器复算和对拍" % marker)
+        if not re.search(r"data-circuit-current-for=[\"']", "\n".join((secs.get("3") or "", visual, secs.get("4") or "")), re.I):
+            problems.append("电路页面必须用 data-circuit-current-for 标记绑定到求解器支路的电流表读数")
+        if not re.search(r"data-circuit-voltage-for=[\"']", "\n".join((secs.get("3") or "", visual, secs.get("4") or "")), re.I):
+            problems.append("电路页面必须用 data-circuit-voltage-for 标记绑定到求解器支路的电压表读数")
     expected_visual = skeleton["visual_type"]
     visual_match = re.search(r'<(?:canvas|svg)\b[^>]*\bdata-visual-type=["\']([^"\']+)', visual, re.I)
     if visual_match and visual_match.group(1).lower() != expected_visual:
@@ -333,7 +383,8 @@ def generate(req, pack, feedback=None, template_only=False):
             "问题": [], "外壳校验": [],
             "页面骨架": {"id": selected_skeleton["id"],
                          "画布类型": selected_skeleton["visual_type"],
-                         "场景库API": selected_skeleton.get("api")}}
+                         "场景库API": selected_skeleton.get("api"),
+                         "学科求解器": selected_skeleton.get("solver_api")}}
 
     if template_only or not HAS_LLM or not get_config()["api_key"]:
         if not template_only and HAS_LLM and not get_config()["api_key"]:

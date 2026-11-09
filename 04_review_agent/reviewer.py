@@ -47,10 +47,12 @@ FACTS_PATH = os.path.join(BASE_DIR, "facts.json")
 
 sys.path.insert(0, PARENT)
 sys.path.insert(0, BASE_DIR)
+sys.path.insert(0, os.path.join(PARENT, "03_generator_agent", "solvers"))
 
 from topics import detect_topic, profile_of, unit_pattern  # noqa: E402
 import judges as judge_lib                                  # noqa: E402
 import registry                                            # noqa: E402
+from circuit_solver import CircuitError, solve_circuit      # noqa: E402
 
 PASS_SCORE = 80
 MAJOR_LINE = 60
@@ -274,6 +276,11 @@ def gate1_safety(html, low, text, topic, br, subject, cfg, engine="", scene=None
             for m in re.finditer(pat, text):
                 v = float(m.group(1))
                 if v <= item["上限"]:
+                    continue
+                # Dimensional identities such as "1 A = 1 V/Ω" name the
+                # ampere unit; they are not proposed apparatus settings.
+                tail = text[m.end():m.end() + 18]
+                if re.match(r"\s*(?:=|≈|等于)\s*\d", tail):
                     continue
                 ctx_s = text[max(0, m.start() - 14):m.start()]
                 if any(w in ctx_s for w in WARN_CONTEXT):
@@ -698,6 +705,149 @@ def infer_visual_type(text):
         return "apparatus"
     return ""
 
+
+def verify_circuit_samples(br):
+    """Compare browser JS solver outputs to this independent Python MNA oracle."""
+    def diagram_signature(model):
+        parts = []
+        for c in model.get("components") or []:
+            kind = str(c.get("type", "")).lower().replace("-", "_")
+            if kind == "voltagesource":
+                kind = "voltage_source"
+            if kind == "currentsource":
+                kind = "current_source"
+            start = c.get("from") if c.get("from") is not None else c.get("positive")
+            end = c.get("to") if c.get("to") is not None else c.get("negative")
+            switch = ("1" if c.get("closed") else "0") if kind == "switch" else "-"
+            parts.append("|".join((str(c.get("id", "")), kind, str(start), str(end), switch)))
+        return ";".join(sorted(parts))
+
+    circuit = (br or {}).get("circuit") or {}
+    samples = circuit.get("samples") or []
+    if not samples:
+        return {"checked": False, "ok": False,
+                "actual": "浏览器未暴露 window.__CIRCUIT_MODEL__ 与 window.__CIRCUIT_RESULT__"}
+    checked = 0
+    for sample in samples[:12]:
+        model, actual = sample.get("model"), sample.get("result")
+        if not isinstance(model, dict) or not isinstance(actual, dict):
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 电路模型或结果不是对象" % sample.get("label", "state")}
+        components = model.get("components") or []
+        if len(components) > 80:
+            return {"checked": True, "ok": False,
+                    "actual": "电路元件数超过审查上限 80，拒绝执行过大模型"}
+        expected_signature = diagram_signature(model)
+        actual_signature = sample.get("diagramSignature")
+        if not actual_signature or actual_signature != expected_signature:
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 电路图未由当前 netlist 绘制，或图示拓扑签名与模型不一致" % sample.get("label", "state"),
+                    "advice": "每次 render 调用 CIRCUIT.draw(cv, model, solverResult)，不要另画独立导线图"}
+        try:
+            expected = solve_circuit(model)
+        except CircuitError as exc:
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 独立求解器拒绝该拓扑（%s）" % (sample.get("label", "state"), exc),
+                    "advice": "检查节点连通、开关状态、电源极性和元件参数；奇异/不安全电路应在页面显示错误状态"}
+        except Exception as exc:  # noqa: BLE001
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 独立求解器错误（%s）" % (sample.get("label", "state"), exc)}
+
+        # For the initial state of a requested Ohm-law experiment, a closed
+        # switch and non-zero source must produce a conducting load current.
+        # A mathematically solvable dead-end branch can satisfy KCL/KVL while
+        # still failing to demonstrate the requested experiment.
+        if sample.get("label") == "initial":
+            components = model.get("components") or []
+            sources = [c for c in components if str(c.get("type", "")).lower().replace("-", "_") == "voltage_source"]
+            all_switches_closed = all(bool(c.get("closed")) for c in components
+                                      if str(c.get("type", "")).lower() == "switch")
+            ammeters = [c for c in components if str(c.get("type", "")).lower() == "ammeter"]
+            energized = any(abs(float(c.get("volts", 0) or 0)) > 1e-9 for c in sources)
+            if energized and all_switches_closed and ammeters and all(
+                    abs(expected["branches"].get(str(c.get("id")), {}).get("current", 0)) < 1e-9
+                    for c in ammeters):
+                return {"checked": True, "ok": False,
+                        "actual": "initial: 电源有电压且开关闭合，但电流表支路电流为 0；电路没有形成有效闭合实验回路",
+                        "advice": "把被测电阻串入电源正负端之间的闭合回路，确认电流表串联在回路中"}
+
+        exp_nodes, act_nodes = expected.get("nodes", {}), actual.get("nodes", {})
+        exp_branches, act_branches = expected.get("branches", {}), actual.get("branches", {})
+        if not isinstance(act_nodes, dict) or not isinstance(act_branches, dict):
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 结果缺少 nodes/branches" % sample.get("label", "state")}
+        for key, value in exp_nodes.items():
+            got = act_nodes.get(key)
+            if not isinstance(got, (int, float)) or abs(float(got) - value) > max(1e-7, abs(value) * 1e-6):
+                return {"checked": True, "ok": False,
+                        "actual": "%s 节点 %s：参考 %.9g V，页面求解器 %s" % (sample.get("label", "state"), key, value, got)}
+        for key, branch in exp_branches.items():
+            got = act_branches.get(key)
+            if not isinstance(got, dict):
+                return {"checked": True, "ok": False,
+                        "actual": "%s 缺少支路 %s" % (sample.get("label", "state"), key)}
+            for field, unit in (("voltage", "V"), ("current", "A"), ("power", "W")):
+                value = branch[field]
+                actual_value = got.get(field)
+                tol = max(1e-7, abs(value) * 1e-6)
+                if not isinstance(actual_value, (int, float)) or abs(float(actual_value) - value) > tol:
+                    return {"checked": True, "ok": False,
+                            "actual": "%s 支路 %s 的 %s：参考 %.9g %s，页面求解器 %s" %
+                                     (sample.get("label", "state"), key, field, value, unit, actual_value)}
+        readings = sample.get("readings") or []
+        if not readings:
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 页面没有带支路绑定标记的电流表/电压表读数" % sample.get("label", "state"),
+                    "advice": "给读数元素添加 data-circuit-current-for 或 data-circuit-voltage-for，并绑定实际测量支路元件 id"}
+        for reading in readings:
+            cid = str(reading.get("component", ""))
+            field = "current" if reading.get("kind") == "current" else "voltage"
+            branch = exp_branches.get(cid)
+            raw_components = model.get("components") or []
+            component_by_id = {str(c.get("id", "")): c for c in raw_components}
+            shown = reading.get("value")
+            if branch is None or not isinstance(shown, (int, float)):
+                return {"checked": True, "ok": False,
+                        "actual": "%s: %s 表读数绑定了无效元件或非数值内容（id=%s，文本=%s）" %
+                                 (sample.get("label", "state"), field, cid, reading.get("text", ""))}
+            if reading.get("bound") is not True:
+                return {"checked": True, "ok": False,
+                        "actual": "%s: %s 表 %s 没有由 CIRCUIT.bindMeters 绑定" %
+                                 (sample.get("label", "state"), field, cid),
+                        "advice": "在每次 render 的求解之后调用 CIRCUIT.bindMeters(solverResult)"}
+            target_component = component_by_id.get(cid, {})
+            target_type = str(target_component.get("type", "")).lower().replace("-", "_")
+            if field == "current" and target_type != "ammeter":
+                return {"checked": True, "ok": False,
+                        "actual": "%s: 电流表示数绑定到 %s（%s），不是网表中的 ammeter 元件" %
+                                 (sample.get("label", "state"), cid, target_type or "未知元件"),
+                        "advice": "电流表读数必须测量真实的串联 ammeter 支路；不能把电流源或普通电阻当电流表"}
+            if field == "voltage" and target_type in ("resistor", "voltmeter"):
+                def endpoints(c):
+                    a = c.get("from", c.get("positive")); b = c.get("to", c.get("negative"))
+                    return frozenset((str(a), str(b)))
+                meter_components = [c for c in raw_components
+                                    if str(c.get("type", "")).lower().replace("-", "_") == "voltmeter"]
+                if not any(endpoints(c) == endpoints(target_component) for c in meter_components):
+                    return {"checked": True, "ok": False,
+                            "actual": "%s: 电压表没有并联在被测支路 %s 的两个端点上" %
+                                     (sample.get("label", "state"), cid),
+                            "advice": "voltmeter 的 from/to 必须与 data-circuit-voltage-for 指定的电阻支路端点相同"}
+            expected_value = branch[field]
+            tol = max(0.005, abs(expected_value) * 0.02)
+            if abs(float(shown) - expected_value) > tol:
+                return {"checked": True, "ok": False,
+                        "actual": "%s: %s 表 %s 显示 %s，参考值 %.6g" %
+                                 (sample.get("label", "state"), field, cid, shown, expected_value)}
+        checks = actual.get("checks") or {}
+        if checks.get("ok") is not True:
+            return {"checked": True, "ok": False,
+                    "actual": "%s：页面求解器的 KCL/电源/功率守恒检查未通过" % sample.get("label", "state")}
+        checked += 1
+    return {"checked": checked > 0, "ok": checked > 0,
+            "actual": "独立 MNA 对拍通过 %d 个状态（首屏与滑块/选择器操作后）" % checked,
+            "advice": "继续扩充边界拓扑样例，重点覆盖断路、短路和并联分支"}
+
 def gate4_browser(br, reason, text=""):
     if br is None:
         return [mk("G4", "G4-00", "浏览器测试", "skip",
@@ -725,6 +875,24 @@ def gate4_browser(br, reason, text=""):
                   "有报错时后续交互随时可能失效" if errors else "脚本运行干净",
                   advice="常见原因：DOM 取到 null、函数名拼错、脚本早于元素执行",
                   severity=CRITICAL, weight=4))
+
+    if br.get("circuitRequired") or re.search(r"欧姆定律|电路|电流表|电压表", text or ""):
+        cc = br.get("circuitCheck")
+        if not cc or not cc.get("checked"):
+            out.append(mk("G4", "G4-13", "电路仿真与独立求解器对拍", "fail",
+                          "页面暴露电路模型/求解结果，且初始与参数变化后的结果均与独立 MNA 求解一致",
+                          (cc or {}).get("actual", "未发现可对拍的电路模型或浏览器样本"),
+                          "页面读数还没有被独立电路求解器验证",
+                          advice="调用 CIRCUIT.solve(model)，暴露 window.__CIRCUIT_MODEL__ 与 window.__CIRCUIT_RESULT__，并将读数绑定到求解结果",
+                          severity=CRITICAL, weight=5))
+        else:
+            out.append(mk("G4", "G4-13", "电路仿真与独立求解器对拍",
+                          "pass" if cc.get("ok") else "fail",
+                          "页面暴露电路模型/求解结果，且初始与参数变化后的结果均与独立 MNA 求解一致",
+                          cc.get("actual", ""),
+                          "页面与独立电路模型结果一致" if cc.get("ok") else "页面计算或机读读数偏离独立求解结果",
+                          advice=cc.get("advice", "检查电路拓扑映射、元件值及页面读数是否来自同一结果对象"),
+                          severity=CRITICAL, weight=5))
 
     r = br.get("ranges") or {}
     if r.get("count", 0) == 0:
@@ -1139,6 +1307,10 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
     br, reason = (None, "未启用")
     if use_browser:
         br, reason = dynamic_checks(html_path)
+    circuit_topic = bool(re.search(r"欧姆定律|电路|电流表|电压表", content + " " + probe))
+    if br is not None and circuit_topic:
+        br["circuitRequired"] = True
+        br["circuitCheck"] = verify_circuit_samples(br)
 
     machine = (br or {}).get("machine") or {}
     cfg = {}
@@ -1199,7 +1371,11 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
 
     gates, total = aggregate(checks)
     failed = [c for c in checks if c["status"] == "fail"]
-    critical = [c for c in failed if c["severity"] == CRITICAL]
+    # Subject judges use the English token ``critical`` while the reviewer
+    # gates use the Chinese label ``严重``. Treat both as blocking severities;
+    # otherwise a failed J1/J6/J8 item can silently coexist with verdict=通过.
+    critical = [c for c in failed if str(c.get("severity", "")).lower()
+                in (CRITICAL.lower(), "critical")]
     reviews = [c for c in checks if c["status"] == "review"]
 
     if critical or total < MAJOR_LINE:

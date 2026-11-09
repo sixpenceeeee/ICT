@@ -248,6 +248,7 @@ SCENE_LIBS = {
 }
 # 页面 JS 里直接调用的库名，用于正文没写学科时的兜底判断
 CALL_HINTS = [
+    ("CIRCUIT.", "circuit_solver.js"),
     ("CHEM.", "chem.js"), ("PHYS.", "phys.js"), ("MATH.", "math.js"),
     ("BIO.", "bio.js"), ("GEO.", "geo.js"), ("CS.", "cs.js"),
 ]
@@ -263,12 +264,18 @@ def _read_lib(name):
 def pick_scene_libs(js, secs):
     """判断这一页要用哪些共享库，返回 (库文件名列表, 学科名)。
 
-    先看页面 JS 里实际调了哪个库（最可靠），再看正文提到了哪一科。
+    先收集页面 JS 实际调用的全部库（最可靠），再按正文补充学科库。
     """
     js = js or ""
+    selected = []
     for token, lib in CALL_HINTS:
-        if token in js:
-            return [lib], lib.replace(".js", "")
+        if token in js and lib not in selected:
+            selected.append(lib)
+    vis_backed = {"phys.js", "math.js", "bio.js", "geo.js", "cs.js"}
+    if "VIS." in js and not (set(selected) & vis_backed) and "vis.js" not in selected:
+        selected.insert(0, "vis.js")
+    if selected:
+        return selected, "+".join(lib.replace(".js", "") for lib in selected)
     text = " ".join((secs or {}).values())
     for subject, lib in SCENE_LIBS.items():
         if subject in text:
@@ -287,7 +294,7 @@ def _with_libs(js, secs=None):
         return js
     blocks = []
     if libs:
-        if "chem.js" not in libs:
+        if "chem.js" not in libs and any(name in libs for name in ("phys.js", "math.js", "bio.js", "geo.js", "cs.js")):
             vis = _read_lib("vis.js")
             if vis:
                 blocks.append(vis)

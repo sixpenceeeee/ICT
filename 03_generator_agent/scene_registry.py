@@ -48,8 +48,10 @@ SCENE_SKELETONS = [
         "id": "physics-circuit-lab", "subject": "物理",
         "patterns": r"欧姆定律|电路|电压|电流|电阻|串联|并联",
         "visual_type": "apparatus", "api": None,
-        "layout": "电源、开关、导线、用电器和电表组成可读电路；闭合路径、接线端和电表量程清楚。",
-        "controls": "电压、电阻、开关状态改变时，同步更新电路状态、电流/电压表读数和公式。",
+        "solver_api": "CIRCUIT.solve",
+        "layout": "电源、开关、导线、用电器和电表组成可读电路；导线与元件端点必须由求解器模型的节点连接关系绘制。",
+        "controls": "电压、电阻、开关或接线状态改变时，每次 render 都调用 CIRCUIT.solve、CIRCUIT.bindMeters 和 CIRCUIT.draw；画面、表头、公式与 __DATA__ 全部从同一个 solverResult 读取。",
+        "solver_contract": "模型格式：{ground:'0',layout:{nodes:{'0':{x:.8,y:.8},n1:{x:.15,y:.2},n2:{x:.8,y:.2}}},components:[{id,type:'voltage_source',positive,negative,volts},{id,type:'resistor',from,to,ohms},{id,type:'ammeter',from,to},{id,type:'voltmeter',from,to,inputOhms:1e7},{id,type:'current_source',from,to,amps},{id,type:'switch',from,to,closed}]}。欧姆定律页使用最小清晰拓扑：电源→开关→电流表→被测电阻→电源负极；电压表并联在被测电阻的两个节点上。电源 volts 必须直接取当前电压控件状态，电阻 ohms 必须取当前电阻控件状态；不得同时串入未要求的额外电阻后仍声称 I=U/R。电流表用理想零压降串联支路 ammeter，电压表用 inputOhms 默认 10 MΩ 的并联支路 voltmeter，不得把电流表伪装成 current_source 或把电表只画成文字。layout.nodes 为各节点 0~1 归一化位置，元件节点之间留足绘图距离；求解器绘图器根据 components 的 from/to 端点自动连线并自动避让标签，禁止另写一套与模型分离的电路导线。每次 render 必须执行 var solverResult=CIRCUIT.solve(model)，赋给 window.__CIRCUIT_MODEL__ 与 window.__CIRCUIT_RESULT__，再调用 CIRCUIT.draw(cv,model,solverResult) 和 CIRCUIT.bindMeters(solverResult)。电流表 DOM 的 data-circuit-current-for 绑定到 ammeter 元件 ID；电压表 DOM 的 data-circuit-voltage-for 绑定到被测电阻元件 ID（其两端与 voltmeter 并联），公式、读数和 __DATA__ 中的数值必须调用 CIRCUIT.meter(solverResult,'元件ID','current'/'voltage') 直接读取同一个求解结果，禁止独立手算、缓存旧值或使用其他公式重算。不可手算表读数或求解失败后回退公式/示意图；solverResult.checks.ok 为 false 或抛错时显示清楚的错误状态并清空/禁用正常读数。",
     },
     {
         "id": "math-cube-cut-3d", "subject": "数学",
@@ -166,3 +168,11 @@ def required_scene_call(req):
     if not api:
         return None
     return re.escape(api).replace(r"\.", r"\s*\.\s*") + r"\s*\(", api
+
+
+def required_solver_call(req):
+    """Return required numerical solver API and call pattern for a topic."""
+    solver = select_page_skeleton(req).get("solver_api")
+    if not solver:
+        return None
+    return re.escape(solver).replace(r"\.", r"\s*\.\s*") + r"\s*\(", solver

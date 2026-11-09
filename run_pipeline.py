@@ -292,10 +292,15 @@ def main():
     # ---------- 收尾 ----------
     # 交付物是一个完整目录（html + frame.css + exp.css + logo.png + zip）：
     # 平台外壳是外链样式，只发 html 别人打开会没样式，所以必须连资源一起带走。
-    final_html = os.path.join(run_dir, "交付_教学资源.html")
+    is_passed = best["结论"] == "通过"
+    # Keep a non-passing best attempt inspectable, but never label it as a
+    # deliverable. The run still exits nonzero and the candidate filename is
+    # explicit so downstream users cannot mistake a high score for approval.
+    final_basename = "交付_教学资源.html" if is_passed else "待修复_不可交付.html"
+    final_html = os.path.join(run_dir, final_basename)
     shutil.copy2(best["HTML"], final_html)
     copy_assets(best["HTML"], run_dir)
-    final_zip = os.path.join(run_dir, "交付_教学资源.zip")
+    final_zip = os.path.join(run_dir, "交付_教学资源.zip" if is_passed else "待修复_不可交付.zip")
     with zipfile.ZipFile(final_zip, "w", zipfile.ZIP_DEFLATED) as z:
         z.write(final_html, "交付_教学资源.html")
         for res in ("frame.css", "exp.css", "logo.png"):
@@ -305,7 +310,8 @@ def main():
 
     # 写回 03 的 output，保证那个目录里留的永远是最好版本，而不是最后一版
     canonical = best["HTML"]
-    shutil.copy2(final_html, canonical)
+    if is_passed:
+        shutil.copy2(final_html, canonical)
 
     total_cost = round(time.time() - started_all, 1)
     log["结束时间"] = datetime.now().isoformat(timespec="seconds")
@@ -314,7 +320,8 @@ def main():
     log["结论"] = best["结论"]
     log["交付文件"] = final_html
     log["交付压缩包"] = final_zip
-    log["交付说明"] = ("模型生成" if best["生成来源"] == "大模型" else "含兜底模板：%s" % best["生成来源"])
+    log["交付说明"] = (("模型生成" if best["生成来源"] == "大模型" else "含兜底模板：%s" % best["生成来源"])
+                       if is_passed else "未通过质量审查，仅保存为不可交付候选稿")
 
     with open(os.path.join(run_dir, "运行日志.json"), "w", encoding="utf-8") as f:
         json.dump(log, f, ensure_ascii=False, indent=2)
@@ -323,7 +330,7 @@ def main():
     print("\n" + "=" * 64)
     print("完成    %s    总分 %.1f / 100    共 %d 轮    总耗时 %.1fs"
           % (best["结论"], best["总分"], len(log["轮次"]), total_cost))
-    print("交付    %s" % final_html)
+    print(("交付    " if is_passed else "候选稿（不可交付）    ") + final_html)
     print("日志    %s" % os.path.join(run_dir, "运行日志.json"))
     print("报告    %s" % os.path.join(run_dir, "运行报告.md"))
     print("=" * 64)
@@ -369,10 +376,12 @@ def write_markdown(path, log, best):
         lines.append("| %d | %s | %d | %.1f | %s | %d |"
                      % (r["轮次"], r["生成来源"], r["字符数"], r["总分"], r["结论"], r["严重问题数"]))
 
-    lines += ["", "## 交付版本说明", "",
-              "- 交付的是第 %d 轮（历史最高分 %.1f）" % (best["轮次"], best["总分"]),
+    approved = log.get("结论") == "通过"
+    lines += ["", "## 交付状态", "",
+              ("- 质量审查通过：第 %d 轮（历史最高分 %.1f）" % (best["轮次"], best["总分"]))
+              if approved else ("- **质量审查未通过：以下仅为不可交付候选稿**（第 %d 轮，历史最高分 %.1f）" % (best["轮次"], best["总分"])),
               "- 生成来源：%s" % best["生成来源"],
-              "- 文件：`交付_教学资源.html`（同目录下另有每轮草稿和对应审查报告）"]
+              "- 文件：`%s`（同目录下另有每轮草稿和对应审查报告）" % os.path.basename(log.get("交付文件", ""))]
 
     if best["问题清单"]:
         lines += ["", "## 仍需人工确认", ""]

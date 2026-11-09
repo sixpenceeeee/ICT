@@ -1,0 +1,432 @@
+/* =====================================================================
+ *  exp.css —— 六区域实验内容样式（配合 frame.css 使用）
+ *
+ *  规范来源：《跨学科交互实验需求与设计规范》第 1 节
+ *      ① 实验信息  ② 演示画布  ③ 参数与操作
+ *      ④ 结果与反馈 ⑤ 实验记录  ⑥ 教学说明
+ *
+ *  约定：类名统一 exp- 前缀，不改动 frame.css 的 .pf- 任何规则；
+ *        颜色全部复用 frame.css 的 --pf-* 变量，保证与外壳同一套视觉。
+ * ===================================================================== */
+
+/* ---------- 纵向容器：六区域依次排布 ---------- */
+.exp-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- 通用卡片 ---------- */
+.exp-card {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  padding: 22px 26px 26px;
+  box-shadow: 0 2px 10px rgba(47, 118, 184, 0.05);
+  min-width: 0;
+}
+
+.exp-card > h2 {
+  margin: 0 0 18px;
+  padding-left: 16px;
+  border-left: 5px solid var(--pf-primary);
+  font-size: 29px;
+  font-weight: 700;
+  color: var(--pf-ink);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.exp-card > h2 .exp-hint {
+  margin-left: 8px;
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--pf-muted);
+}
+
+/* ---------- ① 实验信息 ---------- */
+.exp-info {
+  background: linear-gradient(135deg, #ffffff 0%, #f2f8fe 100%);
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  padding: 20px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 14px 30px;
+}
+
+.exp-info .exp-name {
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--pf-ink);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.exp-info .exp-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.exp-tag {
+  display: inline-block;
+  padding: 5px 16px;
+  border-radius: 999px;
+  background: var(--pf-primary-soft);
+  color: var(--pf-primary-deep);
+  font-size: 26px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.exp-tag.is-plain {
+  background: #f1f5f9;
+  color: var(--pf-muted);
+}
+
+.exp-info .exp-goals {
+  flex: 1 1 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 26px;
+  font-size: 28px;
+  color: var(--pf-ink);
+}
+
+/* 「学习目标」小标题：占满一行，让目标列表另起 */
+.exp-info .exp-goals-title {
+  flex: 1 1 100%;
+  font-size: 27px;
+  font-weight: 700;
+  color: var(--pf-primary-deep);
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.exp-info .exp-goals li::before {
+  content: "✓";
+  color: var(--pf-primary);
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+/* ---------- ②③④ 主区：左「演示 + 结果与反馈」/ 右「参数与操作」 ---------- */
+/* 结果与反馈紧贴在演示下面：原来它在右栏第二行，左栏只有画布时右下是空的，
+   而画布那列反倒留下大片留白。现在左列 = ②演示 + ④结果，右列 = ③参数。 */
+.exp-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(460px, 1fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "stage control"
+    "result result";
+  gap: 20px;
+  align-items: stretch;
+}
+
+.exp-stage { grid-area: stage; display: flex; flex-direction: column; }
+.exp-result { grid-area: result; }
+
+/* 参数栏跨两行：控件之间的空隙均分、按钮贴底，
+   避免把所有剩余空间堆在卡片底部挖出一个大坑 */
+.exp-control {
+  grid-area: control;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 26px;              /* 均分前的最小行距：窄屏没有富余空间时也不会挤在一起 */
+}
+.exp-control .exp-field { margin-bottom: 0; }
+
+/* 参数很少的页面（比如只有一个滑块）：拉满整列会变成一个大空壳，
+   这时退回内容高度，空白交给页面背景，由 typo.js 的 fitControl() 判断 */
+.exp-control.is-short {
+  align-self: start;
+  justify-content: flex-start;
+}
+
+/* ④ 现在是全宽卡，读数一行铺开四个（细节见 normal.css 的 .exp-read） */
+.exp-result .exp-reads { gap: 14px; }
+
+/* 画布容器：等比留白，避免拖滑块时页面跳动 */
+.exp-canvas-box {
+  position: relative;
+  flex: 0 0 auto;
+  aspect-ratio: 16 / 11;   /* 固定比例：右栏再高也不把画布拉长变形 */
+  min-height: 420px;
+  max-height: 640px;
+  border-radius: 10px;
+  background: #fbfdff;
+  border: 1px solid #eef4fa;
+  overflow: hidden;
+  isolation: isolate;   /* 画布层独立成栈，图形永远盖不到盒外的文字 */
+}
+
+.exp-canvas-box canvas,
+.exp-canvas-box svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.exp-canvas-tip {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  z-index: 5;           /* 浮动说明永远浮在画布之上 */
+  font-size: 26px;
+  color: var(--pf-muted);
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(219, 231, 243, 0.9);
+  padding: 4px 12px;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+/* ---------- ③ 参数与操作 ---------- */
+.exp-field { margin-bottom: 18px; }
+.exp-field:last-child { margin-bottom: 0; }
+
+.exp-field .exp-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 26px;
+  color: var(--pf-ink);
+  margin-bottom: 10px;
+}
+
+.exp-field .exp-val {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--pf-primary-deep);
+}
+
+.exp-field input[type="range"] {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--pf-primary);
+  cursor: pointer;
+}
+
+.exp-field select,
+.exp-field input[type="number"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--pf-line);
+  border-radius: 9px;
+  font-size: 26px;
+  color: var(--pf-ink);
+  background: #fff;
+  font-family: inherit;
+}
+
+.exp-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.exp-btn {
+  flex: 1 1 auto;
+  min-width: 150px;
+  padding: 13px 20px;
+  border: 1px solid var(--pf-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--pf-ink);
+  font-size: 26px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.exp-btn:hover { background: var(--pf-primary-soft); border-color: #cfe2f5; }
+.exp-btn:active { transform: translateY(1px); }
+
+.exp-btn.is-primary {
+  background: linear-gradient(120deg, #4a90d9, #3f7fbf);
+  border-color: transparent;
+  color: #fff;
+}
+
+.exp-btn.is-primary:hover { filter: brightness(1.06); background: linear-gradient(120deg, #4a90d9, #3f7fbf); }
+
+.exp-btn.is-on {
+  background: var(--pf-primary);
+  border-color: transparent;
+  color: #fff;
+}
+
+/* ---------- ④ 结果与反馈 ---------- */
+.exp-reads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.exp-read {
+  flex: 1 1 44%;          /* 字大了，读数格子按两列铺、每格至少放得下 6 个字 */
+  min-width: 210px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f7fbff;
+  border: 1px solid #e8f1fa;
+  text-align: center;
+}
+
+.exp-read .k {
+  display: block;
+  font-size: 26px;
+  color: var(--pf-muted);
+  margin-bottom: 2px;
+}
+
+.exp-read .v {
+  display: block;
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--pf-primary-deep);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+
+.exp-read .u { font-size: 26px; font-weight: 600; }
+
+/* 实时代入式：审查会读这一行 */
+.exp-formula {
+  padding: 13px 16px;
+  border-radius: 10px;
+  background: #f3f9ff;
+  border-left: 3px solid var(--pf-primary);
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 27px;
+  line-height: 1.85;
+  color: #1f4d78;
+  word-break: break-word;
+}
+
+.exp-formula em {
+  font-style: normal;
+  font-weight: 800;
+  color: #b5561b;
+}
+
+.exp-note {
+  margin: 9px 0 0;
+  font-size: 27px;
+  line-height: 1.7;
+  color: var(--pf-muted);
+}
+
+.exp-alert {
+  margin-top: 9px;
+  padding: 11px 16px;
+  border-radius: 9px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  font-size: 27px;
+  line-height: 1.6;
+}
+
+.exp-alert[hidden] { display: none; }
+
+/* ---------- ⑤ 实验记录 ---------- */
+.exp-table-wrap { overflow-x: auto; }
+
+.exp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 27px;
+  font-variant-numeric: tabular-nums;
+}
+
+.exp-table th,
+.exp-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #eef4fa;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.exp-table th {
+  background: #f5f9fd;
+  color: var(--pf-ink);
+  font-weight: 700;
+  border-bottom: 1px solid var(--pf-line);
+}
+
+.exp-table tbody tr:nth-child(even) { background: #fbfdff; }
+.exp-table td.is-strong { font-weight: 700; color: var(--pf-primary-deep); }
+
+.exp-table:empty::after { content: "（暂无记录）"; }
+
+/* ---------- ⑥ 教学说明 ---------- */
+.exp-teach summary {
+  cursor: pointer;
+  font-size: 29px;
+  font-weight: 700;
+  color: var(--pf-ink);
+  padding-left: 10px;
+  border-left: 3px solid var(--pf-primary);
+  list-style: none;
+  line-height: 1.2;
+}
+
+.exp-teach summary::-webkit-details-marker { display: none; }
+.exp-teach summary::after {
+  content: "展开 ▾";
+  float: right;
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--pf-muted);
+}
+
+.exp-teach[open] summary::after { content: "收起 ▴"; }
+.exp-teach[open] summary { margin-bottom: 12px; }
+
+.exp-teach .exp-body {
+  font-size: 28px;
+  line-height: 1.75;
+  color: #33475f;
+}
+
+.exp-teach h3 {
+  margin: 14px 0 6px;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--pf-primary-deep);
+}
+
+.exp-teach h3:first-child { margin-top: 0; }
+.exp-teach ul, .exp-teach ol { margin: 0; padding-left: 28px; }
+.exp-teach li { margin-bottom: 4px; }
+
+/* ---------- 响应式：窄屏改为单列 ---------- */
+@media (max-width: 1100px) {
+  .exp-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas:
+      "stage"
+      "control"
+      "result";
+  }
+  .exp-canvas-box { min-height: 320px; }
+}
+
+@media (max-width: 768px) {
+  .exp-info { padding: 12px 14px; }
+  .exp-info .exp-name { font-size: 34px; }
+  .exp-canvas-box { min-height: 260px; }
+  .exp-card { padding: 12px 13px 14px; }
+}

@@ -514,13 +514,32 @@ def j6_structure(ctx):
 
     if scene:
         miss = [x for x in required if x not in text]
+        # Circuit equipment can be rendered as symbols rather than Chinese
+        # labels. Use the browser-captured netlist and meter bindings as
+        # independent structural evidence for the required apparatus.
+        br = ctx.get("br") or {}
+        samples = ((br.get("circuit") or {}).get("samples") or [])
+        sample_model = next((s.get("model") for s in samples if s.get("model")), {})
+        components = sample_model.get("components") or []
+        circuit_evidence = bool(components)
+        if circuit_evidence and "电源" in miss and any(
+                str(c.get("type", "")).lower() in ("voltage_source", "voltagesource")
+                for c in components):
+            miss.remove("电源")
+        readings = next((s.get("readings") or [] for s in samples if s.get("readings")), [])
+        if circuit_evidence and "电流表" in miss and any(r.get("kind") == "current" and r.get("bound") for r in readings):
+            miss.remove("电流表")
+        if circuit_evidence and "电压表" in miss and any(r.get("kind") == "voltage" and r.get("bound") for r in readings):
+            miss.remove("电压表")
+        # A circuit is a core experimental structure: missing required parts
+        # must block the overall verdict instead of being outweighed by score.
         out.append(mk("J6", "J6-01", "J6 强制要素齐备", "pass" if not miss else "fail",
                       "场景「%s」必须具备：%s" % (scene.get("name", ""), "、".join(required)),
                       "缺失：%s" % "、".join(miss) if miss else "要素齐全",
                       "装置/器材/标注缺失，实验无法成立" if miss else "强制要素完整",
                       evidence=scene.get("name", ""),
                       advice="按场景注册表的 required 清单补齐器材与标注，并确保名称与教材一致",
-                      severity="major", weight=5))
+                      severity="critical", weight=5))
     else:
         # 没有注册场景就没有"强制清单"，不能凭空判合格
         hits = [w for w in ("单位", "图例", "刻度", "标注", "坐标轴") if w in text]

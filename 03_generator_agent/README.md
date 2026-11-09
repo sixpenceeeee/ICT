@@ -88,6 +88,8 @@ python shell.py build cases/数学_平面截正方体.txt --title 平面截正�
 
 页面骨架选型集中在 `scene_registry.py`：每个主题条目声明 `id`、适用学科/关键词、`visual_type`、可选场景库 API、布局和控件约束。`prompts.py` 将选中的骨架注入生成提示，`generator_agent.py` 用同一注册表校验必须调用的 API 和画布类型。新增已覆盖主题时，在该注册表加一项即可；先写更具体的关键词规则，规则按列表顺序匹配，具体主题应排在通用主题之前。库尚未覆盖的主题可以先注册布局骨架并将 `api` 设为 `None`，后续补完场景库后再绑定 API。
 
+物理电路主题已接入独立求解器：页面调用内联的 `CIRCUIT.solve(model)`，生成器硬校验要求页面暴露当前电路模型与求解结果；浏览器审查器在首屏和滑块/选择器变化后，读取页面的模型与结果，再由 `solvers/circuit_solver.py` 独立复算节点电压、支路电流和功率。支持范围、模型格式和不支持的电路现象见 [solvers/README.md](solvers/README.md)。
+
 更完整的设计与验收要求见根目录 [优质页面标准.md](../优质页面标准.md)。
 
 ## 五、三道关

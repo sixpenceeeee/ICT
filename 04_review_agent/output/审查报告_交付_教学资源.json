@@ -1,11 +1,11 @@
 {
   "文件": "交付_教学资源.html",
-  "审查时间": "2026-10-24 03:17:05",
+  "审查时间": "2026-11-08 20:19:43",
   "实验ID": "未登记（应由知识库 experiment_id 提供）",
-  "学科": "数学",
-  "主题": "数学",
-  "引擎": "未声明",
-  "场景": "未登记",
+  "学科": "物理",
+  "主题": "伏安法测电阻",
+  "引擎": "circuit",
+  "场景": "ohm",
   "总分": 100.0,
   "结论": "通过",
   "发布状态": "待教师审核",
@@ -16,10 +16,10 @@
       "名称": "结构与安全",
       "满分": 25,
       "得分": 25.0,
-      "通过": 6,
+      "通过": 8,
       "失败": 0,
       "待审": 0,
-      "不适用": 2,
+      "不适用": 0,
       "无可判项": false
     },
     {
@@ -27,10 +27,10 @@
       "名称": "资源完整性",
       "满分": 25,
       "得分": 25.0,
-      "通过": 10,
+      "通过": 13,
       "失败": 0,
       "待审": 2,
-      "不适用": 0,
+      "不适用": 1,
       "无可判项": false
     },
     {
@@ -38,10 +38,10 @@
       "名称": "学科判据",
       "满分": 25,
       "得分": 25.0,
-      "通过": 3,
+      "通过": 6,
       "失败": 0,
-      "待审": 1,
-      "不适用": 4,
+      "待审": 0,
+      "不适用": 2,
       "无可判项": false
     },
     {
@@ -49,10 +49,10 @@
       "名称": "浏览器测试",
       "满分": 15,
       "得分": 15.0,
-      "通过": 7,
+      "通过": 10,
       "失败": 0,
       "待审": 1,
-      "不适用": 1,
+      "不适用": 2,
       "无可判项": false
     },
     {
@@ -70,10 +70,10 @@
   "判据": {
     "J1": {
       "名称": "数值复算",
-      "pass": 3,
+      "pass": 4,
       "fail": 0,
       "review": 0,
-      "skip": 1
+      "skip": 0
     },
     "J2": {
       "名称": "几何复算",
@@ -82,18 +82,11 @@
       "review": 0,
       "skip": 1
     },
-    "J4": {
-      "名称": "空间拓扑",
-      "pass": 0,
-      "fail": 0,
-      "review": 0,
-      "skip": 1
-    },
     "J6": {
       "名称": "结构要素齐备",
-      "pass": 0,
+      "pass": 1,
       "fail": 0,
-      "review": 1,
+      "review": 0,
       "skip": 0
     },
     "J7": {
@@ -102,6 +95,13 @@
       "fail": 0,
       "review": 0,
       "skip": 1
+    },
+    "J8": {
+      "名称": "答案表比对",
+      "pass": 1,
+      "fail": 0,
+      "review": 0,
+      "skip": 0
     }
   },
   "检查项": [
@@ -201,14 +201,14 @@
       "gate_name": "结构与安全",
       "judge": "",
       "name": "引擎与场景白名单",
-      "status": "skip",
-      "severity": "一般",
+      "status": "pass",
+      "severity": "严重",
       "weight": 3,
-      "expected": "scene_engine 取自 25 类白名单，scene_id 已注册",
-      "actual": "页面未声明引擎/场景配置",
-      "message": "无配置可比对，本项不适用",
-      "evidence": "",
-      "advice": ""
+      "expected": "引擎取自 25 类白名单，场景与已审核注册表对应",
+      "actual": "引擎 circuit / 场景 ohm",
+      "message": "配置在许可范围内",
+      "evidence": "{'scene_id': 'ohm'}",
+      "advice": "在 registry.ENGINES/SCENES 中登记该引擎与场景，并补充 required 与 facts 绑定"
     },
     {
       "check_id": "G1-08",
@@ -216,14 +216,14 @@
       "gate_name": "结构与安全",
       "judge": "",
       "name": "数值安全范围",
-      "status": "skip",
+      "status": "pass",
       "severity": "一般",
       "weight": 3,
-      "expected": "参数落在真实器材范围内",
-      "actual": "该主题未配置安全阈值",
-      "message": "主题未识别，阈值检查不适用",
+      "expected": "电压≤36 V、电流≤0.6 A",
+      "actual": "未出现越界值",
+      "message": "数值在安全范围内",
       "evidence": "",
-      "advice": ""
+      "advice": "参数上限按真实器材设定：电压≤36 V、电流≤0.6 A；警示语里提到超限值请加「禁止」"
     },
     {
       "check_id": "G2-01",
@@ -265,7 +265,7 @@
       "severity": "建议",
       "weight": 4,
       "expected": "下载弹窗指向的压缩包应随案例一起交付",
-      "actual": "压缩包未生成：二次函数系数与图像.zip",
+      "actual": "压缩包未生成：探究欧姆定律.zip",
       "message": "页面能正常显示，但「下载本案例」会 404",
       "evidence": "",
       "advice": "打包时把 zip 放到与 html 同目录，或改为指向资源目录"
@@ -286,6 +286,21 @@
       "advice": "用 canvas/svg 画出实验对象与过程，不要只放数字"
     },
     {
+      "check_id": "G2-14",
+      "gate": "G2",
+      "gate_name": "资源完整性",
+      "judge": "",
+      "name": "演示区不嵌入图片素材",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 3,
+      "expected": "②区使用 Canvas/SVG/DOM 状态驱动绘图，不插入静态图片",
+      "actual": "演示区未发现图片节点或 CSS url()",
+      "message": "主演示通过网页图形绘制，不依赖静态图片",
+      "evidence": "",
+      "advice": ""
+    },
+    {
       "check_id": "G2-05",
       "gate": "G2",
       "gate_name": "资源完整性",
@@ -295,7 +310,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "2–4 个关键参数控件",
-      "actual": "3 个滑块 + 2 个按钮",
+      "actual": "2 个滑块 + 3 个按钮",
       "message": "控件数量合适",
       "evidence": "",
       "advice": ""
@@ -370,7 +385,7 @@
       "severity": "一般",
       "weight": 5,
       "expected": "页面上每段文字的最上层都是文字本身",
-      "actual": "169 段文字实测未被 canvas/img/svg 覆盖",
+      "actual": "161 段文字实测未被 canvas/img/svg 覆盖",
       "message": "DOM 层文字均在最上层",
       "evidence": "",
       "advice": ""
@@ -385,7 +400,7 @@
       "severity": "一般",
       "weight": 4,
       "expected": "文字在最后一步绘制，不被任何后续填充覆盖",
-      "actual": "22 段画布文字均未被后续图元覆盖",
+      "actual": "16 段画布文字均未被后续图元覆盖",
       "message": "绘制顺序正确",
       "evidence": "",
       "advice": ""
@@ -400,8 +415,53 @@
       "severity": "一般",
       "weight": 3,
       "expected": "文字包围盒完整落在画布内并留 ≥8px 安全边距",
-      "actual": "22 段文字全部在画布内",
+      "actual": "16 段文字全部在画布内",
       "message": "无文字被裁切",
+      "evidence": "",
+      "advice": ""
+    },
+    {
+      "check_id": "G2-13",
+      "gate": "G2",
+      "gate_name": "资源完整性",
+      "judge": "",
+      "name": "画布文字与边框/文字不冲突",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 4,
+      "expected": "文字与面板描边、相邻标注之间留出可读间距",
+      "actual": "16 段画布文字未与卡片描边或其他文字相撞",
+      "message": "画布内标注留有可读间距",
+      "evidence": "",
+      "advice": ""
+    },
+    {
+      "check_id": "G2-15",
+      "gate": "G2",
+      "gate_name": "资源完整性",
+      "judge": "",
+      "name": "演示文字无对象占位符",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 5,
+      "expected": "演示区只显示面向学生的文字",
+      "actual": "画布和 DOM 演示内容中没有 [object Object] 占位文字",
+      "message": "未发现对象默认字符串",
+      "evidence": "",
+      "advice": ""
+    },
+    {
+      "check_id": "G2-16",
+      "gate": "G2",
+      "gate_name": "资源完整性",
+      "judge": "",
+      "name": "化学场景液量可见",
+      "status": "skip",
+      "severity": "一般",
+      "weight": 3,
+      "expected": "共享化学场景的液量换算后应对应可见液面",
+      "actual": "页面未暴露 CHEM 场景状态",
+      "message": "仅适用于使用 CHEM.scene 的页面",
       "evidence": "",
       "advice": ""
     },
@@ -418,7 +478,7 @@
       "expected": "按公式独立重算后与显示值一致",
       "actual": "2 组代入式全部复算通过",
       "message": "页面数值与独立复算一致",
-      "evidence": "-(0.0)/(2×1.0) = 0.00",
+      "evidence": "3.00 V ÷ 10 Ω = 0.30 A",
       "advice": ""
     },
     {
@@ -444,14 +504,14 @@
       "judge": "J1",
       "judge_name": "数值复算",
       "name": "J1 单位标注完整",
-      "status": "skip",
+      "status": "pass",
       "severity": "major",
       "weight": 3,
-      "expected": "关键读数带单位",
-      "actual": "该主题未配置单位组",
-      "message": "主题未识别，单位检查不适用",
+      "expected": "电压、电流、电阻 均带单位",
+      "actual": "单位齐全",
+      "message": "关键读数均带单位",
       "evidence": "",
-      "advice": ""
+      "advice": "为每个读数和公式项补上单位，且与知识库中的器材规格一致"
     },
     {
       "check_id": "J1-04",
@@ -464,7 +524,7 @@
       "severity": "major",
       "weight": 3,
       "expected": "参数上下限有效、不出现除零",
-      "actual": "3 个滑块范围与初值均合法",
+      "actual": "2 个滑块范围与初值均合法",
       "message": "参数值域合法",
       "evidence": "",
       "advice": "在 setParams 里做上下界校验，除数为 0 时给出提示而不是直接计算"
@@ -486,18 +546,18 @@
       "advice": ""
     },
     {
-      "check_id": "J4-01",
+      "check_id": "J8-01",
       "gate": "G3",
       "gate_name": "学科判据",
-      "judge": "J4",
-      "judge_name": "空间拓扑",
-      "name": "J4 空间拓扑",
-      "status": "skip",
+      "judge": "J8",
+      "judge_name": "答案表比对",
+      "name": "J8 答案表比对",
+      "status": "pass",
       "severity": "major",
       "weight": 6,
-      "expected": "三维面/边/顶点、截面、体积关系成立",
-      "actual": "未在 __GEO__ 中找到三维拓扑量",
-      "message": "本页不是三维几何页，J4 不适用",
+      "expected": "页面表述与已审核事实表一致",
+      "actual": "[PHY-F-001] 命中：欧姆、电阻、电压、电流、伏安；[PHY-F-002] 命中：串联、并联、电路",
+      "message": "关键现象与结论与审核事实一致",
       "evidence": "",
       "advice": ""
     },
@@ -508,14 +568,14 @@
       "judge": "J6",
       "judge_name": "结构要素齐备",
       "name": "J6 强制要素齐备",
-      "status": "review",
-      "severity": "major",
+      "status": "pass",
+      "severity": "critical",
       "weight": 5,
-      "expected": "按已审核场景注册表核对器材/标注/图例",
-      "actual": "场景未注册，仅命中通用标注 0 项（无）",
-      "message": "缺少场景注册表就无法确定「该有哪些器材」，此项交教师确认",
-      "evidence": "",
-      "advice": "在 registry.SCENES 里登记该场景及 required 清单，或先在知识库完成场景审核"
+      "expected": "场景「欧姆定律」必须具备：电源、电流表、电压表",
+      "actual": "要素齐全",
+      "message": "强制要素完整",
+      "evidence": "欧姆定律",
+      "advice": "按场景注册表的 required 清单补齐器材与标注，并确保名称与教材一致"
     },
     {
       "check_id": "J7-01",
@@ -543,7 +603,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "浏览器能正常加载",
-      "actual": "加载耗时 142 ms",
+      "actual": "加载耗时 187 ms",
       "message": "页面可加载",
       "evidence": "",
       "advice": ""
@@ -564,6 +624,21 @@
       "advice": "常见原因：DOM 取到 null、函数名拼错、脚本早于元素执行"
     },
     {
+      "check_id": "G4-13",
+      "gate": "G4",
+      "gate_name": "浏览器测试",
+      "judge": "",
+      "name": "电路仿真与独立求解器对拍",
+      "status": "pass",
+      "severity": "严重",
+      "weight": 5,
+      "expected": "页面暴露电路模型/求解结果，且初始与参数变化后的结果均与独立 MNA 求解一致",
+      "actual": "独立 MNA 对拍通过 4 个状态（首屏与滑块/选择器操作后）",
+      "message": "页面与独立电路模型结果一致",
+      "evidence": "",
+      "advice": "继续扩充边界拓扑样例，重点覆盖断路、短路和并联分支"
+    },
+    {
       "check_id": "G4-03",
       "gate": "G4",
       "gate_name": "浏览器测试",
@@ -573,10 +648,25 @@
       "severity": "严重",
       "weight": 3,
       "expected": "拖动每个滑块都有可见变化",
-      "actual": "3/3 个滑块拖动后有变化",
+      "actual": "2/2 个滑块拖动后有变化",
       "message": "所有滑块都生效",
       "evidence": "",
       "advice": "检查是否监听 input 事件、是否在 handler 里调用 render()"
+    },
+    {
+      "check_id": "G4-10",
+      "gate": "G4",
+      "gate_name": "浏览器测试",
+      "judge": "",
+      "name": "离散选项切换有效",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 2,
+      "expected": "切换选项后共享状态、画面/读数/公式同步更新",
+      "actual": "1/1 个有效选择器切换后状态与视图均变化",
+      "message": "离散选项确实驱动了页面",
+      "evidence": "[{'index': 0, 'applicable': True, 'selectedChanged': True, 'selected': 'ir', 'original': 'iu', 'updatedView': True, 'changed': True}]",
+      "advice": "为 select 监听 change 事件；把所选值写入 state 并统一调用 render()"
     },
     {
       "check_id": "G4-04",
@@ -588,7 +678,7 @@
       "severity": "一般",
       "weight": 2,
       "expected": "点击按钮后页面状态变化",
-      "actual": "1/2 个按钮有响应，死键：重置",
+      "actual": "2/3 个按钮有响应，死键：重置",
       "message": "按钮均可用",
       "evidence": "",
       "advice": "给按钮绑定事件；开关类按钮必须改变实验状态并刷新读数"
@@ -618,7 +708,7 @@
       "severity": "建议",
       "weight": 3,
       "expected": "渐变/半透明叠层/曲线/无色块堆砌",
-      "actual": "渐变 5% · 叠层 86% · 立体件 0% · 曲线 10% · 纯色块 0 处｜未出现径向渐变/椭圆/柔光阴影，立体件可能不足",
+      "actual": "渐变 4% · 叠层 14% · 立体件 0% · 曲线 42% · 纯色块 1 处｜未出现径向渐变/椭圆/柔光阴影，立体件可能不足",
       "message": "缺少立体件，器材看起来是平面图",
       "evidence": "",
       "advice": "每个实体补「渐变 + 高光 + 阴影」，接触面加椭圆投影"
@@ -633,7 +723,7 @@
       "severity": "一般",
       "weight": 2,
       "expected": "名字只在页眉出现一次 / 正文纯黑 / 最小字号 26px",
-      "actual": "标题 9 字「二次函数系数与图像」· ①区重复名称 无 · 最小字号 26px · 小于26px 0 处 · 非黑正文 0 处",
+      "actual": "标题 6 字「探究欧姆定律」· ①区重复名称 无 · 最小字号 26px · 小于26px 0 处 · 非黑正文 0 处",
       "message": "版式与平台规范一致",
       "evidence": "",
       "advice": ""
@@ -663,10 +753,40 @@
       "severity": "一般",
       "weight": 2,
       "expected": "点「记录」后表格追加一行",
-      "actual": "点 3 次，表格行数 1→4",
+      "actual": "点 3 次，表格行数 0→3",
       "message": "记录功能正常",
       "evidence": "",
       "advice": "记录时把当前参数与结果一起写入一行，不要只写结果"
+    },
+    {
+      "check_id": "G4-11",
+      "gate": "G4",
+      "gate_name": "浏览器测试",
+      "judge": "",
+      "name": "窄屏布局与控件标签",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 2,
+      "expected": "桌面/窄屏无页面级横向溢出，参数控件有可读标签",
+      "actual": "视口：desktop 1351/1366 正常; mobile 375/390 正常",
+      "message": "横向溢出会让投影/手机上的内容被裁掉；无标签控件难以理解",
+      "evidence": "mobile={'width': 390, 'documentWidth': 375, 'stageWidth': 319, 'name': 'mobile', 'overflow': False}; unlabeled=[]",
+      "advice": "为控件补 label/aria-label；窄屏下让卡片换列、表格容器局部滚动、画布宽度不超出页面"
+    },
+    {
+      "check_id": "G4-12",
+      "gate": "G4",
+      "gate_name": "浏览器测试",
+      "judge": "",
+      "name": "旋转视角可恢复",
+      "status": "skip",
+      "severity": "一般",
+      "weight": 1,
+      "expected": "带视角恢复按钮的可旋转场景应回到初始 yaw/pitch",
+      "actual": "页面没有恢复视角类按钮",
+      "message": "本项仅适用于提供视角复位的场景",
+      "evidence": "",
+      "advice": ""
     },
     {
       "check_id": "G5-01",
@@ -708,7 +828,7 @@
       "severity": "一般",
       "weight": 2,
       "expected": "非化学/生物学科不强制",
-      "actual": "学科：数学",
+      "actual": "学科：物理",
       "message": "本学科不涉及该强制项",
       "evidence": "",
       "advice": ""
@@ -722,9 +842,9 @@
       "status": "review",
       "severity": "一般",
       "weight": 0,
-      "expected": "明确标注实验性质与来源",
-      "actual": "①区未见实验性质/来源",
-      "message": "缺少性质标注，对外汇报时容易把演示说成必做实验",
+      "expected": "明确标注实验性质与来源（课标必做 / 常规实验 / 教学演示）",
+      "actual": "已标注「探究实验」",
+      "message": "性质已写明，课标地位仍需教研确认",
       "evidence": "",
       "advice": ""
     },
@@ -765,12 +885,12 @@
       "维度": "资源完整性",
       "检查项": "本地资源可解析",
       "级别": "建议",
-      "说明": "页面能正常显示，但「下载本案例」会 404（压缩包未生成：二次函数系数与图像.zip）",
+      "说明": "页面能正常显示，但「下载本案例」会 404（压缩包未生成：探究欧姆定律.zip）",
       "建议": "打包时把 zip 放到与 html 同目录，或改为指向资源目录",
       "check_id": "G2-03",
       "status": "review",
       "expected": "下载弹窗指向的压缩包应随案例一起交付",
-      "actual": "压缩包未生成：二次函数系数与图像.zip",
+      "actual": "压缩包未生成：探究欧姆定律.zip",
       "evidence": ""
     },
     {
@@ -786,39 +906,27 @@
       "evidence": ""
     },
     {
-      "维度": "学科判据·J6",
-      "检查项": "J6 强制要素齐备",
-      "级别": "major",
-      "说明": "缺少场景注册表就无法确定「该有哪些器材」，此项交教师确认（场景未注册，仅命中通用标注 0 项（无））",
-      "建议": "在 registry.SCENES 里登记该场景及 required 清单，或先在知识库完成场景审核",
-      "check_id": "J6-01",
-      "status": "review",
-      "expected": "按已审核场景注册表核对器材/标注/图例",
-      "actual": "场景未注册，仅命中通用标注 0 项（无）",
-      "evidence": ""
-    },
-    {
       "维度": "浏览器测试",
       "检查项": "画面具备立体质感",
       "级别": "建议",
-      "说明": "缺少立体件，器材看起来是平面图（渐变 5% · 叠层 86% · 立体件 0% · 曲线 10% · 纯色块 0 处｜未出现径向渐变/椭圆/柔光阴影，立体件可能不足）",
+      "说明": "缺少立体件，器材看起来是平面图（渐变 4% · 叠层 14% · 立体件 0% · 曲线 42% · 纯色块 1 处｜未出现径向渐变/椭圆/柔光阴影，立体件可能不足）",
       "建议": "每个实体补「渐变 + 高光 + 阴影」，接触面加椭圆投影",
       "check_id": "G4-08",
       "status": "review",
       "expected": "渐变/半透明叠层/曲线/无色块堆砌",
-      "actual": "渐变 5% · 叠层 86% · 立体件 0% · 曲线 10% · 纯色块 0 处｜未出现径向渐变/椭圆/柔光阴影，立体件可能不足",
+      "actual": "渐变 4% · 叠层 14% · 立体件 0% · 曲线 42% · 纯色块 1 处｜未出现径向渐变/椭圆/柔光阴影，立体件可能不足",
       "evidence": ""
     },
     {
       "维度": "教学审核",
       "检查项": "实验性质标注",
       "级别": "一般",
-      "说明": "缺少性质标注，对外汇报时容易把演示说成必做实验（①区未见实验性质/来源）",
+      "说明": "性质已写明，课标地位仍需教研确认（已标注「探究实验」）",
       "建议": "",
       "check_id": "G5-04",
       "status": "review",
-      "expected": "明确标注实验性质与来源",
-      "actual": "①区未见实验性质/来源",
+      "expected": "明确标注实验性质与来源（课标必做 / 常规实验 / 教学演示）",
+      "actual": "已标注「探究实验」",
       "evidence": ""
     },
     {

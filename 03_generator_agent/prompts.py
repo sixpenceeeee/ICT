@@ -406,6 +406,7 @@ def build_user_prompt(req, pack, feedback=None):
 骨架布局：{skeleton_layout}
 控件与状态约束：{skeleton_controls}
 场景库调用要求：{scene_api}
+学科求解器调用要求：{solver_contract}
 {biology_demo_rule}
 请按这个骨架组织②演示区、③参数区和④结果区，不要另起无关布局；不得为了复用骨架改变学科事实。
 写代码前逐项核对以下映射，所有视图和读数必须从同一个状态对象 render：
@@ -444,6 +445,7 @@ def build_user_prompt(req, pack, feedback=None):
         skeleton_controls=page_skeleton["controls"],
         scene_api=(page_skeleton["api"] + "(cv, cfg) 必须在运行代码中实际调用并由当前状态驱动。"
                    if page_skeleton.get("api") else "无对应成品场景 API；遵循上述骨架，必要时用 VIS 原语绘制。"),
+        solver_contract=page_skeleton.get("solver_contract", "本主题没有专用数值求解器；使用本学科公式并暴露可复核的机读结果。"),
         biology_demo_rule=("生物演示区硬约束：②区只有实验对象/观察结果图；禁止在②区出现流程步骤卡、步骤列表、按钮或阶段导航。操作步骤放到③区控件或⑥区教学说明。"
                            if subject == "生物" else ""),
         knowledge=knowledge_text,
