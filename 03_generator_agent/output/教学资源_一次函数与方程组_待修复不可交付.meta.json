@@ -1,0 +1,42 @@
+{
+  "实验主题": "一次函数与方程组",
+  "生成信息": {
+    "来源": "大模型候选（求解器契约未通过）",
+    "模型": "deepseek-chat",
+    "是否修复过": true,
+    "续写次数": 0,
+    "问题": [
+      "必须将 MATH.solveLinearSystem 返回的结果传给 MATH.linearSystem(cv, cfg, result)"
+    ],
+    "模型输出问题": [],
+    "生成契约通过": false,
+    "生成尝试": [
+      {
+        "来源": "大模型首轮",
+        "问题数": 1,
+        "问题": [
+          "必须将 MATH.solveLinearSystem 返回的结果传给 MATH.linearSystem(cv, cfg, result)"
+        ]
+      },
+      {
+        "来源": "大模型自动修复",
+        "问题数": 1,
+        "问题": [
+          "必须将 MATH.solveLinearSystem 返回的结果传给 MATH.linearSystem(cv, cfg, result)"
+        ]
+      }
+    ],
+    "外壳校验": [],
+    "页面骨架": {
+      "id": "math-linearSystem",
+      "画布类型": "graph",
+      "场景库API": "MATH.linearSystem",
+      "学科求解器": "MATH.solveLinearSystem"
+    },
+    "耗时秒": 33.39
+  },
+  "字符数": 179307,
+  "内容字符数": 10049,
+  "文件": "教学资源_一次函数与方程组_待修复不可交付.html",
+  "压缩包": "一次函数与方程组_待修复不可交付.zip"
+}

@@ -1,0 +1,50 @@
+{
+  "实验主题": "平面镜成像",
+  "生成信息": {
+    "来源": "大模型候选（求解器契约未通过）",
+    "模型": "deepseek-chat",
+    "是否修复过": true,
+    "续写次数": 0,
+    "问题": [
+      "必须调用 VIS.bindSolverReadouts(result)，直接绑定 PHYS.solvePlaneMirror 的同一求解结果",
+      "内容过长（17357 字符），必须压到 9000 字符以内"
+    ],
+    "模型输出问题": [],
+    "生成契约通过": false,
+    "生成尝试": [
+      {
+        "来源": "大模型首轮",
+        "问题数": 7,
+        "问题": [
+          "求解器页面缺少 data-solver-input=\"object_distance\"",
+          "求解器页面缺少 data-solver-input=\"object_height\"",
+          "求解器页面缺少 data-solver-input=\"observer_distance\"",
+          "求解器页面缺少 data-solver-input=\"observer_height\"",
+          "求解器页面缺少 data-solver-input=\"mirror_half_height\"",
+          "求解器页面缺少 data-solver-field=\"image_x\"",
+          "内容过长（18499 字符），必须压到 9000 字符以内"
+        ]
+      },
+      {
+        "来源": "大模型自动修复",
+        "问题数": 2,
+        "问题": [
+          "必须调用 VIS.bindSolverReadouts(result)，直接绑定 PHYS.solvePlaneMirror 的同一求解结果",
+          "内容过长（17357 字符），必须压到 9000 字符以内"
+        ]
+      }
+    ],
+    "外壳校验": [],
+    "页面骨架": {
+      "id": "physics-planeMirror",
+      "画布类型": "apparatus",
+      "场景库API": null,
+      "学科求解器": "PHYS.solvePlaneMirror"
+    },
+    "耗时秒": 44.31
+  },
+  "字符数": 109928,
+  "内容字符数": 17351,
+  "文件": "教学资源_平面镜成像_待修复不可交付.html",
+  "压缩包": "平面镜成像_待修复不可交付.zip"
+}

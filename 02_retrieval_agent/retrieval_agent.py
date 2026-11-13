@@ -119,7 +119,7 @@ def retrieve(kb, queries, per_query=8, final_k=12, rrf_k=60, per_cat_min=2, topi
         最终分 = 0.5 × RRF 归一化 + 0.5 × 相对得分。
 
     【类别覆盖保障】
-        最后再保证每个类别至少 per_cat_min 条，避免某一类知识整体缺席。
+        优先从每类选取至多 per_cat_min 条。已识别主题中缺席的类别补一条本主题片段。
     """
     merged = {}
 
@@ -152,13 +152,26 @@ def retrieve(kb, queries, per_query=8, final_k=12, rrf_k=60, per_cat_min=2, topi
 
     ranked = sorted(merged.values(), key=lambda x: x["score"], reverse=True)
 
+    # A category can exist in the selected topic without matching any query.
+    # Supply one local fragment in that case and keep its lexical score at zero.
+    if per_cat_min > 0:
+        missing = set(CATEGORY_ORDER) - {item["chunk"]["类别"] for item in ranked}
+        for chunk in kb.by_topic.get(topic, ()):
+            category = chunk["类别"]
+            if category in missing:
+                ranked.append({
+                    "chunk": chunk, "score": 0.0, "rrf": 0.0, "rel": 0.0,
+                    "bm25_best": 0.0, "命中查询": [],
+                })
+                missing.remove(category)
+
     # 第一步：每个类别先保底，防止某一类知识整体缺席
     chosen, chosen_ids = [], set()
     for _ in range(per_cat_min):
         for cat in CATEGORY_ORDER:
             best = next((r for r in ranked
                          if r["chunk"]["类别"] == cat and r["chunk"]["id"] not in chosen_ids), None)
-            if best:
+            if best and len(chosen) < final_k:
                 chosen.append(best)
                 chosen_ids.add(best["chunk"]["id"])
 
@@ -240,6 +253,13 @@ def pretty_print(req, queries, ranked, pack, topic=None):
     print("=" * 62)
 
 
+def select_knowledge_topic(req):
+    title = req.get("实验主题", "")
+    probe = " ".join([title] + [str(g) for g in req.get("学习目标", [])]
+                     + [v.get("名称", "") for v in req.get("核心变量", [])])
+    return detect_topic(probe, req.get("学科"), title=title)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("text", nargs="*", help="直接给一句教学需求")
@@ -257,16 +277,16 @@ def main():
     if args.topic:
         topic = args.topic
     else:
-        probe = " ".join(
-            [req.get("实验主题", "")]
-            + [str(g) for g in req.get("学习目标", [])]
-            + [v.get("名称", "") for v in req.get("核心变量", [])]
-        )
-        topic = detect_topic(probe)
+        topic = select_knowledge_topic(req)
 
     if topic and topic in kb.by_topic:
         print("识别主题：%s（该主题知识 %d 个片段）" % (topic, len(kb.by_topic[topic])))
     else:
+        if "化学" in str(req.get("学科", "")):
+            raise SystemExit(
+                "化学需求未匹配到已登记主题/知识库，已停止检索，避免拿全库无关知识继续生成。"
+                "请先为该化学场景补充主题关键词与五类知识条目。"
+            )
         print("未识别出主题，将在全部知识中检索（结果可能串主题）")
         topic = topic or None
 

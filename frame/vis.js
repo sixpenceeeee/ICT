@@ -1156,7 +1156,46 @@
     return run;
   }
 
+  /* 求解器读数总闸：自检失败或出现非有限数值时，一律清空读数并显示错误，
+     避免 NaN / Infinity 或"求解器自己都不信"的结果被当成正常实验数据。 */
+  function finiteTree(value) {
+    if (typeof value === 'number') return Number.isFinite(value);
+    if (Array.isArray(value)) return value.every(finiteTree);
+    if (value && typeof value === 'object') return Object.values(value).every(finiteTree);
+    return true;
+  }
+
+  function bindSolverReadouts(result, root = document, formatters = null) {
+    const refused = !!(result && result.checks && result.checks.ok === false);
+    const corrupted = !finiteTree(result);
+    const blocked = refused || corrupted;
+    for (const element of root.querySelectorAll('[data-solver-field]')) {
+      const field = element.dataset.solverField;
+      const value = blocked ? null : result?.[field];
+      let text = value == null || (Array.isArray(value) && value.length === 0) ? '—' : String(value);
+      const digits = formatters && formatters[field];
+      if (!blocked && typeof value === 'number' && Number.isFinite(value) && digits) {
+        text = String(Number(value.toPrecision(digits)));
+      }
+      element.textContent = text;
+    }
+    const box = root.querySelector ? root.querySelector('[data-solver-error]') : null;
+    if (!box) return;
+    if (blocked) {
+      box.textContent = refused
+        ? '求解器自检未通过，读数已清空'
+        : '求解器输出包含非有限数值，读数已清空';
+      box.hidden = false;
+      box.dataset.solverErrorAuto = '1';
+    } else if (box.dataset.solverErrorAuto === '1') {
+      box.hidden = true;
+      box.textContent = '';
+      delete box.dataset.solverErrorAuto;
+    }
+  }
+
   window.VIS = {
+    bindSolverReadouts: bindSolverReadouts,
     /* 状态 */
     S: S,
     /* 基础 */

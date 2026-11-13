@@ -10,6 +10,7 @@
 """
 import io
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -77,6 +78,38 @@ def load_topics():
     return out
 
 
+def existing_documents():
+    """Map generated (topic, category) pairs to their current filenames.
+
+    Number prefixes are stable IDs for citations and run reports. When a new
+    topic is inserted in a subject seed, keep all existing IDs and allocate
+    new IDs after the current maximum instead of renumbering the whole KB.
+    """
+    found = {}
+    highest = START_NO - 1
+    for filename in os.listdir(KB_DIR):
+        match = re.match(r"^(\d+)_", filename)
+        if not match or not filename.endswith(".md"):
+            continue
+        highest = max(highest, int(match.group(1)))
+        path = os.path.join(KB_DIR, filename)
+        with io.open(path, "r", encoding="utf-8") as f:
+            header = re.match(r"^---\s*\n(.*?)\n---\s*\n", f.read(), re.S)
+        if not header:
+            continue
+        meta = {}
+        for line in header.group(1).splitlines():
+            if ":" in line:
+                key, value = line.split(":", 1)
+                meta[key.strip()] = value.strip()
+        if meta.get("主题") and meta.get("类别"):
+            key = (meta["主题"], meta["类别"])
+            if key in found:
+                raise SystemExit("知识库中主题/类别重复：%s / %s" % key)
+            found[key] = filename
+    return found, highest
+
+
 def main():
     topics = load_topics()
     names = [t["主题"] for t in topics]
@@ -93,16 +126,22 @@ def main():
         print("合计 %d 个主题，%d 个文件" % (len(topics), len(topics) * 5))
         return
 
-    n = START_NO
+    prior_files, highest = existing_documents()
+    n = highest
     written = []
     for t in topics:
         for kind, cat, _ in KINDS:
-            path = os.path.join(KB_DIR, "%03d_%s_%s.md" % (n, t["短名"], cat))
+            existing = prior_files.get((t["主题"], cat))
+            if existing:
+                filename = existing
+            else:
+                n += 1
+                filename = "%03d_%s_%s.md" % (n, t["短名"], cat)
+            path = os.path.join(KB_DIR, filename)
             io.open(path, "w", encoding="utf-8").write(render(t, kind, cat))
             written.append(path)
-            n += 1
 
-    print("写入 %d 个文件，编号 %03d–%03d" % (len(written), START_NO, n - 1))
+    print("写入 %d 个文件；既有编号保持不变，新主题编号追加至 %03d" % (len(written), n))
     by_subject = {}
     for t in topics:
         by_subject.setdefault(t["学科"], []).append(t["主题"])

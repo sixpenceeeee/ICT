@@ -1,0 +1,312 @@
+/* =====================================================================
+ *  通用外部框架样式（侧边栏版）  platform-sidebar.css
+ *  与 platform.css（清雅版）视觉语言一致，仅把「下载本案例 / 生成新案例」
+ *  导航从页眉右侧移到【右侧固定边栏】；桌面为右栏，移动端自动变为底部栏。
+ *  约定：
+ *    1. 所有框架类名以 .pf- 前缀，CSS 变量以 --pf- 前缀，避免与内容页冲突。
+ *    2. 内容页 <head> 引入本文件；页眉/页脚/边栏为内联 HTML（纯 HTML/CSS，零 JS 依赖）。
+ *    3. 标题为“半动态”：固定前缀「师伴-」+ 各页面自己的后缀。
+ *    4. 蓝色系、简洁清雅；不影响内容页自身结构与脚本。
+ * ===================================================================== */
+
+:root {
+  --pf-primary: #3b86c9;
+  --pf-primary-d: #2f76b8;
+  --pf-primary-deep: #2b6aa8;
+  --pf-primary-soft: #eaf3fc;
+  --pf-ink: #243b53;
+  --pf-muted: #6b7f96;
+  --pf-line: #e1eaf4;
+  --pf-bg: #f5f9fd;
+  --pf-card: #ffffff;
+  --pf-header-h: 92px;
+  --pf-shell-max: 1640px;
+  --pf-content-pad: 24px 28px;
+  --pf-radius: 14px;
+  --pf-shadow: 0 10px 30px rgba(47, 118, 184, 0.10);
+  --pf-side-w: 96px;        /* 右侧极窄图标栏宽度（桌面） */
+  --pf-sidebar-h: 56px;     /* 移动端底部栏高度 */
+}
+
+/* 统一基线 */
+.pf-hosted { background: var(--pf-bg); }
+
+/* 统一外壳为“纵向 flex 列”，页脚始终贴底，避免页面高度跳动 */
+html.pf-hosted { scrollbar-gutter: stable; }
+html.pf-hosted body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-right: var(--pf-side-w);   /* 桌面：为右侧栏让出空间，内容不被遮挡 */
+}
+html.pf-hosted body > main,
+html.pf-hosted .pf-main { flex: 1 1 auto; min-height: 0; }
+
+/* ============================ 页眉 ============================ */
+.pf-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  flex: 0 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  height: var(--pf-header-h);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 22px;
+  background: linear-gradient(120deg, #5b9fd6 0%, #4589cc 55%, #3f7fbf 100%);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(63, 127, 191, 0.18);
+}
+.pf-header::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(200,228,250,0.7) 50%, rgba(255,255,255,0));
+}
+
+.pf-logo {
+  width: 40px; height: 40px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(10, 30, 80, 0.25);
+  overflow: hidden;
+}
+.pf-logo img { width: 32px; height: 32px; object-fit: contain; display: block; }
+
+.pf-title {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 0 1 auto;
+}
+.pf-fix { color: #fff; font-weight: 800; }
+.pf-page { color: #fff; font-weight: 700; }
+
+/* ============================ 右侧边栏（替代原页眉导航） ============================ */
+/* 桌面：固定右栏；移动端：自动变为底部横栏（见响应式） */
+.pf-side {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: var(--pf-side-w);
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: calc(var(--pf-header-h) + 18px) 0 18px;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #ffffff 0%, #eef5fc 100%);
+  border-left: 1px solid var(--pf-line);
+  box-shadow: -2px 0 18px rgba(47, 118, 184, 0.07);
+}
+/* 极窄图标栏：仅图标，文字以 tooltip 形式在悬停时显示 */
+.pf-side a,
+.pf-side label {
+  position: relative;            /* 供 .pf-tip 绝对定位 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  color: var(--pf-ink);
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s, color 0.15s, transform 0.12s;
+}
+.pf-side a .ico,
+.pf-side label .ico { font-size: 36px; line-height: 1; }
+.pf-side a:hover,
+.pf-side label:hover {
+  background: var(--pf-primary-soft);
+  color: var(--pf-primary-d);
+  transform: translateY(-1px);
+}
+.pf-side a.is-active {
+  background: var(--pf-primary);
+  color: #fff;
+  box-shadow: var(--pf-shadow);
+}
+/* tooltip：默认隐藏，悬停显示在图标左侧（不会超出屏幕右缘） */
+.pf-tip {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%) scale(0.96);
+  padding: 9px 15px;
+  background: var(--pf-ink);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(36, 59, 83, 0.28);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+  z-index: 1;
+}
+.pf-tip::after {                 /* 指向图标的小三角 */
+  content: "";
+  position: absolute;
+  left: 100%; top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: var(--pf-ink);
+}
+.pf-side a:hover .pf-tip,
+.pf-side label:hover .pf-tip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) scale(1);
+}
+
+/* ============================ 弹窗（下载本案例 / 生成案例） ============================ */
+.pf-gen-check,
+.pf-dl-check,
+.pf-contact-check { display: none; }
+.pf-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  padding: 24px;
+  place-items: center;
+}
+/* 三个弹窗各自由独立 checkbox 控制，互不干扰 */
+.pf-gen-check:checked ~ .pf-modal-gen { display: grid; }
+.pf-dl-check:checked ~ .pf-modal-dl { display: grid; }
+.pf-contact-check:checked ~ .pf-modal-contact { display: grid; }
+.pf-modal-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 34, 78, 0.5);
+  cursor: pointer;
+}
+.pf-dialog {
+  position: relative;
+  width: min(420px, 100%);
+  background: #fff;
+  border-radius: 18px;
+  padding: 36px 32px 30px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(13, 34, 78, 0.35);
+  animation: pf-pop 0.22s ease;
+}
+@keyframes pf-pop {
+  from { transform: translateY(14px) scale(0.96); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+.pf-dialog-x {
+  position: absolute;
+  top: 8px; right: 14px;
+  font-size: 20px; line-height: 1;
+  color: #94a3b8; cursor: pointer;
+}
+.pf-dialog-x:hover { color: var(--pf-ink); }
+.pf-dialog-icon {
+  width: 64px; height: 64px;
+  margin: 0 auto 16px;
+  display: grid; place-items: center;
+  font-size: 30px; border-radius: 18px;
+  background: linear-gradient(135deg, #eaf3fc, #dcebf8);
+}
+.pf-dialog h2 { margin: 0 0 14px; font-size: 38px; color: var(--pf-ink); }
+.pf-dialog p {
+  margin: 0 0 24px;
+  font-size: 28px; line-height: 1.75;
+  color: var(--pf-muted);
+}
+.pf-dialog strong { color: var(--pf-primary); font-weight: 700; }
+.pf-dialog-btn {
+  display: inline-block;
+  padding: 10px 36px;
+  border-radius: 999px;
+  background: linear-gradient(120deg, #4a90d9, #3f7fbf);
+  color: #fff;
+  font-size: 14px; font-weight: 600; letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.15s;
+}
+.pf-dialog-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+/* 「立即下载」按钮内嵌的 label（点击同时关闭弹窗并触发下载） */
+.pf-dialog-btn label { color: inherit; font: inherit; cursor: pointer; }
+
+/* ============================ 主体 ============================ */
+.pf-main { flex: 1 1 auto; min-height: 0; }
+.pf-content {
+  max-width: var(--pf-shell-max);
+  margin: 0 auto;
+  padding: var(--pf-content-pad);
+}
+
+/* ============================ 页脚 ============================ */
+.pf-footer {
+  flex: 0 0 auto;
+  padding: 20px 26px;
+  background: #fff;
+  border-top: 1px solid var(--pf-line);
+  color: var(--pf-muted);
+  font-size: 26px;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+/* ============================ 响应式 ============================ */
+/* 移动端：右侧栏自动变为底部横栏，不挤压内容侧边 */
+@media (max-width: 768px) {
+  html.pf-hosted body { padding-right: 0; padding-bottom: var(--pf-sidebar-h); }
+  .pf-side {
+    top: auto; bottom: 0; left: 0; right: 0;
+    width: auto; height: var(--pf-sidebar-h);
+    flex-direction: row;
+    align-items: center; justify-content: center;
+    gap: 14px;
+    padding: 0;
+    border-left: none;
+    border-top: 1px solid var(--pf-line);
+    box-shadow: 0 -2px 18px rgba(47, 118, 184, 0.07);
+  }
+  .pf-side a, .pf-side label {
+    width: 44px; height: 44px;
+    flex: 0 0 auto;
+  }
+  /* 移动端 tooltip 改显示在图标上方，避免超出屏幕 */
+  .pf-tip {
+    right: auto; left: 50%; top: auto;
+    bottom: calc(100% + 12px);
+    transform: translateX(-50%) scale(0.96);
+  }
+  .pf-tip::after {
+    left: 50%; top: 100%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--pf-ink);
+  }
+  .pf-side a:hover .pf-tip,
+  .pf-side label:hover .pf-tip {
+    transform: translateX(-50%) scale(1);
+  }
+  .pf-header { padding: 0 14px; gap: 10px; }
+  .pf-title { font-size: 30px; }
+  .pf-dialog { padding: 28px 22px 24px; }
+}
+@media (max-width: 480px) {
+  .pf-title { font-size: 26px; }
+  .pf-side a, .pf-side label { padding: 8px 4px; font-size: 25px; }
+}

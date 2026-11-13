@@ -1,0 +1,51 @@
+{
+  "实验主题": "氟化钙溶解平衡",
+  "生成信息": {
+    "来源": "场景库确定性模板（模型输出未通过校验）",
+    "模型": "deepseek-chat",
+    "是否修复过": true,
+    "续写次数": 0,
+    "问题": [],
+    "模型输出问题": [
+      "Ksp 方程元素必须只显示 result.dissolution_equation；Q 表达式等内容须放入独立元素"
+    ],
+    "生成契约通过": true,
+    "生成尝试": [
+      {
+        "来源": "大模型首轮",
+        "问题数": 10,
+        "问题": [
+          "选定骨架 chemistry-solubility-ksp 要求页面脚本实际调用 CHEM.solubility，不能只在注释中提及或另写简化手绘",
+          "选定骨架 chemistry-solubility-ksp 必须在 render 中调用学科求解器 CHEMSOLVER.solveSolubilityEquilibrium",
+          "Ksp 必须使用 step=any 的 number 控件，支持溶度积数量级输入和页面变形",
+          "Ksp 页面至少需要两个 min=0、step=any 的 number 离子浓度控件",
+          "Ksp 演示必须调用 CHEM.solubility(cv,result)，图示与求解结果同源",
+          "Ksp 页面必须从求解结果读取 initial_ion_product，不得手写平衡结论",
+          "Ksp 页面必须从求解结果读取 saturation_state，不得手写平衡结论",
+          "Ksp 页面必须从求解结果读取 molar_solubility_mol_L，不得手写平衡结论",
+          "Ksp 页面必须从求解结果读取 checks，不得手写平衡结论",
+          "只有 Ksp 求解器 checks.ok 为 true 时才能显示数值结论；失败时必须显示错误状态"
+        ]
+      },
+      {
+        "来源": "大模型自动修复",
+        "问题数": 1,
+        "问题": [
+          "Ksp 方程元素必须只显示 result.dissolution_equation；Q 表达式等内容须放入独立元素"
+        ]
+      }
+    ],
+    "外壳校验": [],
+    "页面骨架": {
+      "id": "chemistry-solubility-ksp",
+      "画布类型": "apparatus",
+      "场景库API": "CHEM.solubility",
+      "学科求解器": "CHEMSOLVER.solveSolubilityEquilibrium"
+    },
+    "耗时秒": 45.52
+  },
+  "字符数": 134622,
+  "内容字符数": 6918,
+  "文件": "教学资源_氟化钙溶解平衡.html",
+  "压缩包": "氟化钙溶解平衡.zip"
+}

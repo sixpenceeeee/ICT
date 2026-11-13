@@ -17,6 +17,7 @@ topics.py —— 实验主题配置表（新增实验只改这一个文件）
 
 PROFILES = {
     "电路": {
+        "学科": "物理",
         "关键词": ["电路", "电阻", "电压", "电流", "欧姆", "变阻器", "伏安", "电表"],
         "检索侧重": [
             "实验 规范 接线 电表 滑动变阻器",
@@ -37,7 +38,27 @@ PROFILES = {
                     "串联电路写成 I = U / (R + R滑) = 6.0 V ÷ (10 Ω + 10 Ω) = 0.300 A",
     },
 
+    "密度测量": {
+        "学科": "物理",
+        # 只用"天平/量筒/排水法"这类器材词：单写"密度"会把浮力、液体压强页抢过来
+        "关键词": ["密度测量", "测量密度", "测密度", "天平", "量筒", "排水法"],
+        "检索侧重": [
+            "实验 规范 器材 托盘天平 砝码 量筒 排水法 读数",
+            "安全 读数 视线 凹液面 镊子 砝码 量柄",
+            "交互 滑块 记录 单位换算 易错",
+        ],
+        "单位组": [
+            ("质量", ["g", "克", "kg"]),
+            ("体积", ["cm³", "cm3", "mL", "m³"]),
+            ("密度", ["g/cm³", "g/cm3", "kg/m³"]),
+        ],
+        "数值上限": [],
+        "核心公式": "ρ = m / V",
+        "公式示例": "ρ = m ÷ V = 20 g ÷ 8 cm³ = 2.5 g/cm³（1 g/cm³ = 1000 kg/m³）",
+    },
+
     "浮力": {
+        "学科": "物理",
         "关键词": ["浮力", "阿基米德", "排开", "液体密度", "浮沉", "溢水", "浸没"],
         "检索侧重": [
             "实验 规范 器材 弹簧测力计 溢水杯 步骤",
@@ -55,12 +76,12 @@ PROFILES = {
             {"单位": "N", "名称": "力", "上限": 20},
         ],
         "核心公式": "F浮 = ρ液 g V排",
-        "公式示例": "F浮 = ρ液 g V排 = 1000 kg/m³ × 10 N/kg × 0.0002 m³ = 2.00 N"
-                    "（g 取 10 N/kg，体积先换算成 m³；不要用 1.0×10³ 这类科学计数法写代入式）",
+        "公式示例": "F浮 = ρ液 g V排 = 1000 kg/m³ × 9.8 N/kg × 0.0002 m³ = 1.96 N"
+                    "（求解器取 g=9.8 N/kg，体积先换算成 m³）",
     },
 }
 
-# 六学科展示清单补充的 29 个主题：配置由 02_retrieval_agent/seed/build_topics.py 生成，
+# 补充主题配置由 02_retrieval_agent/seed/build_topics.py 生成，
 # 与知识库共用同一份源数据（seed/*_kb.py），避免关键词和公式两处漂移。
 try:
     from topics_extra import EXTRA_PROFILES
@@ -100,18 +121,32 @@ def unit_pattern(unit):
     return "(?:%s)" % "|".join(aliases)
 
 
-def detect_topic(text):
-    """从需求文字里判断属于哪个实验主题，认不出返回 None。
+def detect_topic(text, subject=None, *, title=""):
+    """从需求文字里判断实验主题，可选按学科过滤，认不出返回 None。
 
     只做关键词计分，不调模型：这一步要的是"稳定且可解释"，
     评委问"你怎么知道这是浮力实验"时，能直接指着关键词表回答。
     """
-    text = text or ""
+    text = (text or "").lower()
+    subject = (subject or "").strip()
+    subject = {"物理学": "物理", "生物学": "生物"}.get(subject, subject)
+    if subject in ("数学", "物理") and title:
+        # Prefer a named topic before scoring terms mentioned as background.
+        named = [name for name, profile in PROFILES.items()
+                 if profile.get("学科") == subject and len(name) >= 4 and name in title]
+        if named:
+            return max(named, key=len)
+        title_topic = detect_topic(title, subject)
+        if title_topic:
+            return title_topic
     best, best_score = None, 0
     for name, p in PROFILES.items():
+        if subject and p.get("学科") and p["学科"] != subject:
+            continue
         # 按关键词长度加权：命中的词越长越具体。
         # 只数个数会让「伏安」和「伏安法」同分，导致「伏安法测电阻」被认成「电路」。
-        score = sum(len(kw) for kw in p["关键词"] if kw in text)
+        # 英文缩写（如 Ksp、pH）大小写不应影响主题识别。
+        score = sum(len(kw) for kw in p["关键词"] if kw.lower() in text)
         if score > best_score:
             best, best_score = name, score
     return best

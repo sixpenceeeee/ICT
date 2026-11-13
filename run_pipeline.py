@@ -48,6 +48,36 @@ CHILD_ENV = dict(os.environ)
 CHILD_ENV["PYTHONIOENCODING"] = "utf-8"
 CHILD_ENV["PYTHONUNBUFFERED"] = "1"
 
+
+def round_quality_key(row):
+    """Rank only pages meeting generation, review, and release gates as approved."""
+    failed_count = row.get("失败项数")
+    if failed_count is None:
+        failed_count = len(row.get("问题清单") or [])
+    return (
+        1 if is_release_ready(row) else 0,
+        1 if row.get("生成契约通过", True) else 0,
+        1 if row.get("结论") == "通过" else 0,
+        float(row.get("总分", 0) or 0),
+        -int(row.get("严重问题数", 0) or 0),
+        -int(failed_count or 0),
+        int(row.get("轮次", 0) or 0),
+    )
+
+
+def is_release_ready(row):
+    return (row.get("结论") == "通过" and row.get("发布状态") == "可发布" and
+            row.get("生成契约通过", True))
+
+
+def is_awaiting_teacher_review(row):
+    return (row.get("结论") == "通过" and row.get("发布状态") == "待教师审核" and
+            row.get("生成契约通过", True))
+
+
+def should_replace_best(best, candidate):
+    return best is None or round_quality_key(candidate) > round_quality_key(best)
+
 STAGE_TIMEOUT = 900          # 单阶段上限 15 分钟（生成 HTML 是最慢的一步）
 
 
@@ -215,8 +245,7 @@ def main():
                            "知识包_*.json", log, args.verbose)
     shutil.copy2(kb_path, os.path.join(run_dir, "02_知识包.json"))
 
-    # 知识覆盖不足要显式告警：知识库目前覆盖"电路"和"浮力"两个主题，
-    # 换到第三个主题时检索几乎命中不到东西，生成质量会明显下降。这种话必须说在前面。
+    # 知识覆盖不足时在生成前中止，避免用稀薄或跨主题的知识继续产出页面。
     with open(kb_path, "r", encoding="utf-8") as f:
         pack_doc = json.load(f)
     pack = pack_doc.get("knowledge_pack", {})
@@ -224,10 +253,11 @@ def main():
     chunk_count = sum(len(v) for v in pack.values())
     log["知识主题"] = topic
     log["知识片段数"] = chunk_count
+    if topic == "未识别":
+        raise StageError("知识检索没有识别出可用主题，已停止生成，避免跨主题拼接知识。")
     if chunk_count < 4:
-        print("\n警告：只检索到 %d 个知识片段（主题：%s）。"
-              "知识库目前只覆盖电路与浮力两个实验，其它主题需要先补充知识文件。"
-              "这不是模型的问题，是知识库没料。" % (chunk_count, topic))
+        raise StageError("主题「%s」只检索到 %d 个知识片段（至少需要 4 个），已停止生成。"
+                         % (topic, chunk_count))
 
     # ---------- 阶段 3+4：生成 → 审查 → 返工 ----------
     best = None
@@ -244,12 +274,26 @@ def main():
         shutil.copy2(html_path, os.path.join(run_dir, "%02d_草稿_模型输出.html" % rnd))
         copy_assets(html_path, run_dir)
 
-        # 生成侧自己的校验结果（来源=模板说明模型输出没通过，是重要信号）
+        # 生成侧的场景契约校验与诊断。
         meta_path = os.path.splitext(html_path)[0] + ".meta.json"
         source = "-"
+        generation_meta = {}
+        download_zip_name = ""
         if os.path.exists(meta_path):
             with open(meta_path, "r", encoding="utf-8") as f:
-                source = json.load(f).get("生成信息", {}).get("来源", "-")
+                generation_doc = json.load(f)
+                generation_meta = generation_doc.get("生成信息", {})
+                source = generation_meta.get("来源", "-")
+                download_zip_name = generation_doc.get("压缩包", "")
+            shutil.copy2(meta_path, os.path.join(run_dir, "%02d_生成信息.json" % rnd))
+        download_zip_path = ""
+        if download_zip_name:
+            source_zip = os.path.join(os.path.dirname(html_path), download_zip_name)
+            if os.path.exists(source_zip):
+                download_zip_path = os.path.join(run_dir, download_zip_name)
+                shutil.copy2(source_zip, download_zip_path)
+        generation_contract_passed = bool(generation_meta.get("生成契约通过", True))
+        generation_contract_issues = generation_meta.get("问题") or []
 
         report_path, rev_cost = run_stage("      → 第 %d 轮" % rnd, "质量审查",
                                           "reviewer.py", ["--html", html_path, "--req", req_path],
@@ -264,7 +308,13 @@ def main():
             "字符数": os.path.getsize(html_path),
             "总分": report["总分"],
             "结论": report["结论"],
+            "发布状态": report.get("发布状态", "待验证"),
+            "生成契约通过": generation_contract_passed,
+            "生成契约问题数": len(generation_contract_issues),
+            "生成契约问题": generation_contract_issues,
+            "页面下载包": download_zip_path,
             "严重问题数": report["严重问题数"],
+            "失败项数": len(report.get("问题清单") or []),
             "生成耗时秒": gen_cost,
             "审查耗时秒": rev_cost,
             "HTML": html_path,
@@ -272,41 +322,59 @@ def main():
         }
         log["轮次"].append(round_info)
 
-        # 保留历史最高分版本：第 2 轮不一定比第 1 轮好，最后交付的应该是最好那版
-        if best is None or report["总分"] > best["总分"]:
+        # 通过版本优先；未通过时同分优先严重问题更少、失败项更少的版本。
+        if should_replace_best(best, round_info):
             best = dict(round_info, 问题清单=report["问题清单"])
 
         print("\n    第 %d 轮结果：%s  %.1f 分（严重问题 %d 项）  来源=%s"
               % (rnd, report["结论"], report["总分"], report["严重问题数"], source))
 
-        if report["结论"] == "通过":
-            print("    审查通过，停止返工")
+        review_candidate = dict(report, 生成契约通过=generation_contract_passed)
+        release_ready = is_release_ready(review_candidate)
+        if release_ready:
+            print("    生成契约与质量审查均通过且可发布，停止返工")
+            break
+        if is_awaiting_teacher_review(review_candidate):
+            print("    技术审查通过，但发布状态待教师审核，停止自动返工")
             break
         if rnd == args.max_rounds:
-            print("    已达最大轮次，交付历史最好版本")
+            print("    已达最大轮次，保存历史最好候选稿（未满足交付门槛）")
             break
 
-        feedback = report["修改意见"]
-        print("    未通过，带着 %d 条意见返工" % len(report["问题清单"]))
+        feedback_parts = [report.get("修改意见") or ""]
+        if generation_contract_issues:
+            feedback_parts.append("生成器契约校验仍未通过，必须一并修复：\n- " +
+                                  "\n- ".join(generation_contract_issues))
+        feedback = "\n\n".join(part for part in feedback_parts if part)
+        print("    未达到交付门槛，带着审查/生成契约意见返工")
 
     # ---------- 收尾 ----------
     # 交付物是一个完整目录（html + frame.css + exp.css + logo.png + zip）：
     # 平台外壳是外链样式，只发 html 别人打开会没样式，所以必须连资源一起带走。
-    is_passed = best["结论"] == "通过"
+    is_passed = is_release_ready(best)
+    awaiting_teacher = is_awaiting_teacher_review(best)
     # Keep a non-passing best attempt inspectable, but never label it as a
     # deliverable. The run still exits nonzero and the candidate filename is
     # explicit so downstream users cannot mistake a high score for approval.
-    final_basename = "交付_教学资源.html" if is_passed else "待修复_不可交付.html"
+    final_basename = ("交付_教学资源.html" if is_passed else
+                      "待教师审核_暂不可发布.html" if awaiting_teacher else
+                      "待修复_不可交付.html")
     final_html = os.path.join(run_dir, final_basename)
     shutil.copy2(best["HTML"], final_html)
     copy_assets(best["HTML"], run_dir)
-    final_zip = os.path.join(run_dir, "交付_教学资源.zip" if is_passed else "待修复_不可交付.zip")
+    zip_basename = ("交付_教学资源.zip" if is_passed else
+                    "待教师审核_暂不可发布.zip" if awaiting_teacher else
+                    "待修复_不可交付.zip")
+    final_zip = os.path.join(run_dir, zip_basename)
     with zipfile.ZipFile(final_zip, "w", zipfile.ZIP_DEFLATED) as z:
-        z.write(final_html, "交付_教学资源.html")
+        z.write(final_html, os.path.basename(final_html))
         for res in ("frame.css", "exp.css", "logo.png"):
             p_res = os.path.join(run_dir, res)
             if os.path.exists(p_res):
                 z.write(p_res, res)
+        page_download_zip = best.get("页面下载包")
+        if page_download_zip and os.path.exists(page_download_zip):
+            z.write(page_download_zip, os.path.basename(page_download_zip))
 
     # 写回 03 的 output，保证那个目录里留的永远是最好版本，而不是最后一版
     canonical = best["HTML"]
@@ -318,10 +386,15 @@ def main():
     log["总耗时秒"] = total_cost
     log["最终总分"] = best["总分"]
     log["结论"] = best["结论"]
+    log["发布状态"] = best.get("发布状态", "待验证")
+    log["生成契约通过"] = best.get("生成契约通过", True)
+    log["生成契约问题数"] = best.get("生成契约问题数", 0)
     log["交付文件"] = final_html
     log["交付压缩包"] = final_zip
-    log["交付说明"] = (("模型生成" if best["生成来源"] == "大模型" else "含兜底模板：%s" % best["生成来源"])
-                       if is_passed else "未通过质量审查，仅保存为不可交付候选稿")
+    log["交付说明"] = (("模型或场景模板生成，生成契约与发布审查均通过")
+                       if is_passed else
+                       "质量结论通过，但需教师审核后才能发布" if awaiting_teacher else
+                       "未通过生成契约或质量审查，仅保存为不可交付候选稿")
 
     with open(os.path.join(run_dir, "运行日志.json"), "w", encoding="utf-8") as f:
         json.dump(log, f, ensure_ascii=False, indent=2)
@@ -330,7 +403,10 @@ def main():
     print("\n" + "=" * 64)
     print("完成    %s    总分 %.1f / 100    共 %d 轮    总耗时 %.1fs"
           % (best["结论"], best["总分"], len(log["轮次"]), total_cost))
-    print(("交付    " if is_passed else "候选稿（不可交付）    ") + final_html)
+    status_label = ("交付    " if is_passed else
+                    "待教师审核（暂不可发布）    " if awaiting_teacher else
+                    "候选稿（不可交付）    ")
+    print(status_label + final_html)
     print("日志    %s" % os.path.join(run_dir, "运行日志.json"))
     print("报告    %s" % os.path.join(run_dir, "运行报告.md"))
     print("=" * 64)
@@ -343,7 +419,7 @@ def main():
     if args.open and os.name == "nt":
         os.startfile(final_html)
 
-    return 0 if best["结论"] == "通过" else 1
+    return 0 if is_passed else 1
 
 
 def write_markdown(path, log, best):
@@ -355,6 +431,10 @@ def write_markdown(path, log, best):
         "- 输入需求：%s" % log["输入"],
         "- 模型接入：%s" % log["模型接入"],
         "- 结论：**%s**，总分 %.1f / 100" % (log["结论"], log["最终总分"]),
+        "- 发布状态：%s" % log.get("发布状态", "待验证"),
+        "- 生成器场景契约：%s（问题 %d 项）" %
+        ("通过" if log.get("生成契约通过", True) else "未通过",
+         log.get("生成契约问题数", 0)),
         "- 总耗时：%.1fs，共 %d 轮" % (log["总耗时秒"], len(log["轮次"])),
         "",
         "## 阶段耗时",
@@ -369,17 +449,23 @@ def write_markdown(path, log, best):
         "",
         "## 各轮审查结果",
         "",
-        "| 轮次 | 生成来源 | 字符数 | 总分 | 结论 | 严重问题 |",
-        "|---|---|---|---|---|---|",
+        "| 轮次 | 生成来源 | 契约 | 字符数 | 总分 | 结论 | 发布状态 | 严重问题 | 失败项 |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for r in log["轮次"]:
-        lines.append("| %d | %s | %d | %.1f | %s | %d |"
-                     % (r["轮次"], r["生成来源"], r["字符数"], r["总分"], r["结论"], r["严重问题数"]))
+        lines.append("| %d | %s | %s | %d | %.1f | %s | %s | %d | %d |"
+                     % (r["轮次"], r["生成来源"],
+                        "通过" if r.get("生成契约通过", True) else "失败",
+                        r["字符数"], r["总分"], r["结论"], r.get("发布状态", "待验证"),
+                        r["严重问题数"], r.get("失败项数", 0)))
 
-    approved = log.get("结论") == "通过"
+    approved = is_release_ready(log)
+    awaiting_teacher = is_awaiting_teacher_review(log)
     lines += ["", "## 交付状态", "",
-              ("- 质量审查通过：第 %d 轮（历史最高分 %.1f）" % (best["轮次"], best["总分"]))
-              if approved else ("- **质量审查未通过：以下仅为不可交付候选稿**（第 %d 轮，历史最高分 %.1f）" % (best["轮次"], best["总分"])),
+              ("- 质量审查通过：第 %d 轮（总分 %.1f）" % (best["轮次"], best["总分"]))
+              if approved else
+              ("- 质量结论通过，但发布状态为待教师审核；此文件暂不可发布。" if awaiting_teacher else
+               "- **生成契约或质量审查未通过：以下仅为不可交付候选稿**（第 %d 轮，总分 %.1f）" % (best["轮次"], best["总分"])),
               "- 生成来源：%s" % best["生成来源"],
               "- 文件：`%s`（同目录下另有每轮草稿和对应审查报告）" % os.path.basename(log.get("交付文件", ""))]
 

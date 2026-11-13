@@ -1,0 +1,3771 @@
+<!doctype html>
+<html lang="zh-CN" class="pf-hosted">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="logo.png">
+  <title>师伴-平面镜成像</title>
+
+  <!-- 平台统一外壳（与老师下发的 template 保持一致，不要改） -->
+  <link rel="stylesheet" href="frame.css">
+  <!-- 六区域内容样式 -->
+  <link rel="stylesheet" href="exp.css">
+  <style>
+/* 页面自带样式 */
+.exp-grid > *, .exp-table-wrap{min-width:0;max-width:100%}.exp-field input,.exp-field select{box-sizing:border-box;min-width:0;max-width:100%}.exp-read .v,.exp-info,.exp-note{overflow-wrap:anywhere}.exp-table td{white-space:normal;overflow-wrap:anywhere}.exp-reads{display:flex;flex-wrap:wrap;gap:8px}.exp-comparison-grid{display:flex;flex-wrap:wrap;gap:8px}.physics-stage{display:grid;grid-template-rows:minmax(0,1fr) auto;height:100%;min-width:0;max-width:100%;overflow:hidden}.physics-plot{position:relative;min-height:0;min-width:0;max-width:100%;overflow:hidden}.physics-plot canvas{position:absolute;inset:0;max-width:100%}.physics-key{display:flex;justify-content:center;flex-wrap:wrap;gap:0 0.6em;margin:0;padding:0.25em 0.6em}
+  </style>
+  <!-- 平台阅读规范：必须排在页面自带样式之后，才能盖住它们
+       正文纯黑 / 最小字号 26px / 实验名称只在页眉出现一次 -->
+  <style>
+/* =====================================================================
+ *  normal.css —— 平台阅读规范（后置强制层）
+ *
+ *  它排在加载顺序的最后：
+ *      frame.css → exp.css → 页面自带样式(EXTRA_CSS) → 本文件
+ *  所以这里的规则会盖住前面所有定义，包括模型自己写进页面的 CSS。
+ *  作用只有一个：让 30 个页面读起来像同一个东西，而不是每页一个风格。
+ *
+ *  三条规范：
+ *    1. 正文文字一律纯黑 #000（不再跟随蓝色主题色）
+ *    2. 最小字号 26px（= 原始 13px × 2；配合 typo.js 兜住页面自带的 9~12px 小字）
+ *    3. 实验名称只在页眉出现一次，① 区不再重复
+ * ===================================================================== */
+
+:root {
+  --pf-fs-min: 26px;      /* 全站最小字号（= 原始 13px × 2），改这里就够 */
+  --pf-body-ink: #000;    /* 正文文字色 */
+}
+
+/* ---------------------------------------------------------------------
+ * 1. 正文纯黑
+ *    只作用于「承载正文的元素」，不碰按钮、胶囊标签、读数数值、警示块
+ *    这些有语义的强调色，否则页面会失去层次。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary,
+.pf-hosted .exp-wrap .exp-teach h3,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li,
+.pf-hosted .exp-wrap p,
+.pf-hosted .exp-wrap li,
+.pf-hosted .exp-wrap td,
+.pf-hosted .exp-wrap th,
+.pf-hosted .exp-wrap dt,
+.pf-hosted .exp-wrap dd,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-label,
+.pf-hosted .exp-wrap .exp-field,
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-table,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 段落里用来解释的斜体/引用也统一黑，不保留灰蓝 */
+.pf-hosted .exp-wrap .exp-body em,
+.pf-hosted .exp-wrap .exp-body i,
+.pf-hosted .exp-wrap .exp-body span,
+.pf-hosted .exp-wrap .exp-goals span {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 代入式里的高亮结论（<em>）保留橙色，是「看这里」而不是正文 */
+.pf-hosted .exp-wrap .exp-formula em {
+  color: #b5561b !important;
+  font-weight: 800;
+}
+
+/* 警示块保留橙红语义色，但压深到接近黑，保证对比度 */
+.pf-hosted .exp-wrap .exp-alert {
+  color: #7c2d12 !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一抬到 26px+
+ *    （页面自己写死的更小字号由 typo.js 在运行时兜底）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-tag,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip,
+.pf-hosted .exp-wrap .exp-read .k,
+.pf-hosted .exp-wrap .exp-read .u,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-val,
+.pf-hosted .exp-wrap .exp-btn,
+.pf-hosted .exp-wrap select,
+.pf-hosted .exp-wrap input,
+.pf-hosted .pf-footer,
+.pf-hosted .pf-tip {
+  font-size: var(--pf-fs-min);
+}
+
+/* 中等档：说明类、代入式、表格、警示，比最小档再大 0.5px */
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-alert,
+.pf-hosted .exp-wrap .exp-table {
+  font-size: 27px;
+}
+
+/* 正文（学习目标 / 教学说明）用 28px，比辅助文字再大一档 */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li {
+  font-size: 28px;
+}
+
+/* 标题档：六区域标题 / 教学说明折叠头 */
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary {
+  font-size: 29px;
+}
+
+/* 读数数值：全站最大的字，读数一眼能看清 */
+.pf-hosted .exp-wrap .exp-read .v {
+  font-size: 38px;
+}
+
+/* ---------------------------------------------------------------------
+ * 2a-2. 演示区只留实物与图形
+ *      画布左下角那条「按住拖动可旋转视角…」是文字块，规范要求删掉。
+ *      页面若还生成 .exp-canvas-tip，这里统一隐藏，不用逐页改 HTML。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2b. 字号放大后的版式补偿
+ *     字大一倍，原来的格子宽度就不够了：读数卡按两列铺、允许换行，
+ *     表格窄了横向滚动。这几条只为「不挤、不裁」，不改字号。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-reads { gap: 12px; }
+
+.pf-hosted .exp-wrap .exp-read {
+  box-sizing: border-box;   /* 不加这句，百分比基准只算内容区，加上内边距就放不下 */
+  flex: 1 1 calc(50% - 7px);   /* 默认两列：窄屏、单列时也不会把字挤到折行 */
+  min-width: 0;
+}
+
+/* ④ 现在横跨整行，宽屏时一行铺开四个读数更像仪表盘 */
+@media (min-width: 1180px) {
+  .pf-hosted .exp-wrap .exp-read { flex: 1 1 calc(25% - 11px); }
+}
+
+.pf-hosted .exp-wrap .exp-table-wrap { overflow-x: auto; }
+
+.pf-hosted .exp-wrap .exp-tags { gap: 10px; }
+
+/* ---------------------------------------------------------------------
+ * 3. 实验名称只在页眉：① 区那个大标题删掉（外壳装配时已剥离，
+ *    这里再做一层兜底，防止旧页面或手写页面漏网）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-info .exp-name {
+  display: none !important;
+}
+
+/* 名字挪走后，① 区首个元素不要留出额外的上间距 */
+.pf-hosted .exp-info > *:first-child {
+  margin-top: 0;
+}
+  </style>
+</head>
+<body>
+  <header class="pf-header">
+    <span class="pf-logo"><img src="logo.png" alt="平台标志"></span>
+    <h1 class="pf-title"><span class="pf-fix">师伴-</span><span class="pf-page">平面镜成像</span></h1>
+  </header>
+
+  <aside class="pf-side">
+    <label for="pf-dl"><span class="ico">📥</span><span class="pf-tip">下载本案例</span></label>
+    <label for="pf-gen"><span class="ico">✨</span><span class="pf-tip">生成新案例</span></label>
+    <label for="pf-contact"><span class="ico">📧</span><span class="pf-tip">联系我们，获取更多案例</span></label>
+  </aside>
+
+  <main class="pf-main">
+    <div class="pf-content">
+      <div class="exp-wrap">
+
+        <!-- ① 实验信息 -->
+        <section class="exp-info" id="sec-info">
+<div class="exp-tags"><span class="exp-tag">物理</span><span class="exp-tag">初中八年级</span><span class="exp-tag is-plain">教学演示（虚拟仿真）</span></div><p class="exp-note">来源：物理知识库「平面镜成像」</p><p class="exp-note">实验性质：虚拟仿真，数值取自理想模型。</p><div class="exp-goals-title">学习目标</div><ul class="exp-goals"><li>观察参数变化与结果的关系</li></ul>
+        </section>
+
+        <div class="exp-grid">
+          <!-- ② 演示画布 -->
+          <section class="exp-card exp-stage" id="sec-stage">
+            <h2>② 演示<span class="exp-hint" id="pf-stage-hint">拖动画面可旋转视角</span></h2>
+            <div class="exp-canvas-box">
+<div class="lesson-stage"><div class="lesson-plot"><canvas id="planeMirror-scene" data-visual-type="apparatus" aria-label="平面镜成像"></canvas></div></div>
+            </div>
+          </section>
+
+          <!-- ③ 参数与操作 -->
+          <section class="exp-card exp-control" id="sec-control">
+            <h2>③ 参数与操作</h2>
+<label class="exp-field"><span class="exp-label"><span>物距</span><span class="exp-val"><b id="object_distance-label">0.5</b> m</span></span><input id="object_distance" type="number" min="0.05" max="5" step="any" value="0.5" data-solver-input="object_distance" aria-label="物距"></label><label class="exp-field"><span class="exp-label"><span>物高</span><span class="exp-val"><b id="object_height-label">0.3</b> m</span></span><input id="object_height" type="number" min="0" max="6" step="any" value="0.3" data-solver-input="object_height" aria-label="物高"></label><label class="exp-field"><span class="exp-label"><span>眼睛到镜面距离</span><span class="exp-val"><b id="observer_distance-label">1</b> m</span></span><input id="observer_distance" type="number" min="0.05" max="10" step="any" value="1" data-solver-input="observer_distance" aria-label="眼睛到镜面距离"></label><label class="exp-field"><span class="exp-label"><span>眼睛高于镜心</span><span class="exp-val"><b id="observer_height-label">0</b> m</span></span><input id="observer_height" type="number" min="-10" max="10" step="any" value="0" data-solver-input="observer_height" aria-label="眼睛高于镜心"></label><label class="exp-field"><span class="exp-label"><span>镜面半高</span><span class="exp-val"><b id="mirror_half_height-label">0.6</b> m</span></span><input id="mirror_half_height" type="number" min="0.05" max="6" step="any" value="0.6" data-solver-input="mirror_half_height" aria-label="镜面半高"></label><div class="exp-btns"><button class="exp-btn" id="preset-full" type="button">整段可见</button><button class="exp-btn" id="preset-double_object_distance" type="button">物距加倍</button><button class="exp-btn" id="preset-mirror_edge" type="button">镜边</button><button class="exp-btn" id="preset-narrow" type="button">窄镜</button><button class="exp-btn" id="preset-observer_high" type="button">眼睛偏高</button><button class="exp-btn" id="preset-middle_only" type="button">仅中段可见</button><button class="exp-btn" id="preset-observer_far" type="button">眼睛后退</button><button class="exp-btn" id="preset-short_object" type="button">矮物体</button><button class="exp-btn" id="preset-edge_only" type="button">仅边缘可见</button></div><div class="exp-btns"><button class="exp-btn is-primary" id="btn-record" type="button">记录当前数据</button><button class="exp-btn" id="btn-reset" type="button">重置参数</button></div><p class="exp-note" data-preset-hint aria-live="polite"></p>
+          </section>
+
+          <!-- ④ 结果与反馈 -->
+          <section class="exp-card exp-result" id="sec-result">
+            <h2>④ 结果与反馈</h2>
+<div class="exp-reads"><div class="exp-read"><span class="k">物距（m）</span><span class="v"><b data-solver-field="object_distance">—</b></span></div><div class="exp-read"><span class="k">像距（m）</span><span class="v"><b data-solver-field="image_distance">—</b></span></div><div class="exp-read"><span class="k">像的带符号横坐标 m</span><span class="v"><b data-solver-field="image_x">—</b></span></div><div class="exp-read"><span class="k">像高（m）</span><span class="v"><b data-solver-field="image_height">—</b></span></div><div class="exp-read"><span class="k">放大率</span><span class="v"><b data-solver-field="magnification">—</b></span></div><div class="exp-read"><span class="k">像的性质</span><span class="v"><b data-solver-field="image_kind">—</b></span></div><div class="exp-read"><span class="k">可见性</span><span class="v"><b data-solver-field="visibility">—</b></span></div><div class="exp-read"><span class="k">可见起点（m）</span><span class="v"><b data-solver-field="visible_from">—</b></span></div><div class="exp-read"><span class="k">可见终点（m）</span><span class="v"><b data-solver-field="visible_to">—</b></span></div></div><p class="exp-formula" id="planeMirror-formula"></p><p class="exp-alert" data-solver-error hidden></p>
+          </section>
+        </div>
+
+        <!-- ⑤ 实验记录 -->
+        <section class="exp-card exp-record" id="sec-record">
+          <h2>⑤ 实验记录<span class="exp-hint">点击「记录当前数据」逐行追加</span></h2>
+          <div class="exp-table-wrap">
+<div class="exp-table-wrap"><table class="exp-table"><thead><tr><th>物距/m</th><th>物高/m</th><th>眼睛到镜面距离/m</th><th>眼睛高于镜心/m</th><th>镜面半高/m</th><th>物距/m</th><th>像距/m</th><th></th><th>像高/m</th><th>放大率</th><th>像的性质</th><th>可见性</th><th>可见起点/m</th><th>可见终点/m</th></tr></thead><tbody id="planeMirror-records"></tbody></table></div>
+          </div>
+        </section>
+
+        <!-- ⑥ 教学说明 -->
+        <details class="exp-card exp-teach" id="sec-teach">
+          <summary>⑥ 教学说明（原理 / 易错点 / 探究问题）</summary>
+          <div class="exp-body">
+<h3>原理</h3><p>平面镜成像遵循光的反射定律：入射角等于反射角，物与像关于镜面对称，像距等于物距。</p><h3>易错点</h3><p>入射角是入射光线与法线的夹角，不是与镜面的夹角；平面镜成的是虚像，不能呈现在光屏上。</p><h3>探究问题</h3><p>移动眼睛的位置，可见范围怎样变化？只改变镜面大小，像的位置会变吗？</p><h3>结论</h3><p>像与物关于镜面对称；能否看到完整的像由眼睛位置和镜面大小共同决定。</p><h3>注意事项</h3><p>虚拟实验不涉及真实激光；真实实验中不要让强光直射眼睛。</p>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="pf-footer"><span>© 中小学人工智能教育教学支撑平台 版权所有。本页内容由AI自动生成，请自行确认后使用。</span></footer>
+
+  <input type="checkbox" id="pf-gen" class="pf-gen-check" hidden>
+  <div class="pf-modal pf-modal-gen" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-gen" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-gen" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">✨</div>
+      <h2>生成更多案例</h2>
+      <p>可以在 <strong>WorkBuddy</strong> 中查找<strong>“师伴应用”</strong>，<br>生成更多优质案例。</p>
+      <label class="pf-dialog-btn" for="pf-gen">我知道了</label>
+    </div>
+  </div>
+
+  <input type="checkbox" id="pf-dl" class="pf-dl-check" hidden>
+  <div class="pf-modal pf-modal-dl" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-dl" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-dl" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">📥</div>
+      <h2>下载本案例</h2>
+      <p>您可以将本案例下载到本地运行</p>
+      <a class="pf-dialog-btn" href="平面镜成像.zip" download onclick="var c=document.getElementById('pf-dl');if(c)c.checked=false;">立即下载</a>
+    </div>
+  </div>
+
+  <input type="checkbox" id="pf-contact" class="pf-contact-check" hidden>
+  <div class="pf-modal pf-modal-contact" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-contact" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-contact" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">📧</div>
+      <h2>联系我们获取更多案例</h2>
+      <p>邮箱：<a href="mailto:teachbuddy@outlook.com"><strong>teachbuddy@outlook.com</strong></a></p>
+      <label class="pf-dialog-btn" for="pf-contact">我知道了</label>
+    </div>
+  </div>
+
+  <script>
+/* vis.js —— 全学科共享的「2.5D 实验室」视觉原语层（外壳注入，离线可用）
+ *
+ * 为什么要这一层：
+ *   化学那版「双烧杯」之所以好看，不是因为画了烧杯，而是因为一套固定的光影规则——
+ *   主光从左上来、接触阴影偏右下、玻璃是半透明叠层加内侧阴影、液体上浅下深、
+ *   文字最后画且永远带白描边。这些规则对所有学科都成立。
+ *   所以把「规则」抽成原语，各学科只组合原语，不再各画各的。
+ *
+ * 不变量（所有页面自动继承）：
+ *   ① 空间：一切立体物用斜投影（正面 + 顶面 + 右侧面），顶面最亮、右侧最暗
+ *   ② 光影：每个实体至少 3 处——渐变、高光、接触阴影
+ *   ③ 材质：MAT 表里定死，不各页自创
+ *   ④ 文字：统一走 VIS.text，白描边 + 包围盒自动收进画布 8px
+ *
+ * 对外接口（页面脚本直接用，不必自己写 canvas 细节）：
+ *   VIS.mount(cv, {DW, DH})        绑定画布（设计坐标 + DPR + 等比缩放）
+ *   VIS.clear()                     清屏并应用变换
+ *   VIS.wall({tableY})              景深背景：墙面 / 虚化器皿 / 窗光 / 台面
+ *   VIS.glass(cfg) VIS.liquid(cfg) VIS.glassFront(cfg)   玻璃容器三段式
+ *   VIS.box(cfg) VIS.sphere(cfg) VIS.cyl(cfg)            立体实体
+ *   VIS.spring(cfg) VIS.stand(cfg) VIS.rail(cfg) VIS.post(cfg)
+ *   VIS.lens(cfg) VIS.ray(cfg) VIS.magnifier(cfg)
+ *   VIS.pill(cfg) VIS.leader(cfg) VIS.card(cfg) VIS.panel(cfg)
+ *   VIS.arrow(cfg) VIS.ruler(cfg) VIS.hatch(cfg) VIS.text(cfg)
+ *   VIS.responsive(cv, draw)        容器变化时重绘
+ */
+(function () {
+  'use strict';
+
+  var S = {
+    cv: null, ctx: null, DW: 900, DH: 640,
+    w: 0, h: 0, s: 1, ox: 0, oy: 0, dpr: 1,
+    cur: null            // 当前容器几何（glass → liquid → glassFront 之间传递）
+  };
+
+  /* ============================ 基础工具 ============================ */
+
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function parseColor(c) {
+    if (typeof c !== 'string') return [0, 0, 0];
+    if (c.charAt(0) === '#') {
+      var hx = c.substr(1);
+      if (hx.length === 3) hx = hx[0] + hx[0] + hx[1] + hx[1] + hx[2] + hx[2];
+      return [parseInt(hx.substr(0, 2), 16), parseInt(hx.substr(2, 2), 16), parseInt(hx.substr(4, 2), 16)];
+    }
+    var m = String(c).match(/(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)/);
+    return m ? [+m[1], +m[2], +m[3]] : [0, 0, 0];
+  }
+  function rgba(c, a) {
+    var p = parseColor(c);
+    return 'rgba(' + p[0] + ',' + p[1] + ',' + p[2] + ',' + a + ')';
+  }
+  function mix(c1, c2, t) {
+    var a = parseColor(c1), b = parseColor(c2);
+    return 'rgb(' + Math.round(lerp(a[0], b[0], t)) + ',' +
+      Math.round(lerp(a[1], b[1], t)) + ',' + Math.round(lerp(a[2], b[2], t)) + ')';
+  }
+  function shade(c, k) {
+    var p = parseColor(c);
+    if (k >= 0) return 'rgb(' + [0, 1, 2].map(function (i) { return Math.round(lerp(p[i], 255, k)); }).join(',') + ')';
+    return 'rgb(' + [0, 1, 2].map(function (i) { return Math.round(lerp(p[i], 0, -k)); }).join(',') + ')';
+  }
+  function rr(x, y, w, h, r) {
+    r = Math.min(r, Math.abs(w) / 2, Math.abs(h) / 2);
+    var ctx = S.ctx;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  /* 材质表：全学科同一套，避免每页自创颜色 */
+  var MAT = {
+    iron:     { rgb: '#9aa6b2', name: '铁' },
+    steel:    { rgb: '#b7c2cd', name: '钢' },
+    aluminum: { rgb: '#c8d2dc', name: '铝' },
+    copper:   { rgb: '#c1702f', name: '铜' },
+    brass:    { rgb: '#c9a227', name: '黄铜' },
+    wood:     { rgb: '#c99a63', name: '木' },
+    plastic:  { rgb: '#5b9bd5', name: '塑料' },
+    rubber:   { rgb: '#4a5560', name: '橡胶' },
+    glass:    { rgb: '#d7ecfa', name: '玻璃' },
+    stone:    { rgb: '#a8a29b', name: '石' },
+    ice:      { rgb: '#cfe8f7', name: '冰' },
+    liquid:   { rgb: '#5fb3e0', name: '液体' },
+    orange:   { rgb: '#f0a03c', name: '橙色' },
+    green:    { rgb: '#57a97e', name: '绿色' }
+  };
+
+  /* 确定性伪随机：纹理每次重绘一致（不能用 Math.random，否则画面会闪） */
+  var SPK = [];
+  (function () {
+    var s = 20240;
+    for (var i = 0; i < 512; i++) { s = (s * 9301 + 49297) % 233280; SPK.push(s / 233280); }
+  })();
+  function spk(i) { return SPK[((i % 512) + 512) % 512]; }
+
+  /* ============================ 画布与背景 ============================ */
+
+  function mount(cv, opt) {
+    opt = opt || {};
+    S.cv = cv;
+    S.ctx = cv.getContext('2d');
+    S.DW = opt.DW || 900;
+    S.DH = opt.DH || 640;
+    return resize();
+  }
+
+  function resize() {
+    if (!S.cv) return false;
+    var box = S.cv.parentNode || S.cv;
+    var w = box.clientWidth || 720;
+    var h = box.clientHeight || 480;
+    if (w < 4 || h < 4) return false;
+    S.w = w; S.h = h;
+    S.dpr = window.devicePixelRatio || 1;
+    S.cv.width = Math.max(1, Math.round(w * S.dpr));
+    S.cv.height = Math.max(1, Math.round(h * S.dpr));
+    S.cv.style.width = w + 'px';
+    S.cv.style.height = h + 'px';
+    S.s = Math.min(w / S.DW, h / S.DH);
+    S.ox = (w - S.DW * S.s) / 2;
+    S.oy = (h - S.DH * S.s) / 2;
+    return true;
+  }
+
+  function clear() {
+    var ctx = S.ctx;
+    ctx.setTransform(S.dpr, 0, 0, S.dpr, 0, 0);
+    ctx.clearRect(0, 0, S.w, S.h);
+    ctx.translate(S.ox, S.oy);
+    ctx.scale(S.s, S.s);
+    // 视觉边界（供 text 自动收边使用）
+    S.margin = 8;
+  }
+
+  /* 背景：墙面渐变 + 虚化器材剪影 + 窗格光带 + 台面（景深的来源） */
+  function wall(cfg) {
+    cfg = cfg || {};
+    var ctx = S.ctx;
+    var tableY = cfg.tableY == null ? S.DH * 0.52 : cfg.tableY;
+    var warm = cfg.tone === 'warm';
+    var topC = warm ? '#fdfaf4' : '#f9fcfe';
+    var midC = warm ? '#f4ecdf' : '#eaf2f9';
+    var botC = warm ? '#e8ddca' : '#dfe9f3';
+
+    var g = ctx.createLinearGradient(0, 0, 0, S.DH);
+    g.addColorStop(0, topC);
+    g.addColorStop(0.55, midC);
+    g.addColorStop(1, botC);
+    ctx.fillStyle = g;
+    // 外扩 ±420：等比缩放后不会在上下留白
+    ctx.fillRect(-420, -420, S.DW + 840, S.DH + 840);
+
+    // 左上方向光
+    var rg = ctx.createRadialGradient(S.DW * 0.24, S.DH * 0.1, 20, S.DW * 0.24, S.DH * 0.1, S.DW * 0.8);
+    rg.addColorStop(0, 'rgba(255,255,255,0.85)');
+    rg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = rg;
+    ctx.fillRect(-420, -420, S.DW + 840, S.DH + 840);
+
+    // 虚化器皿剪影：制造景深，别让背景是纯色
+    if (cfg.props !== false) {
+      ctx.save();
+      ctx.filter = 'blur(3px)';
+      ctx.globalAlpha = 0.4;
+      var cols = ['#cbdbe9', '#d6e4f0', '#c4d6e6'];
+      for (var i = 0; i < 8; i++) {
+        var bx = 8 + i * (S.DW / 8);
+        var bh = 40 + spk(i + 3) * 34;
+        rr(bx, tableY - bh - 44, 15 + spk(i + 20) * 9, bh, 4);
+        ctx.fillStyle = cols[i % 3];
+        ctx.fill();
+      }
+      for (var k = 0; k < 3; k++) {
+        rr(S.DW * 0.08 + k * S.DW * 0.33, tableY - 96, 34, 44, 5);
+        ctx.fillStyle = 'rgba(224,236,246,0.8)';
+        ctx.fill();
+      }
+      ctx.filter = 'none';
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = '#d7e4f0';
+      ctx.fillRect(-420, tableY - 56, S.DW + 840, 5);
+      ctx.restore();
+    }
+
+    // 窗格光带
+    ctx.save();
+    var lg = ctx.createLinearGradient(0, 0, S.DW, 0);
+    lg.addColorStop(0, 'rgba(255,255,255,0)');
+    lg.addColorStop(0.4, 'rgba(255,255,255,0.5)');
+    lg.addColorStop(0.64, 'rgba(255,255,255,0)');
+    ctx.fillStyle = lg;
+    ctx.fillRect(-420, 0, S.DW + 840, tableY);
+    ctx.restore();
+
+    // 台面
+    var tg = ctx.createLinearGradient(0, tableY, 0, S.DH);
+    if (warm) {
+      tg.addColorStop(0, '#f0e8d9'); tg.addColorStop(0.3, '#e4d9c6'); tg.addColorStop(1, '#cfc2ad');
+    } else {
+      tg.addColorStop(0, '#f2f7fb'); tg.addColorStop(0.4, '#e3ecf5'); tg.addColorStop(1, '#d2dfeb');
+    }
+    ctx.fillStyle = tg;
+    ctx.fillRect(-420, tableY, S.DW + 840, S.DH + 420);
+    ctx.strokeStyle = warm ? 'rgba(176,161,140,0.8)' : 'rgba(176,198,218,0.85)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(-420, tableY + 0.5);
+    ctx.lineTo(S.DW + 420, tableY + 0.5);
+    ctx.stroke();
+    // 台面反光
+    var rg2 = ctx.createLinearGradient(0, tableY + 2, 0, tableY + 110);
+    rg2.addColorStop(0, 'rgba(255,255,255,0.7)');
+    rg2.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = rg2;
+    ctx.fillRect(-420, tableY + 2, S.DW + 840, 108);
+
+    return tableY;
+  }
+
+  /* 接触阴影：主光左上 → 影子偏右下，这是全库统一的光照约定 */
+  function shadow(x, y, rx, ry, a) {
+    var ctx = S.ctx;
+    var g = ctx.createRadialGradient(x + 6, y + 2, 2, x + 6, y + 2, Math.max(rx, ry) * 1.5);
+    g.addColorStop(0, 'rgba(26,54,84,' + (a == null ? 0.24 : a) + ')');
+    g.addColorStop(0.6, 'rgba(26,54,84,' + (a == null ? 0.24 : a) * 0.4 + ')');
+    g.addColorStop(1, 'rgba(26,54,84,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(x + 6, y + 2, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  /* ============================ 玻璃容器 ============================ */
+  /* 三段式：glass（背）→ liquid（液体）→ glassFront（前壁/刻度）
+   * cfg: { x, base, hw, h, r, kind:'beaker'|'cylinder'|'tube', tick, mouth, pour }
+   */
+
+  function glassBodyPath(cfg) {
+    var ctx = S.ctx;
+    var hw = cfg.hw, h = cfg.h, r = cfg.r == null ? 14 : cfg.r;
+    var kind = cfg.kind || 'beaker';
+    ctx.beginPath();
+    if (kind === 'tube') {
+      ctx.moveTo(-hw, 0);
+      ctx.lineTo(-hw, -h + hw);
+      ctx.arc(0, -h + hw, hw, Math.PI, 0, false);
+      ctx.lineTo(hw, 0);
+      ctx.closePath();
+    } else if (kind === 'cylinder') {
+      ctx.moveTo(-hw, 0);
+      ctx.lineTo(-hw, -h + r);
+      ctx.quadraticCurveTo(-hw, -h, -hw + r, -h);
+      ctx.lineTo(hw - r, -h);
+      ctx.quadraticCurveTo(hw, -h, hw, -h + r);
+      ctx.lineTo(hw, 0);
+      ctx.closePath();
+    } else {
+      ctx.moveTo(-hw, -h);
+      ctx.lineTo(-hw, -r);
+      ctx.quadraticCurveTo(-hw, 0, -hw + r, 0);
+      ctx.lineTo(hw - r, 0);
+      ctx.quadraticCurveTo(hw, 0, hw, -r);
+      ctx.lineTo(hw, -h);
+      ctx.closePath();
+    }
+  }
+
+  function glass(cfg) {
+    var ctx = S.ctx;
+    var base = cfg.base, x = cfg.x, hw = cfg.hw, h = cfg.h;
+    var ry = cfg.ry == null ? Math.max(4, hw * 0.19) : cfg.ry;
+    var kind = cfg.kind || 'beaker';
+
+    ctx.save();
+    ctx.translate(x, base);
+
+    // 台面投影 + 杯体倒影
+    shadow(0, 8, hw * 1.32, 14, 0.22);
+    var rf = ctx.createLinearGradient(0, 2, 0, 58);
+    rf.addColorStop(0, 'rgba(255,255,255,0.5)');
+    rf.addColorStop(0.45, 'rgba(198,226,244,0.26)');
+    rf.addColorStop(1, 'rgba(198,226,244,0)');
+    ctx.fillStyle = rf;
+    ctx.beginPath();
+    ctx.moveTo(-hw + 5, 3);
+    ctx.lineTo(hw - 5, 3);
+    ctx.lineTo(hw - 16, 54);
+    ctx.lineTo(-hw + 16, 54);
+    ctx.closePath();
+    ctx.fill();
+
+    // 玻璃杯体
+    var gg = ctx.createLinearGradient(-hw, 0, hw, 0);
+    gg.addColorStop(0, 'rgba(224,239,249,0.62)');
+    gg.addColorStop(0.16, 'rgba(255,255,255,0.34)');
+    gg.addColorStop(0.62, 'rgba(238,247,253,0.20)');
+    gg.addColorStop(1, 'rgba(203,224,241,0.58)');
+    glassBodyPath({ hw: hw, h: h, r: cfg.r, kind: kind });
+    ctx.fillStyle = gg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(146,180,208,0.95)';
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+
+    // 倾倒口（只给烧杯）
+    if (cfg.pour) {
+      ctx.beginPath();
+      ctx.moveTo(-hw + 9, -h - 2);
+      ctx.quadraticCurveTo(-hw - 6, -h - 1, -hw - 11, -h + 9);
+      ctx.quadraticCurveTo(-hw - 6, -h + 6, -hw + 3, -h + 7);
+      ctx.quadraticCurveTo(-hw + 7, -h + 4, -hw + 9, -h - 2);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(240,249,254,0.92)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(150,182,206,0.8)';
+      ctx.lineWidth = 1.3;
+      ctx.stroke();
+    }
+
+    // 杯口后缘（前缘在 glassFront 画）
+    if (kind !== 'tube') {
+      ctx.beginPath();
+      ctx.ellipse(0, -h, hw, ry, 0, Math.PI, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(146,182,210,0.9)';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    S.cur = {
+      x: x, base: base, hw: hw, h: h, ry: ry, kind: kind,
+      top: base - h, cfg: cfg,
+      clipPath: function () {
+        S.ctx.save();
+        S.ctx.translate(base === base ? 0 : 0, 0);
+      }
+    };
+    return S.cur;
+  }
+
+  /* 液体：clip 到容器内壁，上浅下深，加波纹 / 弯月面 / 悬浮颗粒 / 气泡 */
+  function liquid(cfg) {
+    var ctx = S.ctx;
+    var g0 = S.cur;
+    if (!g0) return null;
+    var lv = cfg.level == null ? 0.6 : clamp(cfg.level, 0, 1);
+    var top = typeof cfg.top === 'string' ? cfg.top : '#7fd8f7';
+    var bot = typeof cfg.bot === 'string' ? cfg.bot : '#0b6aa8';
+    var hw = g0.hw, h = g0.h, base = g0.base, x = g0.x;
+    var ySurf = base - Math.max(6, h * lv);
+
+    ctx.save();
+    ctx.translate(x, base);
+    glassBodyPath({ hw: hw - 1.5, h: h - 1.5, r: g0.cfg.r, kind: g0.kind });
+    ctx.clip();
+
+    var lg = ctx.createLinearGradient(0, -h * lv, 0, 0);
+    lg.addColorStop(0, rgba(top, 0.94));
+    lg.addColorStop(0.6, rgba(mix(top, bot, 0.55), 0.95));
+    lg.addColorStop(1, rgba(bot, 0.97));
+    ctx.fillStyle = lg;
+    ctx.fillRect(-hw, -(h * lv), hw * 2, h * lv);
+
+    // 后壁折射亮带
+    ctx.fillStyle = 'rgba(255,255,255,0.16)';
+    ctx.fillRect(-hw + 7, -(h * lv), 10, h * lv);
+
+    // 悬浮颗粒
+    for (var i = 0; i < 24; i++) {
+      var px = (spk(i + 11) - 0.5) * hw * 1.7;
+      var py = -6 - spk(i + 61) * (h * lv - 10);
+      ctx.beginPath();
+      ctx.arc(px, py, 0.5 + spk(i + 111) * 1.1, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.08 + spk(i + 151) * 0.16) + ')';
+      ctx.fill();
+    }
+    // 杯底折射加深
+    var lb = ctx.createLinearGradient(0, 0, 0, -18);
+    lb.addColorStop(0, 'rgba(20,70,110,0.22)');
+    lb.addColorStop(1, 'rgba(20,70,110,0)');
+    ctx.fillStyle = lb;
+    ctx.fillRect(-hw, -18, hw * 2, 18);
+
+    // 气泡（由状态驱动相位，非随机）
+    var bub = cfg.bubbles || 0;
+    for (var b = 0; b < bub; b++) {
+      var ph = ((cfg.t || 0) * 0.32 + b * 0.31) % 1;
+      var bx = (spk(b + 5) - 0.5) * hw * 1.3;
+      var by = -6 - ph * (h * lv - 12);
+      ctx.beginPath();
+      ctx.arc(bx + Math.sin((cfg.t || 0) * 1.4 + b) * 2.5, by, 1 + (b % 3) * 0.7, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.34 * (1 - ph)) + ')';
+      ctx.fill();
+    }
+    ctx.restore();
+
+    // 液面椭圆
+    ctx.save();
+    ctx.translate(x, ySurf);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, hw - 1, g0.ry, 0, 0, Math.PI * 2);
+    var sg = ctx.createLinearGradient(-hw, -g0.ry, hw, g0.ry);
+    sg.addColorStop(0, 'rgba(255,255,255,0.96)');
+    sg.addColorStop(0.55, rgba(mix(top, '#ffffff', 0.45), 0.95));
+    sg.addColorStop(1, rgba(top, 0.96));
+    ctx.fillStyle = sg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(116,170,206,0.9)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // 弯月面
+    ctx.beginPath();
+    ctx.ellipse(0, 1.4, hw - 4, Math.max(2, g0.ry * 0.78), 0, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // 波纹
+    if (cfg.ripple !== false) {
+      var t = cfg.t || 0;
+      for (var w = 0; w < 3; w++) {
+        ctx.beginPath();
+        for (var sx = -hw + 8; sx <= hw - 8; sx += 4) {
+          var yy = 3 + w * 3.2 + Math.sin(sx * 0.16 + t * 1.7 + w) * (0.5 + w * 0.25);
+          if (sx === -hw + 8) ctx.moveTo(sx, yy); else ctx.lineTo(sx, yy);
+        }
+        ctx.strokeStyle = 'rgba(255,255,255,' + (0.32 - w * 0.08) + ')';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+
+    return { y: ySurf, hw: hw, ry: g0.ry };
+  }
+
+  /* 玻璃前壁：内侧阴影 + 杯口前缘 + 厚底亮弧 + 刻度 */
+  function glassFront(cfg) {
+    var ctx = S.ctx;
+    var g0 = S.cur;
+    if (!g0) return;
+    cfg = cfg || {};
+    var hw = g0.hw, h = g0.h, base = g0.base, x = g0.x, ry = g0.ry;
+
+    ctx.save();
+    ctx.translate(x, base);
+
+    // 内侧阴影（玻璃厚度）
+    var shl = ctx.createLinearGradient(-hw, 0, -hw + 15, 0);
+    shl.addColorStop(0, 'rgba(108,150,182,0.28)');
+    shl.addColorStop(1, 'rgba(108,150,182,0)');
+    ctx.fillStyle = shl;
+    ctx.fillRect(-hw, -h, 15, h);
+    var shr = ctx.createLinearGradient(hw, 0, hw - 15, 0);
+    shr.addColorStop(0, 'rgba(108,150,182,0.24)');
+    shr.addColorStop(1, 'rgba(108,150,182,0)');
+    ctx.fillStyle = shr;
+    ctx.fillRect(hw - 15, -h, 15, h);
+
+    // 左侧垂直高光带
+    var hg = ctx.createLinearGradient(-hw + 12, 0, -hw + 30, 0);
+    hg.addColorStop(0, 'rgba(255,255,255,0)');
+    hg.addColorStop(0.5, 'rgba(255,255,255,0.55)');
+    hg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hg;
+    ctx.fillRect(-hw + 12, -h + 16, 20, h - 40);
+    var hg2 = ctx.createLinearGradient(hw - 26, 0, hw - 14, 0);
+    hg2.addColorStop(0, 'rgba(255,255,255,0)');
+    hg2.addColorStop(0.5, 'rgba(255,255,255,0.3)');
+    hg2.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hg2;
+    ctx.fillRect(hw - 26, -h + 30, 12, h - 60);
+
+    // 杯口前缘
+    if (g0.kind !== 'tube') {
+      ctx.beginPath();
+      ctx.ellipse(0, -h, hw, ry, 0, 0, Math.PI);
+      ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(0, -h, hw, ry, 0, 0, Math.PI);
+      ctx.strokeStyle = 'rgba(146,182,210,0.55)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // 厚底亮弧
+    if (g0.kind !== 'tube') {
+      ctx.beginPath();
+      ctx.moveTo(-hw + 6, -5);
+      ctx.quadraticCurveTo(0, Math.max(2, ry * 0.5), hw - 6, -5);
+      ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+      ctx.lineWidth = 2.4;
+      ctx.stroke();
+    }
+
+    // 刻度（竖直，从底往上，0 在底）
+    var tk = cfg.tick;
+    if (tk) {
+      var max = tk.max || 100, step = tk.step || 20;
+      var unit = tk.unit === undefined ? 'mL' : tk.unit;
+      var inside = tk.side !== 'outside';
+      ctx.font = '600 ' + fs(12) + 'px "Microsoft YaHei", system-ui, sans-serif';
+      ctx.textBaseline = 'middle';
+      for (var v = 0; v <= max; v += step) {
+        if (v === 0) continue;
+        var y = -Math.max(6, h * (v / max) * (tk.fill == null ? 0.92 : tk.fill));
+        var major = (v % (step * 2) === 0);
+        ctx.beginPath();
+        ctx.moveTo(-hw + 2, y);
+        ctx.lineTo(-hw + (major ? 20 : 13), y);
+        ctx.strokeStyle = major ? 'rgba(86,124,150,0.85)' : 'rgba(86,124,150,0.45)';
+        ctx.lineWidth = major ? 1.2 : 0.9;
+        ctx.stroke();
+        if (major) {
+          ctx.fillStyle = 'rgba(58,94,120,0.9)';
+          ctx.textAlign = 'left';
+          if (inside) ctx.fillText(String(v), -hw + 23, y);
+          else ctx.fillText(String(v), -hw - 26, y);
+        }
+      }
+      if (unit) {
+        ctx.fillStyle = 'rgba(58,94,120,0.8)';
+        ctx.textAlign = 'left';
+        ctx.font = '600 ' + fs(12) + 'px "Microsoft YaHei", system-ui, sans-serif';
+        ctx.fillText(unit, -hw + 23, -Math.max(6, h * (tk.fill == null ? 0.92 : tk.fill)) - 12);
+      }
+    }
+    ctx.restore();
+  }
+
+  /* ============================ 立体实体 ============================ */
+  /* 斜投影立方体：正面 + 顶面 + 右侧面，顶面提亮 0.34、右侧压暗 0.28 */
+  function box(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, yTop = cfg.y, w = cfg.w, h = cfg.h;
+    var ox = cfg.ox == null ? w * 0.26 : cfg.ox;
+    var oy = cfg.oy == null ? w * 0.2 : cfg.oy;
+    var col = cfg.color || MAT.wood.rgb;
+    var tint = cfg.tint || 0;
+    var tintC = cfg.tintColor || '#3fa4d6';
+    var x0 = x - w / 2, x1 = x + w / 2, y1 = yTop + h;
+
+    function paint(pathFn, base, light) {
+      pathFn();
+      var c = light ? shade(base, light) : base;
+      if (tint) c = mix(c, tintC, tint);
+      ctx.fillStyle = c;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(38,58,78,' + (tint ? 0.3 : 0.42) + ')';
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+    }
+
+    // 右侧面
+    paint(function () {
+      ctx.beginPath();
+      ctx.moveTo(x1, yTop); ctx.lineTo(x1 + ox, yTop - oy);
+      ctx.lineTo(x1 + ox, y1 - oy); ctx.lineTo(x1, y1); ctx.closePath();
+    }, col, -0.28);
+    // 顶面
+    paint(function () {
+      ctx.beginPath();
+      ctx.moveTo(x0, yTop); ctx.lineTo(x1, yTop);
+      ctx.lineTo(x1 + ox, yTop - oy); ctx.lineTo(x0 + ox, yTop - oy); ctx.closePath();
+    }, col, 0.34);
+    // 正面
+    var g = ctx.createLinearGradient(x0, yTop, x1, y1);
+    var c1 = shade(col, 0.15), c2 = shade(col, -0.13);
+    if (tint) { c1 = mix(c1, tintC, tint); c2 = mix(c2, tintC, tint); }
+    g.addColorStop(0, c1);
+    g.addColorStop(1, c2);
+    ctx.fillStyle = g;
+    rr(x0, yTop, w, h, cfg.r == null ? 1.5 : cfg.r);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(38,58,78,' + (tint ? 0.32 : 0.45) + ')';
+    ctx.lineWidth = 1.1;
+    ctx.stroke();
+    // 正面高光
+    var hgd = ctx.createLinearGradient(x0, yTop, x0, yTop + h * 0.62);
+    hgd.addColorStop(0, 'rgba(255,255,255,0.26)');
+    hgd.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hgd;
+    ctx.fillRect(x0 + 1, yTop + 1, w - 2, h * 0.6);
+
+    return { top: yTop - oy, bottom: y1, cx: x + ox / 2 };
+  }
+
+  /* 球体：径向渐变 + 环境反光 + 高光点 */
+  function sphere(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, y = cfg.y, r = cfg.r;
+    var col = cfg.color || MAT.plastic.rgb;
+    shadow(x, y + r * 0.94, r * 1.1, r * 0.24, 0.2);
+    var g = ctx.createRadialGradient(x - r * 0.36, y - r * 0.4, r * 0.1, x, y, r * 1.05);
+    g.addColorStop(0, shade(col, 0.7));
+    g.addColorStop(0.42, shade(col, 0.14));
+    g.addColorStop(1, shade(col, -0.36));
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(38,58,78,0.28)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // 高光
+    ctx.beginPath();
+    ctx.ellipse(x - r * 0.34, y - r * 0.4, r * 0.26, r * 0.18, -0.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.fill();
+    // 底部环境反光
+    ctx.beginPath();
+    ctx.ellipse(x + r * 0.16, y + r * 0.52, r * 0.5, r * 0.2, 0.1, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+    ctx.fill();
+    return { top: y - r, bottom: y + r };
+  }
+
+  /* 圆柱：上椭圆 + 侧面渐变 + 下弧 */
+  function cyl(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, base = cfg.base, rw = cfg.rw, h = cfg.h;
+    var ry = cfg.ry == null ? rw * 0.22 : cfg.ry;
+    var col = cfg.color || MAT.steel.rgb;
+    shadow(x, base + 3, rw * 1.1, ry * 0.9, 0.2);
+    var g = ctx.createLinearGradient(x - rw, 0, x + rw, 0);
+    g.addColorStop(0, shade(col, -0.3));
+    g.addColorStop(0.22, shade(col, 0.3));
+    g.addColorStop(0.55, shade(col, 0.04));
+    g.addColorStop(1, shade(col, -0.34));
+    ctx.beginPath();
+    ctx.moveTo(x - rw, base - h);
+    ctx.lineTo(x - rw, base);
+    ctx.ellipse(x, base, rw, ry, 0, Math.PI, 0, true);
+    ctx.lineTo(x + rw, base - h);
+    ctx.closePath();
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(60,74,88,0.35)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // 顶面
+    ctx.beginPath();
+    ctx.ellipse(x, base - h, rw, ry, 0, 0, Math.PI * 2);
+    ctx.fillStyle = shade(col, 0.42);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(60,74,88,0.3)';
+    ctx.stroke();
+    return { top: base - h - ry, bottom: base };
+  }
+
+  /* 弹簧：分段螺旋，可伸长 */
+  function spring(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, y1 = cfg.y1, y2 = cfg.y2;
+    var r = cfg.r == null ? 9 : cfg.r;
+    var coils = cfg.coils || 14;
+    ctx.beginPath();
+    var n = coils * 12;
+    for (var i = 0; i <= n; i++) {
+      var t = i / n;
+      var y = lerp(y1, y2, t);
+      var px = x + Math.sin(t * Math.PI * 2 * coils) * r;
+      if (i === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
+    }
+    ctx.strokeStyle = 'rgba(120,134,148,0.95)';
+    ctx.lineWidth = 2.2;
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  /* 铁架台：底座 + 立柱 + 横杆 */
+  function stand(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, baseY = cfg.baseY, topY = cfg.topY;
+    // 底座
+    var bg = ctx.createLinearGradient(0, baseY - 10, 0, baseY + 8);
+    bg.addColorStop(0, '#a8b3be'); bg.addColorStop(0.45, '#7f8b98'); bg.addColorStop(1, '#5f6a76');
+    ctx.fillStyle = bg;
+    rr(x - 62, baseY - 8, 124, 17, 5);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(60,72,84,0.5)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.32)';
+    rr(x - 56, baseY - 5, 108, 3, 1.5);
+    ctx.fill();
+    // 立柱
+    var rg = ctx.createLinearGradient(x - 5, 0, x + 5, 0);
+    rg.addColorStop(0, '#9aa6b2'); rg.addColorStop(0.35, '#e3e9ef');
+    rg.addColorStop(0.7, '#b3bec9'); rg.addColorStop(1, '#78848f');
+    ctx.fillStyle = rg;
+    rr(x - 5, topY, 10, baseY - topY - 6, 4);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(80,95,110,0.32)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    return { x: x, topY: topY };
+  }
+
+  /* 光具座导轨（铝合金 + cm 刻度 + 黑色支脚） */
+  function rail(cfg) {
+    var ctx = S.ctx;
+    var x0 = cfg.x0, x1 = cfg.x1, y = cfg.y, h = cfg.h || 18;
+    var px = cfg.px;              // 每 cm 像素
+    // 支脚
+    ctx.fillStyle = '#2b323a';
+    [x0 + 30, x1 - 30].forEach(function (fx) {
+      ctx.beginPath();
+      ctx.moveTo(fx - 24, y + h);
+      ctx.lineTo(fx + 24, y + h);
+      ctx.lineTo(fx + 16, y + h + 15);
+      ctx.lineTo(fx - 16, y + h + 15);
+      ctx.closePath();
+      ctx.fill();
+    });
+    // 导轨主体
+    var g = ctx.createLinearGradient(0, y, 0, y + h);
+    g.addColorStop(0, '#eef2f7'); g.addColorStop(0.35, '#cbd5df');
+    g.addColorStop(0.7, '#dee5ec'); g.addColorStop(1, '#b7c2cd');
+    ctx.fillStyle = g;
+    rr(x0, y, x1 - x0, h, 4);
+    ctx.fill();
+    ctx.strokeStyle = '#8b99a7';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(90,104,118,0.45)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0 + 6, y + 4.5); ctx.lineTo(x1 - 6, y + 4.5);
+    ctx.stroke();
+    // 刻度
+    var cmMax = Math.round((x1 - x0 - 16) / px);
+    ctx.font = '600 ' + fs(12) + 'px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    for (var cm = 0; cm <= cmMax; cm++) {
+      var cx = x0 + 8 + cm * px;
+      var major = cm % 10 === 0;
+      ctx.beginPath();
+      ctx.moveTo(cx, y + (major ? 7 : 10));
+      ctx.lineTo(cx, y + h - 3);
+      ctx.strokeStyle = major ? '#57656f' : 'rgba(87,101,111,0.35)';
+      ctx.lineWidth = major ? 1.1 : 0.8;
+      ctx.stroke();
+      if (major) {
+        ctx.fillStyle = '#42505c';
+        ctx.fillText(String(cm), cx, y + h + 15);
+        ctx.strokeStyle = 'rgba(87,101,111,0.28)';
+        ctx.beginPath();
+        ctx.moveTo(cx, y + h + 19); ctx.lineTo(cx, y + h + 26);
+        ctx.stroke();
+      }
+    }
+    return { cmToX: function (cm) { return x0 + 8 + cm * px; }, y: y };
+  }
+
+  /* 黑色立柱支架（光学器材通用底座） */
+  function post(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, yTop = cfg.y, yBase = cfg.base;
+    var g = ctx.createLinearGradient(x - 3.5, 0, x + 3.5, 0);
+    g.addColorStop(0, '#1f262e'); g.addColorStop(0.4, '#4a545e'); g.addColorStop(1, '#171c22');
+    ctx.fillStyle = g;
+    rr(x - 3.5, yTop, 7, yBase - yTop, 2.5);
+    ctx.fill();
+    // 滑块底座
+    var bg = ctx.createLinearGradient(0, yBase - 8, 0, yBase + 6);
+    bg.addColorStop(0, '#5a646e'); bg.addColorStop(1, '#232a31');
+    ctx.fillStyle = bg;
+    rr(x - 15, yBase - 8, 30, 13, 3);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    rr(x - 12, yBase - 6, 24, 2.4, 1.2);
+    ctx.fill();
+  }
+
+  /* ============================ 光学 ============================ */
+
+  /* 双凸 / 平凸透镜：玻璃质感 + 高光弧 */
+  function lens(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, y = cfg.y, h = cfg.h, bulge = cfg.bulge == null ? 16 : cfg.bulge;
+    ctx.save();
+    // 玻璃体
+    ctx.beginPath();
+    ctx.moveTo(x, y - h / 2);
+    ctx.quadraticCurveTo(x + bulge, y, x, y + h / 2);
+    ctx.quadraticCurveTo(x - bulge, y, x, y - h / 2);
+    ctx.closePath();
+    var g = ctx.createLinearGradient(x - bulge, 0, x + bulge, 0);
+    g.addColorStop(0, 'rgba(208,232,250,0.9)');
+    g.addColorStop(0.4, 'rgba(246,253,255,0.95)');
+    g.addColorStop(1, 'rgba(196,224,246,0.88)');
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(118,164,198,0.9)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // 左缘高光弧
+    ctx.beginPath();
+    ctx.moveTo(x - 1, y - h / 2 + 6);
+    ctx.quadraticCurveTo(x - bulge * 0.72, y, x - 1, y + h / 2 - 6);
+    ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+    // 中轴细线
+    ctx.beginPath();
+    ctx.moveTo(x, y - h / 2);
+    ctx.lineTo(x, y + h / 2);
+    ctx.strokeStyle = 'rgba(160,196,220,0.5)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+    return { x: x, y: y, h: h };
+  }
+
+  /* 光线：折线 + 中点箭头，橙色系 */
+  function ray(cfg) {
+    var ctx = S.ctx;
+    var pts = cfg.pts || [];
+    if (pts.length < 2) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    if (cfg.glow !== false) {
+      ctx.shadowColor = 'rgba(255,150,40,0.4)';
+      ctx.shadowBlur = 6;
+    }
+    ctx.strokeStyle = cfg.color || '#f08a1e';
+    ctx.lineWidth = cfg.width || 1.9;
+    ctx.setLineDash(cfg.dash || []);
+    ctx.stroke();
+    ctx.restore();
+    // 箭头
+    if (cfg.arrow !== false) {
+      for (var k = 1; k < pts.length; k++) {
+        var ax = pts[k - 1][0], ay = pts[k - 1][1], bx = pts[k][0], by = pts[k][1];
+        var ang = Math.atan2(by - ay, bx - ax);
+        var mx = lerp(ax, bx, 0.52), my = lerp(ay, by, 0.52);
+        ctx.save();
+        ctx.translate(mx, my);
+        ctx.rotate(ang);
+        ctx.beginPath();
+        ctx.moveTo(5, 0); ctx.lineTo(-3.5, 3.2); ctx.lineTo(-3.5, -3.2);
+        ctx.closePath();
+        ctx.fillStyle = cfg.color || '#f08a1e';
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+  }
+
+  /* 圆形放大镜：白环 + 深底 + 内部纹理回调 */
+  function magnifier(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, y = cfg.y, r = cfg.r;
+    ctx.save();
+    // 外环
+    var ring = ctx.createLinearGradient(x - r, y - r, x + r, y + r);
+    ring.addColorStop(0, '#ffffff');
+    ring.addColorStop(0.5, '#dbe7f1');
+    ring.addColorStop(1, '#a9bacb');
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = ring;
+    ctx.fill();
+    // 视野
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x, y, r - 6, 0, Math.PI * 2);
+    ctx.clip();
+    var inner = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 2, x, y, r);
+    inner.addColorStop(0, cfg.bgLight || '#f5fafd');
+    inner.addColorStop(1, cfg.bgDark || '#d8e6f1');
+    ctx.fillStyle = inner;
+    ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    if (typeof cfg.draw === 'function') cfg.draw(ctx, x, y, r - 6);
+    ctx.restore();
+    // 玻璃反光
+    ctx.beginPath();
+    ctx.ellipse(x - r * 0.34, y - r * 0.42, r * 0.34, r * 0.16, -0.6, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* 画布最小字号：画布是位图，9~10px 的中文缩到屏幕上根本认不出。
+     所有走 text/pill/card 的文字都会被抬到这个下限，刻度数字也一并抬。 */
+  var FS_MIN = 25;      // 画布内最小字号 = 原始 12.5px × 2
+  var TYPE_SCALE = 2;   // 画布内所有字号统一放大倍数
+  function fs(v) { v = (+v || 0) * TYPE_SCALE; return v < FS_MIN ? FS_MIN : v; }
+
+  /* ============================ 标注系统 ============================ */
+  /* 所有文字统一走这里：白描边 + 自动收进画布 8px，保证不被图元压住、不出界 */
+
+  /* 演示区只留实物与图形：长句说明、带句读的提示一律不画。
+     允许的是器材名、顶点名、刻度、公式符号这类 ≤14 字的短标注。 */
+  var LABEL_MAX = 14;
+  var SENTENCE = /[，。；：、？！]/;
+  function isLabel(t) {
+    t = t == null ? '' : String(t);
+    if (!t) return false;
+    if (t.length > LABEL_MAX) return false;
+    if (SENTENCE.test(t)) return false;
+    return true;
+  }
+
+  function text(cfg) {
+    if (!isLabel(cfg.text)) return { left: cfg.x || 0, right: cfg.x || 0, w: 0 };
+    var ctx = S.ctx;
+    var size = fs(cfg.size || 13);
+    var weight = cfg.weight || 500;
+    var align = cfg.align || 'center';
+    var baseline = cfg.baseline || 'middle';
+    var col = cfg.color || '#1f3a52';
+    ctx.save();
+    ctx.font = weight + ' ' + size + 'px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+
+    var tx = cfg.x, ty = cfg.y;
+    var w = ctx.measureText(cfg.text).width;
+    var half = align === 'center' ? w / 2 : (align === 'right' ? w : 0);
+    var left = tx - half;
+    var right = left + w;
+    // 自动收边
+    var m = S.margin == null ? 8 : S.margin;
+    if (left < m) { tx += m - left; left = m; right = left + w; }
+    if (right > S.DW - m) { tx -= right - (S.DW - m); left = S.DW - m - w; right = S.DW - m; }
+
+    // 底衬（可选）
+    if (cfg.pad) {
+      var padX = cfg.padX == null ? 6 : cfg.padX;
+      var padY = cfg.padY == null ? 4 : cfg.padY;
+      rr(left - padX, ty - size * 0.72 - padY, w + padX * 2, size * 1.44 + padY * 2, 6);
+      ctx.fillStyle = cfg.pad === true ? 'rgba(255,255,255,0.82)' : cfg.pad;
+      ctx.fill();
+    }
+    // 描边：浅色场景用白描边，深色场景（星空/夜景）必须换成深色描边，
+    // 否则白边会把字糊成一个白块
+    if (cfg.stroke !== false) {
+      ctx.lineWidth = cfg.strokeWidth || Math.max(2.6, size * 0.24);
+      ctx.strokeStyle = cfg.strokeColor
+        || (cfg.onDark ? 'rgba(6,22,38,0.88)' : 'rgba(255,255,255,0.92)');
+      ctx.lineJoin = 'round';
+      ctx.strokeText(cfg.text, tx, ty + size * 0.35);
+    }
+    ctx.fillStyle = col;
+    ctx.fillText(cfg.text, tx, ty + size * 0.35);
+    ctx.restore();
+    return { left: left, right: right, w: w };
+  }
+
+  /* 胶囊标签（统一版式：实底圆角 + 白字 + 1.2px 描边） */
+  function pill(cfg) {
+    var ctx = S.ctx;
+    var text0 = cfg.text || '';
+    var size = fs(cfg.size || 14);
+    var bg = cfg.bg || '#1b62b0';
+    var padX = size * 0.72, padY = size * 0.42;
+    ctx.save();
+    ctx.font = '700 ' + size + 'px "Microsoft YaHei", system-ui, sans-serif';
+    var tw = ctx.measureText(text0).width;
+    var h = size + padY * 2;
+    var w = tw + padX * 2;
+    var x = cfg.x - w / 2, y = cfg.y - h / 2;
+    // 收边
+    var m = S.margin == null ? 8 : S.margin;
+    if (x < m) x = m;
+    if (x + w > S.DW - m) x = S.DW - m - w;
+    // 投影
+    ctx.shadowColor = 'rgba(20,44,70,0.18)';
+    ctx.shadowBlur = 5;
+    ctx.shadowOffsetY = 1.5;
+    rr(x, y, w, h, h / 2);
+    ctx.fillStyle = bg;
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text0, x + w / 2, y + h / 2 + 0.5);
+    ctx.restore();
+    return { x: x, y: y, w: w, h: h, cx: x + w / 2, cy: y + h / 2 };
+  }
+
+  /* 引线：端点圆点 + 细线（虚线可选） */
+  function leader(cfg) {
+    var ctx = S.ctx;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cfg.x1, cfg.y1);
+    ctx.lineTo(cfg.x2, cfg.y2);
+    ctx.strokeStyle = cfg.color || 'rgba(70,100,130,0.55)';
+    ctx.lineWidth = cfg.width || 1.2;
+    if (cfg.dash) ctx.setLineDash([4, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.arc(cfg.x2, cfg.y2, 2.6, 0, Math.PI * 2);
+    ctx.fillStyle = cfg.dotColor || cfg.color || 'rgba(70,100,130,0.75)';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* 圆形端点（F、2F 之类的标记点） */
+  function dot(cfg) {
+    var ctx = S.ctx;
+    ctx.beginPath();
+    ctx.arc(cfg.x, cfg.y, cfg.r || 3.6, 0, Math.PI * 2);
+    ctx.fillStyle = cfg.color || '#2e6fd8';
+    ctx.fill();
+    if (cfg.ring) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+    }
+  }
+
+  /* 读数卡：平台规范要求「演示区只留实物与图形」。
+     这些读数 ④ 区已经完整给出，画布上再画一张信息卡属于重复铺陈 → 不再绘制。
+     函数和返回值保留，老页面的调用不会报错。 */
+  function card(cfg) {
+    cfg = cfg || {};
+    return { x: cfg.x == null ? 16 : cfg.x, y: cfg.y == null ? 14 : cfg.y, w: 0, h: 0 };
+  }
+
+  /* 底部公式/结论面板：同样是文字块，公式在 ④ 区与教学说明里都有，
+     画布上不再铺一层底板 → 不再绘制（保留函数签名）。 */
+  function panel(cfg) {
+    cfg = cfg || {};
+    return { x: cfg.x, y: cfg.y, w: cfg.w, h: cfg.h };
+  }
+
+  /* 粗箭头（过程指示） */
+  function arrow(cfg) {
+    var ctx = S.ctx;
+    var x1 = cfg.x1, x2 = cfg.x2, y = cfg.y, h = cfg.h || 13;
+    var col = cfg.color || '#1b62b0';
+    ctx.save();
+    var g = ctx.createLinearGradient(x1, 0, x2, 0);
+    g.addColorStop(0, rgba(col, 0.55));
+    g.addColorStop(1, rgba(col, 0.98));
+    ctx.fillStyle = g;
+    var headL = h * 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x1, y - h / 2);
+    ctx.lineTo(x2 - headL, y - h / 2);
+    ctx.lineTo(x2 - headL, y - h);
+    ctx.lineTo(x2, y);
+    ctx.lineTo(x2 - headL, y + h);
+    ctx.lineTo(x2 - headL, y + h / 2);
+    ctx.lineTo(x1, y + h / 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* 刻度尺（竖直，读数指针） */
+  function ruler(cfg) {
+    var ctx = S.ctx;
+    var x = cfg.x, y = cfg.y, h = cfg.h, max = cfg.max, value = cfg.value;
+    var w = cfg.w || 34;
+    ctx.save();
+    var g = ctx.createLinearGradient(x, 0, x + w, 0);
+    g.addColorStop(0, '#fdfefe'); g.addColorStop(0.6, '#f0f5fa'); g.addColorStop(1, '#dde6ef');
+    rr(x, y, w, h, 4);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(150,172,192,0.8)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // 刻度：0 在下，max 在上
+    ctx.strokeStyle = 'rgba(90,112,132,0.5)';
+    for (var v = 0; v <= max; v += max / 20) {
+      var yy = y + h - (v / max) * h;
+      var major = Math.abs(v % (max / 4)) < 0.001 || Math.abs(v % (max / 4) - max / 4) < 0.001;
+      ctx.beginPath();
+      ctx.moveTo(x + w, yy);
+      ctx.lineTo(x + w - (major ? 12 : 6), yy);
+      ctx.lineWidth = major ? 1 : 0.7;
+      ctx.stroke();
+    }
+    // 指针
+    var py = y + h - clamp(value / max, 0, 1) * h;
+    ctx.beginPath();
+    ctx.moveTo(x + w, py);
+    ctx.lineTo(x + w + 9, py - 4);
+    ctx.lineTo(x + w + 9, py + 4);
+    ctx.closePath();
+    ctx.fillStyle = '#d9534f';
+    ctx.fill();
+    ctx.restore();
+    return { y: py };
+  }
+
+  /* 剖面斜线填充（数学截面、地理岩层） */
+  function hatch(cfg) {
+    var ctx = S.ctx;
+    ctx.save();
+    if (cfg.poly) {
+      ctx.beginPath();
+      ctx.moveTo(cfg.poly[0][0], cfg.poly[0][1]);
+      for (var i = 1; i < cfg.poly.length; i++) ctx.lineTo(cfg.poly[i][0], cfg.poly[i][1]);
+      ctx.closePath();
+      ctx.clip();
+    }
+    var gap = cfg.gap || 8;
+    var col = cfg.color || 'rgba(46,111,216,0.35)';
+    var x0 = cfg.x0 == null ? -200 : cfg.x0;
+    var x1 = cfg.x1 == null ? S.DW + 200 : cfg.x1;
+    var y0 = cfg.y0 == null ? -200 : cfg.y0;
+    var y1 = cfg.y1 == null ? S.DH + 200 : cfg.y1;
+    ctx.strokeStyle = col;
+    ctx.lineWidth = cfg.width || 1;
+    for (var k = y0 - (x1 - x0); k < y1; k += gap) {
+      ctx.beginPath();
+      ctx.moveTo(x0, k);
+      ctx.lineTo(x1, k + (x1 - x0));
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  /* 容器尺寸变化时重绘 */
+  function responsive(cv, draw) {
+    function run() {
+      if (resize()) draw();
+    }
+    window.addEventListener('resize', run);
+    if (window.ResizeObserver) {
+      try { new ResizeObserver(run).observe(cv.parentNode || cv); } catch (e) { /* 老浏览器忽略 */ }
+    }
+    return run;
+  }
+
+  /* 求解器读数总闸：自检失败或出现非有限数值时，一律清空读数并显示错误，
+     避免 NaN / Infinity 或"求解器自己都不信"的结果被当成正常实验数据。 */
+  function finiteTree(value) {
+    if (typeof value === 'number') return Number.isFinite(value);
+    if (Array.isArray(value)) return value.every(finiteTree);
+    if (value && typeof value === 'object') return Object.values(value).every(finiteTree);
+    return true;
+  }
+
+  function bindSolverReadouts(result, root = document, formatters = null) {
+    const refused = !!(result && result.checks && result.checks.ok === false);
+    const corrupted = !finiteTree(result);
+    const blocked = refused || corrupted;
+    for (const element of root.querySelectorAll('[data-solver-field]')) {
+      const field = element.dataset.solverField;
+      const value = blocked ? null : result?.[field];
+      let text = value == null || (Array.isArray(value) && value.length === 0) ? '—' : String(value);
+      const digits = formatters && formatters[field];
+      if (!blocked && typeof value === 'number' && Number.isFinite(value) && digits) {
+        text = String(Number(value.toPrecision(digits)));
+      }
+      element.textContent = text;
+    }
+    const box = root.querySelector ? root.querySelector('[data-solver-error]') : null;
+    if (!box) return;
+    if (blocked) {
+      box.textContent = refused
+        ? '求解器自检未通过，读数已清空'
+        : '求解器输出包含非有限数值，读数已清空';
+      box.hidden = false;
+      box.dataset.solverErrorAuto = '1';
+    } else if (box.dataset.solverErrorAuto === '1') {
+      box.hidden = true;
+      box.textContent = '';
+      delete box.dataset.solverErrorAuto;
+    }
+  }
+
+  window.VIS = {
+    bindSolverReadouts: bindSolverReadouts,
+    /* 状态 */
+    S: S,
+    /* 基础 */
+    mount: mount, resize: resize, clear: clear, responsive: responsive,
+    wall: wall, shadow: shadow,
+    /* 容器 */
+    glass: glass, liquid: liquid, glassFront: glassFront,
+    /* 实体 */
+    box: box, sphere: sphere, cyl: cyl, spring: spring, stand: stand,
+    post: post, rail: rail,
+    /* 光学 */
+    lens: lens, ray: ray, magnifier: magnifier,
+    /* 标注 */
+    text: text, pill: pill, leader: leader, dot: dot, card: card, panel: panel,
+    arrow: arrow, ruler: ruler, hatch: hatch,
+    /* 工具 */
+    MAT: MAT, mix: mix, shade: shade, rgba: rgba, parseColor: parseColor, rr: rr,
+    clamp: clamp, lerp: lerp, spk: spk
+  };
+})();
+
+/* phys.js —— 物理学科场景库（基于 vis.js 原语，外壳注入，离线可用）
+ *
+ * 解决的问题：物理页最容易退化成「方框 + 箭头」的示意图。
+ * 这里把两类高频实验的「版面 + 光影 + 标注」固化成函数，页面只传状态量：
+ *
+ *   PHYS.floating(cv, {              // 浮力：阿基米德原理 / 浮沉条件
+ *     objRho: 0.6,                   // 物体密度 g/cm³
+ *     liqRho: 1.0,                   // 液体密度 g/cm³
+ *     side: 10,                      // 正方体边长 cm
+ *     level: 0.72,                   // 液面高度（占容器高度比例）
+ *     mode: 'hang' | 'free',         // 悬挂测力计 / 自由漂浮
+ *     sub: 0.6,                      // 悬挂时的浸没比例 0~1
+ *     t: 0                           // 时间（秒），驱动波纹与气泡
+ *   })
+ *
+ *   PHYS.optics(cv, {                // 凸透镜成像：光具座实景
+ *     u: 30, f: 10, scr: 15,         // 物距 / 焦距 / 光屏位置（cm）
+ *     lensAt: 45                     // 透镜在导轨上的位置 cm
+ *   })
+ *
+ * 两个函数都会把装置描述写进 canvas 的 aria-label 与 #tip，
+ * 保证「烧杯 / 物块 / 透镜 / 光屏」这些词出现在页面文字里。
+ */
+(function () {
+  'use strict';
+
+  // 底部公式面板已移除，设计高度收回 640，图形在画布里占得更满
+  var DW = 900, DH = 640;
+  var G = 10;                     // 取 g = 10 N/kg，与初中教材一致
+
+  function V() { return window.VIS; }
+  function say(cv, txt) {
+    cv.setAttribute('aria-label', txt);
+    var tip = document.getElementById('tip');
+    if (tip) tip.textContent = txt;
+  }
+
+  /* ============================================================
+   * 浮力：烧杯 + 液体 + 斜投影物块 + 弹簧测力计 + 铁架台
+   * ============================================================ */
+  var FL = {
+    cx: 380, base: 498, hw: 150, h: 298,   // 烧杯
+    px: 12.2,                               // 每 cm 像素
+    standX: 706, armY: 82
+  };
+
+  function floating(cv, cfg, result) {
+    var v = V();
+    cfg = cfg || {};
+    if (!v.mount(cv, { DW: DW, DH: DH })) return;
+    v.clear();
+    var ctx = v.S.ctx;
+
+    var objRho = cfg.objRho == null ? 0.60 : cfg.objRho;
+    var liqRho = cfg.liqRho == null ? 1.00 : cfg.liqRho;
+    var side = cfg.side == null ? 8 : cfg.side;
+    var level = v.clamp(cfg.level == null ? 0.58 : cfg.level, 0.12, 0.96);
+    var mode = cfg.mode === 'free' ? 'free' : 'hang';
+    var t = cfg.t || 0;
+
+    // ---- 物理量 ----
+    var sub, reading;
+    if (result) {
+      objRho = cfg.object_density / 1000;
+      liqRho = cfg.liquid_density / 1000;
+      side = v.clamp(100 * Math.cbrt(cfg.volume), 1, 16);
+      sub = result.fraction;
+      reading = result.tension ?? 0;
+    } else {
+      var Vcm3 = side * side * side;
+      var subFree = v.clamp(objRho / liqRho, 0, 1);
+      var subCap = Math.min(1, liqRho > 0 ? objRho / liqRho : 1);
+      sub = mode === 'free' ? subFree
+        : v.clamp(cfg.sub == null ? 0.55 : cfg.sub, 0, Math.max(0.08, subCap));
+      reading = Math.max(0, (objRho - liqRho * sub) * Vcm3 * G / 1000);
+    }
+
+    var apo = side * FL.px;
+    var ySurf = FL.base - FL.h * level;
+    var bottom = ySurf + sub * apo;
+    var top = bottom - apo;
+
+    // ---- 背景 ----
+    v.wall({ tableY: FL.base + 2 });
+
+    // ---- 铁架台 ----
+    v.stand({ x: FL.standX, baseY: FL.base + 2, topY: 62 });
+    var ag = ctx.createLinearGradient(0, FL.armY - 5, 0, FL.armY + 5);
+    ag.addColorStop(0, '#d6dde5'); ag.addColorStop(0.4, '#aab6c2'); ag.addColorStop(1, '#7b8792');
+    ctx.fillStyle = ag;
+    v.rr(FL.cx - 7, FL.armY - 5, FL.standX - FL.cx + 7, 10, 4);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(80,95,110,0.35)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // ---- 烧杯（背面） ----
+    v.glass({ x: FL.cx, base: FL.base, hw: FL.hw, h: FL.h, kind: 'beaker', pour: true });
+
+    // ---- 液体 ----
+    var lc = cfg.liquid || {};
+    v.liquid({
+      level: level,
+      top: lc.top || '#63c0ed',
+      bot: lc.bot || '#0f63a3',
+      t: t,
+      ripple: true,
+      bubbles: cfg.bubbles == null ? (mode === 'free' ? 5 : 0) : cfg.bubbles
+    });
+
+    // ---- 物块（斜投影，水线上下分段绘制） ----
+    var mat = cfg.material || (objRho < 0.35 ? v.MAT.wood.rgb
+      : objRho < 0.75 ? v.MAT.plastic.rgb
+        : objRho < 1.6 ? v.MAT.glass.rgb : v.MAT.iron.rgb);
+    var ox = apo * 0.28, oy = apo * 0.2;
+
+    if (mode === 'free') v.shadow(FL.cx + 4, FL.base - 8, apo * 0.58, 7, 0.14);
+
+    function drawBlock(tint) {
+      v.box({
+        x: FL.cx, y: top, w: apo, h: apo,
+        ox: ox, oy: oy, color: mat, tint: tint, tintColor: '#2f8fc4',
+        r: 2
+      });
+    }
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, DW, ySurf);
+    ctx.clip();
+    drawBlock(0);
+    ctx.restore();
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, ySurf, DW, DH - ySurf);
+    ctx.clip();
+    ctx.translate(2.2, 0);
+    drawBlock(0.28);
+    ctx.restore();
+    ctx.beginPath();
+    ctx.moveTo(FL.cx - apo / 2 - 2, ySurf);
+    ctx.lineTo(FL.cx + apo / 2 + 2, ySurf);
+    ctx.strokeStyle = 'rgba(255,255,255,0.82)';
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+
+    // ---- 弹簧测力计（0 在上，刻度向下增大） ----
+    var sTop = 100, sBot = 214;
+    if (mode === 'hang') {
+      ctx.beginPath();
+      ctx.moveTo(FL.cx, sBot + 8);
+      ctx.lineTo(FL.cx, top - oy * 0.35);
+      ctx.strokeStyle = '#8a97a3';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    }
+    // 挂环：吊在横臂下沿（armY + 5）
+    ctx.beginPath();
+    ctx.arc(FL.cx, FL.armY + 10, 7, 0, Math.PI * 2);
+    ctx.strokeStyle = '#8a97a3';
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+
+    var sg = ctx.createLinearGradient(FL.cx - 26, 0, FL.cx + 26, 0);
+    sg.addColorStop(0, '#9fb0be'); sg.addColorStop(0.22, '#eef4f9');
+    sg.addColorStop(0.62, '#dbe5ee'); sg.addColorStop(1, '#9aa9b7');
+    v.rr(FL.cx - 27, sTop, 54, sBot - sTop, 9);
+    ctx.fillStyle = sg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(110,130,148,0.75)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // 透明观察窗
+    var winTop = sTop + 9, winBot = sBot - 8;
+    v.rr(FL.cx - 19, winTop, 38, winBot - winTop, 6);
+    ctx.fillStyle = 'rgba(255,255,255,0.94)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(150,175,196,0.7)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // 刻度数字（只标 0 / 4 / 8，避免糊）
+    [0, 4, 8].forEach(function (vn) {
+      var vy = winTop + 5 + (vn / maxN) * (winBot - winTop - 10);
+      v.text({
+        x: FL.cx + 15, y: vy, text: String(vn),
+        size: 8.5, weight: 700, color: '#5b7791', align: 'right', stroke: false
+      });
+    });
+
+    // 刻度 0~8 N：0 在窗顶，向下增大
+    var maxN = 8;
+    for (var n = 0; n <= maxN * 4; n++) {
+      var val = n / 4;
+      var yy = winTop + 5 + (val / maxN) * (winBot - winTop - 10);
+      var major = Math.abs(val - Math.round(val)) < 0.001;
+      ctx.beginPath();
+      ctx.moveTo(FL.cx - 18, yy);
+      ctx.lineTo(FL.cx - 18 + (major ? 10 : 5), yy);
+      ctx.strokeStyle = major ? 'rgba(70,92,112,0.85)' : 'rgba(70,92,112,0.32)';
+      ctx.lineWidth = major ? 1.1 : 0.8;
+      ctx.stroke();
+    }
+    // 内部弹簧：上端固定，随示数伸长
+    var spTopY = winTop + 8;
+    var spBotY = winTop + 5 + ((maxN - Math.min(reading, maxN)) / maxN) * (winBot - winTop - 10);
+    v.spring({ x: FL.cx + 4, y1: spTopY, y2: spBotY, r: 7, coils: 12 });
+    // 指针（红色三角，指向刻度）
+    ctx.beginPath();
+    ctx.moveTo(FL.cx - 20, spBotY);
+    ctx.lineTo(FL.cx - 5, spBotY - 4);
+    ctx.lineTo(FL.cx - 5, spBotY + 4);
+    ctx.closePath();
+    ctx.fillStyle = '#d9534f';
+    ctx.fill();
+
+    // ---- 玻璃前壁与刻度 ----
+    v.glassFront({ tick: { max: 1000, step: 200, unit: '', side: 'inside', fill: 0.86 } });
+
+    // ---- 底部公式面板：不放画布 ----
+    // 演示区只留实物与图形。代入式与结论在 ④ 区（.exp-formula）已经完整给出，
+    // 画布底部再铺一块公式面板属于重复，故移除。
+
+    // ---- 读数卡：不放画布 ----
+    // 字号按平台规范放大一倍后，5 行读数卡在 900×700 的设计空间里会盖住量筒左半侧；
+    // 这些读数 ④ 区（.exp-reads）已经完整给出，画布上再放一份纯属重复，故移除。
+
+    // ---- 状态标题（杯顶上方靠左，避开测力计） ----
+    v.text({
+      x: 226, y: 150,
+      text: result ? result.state : mode === 'free' ? '自由漂浮' : '悬挂测力',
+      size: 14, weight: 700, color: '#134f96'
+    });
+
+    // ---- 标注（全部最后画，绝不与器材或彼此重叠） ----
+    // 物块：引线伸到杯外左侧
+    // 引线走物块下半部，避开杯壁上的 800 刻度数字
+    var midY = bottom - apo * 0.26;
+    var blockRight = FL.cx + apo / 2 + ox;
+    v.leader({ x1: 170, y1: midY, x2: FL.cx - apo / 2 - 6, y2: midY });
+    v.pill({ x: 104, y: midY, text: '物块 ρ=' + objRho.toFixed(2), bg: '#3d6c92', size: 12 });
+
+    // 液面：右侧留白处（物块右缘之外），引线落到液面
+    var surfX = Math.max(blockRight + 30, FL.cx + 60);
+    v.leader({ x1: surfX + 6, y1: ySurf - 44, x2: surfX - 24, y2: ySurf - 6 });
+    v.pill({ x: surfX + 62, y: ySurf - 50, text: '液面 ρ=' + liqRho.toFixed(2), bg: '#1877b8', size: 12 });
+
+    // 测力计：右侧，高度取测力计中段
+    if (mode === 'hang') {
+      var gy = (sTop + sBot) / 2;
+      v.leader({ x1: FL.cx + 30, y1: gy, x2: 500, y2: gy });
+      v.pill({ x: 592, y: gy, text: '测力计 ' + reading.toFixed(2) + ' N', bg: '#5f7183', size: 12 });
+    }
+
+    say(cv, '装置：烧杯（内装 ' + (lc.name || '液体') + '）· 物块 ρ=' + objRho.toFixed(2) +
+      ' · ' + (result ? result.state : mode === 'free' ? '自由漂浮' : '弹簧测力计（0~8 N）') + ' · 液体 ρ=' + liqRho.toFixed(2));
+  }
+
+  /* ============================================================
+   * 凸透镜成像：光具座实景
+   * ============================================================ */
+  var OP = {
+    x0: 56, x1: 852, railY: 470, railH: 20,
+    axisY: 300, f: 10, lensAt: 45, objH: 58
+  };
+
+  function solveThinLens(request) {
+    var { u, f } = request || {};
+    if (![u, f].every(value => Number.isFinite(value) && value >= 1e-6 && value <= 1e6)) {
+      throw new Error('物距和焦距必须在 0.000001 至 1000000 cm 之间');
+    }
+    var distance = null, magnification = null, state = '无有限像';
+    if (u !== f) {
+      distance = u * f / (u - f);
+      magnification = -distance / u;
+      if (u < f) state = '正立放大的虚像';
+      else if (u < 2 * f) state = '倒立放大的实像';
+      else if (u === 2 * f) state = '倒立等大的实像';
+      else state = '倒立缩小的实像';
+    }
+    return { version: 1, u: u, f: f, image_distance_cm: distance, magnification: magnification, state: state };
+  }
+
+  function optics(cv, cfg, result) {
+    var v = V();
+    cfg = cfg || {};
+    if (!v.mount(cv, { DW: DW, DH: DH })) return;
+    v.clear();
+    var ctx = v.S.ctx;
+
+    result = result || solveThinLens({ u: cfg.u ?? 30, f: cfg.f ?? OP.f });
+    var { u, f, state } = result;
+    var lensAt = cfg.lensAt == null ? OP.lensAt : cfg.lensAt;
+    var px = (OP.x1 - OP.x0 - 16) / 80;            // 80 cm 导轨
+    function X(cm) { return OP.x0 + 8 + cm * px; }
+
+    var vImg = result.image_distance_cm;
+    var hasImage = vImg !== null;
+    var isReal = vImg > 0;
+    var mag = Math.abs(result.magnification);
+    var objTop = OP.axisY - OP.objH;
+
+    v.wall({ tableY: OP.railY + 34, tone: 'warm' });
+    v.rail({ x0: OP.x0, x1: OP.x1, y: OP.railY, h: OP.railH, px: px });
+
+    // ---- 主光轴（点划线） ----
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(30, OP.axisY);
+    ctx.lineTo(866, OP.axisY);
+    ctx.setLineDash([9, 6]);
+    ctx.strokeStyle = 'rgba(150,190,225,0.95)';
+    ctx.lineWidth = 1.3;
+    ctx.stroke();
+    ctx.restore();
+
+    var objX = X(lensAt - u);
+    var lensX = X(lensAt);
+    var scrCm = v.clamp(cfg.scr == null ? (isReal ? lensAt + vImg : lensAt + 20) : cfg.scr, 1, 79);
+    var scrX = X(scrCm);
+    var imageX = hasImage ? X(lensAt + vImg) : null;
+    var imageOnRail = hasImage && imageX >= X(0) && imageX <= X(80);
+    var fL = X(lensAt - f), fR = X(lensAt + f);
+
+    /* ---- 三条特殊光线（先算，画在器材之下） ----
+     * ① 平行主光轴入射 → 过右侧焦点 F'
+     * ② 过光心 → 方向不变
+     * ③ 过左侧焦点 F → 出射平行主光轴
+     */
+    var rays = [];
+    // ① 平行入射 → 过 F'，延长到导轨右端
+    rays.push({ pts: [[objX, objTop], [lensX, objTop], [fR, OP.axisY]], extend: true, color: '#f08a1e' });
+    // ② 过光心 → 方向不变，延长到导轨右端
+    rays.push({ pts: [[objX, objTop], [lensX, OP.axisY]], extend: true, color: '#e07b12' });
+    // ③ 过 F → 出射平行主光轴（水平段必须显式给出，不能沿用前面的斜率）
+    if (objX < fL - 2) {
+      var y3 = objTop + (OP.axisY - objTop) * (lensX - objX) / (fL - objX);
+      if (Math.abs(y3 - OP.axisY) <= 86) {
+        rays.push({
+          pts: [[objX, objTop], [fL, OP.axisY], [lensX, y3], [OP.x1, y3]],
+          extend: false, color: 'rgba(236,140,50,0.88)'
+        });
+      }
+    }
+
+    var drawn = rays.map(function (r) {
+      var out = r.pts.slice();
+      if (!r.extend) return out;
+      var a = out[out.length - 2], b = out[out.length - 1];
+      var dx = b[0] - a[0], dy = b[1] - a[1];
+      if (Math.abs(dx) < 1e-6) return out;
+      var t = (OP.x1 - b[0]) / dx;
+      if (t > 0) out.push([b[0] + dx * t, b[1] + dy * t]);
+      return out;
+    });
+    drawn.forEach(function (pts, i) {
+      v.ray({ pts: pts, color: rays[i].color, width: i === 2 ? 1.6 : 1.9 });
+    });
+
+    // ---- 物：立体箭头（柱 + 三角头） ----
+    v.post({ x: objX, y: OP.axisY, base: OP.railY + 4 });
+    var headH = 18, headW = 15, shaftW = 9;
+    ctx.save();
+    var og = ctx.createLinearGradient(objX - headW, 0, objX + headW, 0);
+    og.addColorStop(0, '#d97a06'); og.addColorStop(0.42, '#ffb04d'); og.addColorStop(1, '#c26500');
+    ctx.fillStyle = og;
+    ctx.shadowColor = 'rgba(255,150,40,0.38)';
+    ctx.shadowBlur = 7;
+    ctx.beginPath();
+    ctx.moveTo(objX - shaftW / 2, OP.axisY);
+    ctx.lineTo(objX - shaftW / 2, objTop);
+    ctx.lineTo(objX - headW, objTop);
+    ctx.lineTo(objX, objTop - headH);
+    ctx.lineTo(objX + headW, objTop);
+    ctx.lineTo(objX + shaftW / 2, objTop);
+    ctx.lineTo(objX + shaftW / 2, OP.axisY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    // 底座
+    ctx.fillStyle = '#8a6a45';
+    v.rr(objX - 14, OP.axisY - 2, 28, 8, 2);
+    ctx.fill();
+
+    // ---- 透镜 ----
+    v.post({ x: lensX, y: OP.axisY, base: OP.railY + 4 });
+    v.lens({ x: lensX, y: OP.axisY, h: 172, bulge: 22 });
+    ctx.fillStyle = '#3a444e';
+    v.rr(lensX - 10, OP.axisY - 96, 20, 11, 3); ctx.fill();
+    v.rr(lensX - 10, OP.axisY + 85, 20, 11, 3); ctx.fill();
+
+    // ---- 光屏 ----
+    v.post({ x: scrX, y: OP.axisY - 98, base: OP.railY + 4 });
+    var pg = ctx.createLinearGradient(scrX - 5, 0, scrX + 5, 0);
+    pg.addColorStop(0, '#ffffff'); pg.addColorStop(1, '#e6edf4');
+    ctx.fillStyle = pg;
+    v.rr(scrX - 5, OP.axisY - 98, 10, 196, 3);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(150,172,192,0.9)';
+    ctx.lineWidth = 1.1;
+    ctx.stroke();
+
+    // 像的位置由求解器决定。光屏移动时只改变能否接到实像。
+    if (imageOnRail) {
+      var imgH = OP.objH * mag * (isReal ? 1 : -1);
+      var tip = OP.axisY + imgH;
+      var head = Math.min(Math.abs(imgH) / 2, 12) * (isReal ? -1 : 1);
+      var iw = v.clamp(9 * mag, 6, 15);
+      ctx.save();
+      ctx.fillStyle = '#db861f';
+      ctx.strokeStyle = '#db861f';
+      if (!isReal) {
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath();
+        ctx.moveTo(lensX, objTop);
+        ctx.lineTo(imageX, OP.axisY - OP.objH * mag);
+        ctx.moveTo(lensX, OP.axisY);
+        ctx.lineTo(imageX, OP.axisY - OP.objH * mag);
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.moveTo(imageX - iw * 0.42, OP.axisY);
+      ctx.lineTo(imageX - iw * 0.42, tip + head);
+      ctx.lineTo(imageX - iw, tip + head);
+      ctx.lineTo(imageX, tip);
+      ctx.lineTo(imageX + iw, tip + head);
+      ctx.lineTo(imageX + iw * 0.42, tip + head);
+      ctx.lineTo(imageX + iw * 0.42, OP.axisY);
+      ctx.closePath();
+      if (isReal) ctx.fill();
+      else ctx.stroke();
+      ctx.restore();
+    }
+
+    // ---- F / 2F 标记点 ----
+    var marks = [];
+    [[lensAt - 2 * f, '2F'], [lensAt - f, 'F'], [lensAt + f, "F'"], [lensAt + 2 * f, "2F'"]].forEach(function (m) {
+      if (m[0] < 0.5 || m[0] > 79.5) return;
+      v.dot({ x: X(m[0]), y: OP.axisY, r: 3.8, color: '#2e6fd8', ring: true });
+      marks.push([X(m[0]), m[1]]);
+    });
+
+    // ---- 距离标注（导轨下方，文字在线的上方） ----
+    var dY = OP.railY + 58;
+    function dim(xa, xb, label, color, level) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.3;
+      ctx.beginPath();
+      ctx.moveTo(xa, dY); ctx.lineTo(xb, dY);
+      ctx.stroke();
+      [[xa, 1], [xb, -1]].forEach(function (p) {
+        ctx.beginPath();
+        ctx.moveTo(p[0], dY);
+        ctx.lineTo(p[0] + p[1] * 6, dY - 4);
+        ctx.lineTo(p[0] + p[1] * 6, dY + 4);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+      });
+      ctx.strokeStyle = 'rgba(160,180,200,0.55)';
+      ctx.setLineDash([3, 3]);
+      [[xa], [xb]].forEach(function (p) {
+        ctx.beginPath();
+        ctx.moveTo(p[0], OP.railY + OP.railH);
+        ctx.lineTo(p[0], dY + 6);
+        ctx.stroke();
+      });
+      ctx.restore();
+      v.text({ x: (xa + xb) / 2, y: dY + level, text: label, size: 12.5, weight: 700, color: color });
+    }
+    dim(objX, lensX, 'u = ' + u.toFixed(1) + ' cm', '#1b62b0', -15);
+    if (imageOnRail) dim(lensX, imageX, 'v = ' + vImg.toFixed(1) + ' cm', '#157a55', 18);
+
+    // ---- 读数卡 ----
+    v.card({
+      x: 16, y: 14, w: 168, title: '成像参数',
+      rows: [
+        ['物距 u', u.toFixed(1) + ' cm'],
+        ['焦距 f', f.toFixed(1) + ' cm'],
+        ['像距 v', hasImage ? vImg.toFixed(1) + ' cm' : '∞'],
+        ['放大率', hasImage ? result.magnification.toFixed(2) + '×' : '—'],
+        ['性质', state,
+          isReal ? '#157a55' : '#c0392b']
+      ]
+    });
+
+    // ---- 文字层（最后画） ----
+    marks.forEach(function (m) {
+      v.text({ x: m[0], y: OP.axisY + 20, text: m[1], size: 13, weight: 700, color: '#2e6fd8' });
+    });
+    v.text({ x: 44, y: OP.axisY - 15, text: '主光轴', size: 12, weight: 600, color: '#7ba9d4', align: 'left' });
+    v.pill({ x: objX - 18, y: objTop - headH - 100, text: '物（' + u.toFixed(0) + ' cm）', bg: '#b8690a', size: 12 });
+    v.pill({ x: lensX, y: OP.axisY - 122, text: '凸透镜 f=' + f.toFixed(0) + 'cm', bg: '#1b62b0', size: 12 });
+    v.pill({ x: scrX, y: OP.axisY - 158, text: '光屏', bg: '#5f7183', size: 12 });
+
+    v.text({
+      x: 450, y: OP.railY + 104,
+      text: hasImage ? state + (imageOnRail ? '' : '（像在导轨范围外）') : 'u = f：无有限像（出射光平行）',
+      size: 15, weight: 700, color: '#134f96'
+    });
+
+    say(cv, '装置：光具座（0~80 cm）· 凸透镜 f=' + f.toFixed(0) + ' cm · 光屏 · 蜡烛，物距 ' +
+      u.toFixed(1) + ' cm，' + state);
+  }
+
+  /* ============================================================
+   * 兜底：物理页没调场景库时，按正文关键词补一版标准画面
+   * ============================================================ */
+  // 取第一个有数值的参数：页面给参数用的键名各页不同（rhoObj / objRho / rho…）
+  function num() {
+    for (var i = 0; i < arguments.length; i++) {
+      var v = arguments[i];
+      if (v !== null && v !== undefined && v !== '' && isFinite(v)) return +v;
+    }
+    return null;
+  }
+
+  /* 画布上到底有没有东西。
+   *
+   * 库的兜底和页面自己的 draw() 用的是**同一张画布**（不是各画一张），
+   * 两边都在画 = 每次交互产生两幅互斥的版面，谁排在最后谁露脸，
+   * 顺序还会逐帧漂移 → 学生看到画面闪动、背景来回换。
+   * 所以只要页面已经自己画了东西，库就必须彻底收手：不画、也不挂监听。
+   */
+  function isBlank(cv0) {
+    try {
+      var w = cv0 && cv0.width, h = cv0 && cv0.height;
+      if (!w || !h) return true;
+      var c2 = cv0.getContext('2d');
+      if (!c2) return true;
+      var d = c2.getImageData(0, 0, w, h).data;
+      var rowBytes = w * 4;
+      // 每 16 行采一行，采到的行整行扫完：横竖线条都不会漏
+      for (var y = 0; y < h; y += 16) {
+        var base = y * rowBytes;
+        for (var x = 0; x < w; x++) {
+          var i = base + x * 4;
+          if (d[i + 3] < 8) continue;                                  // 全透明 = 没画
+          if (d[i] > 246 && d[i + 1] > 246 && d[i + 2] > 246) continue; // 白/近白底
+          return false;
+        }
+      }
+      return true;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  function auto() {
+    if (window.__PHYS_DRAWN__ || window.__PHYS_BUOYANCY_REQUEST__ || window.__PHYS_PLANE_MIRROR_REQUEST__) return;
+    var cv = document.querySelector('.exp-canvas-box canvas') || document.querySelector('canvas');
+    if (!cv) return;
+    var txt = (document.body ? document.body.innerText : '') + ' ' + (document.title || '');
+    var cfg = window.__CONFIG__ || {};
+    var sid = String(cfg.scene_id || '');
+    var st = window.__DATA__ || {};
+    var pr = st.params || {}, rs = st.result || {};
+
+    // 页面自己画得出来就必须让位，否则两套版面抢同一张画布（见 isBlank 注释）
+    if (!isBlank(cv)) { window.__PHYS_DRAWN__ = true; return; }
+
+    if (/浮力|浮沉|阿基米德|排开/.test(txt) || /buoy|float/.test(sid)) {
+      // ④区当前状态是「漂浮/上浮」时不该画测力计（那是悬挂法）
+      var secRes = document.getElementById('sec-result');
+      var stt = secRes ? String(secRes.innerText || '') : '';
+      var floats = /上浮|漂浮|悬浮/.test(stt.slice(0, 120));
+      var mode = (!floats && /测力计|弹簧秤/.test(txt)) ? 'hang' : 'free';
+
+      // 参数每次现读页面自己的 __DATA__：页面改了状态就按新值重画，
+      // 画布上的读数才会和 ④区 一致（不能只用库的默认边长 8 cm）
+      var cfgF = function () {
+        var d = window.__DATA__ || {}, p2 = d.params || {}, r2 = d.result || {};
+        var o = num(p2.rhoObj, p2.objRho, p2.rho, r2.rhoObj);
+        var l = num(p2.rhoLiq, p2.liqRho, p2.rhoL, r2.rhoLiq);
+        var fb = num(r2.Fbuoy, r2.Fb, r2.F, r2.F浮);
+        var fr = num(r2.frac, r2.subRatio, r2.sub, p2.sub, p2.frac);
+        var sd = num(p2.side, p2.a, p2.edge, r2.side);
+        // 体积反推：V物 → V排/浸没比 → F浮/(ρ液·浸没比·g)
+        var vb = num(r2.Vobj, r2.V, r2.volume, p2.volume, p2.Vobj);
+        var vs = num(r2.vsub, r2.Vsub, r2.vSub);
+        if (vb == null && vs != null && fr) vb = vs / fr;
+        if (vb == null && fb != null && l && fr) vb = fb * 1000 / (l * fr * G);
+        if (sd == null && vb) sd = Math.pow(vb, 1 / 3);
+        return {
+          objRho: o == null ? 0.6 : o,
+          liqRho: l == null ? 1.0 : l,
+          side: sd == null ? 8 : sd,
+          level: 0.62,
+          mode: mode,
+          sub: fr == null ? (o != null && l ? Math.min(1, o / l) : 0.6) : fr
+        };
+      };
+      var drawF = function () { floating(cv, cfgF()); };
+      drawF();
+      window.__PHYS_DRAWN__ = true;
+      // 页面自己的重绘（通常在 input/click 里）会盖掉库的版面，这里排在它之后补画
+      var later = function () { setTimeout(drawF, 0); };
+      document.addEventListener('input', later, true);
+      document.addEventListener('click', later, true);
+      window.addEventListener('load', function () { setTimeout(drawF, 60); });
+      return;
+    }
+    if (/凸透镜|光具座|成像/.test(txt) || /lens|optics/.test(sid)) {
+      optics(cv, { u: 30, f: 10 });
+      window.__PHYS_DRAWN__ = true;
+    }
+  }
+
+  /* 时机同样关键：必须等页面自己的脚本跑完、画完第一帧再判断。
+   * 以前挂在 DOMContentLoaded+setTimeout(0)，页面可能还没画 → 误判空白 → 抢画布。
+   * 改成 load 之后再等两帧。 */
+  function scheduleAuto() {
+    var run = function () {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          try { auto(); } catch (e) { }
+        });
+      });
+    };
+    if (document.readyState === 'complete') setTimeout(run, 60);
+    else window.addEventListener('load', function () { setTimeout(run, 60); });
+  }
+  scheduleAuto();
+
+  const LESSON_G = 9.8;
+
+  function quantity(request, field, min = -1e9) {
+    const value = request?.[field];
+    if (!Number.isFinite(value) || value < min || value > 1e9) {
+      throw new Error('参数超出模型范围：' + field);
+    }
+    return value;
+  }
+
+  function solveBuoyancy(request) {
+    const obj = quantity(request, 'object_density', 1e-9);
+    const liquid = quantity(request, 'liquid_density', 1e-9);
+    const volume = quantity(request, 'volume', 1e-9);
+    let fraction = quantity(request, 'fraction', 0);
+    const { mode } = request;
+    if (fraction > 1 || !['hang', 'free'].includes(mode)) {
+      throw new Error('浸没比须在 0 至 1 之间，模式须为 hang 或 free');
+    }
+    const free = mode === 'free';
+    if (free) fraction = Math.min(obj / liquid, 1);
+    const displaced = volume * fraction;
+    const weight = obj * volume * LESSON_G;
+    const buoyancy = liquid * LESSON_G * displaced;
+    const state = free ? (obj < liquid ? '上浮后漂浮' : obj > liquid ? '下沉' : '悬浮')
+      : (fraction > obj / liquid ? '绳松弛' : '悬挂');
+    return { version: 1, fraction, displaced_volume: displaced, weight, buoyancy,
+      tension: free ? null : Math.max(0, weight - buoyancy), state };
+  }
+
+  function solveLever(request) {
+    const left = quantity(request, 'left_force', 0) * quantity(request, 'left_arm', 0);
+    const right = quantity(request, 'right_force', 0) * quantity(request, 'right_arm', 0);
+    const delta = left - right;
+    const net = Math.abs(delta) <= 1e-12 * Math.max(left, right) ? 0 : delta;
+    return { version: 1, left_torque: left, right_torque: right, net_torque: net,
+      state: net > 0 ? '左侧下沉' : net < 0 ? '右侧下沉' : '平衡' };
+  }
+
+  function solveLiquidPressure(request) {
+    const density = quantity(request, 'density', 1e-9);
+    const depth = quantity(request, 'depth', 0);
+    return { version: 1, pressure: LESSON_G * (density * depth) };
+  }
+
+  function solveSpecificHeat(request) {
+    const heat = quantity(request, 'heat');
+    const initial = quantity(request, 'initial_temperature', -273.15);
+    const mass = quantity(request, 'mass', 1e-9);
+    const specificHeat = quantity(request, 'specific_heat', 1e-9);
+    const change = heat / (mass * specificHeat);
+    const final = initial + change;
+    if (final < -273.15) throw new Error('温度不能低于绝对零度');
+    return { version: 1, temperature_change: change, final_temperature: final };
+  }
+
+  function solveUniformAcceleration(request) {
+    const v0 = quantity(request, 'initial_velocity');
+    const a = quantity(request, 'acceleration');
+    const duration = quantity(request, 'time', 0);
+    const sample = t => [t, t * (v0 + a * t / 2), v0 + a * t];
+    const trajectory = Array.from({ length: 5 }, (_, i) => sample(duration * i / 4));
+    const [, displacement, velocity] = trajectory[4];
+    let distance = Math.abs(displacement);
+    if (v0 * velocity < 0) {
+      const turningPoint = sample(-v0 / a)[1];
+      distance = Math.abs(turningPoint) + Math.abs(displacement - turningPoint);
+    }
+    return { version: 1, velocity, displacement, distance, trajectory };
+  }
+
+  function solveHorizontalProjectile(request) {
+    const speed = quantity(request, 'speed', 0);
+    const height = quantity(request, 'height', 0);
+    const time = quantity(request, 'time', 0);
+    const flightTime = Math.sqrt(2 * height / LESSON_G);
+    const elapsed = Math.min(time, flightTime);
+    const sample = t => [t, speed * t, t >= flightTime ? 0 : Math.max(0, height - LESSON_G * t * t / 2)];
+    const [, x, y] = sample(elapsed);
+    const trajectory = Array.from({ length: 5 }, (_, i) => sample(flightTime * i / 4));
+    return { version: 1, x, y, vx: speed, vy: -LESSON_G * elapsed,
+      flight_time: flightTime, range: speed * flightTime,
+      state: time >= flightTime ? '已到落点' : '飞行中', trajectory };
+  }
+
+  function solveRefraction(request) {
+    const n1 = quantity(request, 'n1', 1);
+    const n2 = quantity(request, 'n2', 1);
+    const incident = quantity(request, 'incident_angle', 0);
+    if (incident > 90) throw new Error('入射角须在 0 至 90 度之间');
+    const radiansPerDegree = Math.PI / 180;
+    const critical = n1 > n2 ? Math.asin(n2 / n1) / radiansPerDegree : null;
+    let state = '折射', refracted;
+    if (critical !== null && Math.abs(incident - critical) <= 1e-10) {
+      state = '临界折射';
+      refracted = 90;
+    } else if (critical !== null && incident > critical) {
+      state = '全反射';
+      refracted = null;
+    } else {
+      const sine = n1 * Math.sin(incident * radiansPerDegree) / n2;
+      refracted = n1 === n2 ? incident : Math.asin(Math.min(1, sine)) / radiansPerDegree;
+    }
+    return { version: 1, reflected_angle: incident, refracted_angle: refracted, critical_angle: critical, state };
+  }
+
+  function solveHorizontalForce(request) {
+    const mass = quantity(request, 'mass', 1e-9);
+    const applied = quantity(request, 'applied_force');
+    const velocity = quantity(request, 'velocity');
+    const staticMu = quantity(request, 'static_coefficient', 0);
+    const kineticMu = quantity(request, 'kinetic_coefficient', 0);
+    if (kineticMu > staticMu || staticMu > 1000) {
+      throw new Error('摩擦系数须满足 0 ≤ 动摩擦系数 ≤ 静摩擦系数 ≤ 1000');
+    }
+    const weight = mass * LESSON_G;
+    const normal = weight;
+    const limit = staticMu * normal;
+    const magnitude = Math.abs(applied);
+    const tolerance = 1e-12 * Math.max(magnitude, limit);
+    const atLimit = limit > 0 && Math.abs(magnitude - limit) <= tolerance;
+    const atRest = velocity === 0 && (magnitude <= limit || atLimit);
+    const direction = velocity === 0 ? applied : velocity;
+    const friction = atRest ? -applied : -Math.sign(direction) * kineticMu * normal;
+    const net = applied + friction;
+    const acceleration = net / mass;
+    const scale = Math.max(1, magnitude, Math.abs(friction));
+    const validFriction = atRest
+      ? net === 0 && Math.abs(friction) <= limit + tolerance
+      : friction * Math.sign(direction) <= 0 && Math.abs(friction) === kineticMu * normal;
+    if (normal - weight !== 0 || Math.abs(mass * acceleration - net) > 1e-12 * scale || !validFriction) {
+      throw new Error('受力结果未通过平衡或摩擦自检');
+    }
+    const state = atRest ? (atLimit ? '临界静止' : '静止') : velocity === 0 ? '开始滑动' : '滑动中';
+    return { version: 1, weight, normal_force: normal, static_limit: limit, friction,
+      net_force: net, acceleration, state };
+  }
+
+  function solveWorkPower(request) {
+    const force = quantity(request, 'force', 0);
+    const distance = quantity(request, 'distance', 0);
+    const angle = quantity(request, 'angle', 0);
+    const duration = quantity(request, 'duration', 1e-9);
+    if (angle > 180 || (force > 0 && force < 1e-9) || (distance > 0 && distance < 1e-9)) {
+      throw new Error('夹角须在 0 至 180 度之间；非零力和位移至少为 1e-9');
+    }
+    const radiansPerDegree = Math.PI / 180;
+    // Use the complementary angle near 90° to avoid cancellation.
+    const projection = Math.abs(90 - angle) < 30
+      ? Math.sin((90 - angle) * radiansPerDegree) : Math.cos(angle * radiansPerDegree);
+    const parallelForce = force * projection;
+    const work = parallelForce * distance;
+    const power = work / duration;
+    const expectedSign = force === 0 || distance === 0 ? 0 : Math.sign(90 - angle);
+    if (Math.sign(work) !== expectedSign ||
+        Math.abs(work) > force * distance * (1 + 1e-12) ||
+        Math.abs(power * duration - work) > 1e-12 * Math.abs(work)) {
+      throw new Error('功与功率未通过方向、大小或时间关系自检');
+    }
+    return { version: 1, parallel_force: parallelForce, work, average_power: power,
+      state: work > 0 ? '正功' : work < 0 ? '负功' : '零功' };
+  }
+
+  // Preserve small energy transfers when two larger terms nearly cancel.
+  function sumEnergyTerms(...terms) {
+    let sum = 0, correction = 0;
+    for (const term of terms) {
+      const next = sum + term;
+      correction += Math.abs(sum) >= Math.abs(term) ? (sum - next) + term : (term - next) + sum;
+      sum = next;
+    }
+    return sum + correction;
+  }
+
+  function solveMechanicalEnergy(request) {
+    const mass = quantity(request, 'mass', 1e-9);
+    const speed = quantity(request, 'initial_speed', 0);
+    const startHeight = quantity(request, 'start_height');
+    const endHeight = quantity(request, 'end_height');
+    const work = quantity(request, 'nonconservative_work');
+    const weight = mass * LESSON_G;
+    const initialKinetic = 0.5 * mass * (speed * speed);
+    const initialPotential = weight * startHeight;
+    const potentialChange = weight * (endHeight - startHeight);
+    const scale = Math.max(initialKinetic, Math.abs(work), Math.abs(potentialChange));
+    const available = sumEnergyTerms(initialKinetic, work, -potentialChange);
+    const finalKinetic = Math.abs(available) <= 1e-12 * scale ? 0 : available;
+    const possible = finalKinetic >= 0;
+    const finalPotential = possible ? weight * endHeight : null;
+    if (possible && Math.abs(sumEnergyTerms(finalKinetic, -initialKinetic, potentialChange, -work)) > 2e-12 * scale) {
+      throw new Error('机械能变化与非保守力做功不一致');
+    }
+    return {
+      version: 1, initial_kinetic: initialKinetic, initial_potential: initialPotential,
+      initial_energy: initialKinetic + initialPotential,
+      final_kinetic: possible ? finalKinetic : null, final_potential: finalPotential,
+      final_energy: possible ? finalKinetic + finalPotential : null,
+      energy_change: possible ? work : null,
+      final_speed: possible ? Math.sqrt(finalKinetic) * Math.sqrt(2 / mass) : null,
+      energy_shortfall: Math.max(0, -finalKinetic),
+      state: finalKinetic > 0 ? '末速度非零' : possible ? '末速度为零' : '能量不足',
+    };
+  }
+
+  function solveInclinedPlane(request) {
+    const mass = quantity(request, 'mass', 1e-9);
+    const length = quantity(request, 'length', 1e-9);
+    const height = quantity(request, 'height', 0);
+    const coefficient = quantity(request, 'friction_coefficient', 0);
+    if (height > length || (height > 0 && height < 1e-9) ||
+        (coefficient > 0 && coefficient < 1e-9)) {
+      throw new Error('高度不能超过斜面长度，非零高度和摩擦系数至少为 1e-9');
+    }
+    const run = Math.sqrt((length - height) * (length + height));
+    const weight = mass * LESSON_G;
+    const normal = weight * (run / length);
+    const friction = coefficient * normal;
+    const pull = weight * (height / length) + friction;
+    const useful = weight * height;
+    const loss = friction * length;
+    const total = pull * length;
+    if (Math.abs(total - (useful + loss)) > 1e-12 * total) {
+      throw new Error('斜面输入功与有用功、摩擦耗能不平衡');
+    }
+    return {
+      version: 1, horizontal_run: run, angle_deg: Math.atan2(height, run) * (180 / Math.PI),
+      normal_force: normal, friction_force: friction, pull_force: pull, useful_work: useful,
+      friction_loss: loss, input_work: total, efficiency: total > 0 ? 100 * (useful / total) : null,
+    };
+  }
+
+  const PULLEY_LAYOUTS = {
+    fixed: { strands: 1, route: ['lower_anchor', 'fixed_pulley', 'free_end'] },
+    two_fixed: { strands: 1, route: ['lower_anchor', 'fixed_pulley', 'fixed_pulley', 'free_end'] },
+    two_strands: { strands: 2, route: ['upper_anchor', 'moving_pulley', 'fixed_pulley', 'free_end'] },
+    three_strands: { strands: 3, route: ['lower_anchor', 'fixed_pulley', 'moving_pulley', 'free_end'] },
+    four_strands: {
+      strands: 4, route: ['upper_anchor', 'moving_pulley', 'fixed_pulley', 'moving_pulley', 'fixed_pulley', 'free_end'],
+    },
+  };
+
+  function solvePulleySystem(request) {
+    const load = quantity(request, 'load_mass', 1e-9);
+    const moving = quantity(request, 'moving_mass', 0);
+    const height = quantity(request, 'lift_height', 0);
+    const drag = quantity(request, 'rope_loss_force', 0);
+    const { layout } = request;
+    if (typeof layout !== 'string' || !Object.hasOwn(PULLEY_LAYOUTS, layout)) {
+      throw new Error('滑轮组绳路不在支持范围内');
+    }
+    if ([moving, height, drag].some(value => value > 0 && value < 1e-9)) {
+      throw new Error('非零动滑轮组件质量、提升高度和绳端阻力至少为 1e-9');
+    }
+    const { strands, route } = PULLEY_LAYOUTS[layout];
+    const loadWeight = load * LESSON_G;
+    const movingWeight = moving * LESSON_G;
+    const pull = (loadWeight + movingWeight) / strands + drag;
+    const draw = strands * height;
+    const useful = loadWeight * height;
+    const carrierWork = movingWeight * height;
+    const loss = drag * draw;
+    const work = pull * draw;
+    if (Math.abs(work - (useful + carrierWork + loss)) > 1e-12 * work) {
+      throw new Error('滑轮组输入功与提升功、摩擦耗能不平衡');
+    }
+    return {
+      version: 1, rope_route: route.slice(), supporting_strands: strands,
+      fixed_pulleys: route.filter(node => node === 'fixed_pulley').length,
+      moving_pulleys: route.filter(node => node === 'moving_pulley').length,
+      pull_distance: draw, pull_force: pull, useful_work: useful,
+      carrier_work: carrierWork, friction_loss: loss, input_work: work,
+      efficiency: work > 0 ? Math.min(100, 100 * (useful / work)) : null,
+    };
+  }
+
+  function drawPulleySystem(canvas, request, result) {
+    const vis = V();
+    if (!vis.mount(canvas, {DW, DH})) return;
+    vis.clear();
+    const ctx = vis.S.ctx;
+    const height = Number(request.lift_height) || 0;
+    const top = 58;
+    const bottom = DH - 42;
+    const lift = Math.min(Math.max(height, 0), 8) / 8 * Math.min(150, DH * 0.28);
+    const movingY = bottom - lift;
+    const fixedY = top + 72;
+    const anchorX = 92;
+    const freeX = DW - 92;
+    const pulleyRadius = Math.max(18, Math.min(30, DW / 18));
+    const movingXs = result.rope_route.filter(node => node === 'moving_pulley')
+      .map((_, index, items) => DW * (0.34 + (index + 1) * 0.12 / (items.length + 1)));
+    const fixedXs = result.rope_route.filter(node => node === 'fixed_pulley')
+      .map((_, index, items) => DW * (0.55 + (index + 1) * 0.12 / (items.length + 1)));
+    let movingIndex = 0;
+    let fixedIndex = 0;
+    const nodes = result.rope_route.map(node => {
+      if (node === 'upper_anchor') return [anchorX, top, node];
+      if (node === 'lower_anchor') return [anchorX, movingY, node];
+      if (node === 'free_end') return [freeX, bottom, node];
+      if (node === 'moving_pulley') return [movingXs[movingIndex++], movingY, node];
+      return [fixedXs[fixedIndex++], fixedY, node];
+    });
+    const line = (x1, y1, x2, y2, color, width, dashed = false) => {
+      ctx.beginPath();
+      ctx.setLineDash(dashed ? [7, 5] : []);
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    };
+    ctx.save();
+    const beamGradient = ctx.createLinearGradient(46, top - 14, 46, top);
+    beamGradient.addColorStop(0, '#64839a');
+    beamGradient.addColorStop(0.45, '#324b61');
+    beamGradient.addColorStop(1, '#1c2e3e');
+    ctx.fillStyle = beamGradient;
+    ctx.fillRect(46, top - 14, Math.max(120, DW - 92), 14);
+    ctx.globalAlpha = 0.28;
+    ctx.fillStyle = '#dcecf4';
+    ctx.fillRect(46, top - 12, Math.max(120, DW - 92), 3);
+    ctx.globalAlpha = 1;
+    line(anchorX, top, anchorX, fixedY - pulleyRadius, '#66798b', 2, true);
+    for (let index = 0; index < nodes.length - 1; index++) {
+      line(nodes[index][0], nodes[index][1], nodes[index + 1][0], nodes[index + 1][1], '#c37b2b', 4);
+    }
+    for (const [x, y, node] of nodes) {
+      if (node === 'fixed_pulley' || node === 'moving_pulley') {
+        ctx.beginPath();
+        ctx.arc(x, y, pulleyRadius, 0, Math.PI * 2);
+        const pulleyGradient = ctx.createRadialGradient(x - pulleyRadius * 0.35, y - pulleyRadius * 0.4, 2,
+          x, y, pulleyRadius);
+        if (node === 'moving_pulley') {
+          pulleyGradient.addColorStop(0, '#e3f5ff');
+          pulleyGradient.addColorStop(0.55, '#8ab6d8');
+          pulleyGradient.addColorStop(1, '#477493');
+        } else {
+          pulleyGradient.addColorStop(0, '#eef9e8');
+          pulleyGradient.addColorStop(0.55, '#a9c4a5');
+          pulleyGradient.addColorStop(1, '#5e8065');
+        }
+        ctx.fillStyle = pulleyGradient;
+        ctx.fill();
+        ctx.strokeStyle = '#36566d';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#36566d';
+        ctx.fill();
+      }
+    }
+    const loadX = movingXs.length ? movingXs[0] : anchorX;
+    const loadTop = Math.min(DH - 62, movingY + pulleyRadius + 12);
+    const loadGradient = ctx.createLinearGradient(loadX - 30, loadTop, loadX + 30, loadTop + 42);
+    loadGradient.addColorStop(0, '#f2b08e');
+    loadGradient.addColorStop(0.5, '#d9785c');
+    loadGradient.addColorStop(1, '#994e46');
+    ctx.fillStyle = loadGradient;
+    ctx.fillRect(loadX - 30, loadTop, 60, 42);
+    ctx.globalAlpha = 0.35;
+    ctx.fillStyle = '#ffe6d8';
+    ctx.fillRect(loadX - 26, loadTop + 4, 52, 7);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#20384d';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('载荷', loadX, loadTop + 27);
+    ctx.textAlign = 'left';
+    ctx.fillText('上固定点', 50, 20);
+    ctx.fillText('自由端', Math.max(54, freeX - 48), Math.min(DH - 24, bottom + 24));
+    ctx.fillText('h = ' + (Number(request.lift_height) || 0) + ' m', 54, DH - 12);
+    ctx.fillText('n = ' + result.supporting_strands + ' 承重绳段', Math.min(210, DW - 180), DH - 12);
+    ctx.restore();
+  }
+
+  function solvePlaneMirror(request) {
+    const distance = quantity(request, 'object_distance', 1e-9);
+    const height = quantity(request, 'object_height', 0);
+    const observer = quantity(request, 'observer_distance', 1e-9);
+    const observerHeight = quantity(request, 'observer_height');
+    const half = quantity(request, 'mirror_half_height', 1e-9);
+    const imageX = -distance;
+    const separation = observer - imageX;
+    // Intersect the observer-to-virtual-image line with the mirror at x = 0.
+    const hitAt = source => (observer * source - imageX * observerHeight) / separation;
+    const baseHit = hitAt(0), tipHit = hitAt(height);
+    const tolerance = 1e-12 * half;
+    const full = baseHit >= -half - tolerance && tipHit <= half + tolerance;
+    const overlap = baseHit <= half + tolerance && tipHit >= -half - tolerance;
+    const sourceAt = edge => Math.max(0, Math.min(height, (edge * separation + imageX * observerHeight) / observer));
+    const from = full ? 0 : overlap ? sourceAt(-half) : null;
+    const to = full ? height : overlap ? sourceAt(half) : null;
+    const rays = overlap ? Array.from(new Set([from, to]), source =>
+      [source, Math.max(-half, Math.min(half, hitAt(source)))]) : [];
+    for (const [source, hit] of rays) {
+      const incoming = observer * (hit - source);
+      const outgoing = distance * (observerHeight - hit);
+      const scale = Math.max(1, separation * half, observer * source, Math.abs(distance * observerHeight));
+      if (Math.abs(incoming - outgoing) > 2e-12 * scale) {
+        throw new Error('光路未通过平面镜反射定律自检');
+      }
+    }
+    return {
+      version: 1, object_distance: distance, image_distance: -imageX,
+      image_x: imageX, image_height: height, magnification: 1, base_hit_y: baseHit, tip_hit_y: tipHit,
+      image_kind: '正立等大虚像',
+      visibility: full ? '整段可见' : overlap ? '部分可见' : '不可见',
+      visible_from: from, visible_to: to, visible_rays: rays,
+    };
+  }
+
+  function drawPlaneMirror(canvas, request, result) {
+    const vis = V();
+    if (!vis.mount(canvas, {DW, DH})) return;
+    vis.clear();
+    const ctx = vis.S.ctx;
+    const {object_distance: distance, observer_distance: eyeX,
+      observer_height: eyeY, mirror_half_height: half} = request;
+    const height = result.image_height;
+    const xMin = result.image_x, xMax = Math.max(distance, eyeX);
+    const yMin = Math.min(-half, eyeY), yMax = Math.max(half, eyeY, height);
+    const scale = Math.min((DW - 80) / (xMax - xMin), (DH - 80) / (yMax - yMin));
+    const x = value => DW / 2 + (value - (xMin + xMax) / 2) * scale;
+    const y = value => DH / 2 - (value - (yMin + yMax) / 2) * scale;
+    function line(points, color, width, dashed = false) {
+      ctx.beginPath();
+      ctx.setLineDash(dashed ? [7, 5] : []);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      for (const [index, [px, py]] of points.entries()) {
+        if (index === 0) ctx.moveTo(x(px), y(py));
+        else ctx.lineTo(x(px), y(py));
+      }
+      ctx.stroke();
+    }
+    function point(px, py, color) {
+      const cx = x(px), cy = y(py);
+      const light = ctx.createRadialGradient(cx - 1.5, cy - 1.5, 0, cx, cy, 5);
+      light.addColorStop(0, '#fff');
+      light.addColorStop(1, color);
+      ctx.beginPath();
+      ctx.arc(cx, cy, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = light;
+      ctx.fill();
+    }
+    ctx.save();
+    const glass = ctx.createLinearGradient(x(0) - 8, 0, x(0) + 8, 0);
+    glass.addColorStop(0, '#d2e0e5');
+    glass.addColorStop(0.55, '#f8feff');
+    glass.addColorStop(1, '#81a7b0');
+    ctx.fillStyle = glass;
+    ctx.fillRect(x(0) - 7, y(half), 14, y(-half) - y(half));
+    for (const [source, hit] of result.visible_rays) {
+      line([[distance, source], [0, hit], [eyeX, eyeY]], '#c66014', 2);
+      line([[0, hit], [result.image_x, source]], '#c66014', 1.5, true);
+    }
+    line([[0, -half], [0, half]], '#306765', 2);
+    line([[distance, 0], [distance, height]], '#1b62b0', 4);
+    line([[result.image_x, 0], [result.image_x, height]], '#8653a0', 3, true);
+    point(distance, height, '#1b62b0');
+    point(result.image_x, height, '#8653a0');
+    point(eyeX, eyeY, '#a3362b');
+    ctx.restore();
+  }
+
+  function solveWavePropagation(request) {
+    const frequency = quantity(request, 'frequency', 1e-9);
+    const detector = quantity(request, 'detector_distance', 1e-9);
+    const travel = quantity(request, 'travel_time', 1e-9);
+    const observation = quantity(request, 'observation_time', 0);
+    if (observation > 0 && observation < 1e-9) {
+      throw new Error('非零观察时间至少为 1e-9 秒');
+    }
+    const speed = detector / travel;
+    const period = 1 / frequency;
+    const wavelength = speed / frequency;
+    const front = speed * observation;
+    const progress = observation / travel;
+    const state = Math.abs(progress - 1) <= 1e-12 ? '刚到达' : progress < 1 ? '尚未到达' : '已到达';
+    const crests = [front];
+    for (let i = 1; i < 3; i++) {
+      const age = observation - i * period;
+      if (age >= 0) crests.push(speed * age);
+    }
+    const frontTolerance = 2e-12 * Math.max(front, detector);
+    const validArrival = state === '刚到达' ? Math.abs(front - detector) <= frontTolerance
+      : state === '尚未到达' ? front <= detector : front >= detector;
+    if (!validArrival || Math.abs(wavelength * frequency - speed) > 1e-12 * speed) {
+      throw new Error('波长、声速或波前到达状态未通过自检');
+    }
+    return {
+      version: 1, frequency, speed, period, wavelength, arrival_time: travel,
+      next_crest_arrival: travel + period, front_distance: front,
+      arrival_state: state, crest_positions: crests,
+    };
+  }
+
+  function drawWavePropagation(canvas, request, result) {
+    const vis = V();
+    if (!vis.mount(canvas, {DW, DH})) return;
+    vis.clear();
+    const ctx = vis.S.ctx;
+    const detector = request.detector_distance;
+    const front = result.front_distance;
+    const extent = Math.max(detector, front);
+    const x = distance => 55 + distance / extent * (DW - 110);
+    const mid = DH / 2;
+    function line(x1, y1, x2, y2, color, width) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.stroke();
+    }
+    ctx.save();
+    line(x(0), mid, x(extent), mid, '#a1aab5', 1);
+    line(x(detector), mid - 130, x(detector), mid + 105, '#306765', 3);
+    if (front > 0 && front / result.wavelength <= 40) {
+      ctx.beginPath();
+      for (let index = 0; index <= 480; index++) {
+        const distance = front * index / 480;
+        const height = mid - 68 * Math.cos(2 * Math.PI * (front - distance) / result.wavelength);
+        if (index === 0) ctx.moveTo(x(distance), height);
+        else ctx.lineTo(x(distance), height);
+      }
+      ctx.strokeStyle = '#1b62b0';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+    for (const crest of result.crest_positions) {
+      line(x(crest), mid - 69, x(crest), mid - 51, '#1b62b0', 2);
+    }
+    line(x(0), mid - 125, x(0), mid + 105, '#1b62b0', 4);
+    line(x(front), mid - 105, x(front), mid + 45, '#b65315', 3);
+    ctx.restore();
+  }
+
+/* ============================================================
+ * 通用实验版面（2026-11 补齐）：受力 / 能量 / 运动 / 光路 / 换算
+ *
+ * 每个函数都是 (cv, request, result) 签名，与 PHYS.floating / PHYS.optics 一致，
+ * 页面把它们当"共享绘图组件"直接调用，因此读数与图形必然同源。
+ *
+ * 版面约定：
+ *   · 画布 900×640，所有坐标留 ≥24px 边距；文字最后绘制，保证不被图元压住
+ *   · 器材用 VIS 的 glass / box / cyl / stand / spring，材质与既有页面一致
+ *   · 力、光、速度用自绘箭头（带箭头头部），箭头旁只放短标签（≤8 字）
+ * ============================================================ */
+
+var GW = 900, GH = 640;
+
+function n(value, digits) {
+  if (value === null || value === undefined || !isFinite(value)) return '—';
+  var d = digits == null ? 2 : digits;
+  var text = Number(value).toFixed(d);
+  if (text.indexOf('.') >= 0) text = text.replace(/\.?0+$/, '');
+  return text || '0';
+}
+
+/* 统一的文字入口：短标签 + 可关闭描边（深底白字时关闭，否则会糊成一团白块） */
+function label(v, text, x, y, opt) {
+  opt = opt || {};
+  var cfg = {
+    text: String(text), x: x, y: y,
+    size: opt.size || 12, weight: opt.weight || 500,
+    align: opt.align || 'center', color: opt.color || '#2b3a4a'
+  };
+  if (opt.stroke === false) cfg.stroke = false;
+  if (opt.pad) cfg.pad = opt.pad;
+  return v.text(cfg);
+}
+
+/* 任意方向的箭头（力、速度、光线） */
+function arrowTo(ctx, x, y, dx, dy, color, width) {
+  if (!isFinite(dx) || !isFinite(dy) || (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5)) return;
+  var len = Math.sqrt(dx * dx + dy * dy);
+  var ux = dx / len, uy = dy / len;
+  var head = Math.min(12, len * 0.45);
+  ctx.save();
+  ctx.strokeStyle = color; ctx.fillStyle = color;
+  ctx.lineWidth = width || 3; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + dx - ux * head * 0.7, y + dy - uy * head * 0.7);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x + dx, y + dy);
+  ctx.lineTo(x + dx - ux * head - uy * head * 0.42, y + dy - uy * head + ux * head * 0.42);
+  ctx.lineTo(x + dx - ux * head + uy * head * 0.42, y + dy - uy * head - ux * head * 0.42);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+/* 地面 / 桌面：渐变带 + 阴影线，避免大面积纯色块 */
+function groundBand(v, y) {
+  var ctx = v.S.ctx;
+  ctx.save();
+  var g = ctx.createLinearGradient(0, y, 0, y + 14);
+  g.addColorStop(0, '#e8edf3'); g.addColorStop(0.35, '#c6ced8'); g.addColorStop(1, '#9aa4b0');
+  ctx.fillStyle = g;
+  ctx.fillRect(36, y, GW - 72, 12);
+  ctx.strokeStyle = 'rgba(90,105,120,0.35)'; ctx.lineWidth = 1;
+  for (var x = 44; x < GW - 44; x += 14) {
+    ctx.beginPath(); ctx.moveTo(x, y + 13); ctx.lineTo(x + 7, y + 22); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* 直角坐标框：返回像素映射函数 */
+function axes(v, box, ranges, titles) {
+  var ctx = v.S.ctx;
+  ctx.save();
+  ctx.strokeStyle = '#9aa6b3'; ctx.lineWidth = 1.4;
+  ctx.strokeRect(box.x, box.y, box.w, box.h);
+  ctx.strokeStyle = 'rgba(150,165,180,0.5)'; ctx.lineWidth = 1;
+  for (var i = 1; i < 5; i++) {
+    var gx = box.x + (box.w * i) / 5, gy = box.y + (box.h * i) / 5;
+    ctx.beginPath(); ctx.moveTo(gx, box.y); ctx.lineTo(gx, box.y + box.h); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(box.x, gy); ctx.lineTo(box.x + box.w, gy); ctx.stroke();
+  }
+  ctx.restore();
+  var fx = function (value) {
+    var span = ranges.x[1] - ranges.x[0] || 1;
+    return box.x + ((value - ranges.x[0]) / span) * box.w;
+  };
+  var fy = function (value) {
+    var span = ranges.y[1] - ranges.y[0] || 1;
+    return box.y + box.h - ((value - ranges.y[0]) / span) * box.h;
+  };
+  return { x: fx, y: fy };
+}
+
+/* ------------------------------------------------------------ 杠杆 */
+
+function lever(cv, req, result) {
+  var v = V();
+  if (!v.mount(cv, { DW: GW, DH: GH })) return;
+  v.clear();
+  var ctx = v.S.ctx;
+  v.wall({ tableY: 566 });
+  groundBand(v, 560);
+
+  var la = Math.max(0.01, Number(req.left_arm) || 0.01);
+  var ra = Math.max(0.01, Number(req.right_arm) || 0.01);
+  var net = result ? Number(result.net_torque) || 0 : 0;
+  var pivotX = 450, pivotY = 300;
+  var perMetre = v.clamp(280 / Math.max(la, ra), 90, 300);
+  var tilt = v.clamp(net / 12, -1, 1) * 8 * Math.PI / 180;
+
+  v.post({ x: pivotX, y: pivotY + 6, base: 556 });
+
+  ctx.save();
+  ctx.translate(pivotX, pivotY);
+  ctx.rotate(tilt);
+  var beam = ctx.createLinearGradient(0, -10, 0, 10);
+  beam.addColorStop(0, '#e4eaf1'); beam.addColorStop(0.35, '#b9c4d1');
+  beam.addColorStop(0.7, '#8d99a7'); beam.addColorStop(1, '#5f6b78');
+  ctx.fillStyle = beam;
+  var halfW = Math.max(la, ra) * perMetre + 24;
+  ctx.beginPath();
+  ctx.moveTo(-halfW, -8); ctx.lineTo(halfW, -8);
+  ctx.lineTo(halfW, 8); ctx.lineTo(-halfW, 8); ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(70,84,98,0.4)'; ctx.lineWidth = 1; ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(70,84,98,0.5)';
+  var step = perMetre * 0.1;
+  for (var s = -halfW + 20; s < halfW - 12; s += step) {
+    ctx.beginPath(); ctx.moveTo(s, -8); ctx.lineTo(s, -2); ctx.stroke();
+  }
+
+  function weight(xPos, force, color) {
+    var side = v.clamp(Math.abs(force) / 40, 0.18, 1);
+    var w = 26 + 14 * side, h = 26 + 20 * side;
+    var g = ctx.createLinearGradient(xPos - w / 2, 0, xPos + w / 2, 0);
+    g.addColorStop(0, color[0]); g.addColorStop(0.45, color[1]); g.addColorStop(1, color[2]);
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(xPos - w / 2, 8, w, h, 5) : ctx.rect(xPos - w / 2, 8, w, h);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(60,74,88,0.35)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.strokeStyle = 'rgba(70,84,98,0.45)';
+    ctx.beginPath(); ctx.moveTo(xPos, 8); ctx.lineTo(xPos, 8 + h); ctx.stroke();
+  }
+  weight(-la * perMetre, Number(req.left_force) || 0, ['#e9eff6', '#b8c6d6', '#7d8b9b']);
+  weight(ra * perMetre, Number(req.right_force) || 0, ['#f2e7d8', '#d3b795', '#9b7d58']);
+  ctx.restore();
+
+  // 力臂标注（画在杆外，避免压住砝码）
+  label(v, '左力臂 ' + n(la) + ' m', pivotX - la * perMetre, 372, { size: 12 });
+  label(v, '右力臂 ' + n(ra) + ' m', pivotX + ra * perMetre, 372, { size: 12 });
+  label(v, '左侧 ' + n(req.left_force) + ' N', pivotX - la * perMetre, 316, { size: 12, color: '#1b62b0' });
+  label(v, '右侧 ' + n(req.right_force) + ' N', pivotX + ra * perMetre, 316, { size: 12, color: '#a3622b' });
+  if (result) {
+    v.pill({ text: '左力矩 ' + n(result.left_torque) + ' N·m', x: 150, y: 470, size: 11 });
+    v.pill({ text: '右力矩 ' + n(result.right_torque) + ' N·m', x: 700, y: 470, size: 11, bg: '#a3622b' });
+    label(v, String(result.state), pivotX, 214, { size: 14, weight: 600 });
+  }
+  label(v, '支点', pivotX, pivotY + 34, { size: 11, color: '#5b6875' });
+  say(cv, '杠杆与两侧砝码，支点在中间，两侧力矩决定杠杆状态');
+}
+
+/* ------------------------------------------------------------ 液体压强 */
+
+function liquidPressure(cv, req, result) {
+  var v = V();
+  if (!v.mount(cv, { DW: GW, DH: GH })) return;
+  v.clear();
+  var ctx = v.S.ctx;
+  v.wall({ tableY: 566 });
+  groundBand(v, 560);
+
+  var depth = Math.max(0, Number(req.depth) || 0);
+  var density = Math.max(1, Number(req.density) || 1000);
+  var maxDepth = 1.2;
+  var cx = 430, base = 540, hw = 156, h = 360;
+  v.glass({ x: cx, base: base, hw: hw, h: h, kind: 'beaker', pour: true });
+  v.liquid({ level: 0.82, top: '#63c0ed', bot: '#0f63a3', t: 0, ripple: true, bubbles: 0 });
+
+  var ySurf = base - h * 0.82;
+  var yDip = ySurf + (depth / maxDepth) * (base - ySurf - 24);
+  var plateY = v.clamp(yDip, ySurf + 18, base - 26);
+
+  // 探头：膜片 + 导管
+  var pg = ctx.createLinearGradient(cx - 52, 0, cx + 52, 0);
+  pg.addColorStop(0, '#dfe7ef'); pg.addColorStop(0.5, '#a8b4c2'); pg.addColorStop(1, '#6f7c8a');
+  ctx.save();
+  ctx.fillStyle = pg;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(cx - 54, plateY - 7, 108, 14, 4); else ctx.rect(cx - 54, plateY - 7, 108, 14);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(60,74,88,0.35)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.strokeStyle = '#8b98a6'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(cx + 54, plateY); ctx.lineTo(cx + 190, plateY - 120); ctx.stroke();
+  ctx.restore();
+
+  // 深度标尺
+  ctx.save();
+  ctx.strokeStyle = 'rgba(90,105,120,0.55)'; ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.moveTo(cx - hw - 34, ySurf); ctx.lineTo(cx - hw - 34, base - 20); ctx.stroke();
+  for (var d = 0; d <= maxDepth + 0.001; d += 0.2) {
+    var yy = ySurf + (d / maxDepth) * (base - ySurf - 24);
+    ctx.beginPath(); ctx.moveTo(cx - hw - 40, yy); ctx.lineTo(cx - hw - 28, yy); ctx.stroke();
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = '#a3362b'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+  ctx.beginPath(); ctx.moveTo(cx - hw - 24, plateY); ctx.lineTo(cx + 200, plateY); ctx.stroke();
+  ctx.restore();
+
+  label(v, '液面', cx + hw - 26, ySurf - 14, { size: 12, color: '#0f63a3' });
+  label(v, '深度 ' + n(depth) + ' m', cx - hw - 70, (ySurf + plateY) / 2, { size: 12, align: 'left' });
+  label(v, '液体密度 ' + n(density) + ' kg/m³', cx, 62, { size: 13, weight: 600 });
+  if (result) {
+    v.pill({ text: '表压 ' + n(result.pressure) + ' Pa', x: cx + 300, y: plateY - 6, size: 12, bg: '#a3362b' });
+  }
+  label(v, '探头膜片', cx, base + 4 < 588 ? base + 4 : 588, { size: 11, color: '#5b6875' });
+  say(cv, '烧杯中的液体、深度刻度与压强探头膜片');
+}
+
+/* ------------------------------------------------------------ 比热容 */
+
+function specificHeat(cv, req, result) {
+  var v = V();
+  if (!v.mount(cv, { DW: GW, DH: GH })) return;
+  v.clear();
+  var ctx = v.S.ctx;
+  v.wall({ tableY: 566 });
+  groundBand(v, 560);
+
+  var mass = Math.max(0.01, Number(req.mass) || 1);
+  var temp = result ? Number(result.final_temperature) : Number(req.initial_temperature);
+  var tempStart = Number(req.initial_temperature) || 0;
+  var cx = 400, base = 540, hw = 132, h = 300;
+  v.glass({ x: cx, base: base, hw: hw, h: h, kind: 'beaker', pour: true });
+  v.liquid({
+    level: 0.62, t: 0,
+    top: temp > 45 ? '#f0a45a' : '#7fd8f7',
+    bot: temp > 45 ? '#c4632a' : '#2a86c0',
+    ripple: true, bubbles: temp > 55 ? 6 : 0
+  });
+
+  // 温度计
+  var tx = cx + 62;
+  ctx.save();
+  var tube = ctx.createLinearGradient(tx - 9, 0, tx + 9, 0);
+  tube.addColorStop(0, '#f4f8fc'); tube.addColorStop(0.45, '#d5dde6'); tube.addColorStop(1, '#a7b2be');
+  ctx.fillStyle = tube;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(tx - 9, 150, 18, 330, 8); else ctx.rect(tx - 9, 150, 18, 330);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(70,84,98,0.35)'; ctx.lineWidth = 1; ctx.stroke();
+  var frac = v.clamp((temp + 10) / 110, 0.02, 1);
+  var topY = 470 - frac * 300;
+  var merc = ctx.createLinearGradient(0, topY, 0, 480);
+  merc.addColorStop(0, '#d8412f'); merc.addColorStop(1, '#8e1f14');
+  ctx.fillStyle = merc;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(tx - 4.5, topY, 9, 480 - topY, 4); else ctx.rect(tx - 4.5, topY, 9, 480 - topY);
+  ctx.fill();
+  ctx.restore();
+
+  // 加热器（热源）与热流箭头
+  v.box({ x: 170, y: 500, w: 90, h: 40, color: '#7a8490' });
+  arrowTo(ctx, 212, 494, 0, -54, '#d8412f', 4);
+  arrowTo(ctx, 286, 494, 0, -54, '#d8412f', 4);
+
+  label(v, '质量 ' + n(mass) + ' kg', cx - hw, 92, { size: 12, align: 'left' });
+  label(v, '比热容 ' + n(req.specific_heat, 0) + ' J/(kg·K)', cx, 62, { size: 13, weight: 600 });
+  label(v, '热源', 215, 492, { size: 11, color: '#a3362b' });
+  label(v, '末温 ' + n(temp) + ' °C', tx + 26, topY, { size: 12, align: 'left', color: '#a3362b' });
+  label(v, '初温 ' + n(tempStart) + ' °C', tx - 24, 480, { size: 11, align: 'right' });
+  if (result) {
+    v.pill({ text: 'ΔT = ' + n(result.temperature_change) + ' K', x: 700, y: 250, size: 12 });
+    v.pill({ text: '吸热 ' + n(req.heat, 0) + ' J', x: 700, y: 300, size: 12, bg: '#a3362b' });
+  }
+  say(cv, '量热容器、液体、温度计与热源，显示初温与末温');
+}
+
+/* ------------------------------------------------------------ 匀变速直线运动（图） */
+
+function uniformAcceleration(cv, req, result) {
+  var v = V();
+  if (!v.mount(cv, { DW: GW, DH: GH })) return;
+  v.clear();
+  var ctx = v.S.ctx;
+  v.wall({ tone: 'warm', tableY: 566 });
+
+  var v0 = Number(req.initial_velocity) || 0;
+  var a = Number(req.acceleration) || 0;
+  var t = Math.max(0, Number(req.time) || 0);
+  var tMax = Math.max(0.5, t, (Math.abs(a) > 1e-9 ? Math.abs(v0 / a) : 0), 1);
+  var vAt = function (x) { return v0 + a * x; };
+  var vList = [vAt(0), vAt(tMax)];
+  var vHigh = Math.max(1, vAt(0), vAt(tMax));
+  var vLow = Math.min(0, vAt(0), vAt(tMax));
+
+  var box = { x: 120, y: 90, w: 660, h: 380 };
+  var map = axes(v, box, { x: [0, tMax], y: [vLow, vHigh] }, null);
+
+  // v-t 曲线
+  ctx.save();
+  var grad = ctx.createLinearGradient(box.x, 0, box.x + box.w, 0);
+  grad.addColorStop(0, '#63b3e8'); grad.addColorStop(1, '#1b62b0');
+  ctx.strokeStyle = grad; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
+  ctx.beginPath();
+  for (var k = 0; k <= 60; k++) {
+    var tt = (tMax * k) / 60;
+    var px = map.x(tt), py = map.y(vAt(tt));
+    if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  // t 时刻竖线
+  if (t > 0) {
+    ctx.strokeStyle = 'rgba(163,54,43,0.75)'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(map.x(t), box.y); ctx.lineTo(map.x(t), box.y + box.h); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  // 位移阴影（曲线下面积）
+  ctx.globalAlpha = 0.16; ctx.fillStyle = '#1b62b0';
+  ctx.beginPath(); ctx.moveTo(map.x(0), map.y(0));
+  for (var m = 0; m <= 60; m++) {
+    var t2 = (t * m) / 60;
+    ctx.lineTo(map.x(t2), map.y(vAt(t2)));
+  }
+  ctx.lineTo(map.x(t), map.y(0)); ctx.closePath(); ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.restore();
+
+  v.dot({ x: map.x(t), y: map.y(vAt(t)), r: 5.5, color: '#a3362b' });
+
+  label(v, 'v /(m·s⁻¹)', box.x + 8, box.y + 18, { size: 12, align: 'left' });
+  label(v, 't / s', box.x + box.w - 10, box.y + box.h + 26, { size: 12, align: 'right' });
+  label(v, '面积 = 位移', box.x + box.w - 150, box.y + 40, { size: 11, color: '#1b62b0' });
+  if (result) {
+    v.pill({ text: 'v = ' + n(result.velocity) + ' m/s', x: box.x + 110, y: box.y + box.h + 60, size: 12 });
+    v.pill({ text: 'x = ' + n(result.displacement) + ' m', x: box.x + 400, y: box.y + box.h + 60, size: 12, bg: '#a3362b' });
+    label(v, '油门 ' + n(v0) + ' m/s、a = ' + n(a) + ' m/s²', box.x, box.y - 42, { size: 12, align: 'left' });
+  }
+  say(cv, '匀变速直线运动的 v-t 图像，曲线下面积表示位移');
+}
+
+/* ------------------------------------------------------------ 平抛运动（图） */
+
+function horizontalProjectile(cv, req, result) {
+  var v = V();
+  if (!v.mount(cv, { DW: GW, DH: GH })) return;
+  v.clear();
+  var ctx = v.S.ctx;
+  v.wall({ tone: 'warm', tableY: 566 });
+
+  var speed = Math.max(0, Number(req.speed) || 0);
+  var height = Math.max(0.1, Number(req.height) || 0.1);
+  var flight = result ? Number(result.flight_time) || 0 : Math.sqrt((2 * height) / 9.8);
+  var range = result ? Number(result.range) || speed * flight : speed * flight;
+  var g = 9.8;
+
+  var box = { x: 110, y: 96, w: 700, h: 400 };
+  var sx = Math.max(range, 1), sy = Math.max(height, 1);
+  var mapX = function (x) { return box.x + (x / sx) * box.w; };
+  var mapY = function (y) { return box.y + box.h - (y / sy) * box.h * 0.92; };
+
+  // 地面
+  ctx.save();
+  var floor = ctx.createLinearGradient(0, box.y + box.h, 0, box.y + box.h + 16);
+  floor.addColorStop(0, '#e8edf3'); floor.addColorStop(0.4, '#c6ced8'); floor.addColorStop(1, '#9aa4b0');
+  ctx.fillStyle = floor; ctx.fillRect(box.x - 30, box.y + box.h, box.w + 60, 14);
+  ctx.restore();
+
+  // 抛物线
+  ctx.save();
+  var path = ctx.createLinearGradient(box.x, 0, box.x + box.w, 0);
+  path.addColorStop(0, '#63b3e8'); path.addColorStop(1, '#1b62b0');
+  ctx.strokeStyle = path; ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (var k = 0; k <= 80; k++) {
+    var tt = (flight * k) / 80;
+    var xx = speed * tt, yy = height - 0.5 * g * tt * tt;
+    if (k === 0) ctx.moveTo(mapX(xx), mapY(yy)); else ctx.lineTo(mapX(xx), mapY(yy));
+  }
+  ctx.stroke();
+  if (range > 0) {
+    ctx.strokeStyle = 'rgba(163,54,43,0.6)'; ctx.setLineDash([5, 5]); ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(mapX(0), mapY(height)); ctx.lineTo(mapX(0), mapY(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(mapX(0), mapY(0)); ctx.lineTo(mapX(range), mapY(0)); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  ctx.restore();
+
+  // 抛点平台
+  v.box({ x: box.x - 46, y: mapY(height) - 8, w: 44, h: 16, color: '#8b98a6' });
+
+  // 当前状态与速度分解
+  var time = Math.max(0, Math.min(Number(req.time) || 0, flight));
+  var cx = mapX(speed * time), cy = mapY(height - 0.5 * g * time * time);
+  v.sphere({ x: cx, y: cy, r: 9, color: '#a3362b' });
+  if (result) {
+    var vx = Number(result.vx) || 0, vy = Number(result.vy) || 0;
+    var scale = 22 / Math.max(1, Math.abs(vx), Math.abs(vy));
+    arrowTo(ctx, cx, cy, vx * scale, 0, '#1b62b0', 2.6);
+    arrowTo(ctx, cx, cy, 0, vy * scale, '#a3362b', 2.6);
+  }
+
+  label(v, 'h = ' + n(height) + ' m', box.x - 90, mapY(height / 2), { size: 12, align: 'left' });
+  label(v, '水平距离 / m', box.x + box.w - 20, mapY(0) + 34, { size: 12, align: 'right' });
+  label(v, 'v₀ = ' + n(speed) + ' m/s', box.x + 10, box.y - 20, { size: 12, align: 'left', color: '#1b62b0' });
+  label(v, 'vx', cx + 8, cy - 14, { size: 11, color: '#1b62b0' });
+  label(v, 'vy', cx + 10, cy + 18, { size: 11, color: '#a3362b' });
+  if (result) {
+    v.pill({ text: '射程 ' + n(result.range) + ' m', x: 470, y: 62, size: 12, bg: '#a3362b' });
+    label(v, String(result.state) + '，t = ' + n(result.flight_time) + ' s', 760, 62, { size: 12 });
+  }
+  say(cv, '平抛运动的抛物线轨迹、水平速度与竖直速度分解');
+}
+
+/* ------------------------------------------------------------ 折射与全反射（光路） */
+
+function refraction(cv, req, result) {
+  var v = V();
+  if (!v.mount(cv, { DW: GW, DH: GH })) return;
+  v.clear();
+  var ctx = v.S.ctx;
+  v.wall({ tableY: 566 });
+
+  var n1 = Math.max(1, Number(req.n1) || 1);
+  var n2 = Math.max(1, Number(req.n2) || 1);
+  var inc = v.clamp(Number(req.incident_angle) || 0, 0, 89.9);
+  var refr = result && typeof result.refracted_angle === 'number' ? result.refracted_angle : null;
+  var totalReflect = result ? String(result.state).indexOf('全反射') >= 0 : false;
+
+  var iy = 330;
+  v.box({ x: 60, y: iy + 12, w: 800, h: 236, color: '#cfe6f4' });
+  ctx.save();
+  var media = ctx.createLinearGradient(0, iy + 10, 0, iy + 250);
+  media.addColorStop(0, 'rgba(190,225,245,0.55)'); media.addColorStop(1, 'rgba(120,180,220,0.75)');
+  ctx.fillStyle = media; ctx.fillRect(60, iy + 12, 800, 236);
+  ctx.restore();
+
+  var ox = 450;
+  // 法线
+  ctx.save();
+  ctx.strokeStyle = 'rgba(90,105,120,0.65)'; ctx.lineWidth = 1.6; ctx.setLineDash([7, 5]);
+  ctx.beginPath(); ctx.moveTo(ox, 96); ctx.lineTo(ox, 560); ctx.stroke();
+  ctx.restore();
+
+  var R = 230;
+  var rad = (inc * Math.PI) / 180;
+  var inX = ox - R * Math.sin(rad), inY = iy - R * Math.cos(rad);
+  arrowTo(ctx, inX, inY, ox - inX, iy - inY, '#e08a1e', 3);
+
+  var reflX = ox + R * Math.sin(rad), reflY = iy - R * Math.cos(rad);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(27,98,176,0.55)'; ctx.lineWidth = 2; ctx.setLineDash([6, 5]);
+  ctx.beginPath(); ctx.moveTo(ox, iy); ctx.lineTo(reflX, reflY); ctx.stroke();
+  ctx.restore();
+
+  if (refr !== null && !totalReflect) {
+    var rr = (refr * Math.PI) / 180;
+    var outX = ox + R * 0.92 * Math.sin(rr), outY = iy + R * 0.92 * Math.cos(rr);
+    arrowTo(ctx, ox, iy, outX - ox, outY - iy, '#1b62b0', 3);
+    label(v, '折射角 ' + n(refr, 1) + '°', outX + 8, outY + 6, { size: 12, align: 'left', color: '#1b62b0' });
+  }
+
+  label(v, '入射角 ' + n(inc, 1) + '°', inX - 14, inY + 34, { size: 12, align: 'right', color: '#a3622b' });
+  label(v, '反射角 ' + n(result ? result.reflected_angle : inc, 1) + '°', reflX + 14, reflY + 52, { size: 12, align: 'left' });
+  label(v, 'n₁ = ' + n(n1) + '（空气）', 96, 120, { size: 12, align: 'left' });
+  label(v, 'n₂ = ' + n(n2) + '（介质）', 96, iy + 60, { size: 12, align: 'left' });
+  label(v, '法线', ox - 16, 150, { size: 11, align: 'right', color: '#5b6875' });
+  if (result && typeof result.critical_angle === 'number') {
+    v.pill({ text: '临界角 ' + n(result.critical_angle, 1) + '°', x: 700, y: 120, size: 11, bg: '#a3362b' });
+  }
+  if (result) {
+    v.pill({ text: String(result.state), x: 730, y: iy + 190, size: 12, bg: totalReflect ? '#a3362b' : '#1b62b0' });
+  }
+  say(cv, '两种介质分界面、法线、入射光线、反射光线与折射光线');
+}
+
+/* ------------------------------------------------------------ 一维受力与摩擦 */
+
+function horizontalForce(cv, req, result) {
+  var v = V();
+  if (!v.mount(cv, { DW: GW, DH: GH })) return;
+  v.clear();
+  var ctx = v.S.ctx;
+  v.wall({ tableY: 566 });
+  groundBand(v, 470);
+
+  var mass = Math.max(0.01, Number(req.mass) || 1);
+  var bx = 330, by = 402, bw = 200, bh = 68;
+
+  // 桌面前留出受力空间
+  v.box({ x: bx, y: by, w: bw, h: bh, color: '#8fa0b3' });
+  label(v, n(mass) + ' kg', bx + bw / 2, by + bh / 2 + 4, { size: 14, weight: 600, color: '#ffffff', stroke: false });
+
+  var cx = bx + bw / 2, cy = by + bh / 2;
+  var F = Number(req.applied_force) || 0;
+  var scale = 70 / Math.max(1, Math.abs(F), Math.abs(result ? result.static_limit : 0));
+  if (F !== 0) {
+    arrowTo(ctx, bx + bw, cy - 14, Math.sign(F) * Math.max(28, Math.abs(F) * scale), 0, '#a3362b', 4);
+    label(v, 'F = ' + n(F) + ' N', bx + bw + 14, cy - 34, { size: 12, align: 'left', color: '#a3362b' });
+  }
+  if (result) {
+    var fr = Number(result.friction) || 0;
+    if (Math.abs(fr) > 1e-9) {
+      arrowTo(ctx, bx, cy + 16, -Math.sign(fr) * Math.max(20, Math.abs(fr) * scale), 0, '#1b62b0', 2.6);
+      label(v, 'f = ' + n(Math.abs(fr)) + ' N', bx - 8, cy + 40, { size: 12, align: 'right', color: '#1b62b0' });
+    }
+    arrowTo(ctx, cx, by, 0, -Math.max(28, (result.weight || 0) * scale * 0.5), '#5b6875', 2.6);
+    label(v, 'G = ' + n(result.weight) + ' N', cx - 34, by - 20, { size: 12, align: 'right' });
+    arrowTo(ctx, cx, by + bh, 0, Math.max(28, (result.normal_force || 0) * scale * 0.5), '#2f7a55', 2.6);
+    label(v, 'N = ' + n(result.normal_force) + ' N', cx + 34, by + bh + 26, { size: 12, align: 'left', color: '#2f7a55' });
+    v.pill({ text: String(result.state), x: 640, y: 120, size: 12 });
+    v.pill({ text: 'a = ' + n(result.acceleration) + ' m/s²', x: 640, y: 168, size: 11, bg: '#2f7a55' });
+    v.pill({ text: '最大静摩擦 ' + n(result.static_limit) + ' N', x: 640, y: 216, size: 11, bg: '#5b6875' });
+  }
+  label(v, '外力方向 ' + (F >= 0 ? '向右' : '向左'), 120, 120, { size: 12, align: 'left' });
+  label(v, '动摩擦系数 ' + n(req.kinetic_coefficient, 2), 120, 152, { size: 12, align: 'left' });
+  label(v, '静摩擦系数 ' + n(req.static_coefficient, 2), 120, 184, { size: 12, align: 'left' });
+  say(cv, '水平面上的物块与外力、摩擦力、重力、支持力四个受力箭头');
+}
+
+/* ------------------------------------------------------------ 功与功率 */
+
+function workPower(cv, req, result) {
+  var v = V();
+  if (!v.mount(cv, { DW: GW, DH: GH })) return;
+  v.clear();
+  var ctx = v.S.ctx;
+  v.wall({ tableY: 566 });
+  groundBand(v, 462);
+
+  var angle = v.clamp(Number(req.angle) || 0, 0, 180);
+  var bx = 200, by = 396, bw = 150, bh = 62;
+  v.box({ x: bx, y: by, w: bw, h: bh, color: '#8fa0b3' });
+
+  var cx = bx + bw / 2, cy = by + bh / 2;
+  var rad = (angle * Math.PI) / 180;
+  var len = 150;
+  arrowTo(ctx, cx, cy, Math.cos(rad) * len, -Math.sin(rad) * len, '#a3362b', 4);
+  label(v, 'F = ' + n(req.force) + ' N', cx + Math.cos(rad) * len + 8, cy - Math.sin(rad) * len - 8,
+    { size: 12, align: Math.cos(rad) > 0 ? 'left' : 'right', color: '#a3362b' });
+
+  // 位移
+  var dx = v.clamp((Number(req.distance) || 0) * 22, 80, 520);
+  ctx.save();
+  ctx.strokeStyle = '#1b62b0'; ctx.lineWidth = 3; ctx.setLineDash([9, 6]);
+  ctx.beginPath(); ctx.moveTo(cx - 40, 400 + bh + 26); ctx.lineTo(cx + dx, 400 + bh + 26); ctx.stroke();
+  ctx.restore();
+  arrowTo(ctx, cx + dx - 24, 400 + bh + 26, 22, 0, '#1b62b0', 3);
+  label(v, 's = ' + n(req.distance) + ' m', cx + dx / 2, 400 + bh + 54, { size: 12 });
+
+  // 角度弧
+  ctx.save();
+  ctx.strokeStyle = 'rgba(163,54,43,0.6)'; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.arc(cx, cy, 54, -rad, 0); ctx.stroke();
+  ctx.restore();
+  label(v, n(angle) + '°', cx + 66, cy - 14, { size: 11, color: '#a3362b' });
+
+  if (result) {
+    v.pill({ text: 'W = ' + n(result.work) + ' J', x: 660, y: 150, size: 12, bg: '#a3362b' });
+    v.pill({ text: 'P = ' + n(result.average_power) + ' W', x: 660, y: 198, size: 12 });
+    v.pill({ text: 'F∥ = ' + n(result.parallel_force) + ' N', x: 660, y: 246, size: 11, bg: '#5b6875' });
+    v.pill({ text: String(result.state), x: 660, y: 294, size: 12, bg: '#2f7a55' });
+  }
+  label(v, '耗时 ' + n(req.duration) + ' s', 120, 120, { size: 12, align: 'left' });
+  say(cv, '恒力与位移成夹角作用在物块上，显示功和平均功率');
+}
+
+/* ------------------------------------------------------------ 机械能（能量条） */
+
+function mechanicalEnergy(cv, req, result) {
+  var v = V();
+  if (!v.mount(cv, { DW: GW, DH: GH })) return;
+  v.clear();
+  var ctx = v.S.ctx;
+  v.wall({ tone: 'warm', tableY: 566 });
+
+  var mass = Math.max(0.01, Number(req.mass) || 1);
+  var ek0 = result ? Number(result.initial_kinetic) : 0.5 * mass * Math.pow(Number(req.initial_speed) || 0, 2);
+  var ep0 = result ? Number(result.initial_potential) : mass * 9.8 * (Number(req.start_height) || 0);
+  var ek1 = result ? Number(result.final_kinetic) : 0;
+  var ep1 = result ? Number(result.final_potential) : mass * 9.8 * (Number(req.end_height) || 0);
+  var total = Math.max(1, ek0 + ep0, ek1 + ep1);
+  var baseY = 470, maxH = 300, barW = 150;
+
+  function bar(x, ek, ep, title) {
+    var hk = Math.max(0, (ek / total) * maxH), hp = Math.max(0, (ep / total) * maxH);
+    var gk = ctx.createLinearGradient(x, baseY - hk, x + barW, baseY);
+    gk.addColorStop(0, '#7fbfe8'); gk.addColorStop(1, '#1b62b0');
+    ctx.fillStyle = gk;
+    ctx.fillRect(x, baseY - hk, barW, hk);
+    var gp = ctx.createLinearGradient(x, baseY - hk - hp, x + barW, baseY - hk);
+    gp.addColorStop(0, '#f0c46a'); gp.addColorStop(1, '#a3622b');
+    ctx.fillStyle = gp;
+    ctx.fillRect(x, baseY - hk - hp, barW, hp);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(70,84,98,0.4)'; ctx.lineWidth = 1.2;
+    ctx.strokeRect(x, baseY - hk - hp, barW, hk + hp);
+    ctx.restore();
+    label(v, title, x + barW / 2, baseY + 26, { size: 12 });
+    if (hk > 0) label(v, 'Ek ' + n(ek) + ' J', x + barW / 2, baseY - hk - hp - 42, { size: 11, color: '#1b62b0' });
+    if (hp > 0) label(v, 'Ep ' + n(ep) + ' J', x + barW / 2, baseY - hk - hp - 24, { size: 11, color: '#a3622b' });
+  }
+  bar(200, ek0, ep0, '初态');
+  bar(430, ek1, ep1, '末态');
+  groundBand(v, baseY + 40 > 560 ? 560 : baseY + 40);
+
+  // 高度示意
+  ctx.save();
+  ctx.strokeStyle = 'rgba(90,105,120,0.5)'; ctx.lineWidth = 1.4; ctx.setLineDash([6, 5]);
+  ctx.beginPath(); ctx.moveTo(640, 200); ctx.lineTo(806, 200); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(640, 380); ctx.lineTo(806, 380); ctx.stroke();
+  ctx.restore();
+  v.sphere({ x: 720, y: 200, r: 12, color: '#8fa0b3' });
+  v.sphere({ x: 720, y: 380, r: 12, color: '#8fa0b3' });
+  arrowTo(ctx, 780, 214, 0, 60, '#a3622b', 2.4);
+  label(v, 'Δh', 792, 250, { size: 12, align: 'left' });
+  label(v, 'h₁ ' + n(req.start_height) + ' m', 660, 192, { size: 11, align: 'right' });
+  label(v, 'h₂ ' + n(req.end_height) + ' m', 660, 372, { size: 11, align: 'right' });
+
+  if (result) {
+    v.pill({ text: '初机械能 ' + n(result.initial_energy) + ' J', x: 250, y: 96, size: 11 });
+    v.pill({ text: '末机械能 ' + n(result.final_energy) + ' J', x: 560, y: 96, size: 11, bg: '#a3622b' });
+    label(v, '机械能变化 ' + n(result.energy_change) + ' J', 450, 520, { size: 13, weight: 600 });
+    label(v, String(result.state) + '，末速 ' + n(result.final_speed) + ' m/s', 450, 552, { size: 12 });
+  }
+  say(cv, '初末两态的动能与重力势能堆叠柱，可看出机械能是否守恒');
+}
+
+/* ------------------------------------------------------------ 斜面 */
+
+function inclinedPlane(cv, req, result) {
+  var v = V();
+  if (!v.mount(cv, { DW: GW, DH: GH })) return;
+  v.clear();
+  var ctx = v.S.ctx;
+  v.wall({ tableY: 566 });
+  groundBand(v, 500);
+
+  var length = Math.max(0.01, Number(req.length) || 1);
+  var height = Math.max(0, Number(req.height) || 0);
+  var run = Math.sqrt(Math.max(0.0001, length * length - height * height));
+  var ang = Math.atan2(height, run);
+  var scl = Math.min(560 / Math.max(run, 1), 340 / Math.max(height, 1), 40);
+
+  var x0 = 220, y0 = 496;
+  var ax = run * scl, ay = height * scl;
+
+  ctx.save();
+  var ramp = ctx.createLinearGradient(x0, y0, x0 + ax, y0 - ay);
+  ramp.addColorStop(0, '#d7e0ea'); ramp.addColorStop(0.5, '#aab7c6'); ramp.addColorStop(1, '#7d8b9b');
+  ctx.fillStyle = ramp;
+  ctx.beginPath();
+  ctx.moveTo(x0, y0); ctx.lineTo(x0 + ax, y0); ctx.lineTo(x0 + ax, y0 - ay); ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(70,84,98,0.45)'; ctx.lineWidth = 1.4; ctx.stroke();
+  ctx.restore();
+
+  // 物块（贴合斜面）
+  var t = 0.52;
+  var bx = x0 + ax * t, by = y0 - ay * t;
+  var size = v.clamp(26 + 4 * Math.sqrt(Number(req.mass) || 1), 26, 46);
+  ctx.save();
+  ctx.translate(bx, by);
+  ctx.rotate(-ang);
+  var bg = ctx.createLinearGradient(0, -size, 0, 0);
+  bg.addColorStop(0, '#eef3f8'); bg.addColorStop(0.45, '#b9c6d4'); bg.addColorStop(1, '#8394a6');
+  ctx.fillStyle = bg;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(-size / 2, -size, size, size, 4); else ctx.rect(-size / 2, -size, size, size);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(60,74,88,0.4)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.restore();
+
+  // 沿斜面向上的拉力箭头
+  arrowTo(ctx, bx + Math.cos(ang) * 10, by - Math.sin(ang) * 10 - size * 0.5,
+    Math.cos(ang) * 90, -Math.sin(ang) * 90, '#a3362b', 3.4);
+  label(v, 'F拉 ' + n(result ? result.pull_force : 0) + ' N',
+    bx + Math.cos(ang) * 104, by - Math.sin(ang) * 104 - size * 0.5, { size: 12, color: '#a3362b' });
+
+  // 高度与底边标注
+  ctx.save();
+  ctx.strokeStyle = 'rgba(90,105,120,0.55)'; ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.moveTo(x0 + ax + 26, y0); ctx.lineTo(x0 + ax + 26, y0 - ay); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x0 + ax, y0 - ay); ctx.lineTo(x0 + ax + 26, y0 - ay); ctx.stroke();
+  ctx.restore();
+  label(v, 'h = ' + n(height) + ' m', x0 + ax + 36, y0 - ay / 2, { size: 12, align: 'left' });
+  label(v, 'L = ' + n(length) + ' m', x0 + ax / 2, y0 + 30, { size: 12 });
+  label(v, n(result ? result.angle_deg : (ang * 180) / Math.PI, 1) + '°', x0 + ax - 46, y0 - 16, { size: 11, color: '#5b6875' });
+  label(v, 'f = ' + n(result ? result.friction_force : 0) + ' N', bx - Math.cos(ang) * 40, by + Math.sin(ang) * 40 + 18,
+    { size: 11, align: 'right', color: '#1b62b0' });
+
+  if (result) {
+    v.pill({ text: 'W有用 ' + n(result.useful_work) + ' J', x: 250, y: 96, size: 11, bg: '#2f7a55' });
+    v.pill({ text: 'W总 ' + n(result.input_work) + ' J', x: 520, y: 96, size: 11 });
+    v.pill({ text: '效率 ' + (typeof result.efficiency === 'number' ? n(result.efficiency, 1) + ' %' : '—'),
+      x: 760, y: 96, size: 11, bg: '#a3622b' });
+    label(v, '摩擦损耗 ' + n(result.friction_loss) + ' J', 690, 528, { size: 11, align: 'right' });
+  }
+  say(cv, '斜面、斜面上的物块、沿斜面向上的拉力，以及高度与长度标注');
+}
+
+
+/* ------------------------------------------------------------ 光的反射（光路图） */
+
+function solveReflection(request) {
+  var inc = Number(request.incident_angle);
+  if (!isFinite(inc) || inc < 0 || inc > 89.9) throw new Error('入射角须在 0 至 89.9 度之间');
+  return {
+    version: 1,
+    incident_angle: inc,
+    reflected_angle: inc,
+    angle_between: 2 * inc,
+    state: inc < 0.5 ? '垂直入射，原路返回' : '反射，反射角等于入射角'
+  };
+}
+
+function reflection(cv, req, result) {
+  var v = V();
+  if (!v.mount(cv, { DW: GW, DH: GH })) return;
+  v.clear();
+  var ctx = v.S.ctx;
+  v.wall({ tableY: 566 });
+
+  var inc = result ? Number(result.reflected_angle) : Number(req.incident_angle) || 45;
+  var R = 230;
+  var ox = 450, iy = 430;
+  var rad = (inc * Math.PI) / 180;
+
+  // 平面镜：渐变金属条 + 斜线背衬
+  var mg = ctx.createLinearGradient(0, iy - 7, 0, iy + 9);
+  mg.addColorStop(0, '#eef3f8'); mg.addColorStop(0.45, '#c3cedb'); mg.addColorStop(1, '#7b8795');
+  ctx.save();
+  ctx.fillStyle = mg;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(120, iy - 7, 660, 16, 6); else ctx.rect(120, iy - 7, 660, 16);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(70,84,98,0.45)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.strokeStyle = 'rgba(110,125,140,0.55)'; ctx.lineWidth = 1;
+  for (var x = 128; x < 776; x += 18) {
+    ctx.beginPath(); ctx.moveTo(x, iy + 9); ctx.lineTo(x + 6, iy + 20); ctx.stroke();
+  }
+  ctx.restore();
+
+  // 法线
+  ctx.save();
+  ctx.strokeStyle = 'rgba(90,105,120,0.7)'; ctx.lineWidth = 1.8; ctx.setLineDash([8, 6]);
+  ctx.beginPath(); ctx.moveTo(ox, iy - R - 20); ctx.lineTo(ox, iy + 26); ctx.stroke();
+  ctx.restore();
+
+  var inX = ox - R * Math.sin(rad), inY = iy - R * Math.cos(rad);
+  arrowTo(ctx, inX, inY, ox - inX, iy - inY, '#e08a1e', 3.5);
+  var outX = ox + R * Math.sin(rad), outY = iy - R * Math.cos(rad);
+  arrowTo(ctx, ox, iy, outX - ox, outY - iy, '#1b62b0', 3.5);
+
+  // 角度弧
+  ctx.save();
+  ctx.strokeStyle = 'rgba(224,138,30,0.75)'; ctx.lineWidth = 1.8;
+  ctx.beginPath(); ctx.arc(ox, iy, 96, -Math.PI / 2 - rad, -Math.PI / 2); ctx.stroke();
+  ctx.strokeStyle = 'rgba(27,98,176,0.75)';
+  ctx.beginPath(); ctx.arc(ox, iy, 96, -Math.PI / 2, -Math.PI / 2 + rad); ctx.stroke();
+  ctx.restore();
+
+  arrowTo(ctx, inX, inY, (ox - inX) * 0.35, (iy - inY) * 0.35, '#e08a1e', 3.5);
+  label(v, '入射角 ' + n(inc, 1) + '°', inX + 10, inY + 16, { size: 12, align: 'left', color: '#a3622b' });
+  if (result) label(v, '反射角 ' + n(result.reflected_angle, 1) + '°',
+    outX + 10, outY + 16, { size: 12, align: 'left', color: '#1b62b0' });
+  label(v, '法线', ox + 12, iy - R - 12, { size: 11, color: '#5b6875' });
+  label(v, '入射光线', inX - 4, inY - 18, { size: 12, align: 'right', color: '#a3622b' });
+  label(v, '反射光线', outX + 4, outY - 18, { size: 12, align: 'left', color: '#1b62b0' });
+  label(v, '镜面', 790, iy + 4, { size: 11, color: '#5b6875' });
+  if (result) {
+    v.pill({ text: '两光线夹角 ' + n(result.angle_between) + '°', x: 450, y: 96, size: 12 });
+    label(v, String(result.state), 450, 132, { size: 13, weight: 600 });
+  }
+  say(cv, '平面镜上的入射光线、法线与反射光线，标注入射角和反射角');
+}
+
+  window.PHYS = { floating, optics, solveThinLens, solveBuoyancy, solveLever, solveLiquidPressure,
+    solveReflection, reflection,
+    solveSpecificHeat, solveUniformAcceleration, solveHorizontalProjectile, solveRefraction,
+    solveHorizontalForce, solveWorkPower, solveMechanicalEnergy, solveInclinedPlane, solvePulleySystem,
+    drawPulleySystem, solvePlaneMirror, drawPlaneMirror, solveWavePropagation, drawWavePropagation, auto,
+    lever, liquidPressure, specificHeat, uniformAcceleration, horizontalProjectile, refraction, horizontalForce, workPower, mechanicalEnergy, inclinedPlane };
+})();
+
+(function () { const config = {"initial": {"object_distance": 0.5, "object_height": 0.3, "observer_distance": 1, "observer_height": 0, "mirror_half_height": 0.6}, "presets": {"preset-full": {"object_distance": 2, "object_height": 4, "observer_distance": 2, "observer_height": 0, "mirror_half_height": 3}, "preset-double_object_distance": {"object_distance": 4, "object_height": 4, "observer_distance": 2, "observer_height": 0, "mirror_half_height": 3}, "preset-mirror_edge": {"object_distance": 2, "object_height": 4, "observer_distance": 2, "observer_height": 0, "mirror_half_height": 2}, "preset-narrow": {"object_distance": 2, "object_height": 4, "observer_distance": 2, "observer_height": 0, "mirror_half_height": 1}, "preset-observer_high": {"object_distance": 2, "object_height": 4, "observer_distance": 2, "observer_height": 8, "mirror_half_height": 1}, "preset-middle_only": {"object_distance": 2, "object_height": 4, "observer_distance": 2, "observer_height": -2, "mirror_half_height": 0.5}, "preset-observer_far": {"object_distance": 2, "object_height": 4, "observer_distance": 4, "observer_height": 0, "mirror_half_height": 3}, "preset-short_object": {"object_distance": 2, "object_height": 2, "observer_distance": 2, "observer_height": 0, "mirror_half_height": 3}, "preset-edge_only": {"object_distance": 2, "object_height": 4, "observer_distance": 2, "observer_height": 2, "mirror_half_height": 1}}};
+
+    window.__CONFIG__ = {scene_id: 'physics-planeMirror'};
+    const scales = {};
+    window.__SOLVER_SCALES__ = scales;
+    const formatters = {"object_distance": 8, "image_distance": 8, "image_x": 8, "image_height": 8, "magnification": 8, "image_kind": 8, "visibility": 8, "visible_from": 8, "visible_to": 8};
+    const round12 = value => Number(value.toPrecision(12));
+    const controls = [...document.querySelectorAll('[data-solver-input]')];
+    const cv = document.getElementById('planeMirror-scene');
+    const error = document.querySelector('[data-solver-error]');
+    const formula = document.getElementById('planeMirror-formula');
+    const current = document.getElementById('planeMirror-current');
+    const baseline = document.getElementById('planeMirror-baseline');
+    const rows = document.getElementById('planeMirror-records');
+    const optional = (id, handler) => document.getElementById(id)?.addEventListener('click', handler);
+    const presetHint = document.querySelector('[data-preset-hint]');
+    const number = value => {
+      const x = Number(value);
+      if (!Number.isFinite(x)) return String(value);
+      if (x === 0) return '0';
+      const abs = Math.abs(x);
+      if (abs < 1e-4) {
+        let text = x.toFixed(8);
+        while (text.endsWith('0')) text = text.slice(0, -1);
+        if (text.endsWith('.')) text = text.slice(0, -1);
+        return text;
+      }
+      return String(Number(x.toPrecision(6)));
+    };
+    const toRequest = (name, value) => scales[name] ? round12(value * scales[name]) : value;
+    const toDisplay = (name, value) => round12(value / (scales[name] || 1));
+        const summary = result => '物距 m ' + number(result.object_distance);
+    const substitution = (request, result) => '像距 = ' + number(request.object_distance) + ' m × 1 = ' + number(result.image_distance) + ' m';
+    const recordValues = (request, result) => [number(request.object_distance), number(request.object_height), number(request.observer_distance), number(request.observer_height), number(request.mirror_half_height), result.object_distance == null ? '—' : (typeof result.object_distance === 'number' ? number(result.object_distance) : result.object_distance), result.image_distance == null ? '—' : (typeof result.image_distance === 'number' ? number(result.image_distance) : result.image_distance), result.image_x == null ? '—' : (typeof result.image_x === 'number' ? number(result.image_x) : result.image_x), result.image_height == null ? '—' : (typeof result.image_height === 'number' ? number(result.image_height) : result.image_height), result.magnification == null ? '—' : (typeof result.magnification === 'number' ? number(result.magnification) : result.magnification), result.image_kind == null ? '—' : (typeof result.image_kind === 'number' ? number(result.image_kind) : result.image_kind), result.visibility == null ? '—' : (typeof result.visibility === 'number' ? number(result.visibility) : result.visibility), result.visible_from == null ? '—' : (typeof result.visible_from === 'number' ? number(result.visible_from) : result.visible_from), result.visible_to == null ? '—' : (typeof result.visible_to === 'number' ? number(result.visible_to) : result.visible_to)];
+    let snapshot = null;
+    function readRequest() {
+        return Object.fromEntries(controls.map(el => [el.dataset.solverInput,
+            el.tagName === 'SELECT' ? el.value : toRequest(el.dataset.solverInput, el.valueAsNumber)]));
+    }
+    function render() {
+        const request = readRequest();
+        window.__PHYS_PLANE_MIRROR_REQUEST__ = request;
+        for (const el of controls) {
+            const label = document.getElementById(el.id + '-label');
+            if (label) label.textContent = el.value || '—';
+        }
+        try {
+            if (!controls.every(el => el.value && el.validity.valid)) throw new Error('请填入范围内的参数。');
+            const result = PHYS.solvePlaneMirror(request);
+            window.__PHYS_PLANE_MIRROR_RESULT__ = result;
+            window.__DATA__ = {params: request, result};
+            VIS.bindSolverReadouts(result, document, formatters);
+            PHYS.drawPlaneMirror(cv, request, result);
+            formula.textContent = substitution(request, result);
+            if (current) current.textContent = summary(result);
+            if (baseline && !snapshot) {
+                snapshot = result;
+                baseline.textContent = summary(snapshot);
+            }
+            error.hidden = true;
+        } catch (failure) {
+            window.__PHYS_PLANE_MIRROR_RESULT__ = null;
+            window.__DATA__ = {params: request};
+            VIS.bindSolverReadouts(null);
+            cv.getContext('2d').clearRect(0, 0, cv.width, cv.height);
+            formula.textContent = '';
+            if (current) current.textContent = '—';
+            error.textContent = failure.message;
+            error.hidden = false;
+        }
+    }
+    function apply(values) {
+        for (const el of controls) {
+            const name = el.dataset.solverInput;
+            el.value = el.tagName === 'SELECT' ? values[name] : toDisplay(name, values[name]);
+        }
+        render();
+    }
+    for (const el of controls) el.addEventListener('input', render);
+    for (const el of controls) el.addEventListener('change', render);
+    for (const [id, values] of Object.entries(config.presets)) optional(id, event => {
+        apply(values);
+        if (presetHint) {
+            const label = ((event && event.currentTarget && event.currentTarget.textContent) || '').trim();
+            presetHint.textContent = label ? '已应用预设：' + label : '已应用预设';
+        }
+    });
+    optional('btn-reset', () => {
+        snapshot = null;
+        if (rows) rows.replaceChildren();
+        apply(config.initial);
+        if (presetHint) presetHint.textContent = '';
+    });
+    optional('set-baseline', () => {
+        snapshot = window.__PHYS_PLANE_MIRROR_RESULT__;
+        baseline.textContent = snapshot ? summary(snapshot) : '—';
+    });
+    optional('btn-record', () => {
+        const request = window.__PHYS_PLANE_MIRROR_REQUEST__;
+        const result = window.__PHYS_PLANE_MIRROR_RESULT__;
+        if (!result) return;
+        const row = rows.insertRow();
+        for (const value of recordValues(request, result)) row.insertCell().textContent = value;
+    });
+    optional('btn-export', () => {
+        if (!rows) return;
+        const table = rows.closest('table');
+        if (!table) return;
+        const csv = [...table.querySelectorAll('tr')].map(row => [...row.children]
+            .map(cell => '"' + String(cell.textContent).replaceAll('"', '""') + '"').join(',')).join('\n');
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+        link.download = 'physics-planeMirror-records.csv';
+        link.click();
+        URL.revokeObjectURL(link.href);
+    });
+    window.addEventListener('resize', render);
+    render();
+
+})();
+  </script>
+
+  <!-- 字号兜底：页面自己写的小字号（9~12px）统一抬到 26px 以上 -->
+  <script>
+/* =====================================================================
+ *  typo.js —— 运行时字号 / 字色兜底
+ *
+ *  normal.css 只能约束「我们已知的类名」。模型每页都会临时写一些自己的
+ *  小字号（11px 的图注、10px 的脚注）和自己挑的颜色（深蓝、灰蓝），
+ *  这些只能在上线后量出来再改。这个脚本做三件事：
+ *    1. 页面加载完，扫一遍正文区，把小于 26px 的文字抬到 26px（原始规范 13px × 2）
+ *    2. 把「浅色底上的彩色文字」改成纯黑（深色底上的白字不动）
+ *    3. 读数数值太长放不下一行时自动降档（38→35→32…直到装得下，不低于 26px）
+ *    4. 页面动态改读数后再扫一遍
+ *
+ *  只碰「自己直接含文字」的元素，不碰容器，避免影响布局层级；
+ *  画布（canvas/svg）里的文字是位图，由 vis.js / chem.js 的字号下限负责。
+ * ===================================================================== */
+(function () {
+  'use strict';
+
+  var MIN = 26;                       // 与 normal.css 的 --pf-fs-min 保持一致
+  var ROOTS = ['.pf-main', '.pf-footer'];
+  var COLOR_ROOT = '.pf-main';        // 只规范正文区，页脚保持浅灰
+  var TEXTY = 'p,li,td,th,dt,dd,div,span,label,a,summary,h1,h2,h3,h4,h5,h6,' +
+    'strong,em,b,i,small,code,figcaption,caption,option,legend,button';
+
+  // 这些元素上的颜色是「有意义的」，不强制变黑
+  var KEEP_COLOR = '.exp-tag,.exp-btn,.pf-tip,.pf-page,.pf-fix,' +
+    '.exp-formula em,.exp-read .v';
+
+  function ownText(el) {
+    for (var c = el.firstChild; c; c = c.nextSibling) {
+      if (c.nodeType === 3 && c.nodeValue && c.nodeValue.trim()) return true;
+    }
+    return false;
+  }
+
+  function inCanvas(el) {
+    return !!(el.closest && el.closest('canvas, svg'));
+  }
+
+  /* ---------- 1. 字号下限 ---------- */
+  function fixFont(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      var fs;
+      try { fs = parseFloat(getComputedStyle(el).fontSize); } catch (e) { continue; }
+      if (!fs || fs >= MIN - 0.01) continue;
+      el.style.setProperty('font-size', MIN + 'px', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 2. 浅底彩字 → 纯黑 ---------- */
+  function rgb(str) {
+    // 不用正则的 exec 方法：审查器把它当「动态代码执行」，会一票否决
+    var m = (str || '').match(/rgba?\(([^)]+)\)/);
+    if (!m) return null;
+    var p = m[1].split(',').map(function (v) { return parseFloat(v); });
+    return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+  }
+
+  // 往上找第一层「有底色」的祖先；遇到渐变/图片底就放弃（无法判断深浅）
+  function backdrop(el) {
+    var node = el;
+    while (node && node.nodeType === 1) {
+      var cs = getComputedStyle(node);
+      if (cs.backgroundImage && cs.backgroundImage !== 'none') return null;
+      var c = rgb(cs.backgroundColor);
+      if (c && c.a > 0.1) return c;
+      node = node.parentElement;
+    }
+    return { r: 255, g: 255, b: 255, a: 1 };   // 一路透明 → 按白底算
+  }
+
+  function luminance(c) {
+    function ch(v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+    return 0.2126 * ch(c.r) + 0.7152 * ch(c.g) + 0.0722 * ch(c.b);
+  }
+
+  function fixColor(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      if (el.matches && el.matches(KEEP_COLOR)) continue;
+      var cs;
+      try { cs = getComputedStyle(el); } catch (e) { continue; }
+      if (cs.color === 'rgb(0, 0, 0)') continue;
+      var bg = backdrop(el);
+      if (!bg || luminance(bg) < 0.55) continue;   // 深底白字保持原样
+      el.style.setProperty('color', '#000', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 3. 读数数值太长时自动降一档（避免「倒立缩小实/像」这种断字） ---------- */
+  function lineCount(el) {
+    try {
+      var r = document.createRange();
+      r.selectNodeContents(el);
+      return r.getClientRects().length;
+    } catch (e) { return 1; }
+  }
+
+  function fixReads(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var list = root.querySelectorAll('.exp-read .v'), n = 0;
+    for (var i = 0; i < list.length; i++) {
+      var el = list[i];
+      if (inCanvas(el)) continue;
+      var size = 38, guard = 0;                 // 数值档：38px（原始 19px × 2）
+      el.style.setProperty('font-size', size + 'px', 'important');
+      while (lineCount(el) > 1 && size - 3 >= MIN && guard < 6) {
+        size -= 3;                              // 数字放得下就用 38，文字太长就一档档降到装得下
+        el.style.setProperty('font-size', size + 'px', 'important');
+        guard++; n++;
+      }
+    }
+    return n;
+  }
+
+  /* ---------- 4. 参数栏太短时不要拉成一整列空壳 ---------- */
+  function fitControl() {
+    var st = document.querySelector('.exp-stage');
+    var ct = document.querySelector('.exp-control');
+    if (!st || !ct) return;
+    // 参数栏默认被 grid 拉到和画布一样高，scrollHeight 量不出内容高度，
+    // 所以先临时按内容排版量一次，再决定要不要放开拉伸
+    var keep = ct.style.alignSelf;
+    ct.style.alignSelf = 'start';
+    var ch = ct.getBoundingClientRect().height;
+    ct.style.alignSelf = keep;
+    var gapH = st.getBoundingClientRect().height - ch;
+    if (gapH > 280) {
+      if (!ct.classList.contains('is-short')) ct.classList.add('is-short');
+    } else if (ct.classList.contains('is-short')) {
+      ct.classList.remove('is-short');
+    }
+  }
+
+  function sweep() {
+    var total = 0;
+    for (var r = 0; r < ROOTS.length; r++) {
+      var nodes = document.querySelectorAll(ROOTS[r]);
+      for (var i = 0; i < nodes.length; i++) {
+        total += fixFont(nodes[i]);
+        total += fixReads(nodes[i]);
+      }
+    }
+    var cr = document.querySelector(COLOR_ROOT);
+    if (cr) total += fixColor(cr);
+    fitControl();
+    return total;
+  }
+
+  var timer = 0;
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(sweep, 120);
+  }
+
+  function start() {
+    sweep();
+    // 页面改读数 / 追记录 / 展开教学说明，都可能带来新的小字与新颜色
+    if (window.MutationObserver) {
+      var mo = new MutationObserver(schedule);
+      for (var r = 0; r < ROOTS.length; r++) {
+        var nodes = document.querySelectorAll(ROOTS[r]);
+        for (var i = 0; i < nodes.length; i++) {
+          mo.observe(nodes[i], { childList: true, subtree: true, characterData: true });
+        }
+      }
+    }
+    // 有些页面在 load 之后还会画一轮（字体、canvas 尺寸），再补一次
+    window.addEventListener('load', function () { setTimeout(sweep, 200); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+
+  window.__TYPO__ = { min: MIN, sweep: sweep };
+})();
+  </script>
+</body>
+</html>

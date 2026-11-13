@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>凸透镜成像（变形测试夹具·像距写死）</title></head>
+<body>
+  <div class="exp-tags"><span class="exp-tag">物理</span><span class="exp-tag">初中八年级</span></div>
+  <div class="exp-read"><span class="k">像距</span><span class="v"><b data-solver-field="image_distance_cm">—</b></span></div>
+  <div class="exp-read"><span class="k">放大率</span><span class="v"><b data-solver-field="magnification">—</b></span></div>
+  <label>物距 u <input type="range" data-solver-input="u" min="5" max="60" step="0.5" value="30"></label>
+  <label>焦距 f <input type="range" data-solver-input="f" min="5" max="20" step="0.5" value="10"></label>
+  <script>
+    // 故意写死像距：控件会动、读数会“看起来变”，但结果不遵守高斯公式。
+    // 变形测试必须抓住它；只检查“值有没有变”的旧实现会放过。
+    function solve(u, f) {
+      return { u: u, f: f, image_distance_cm: 15, magnification: -0.5, state: '成像' };
+    }
+    function render() {
+      var u = Number(document.querySelector('[data-solver-input="u"]').value);
+      var f = Number(document.querySelector('[data-solver-input="f"]').value);
+      var result = solve(u, f);
+      window.__PHYS_LENS_REQUEST__ = { u: u, f: f };
+      window.__PHYS_LENS_RESULT__ = result;
+      document.querySelectorAll('[data-solver-field]').forEach(function (el) {
+        var key = el.getAttribute('data-solver-field');
+        el.textContent = result[key] == null ? '—' : String(result[key]);
+      });
+    }
+    document.querySelectorAll('[data-solver-input]').forEach(function (el) {
+      el.addEventListener('input', render);
+      el.addEventListener('change', render);
+    });
+    render();
+  </script>
+</body>
+</html>

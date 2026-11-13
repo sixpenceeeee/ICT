@@ -249,7 +249,9 @@ SCENE_LIBS = {
 # 页面 JS 里直接调用的库名，用于正文没写学科时的兜底判断
 CALL_HINTS = [
     ("CIRCUIT.", "circuit_solver.js"),
+    ("CHEMSOLVER.", "chem_solver.js"),
     ("CHEM.", "chem.js"), ("PHYS.", "phys.js"), ("MATH.", "math.js"),
+    ("MATHPAGE.", "math_page.js"),
     ("BIO.", "bio.js"), ("GEO.", "geo.js"), ("CS.", "cs.js"),
 ]
 
@@ -331,7 +333,28 @@ def render(title, secs, slug=None):
     html = shell
     for k, v in mapping.items():
         html = html.replace(k, v)
-    return html
+    return _with_stage_hint(html, secs.get("2") or "")
+
+
+#: ②区标题后面的提示语：外壳里写死「拖动画面可旋转视角」，对天平、烧杯这类
+#: 二维器材页是错的（会让学生以为拖不动就是页面坏了）。按 data-visual-type 改写。
+STAGE_HINTS = {
+    "apparatus": "调整参数，器材与读数同步变化",
+    "graph": "调整参数，曲线与读数同步变化",
+    "geometry": "拖动画面可旋转视角",
+    "diagram": "调整参数，图形与结论同步变化",
+    "process": "按步骤推进，观察每一步的现象",
+    "molecular": "切换结构，观察粒子排布",
+}
+DEFAULT_STAGE_HINT = "调整参数观察变化"
+
+
+def _with_stage_hint(html, stage_html):
+    """把 ② 区的提示语换成与演示类型相符的一句。"""
+    match = re.search(r'data-visual-type="([a-z]+)"', stage_html or "")
+    hint = STAGE_HINTS.get(match.group(1) if match else "", DEFAULT_STAGE_HINT)
+    return re.sub(r'(id="pf-stage-hint">)[^<]*(</span>)',
+                  lambda m: m.group(1) + hint + m.group(2), html, count=1)
 
 
 def _esc(s):
@@ -354,6 +377,22 @@ def _calls(html, token):
         pat = re.compile(r"(?<![A-Za-z0-9_.$])" + re.escape(token))
         _NS_CALL_RE[token] = pat
     return pat.search(html) is not None
+
+
+def _namespace_exported(html, namespace):
+    """Return whether a shared library exports its namespace on a global root.
+
+    Libraries may be wrapped in an IIFE and export through ``root.NAME``;
+    that is the same browser global as ``window.NAME`` when ``root`` is the
+    window object. Accept the common global aliases while avoiding comments or
+    plain text that merely mentions the namespace.
+    """
+    escaped = re.escape(namespace)
+    pat = re.compile(
+        r"(?<![A-Za-z0-9_$])(?:window|globalThis|self|root)\s*"
+        r"(?:\.\s*" + escaped + r"|\[\s*['\"]" + escaped + r"['\"]\s*\])\s*="
+    )
+    return pat.search(html or "") is not None
 
 
 def validate(html):
@@ -380,9 +419,9 @@ def validate(html):
         # 必须按「标识符左边界」匹配。以前直接 `token in html`，会把
         # PAGE_GEO.params 里的 "GEO." 当成地理库调用，报出根本不存在的
         # 注入缺失（二次函数页就被这样误伤），日志里一片红但页面是好的。
-        if _calls(html, token) and ("window." + ns) not in html:
+        if _calls(html, token) and not _namespace_exported(html, ns):
             problems.append("页面调用了 %s，但 %s 没有注入（检查 shell.py 的注入路由）" % (token, lib))
-    if _calls(html, "VIS.") and "window.VIS" not in html:
+    if _calls(html, "VIS.") and not _namespace_exported(html, "VIS"):
         problems.append("页面调用了 VIS 原语，但 vis.js 没有注入（检查 frame/vis.js）")
 
     for key, name in SECTIONS:

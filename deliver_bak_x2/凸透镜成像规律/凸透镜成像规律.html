@@ -1,0 +1,1326 @@
+<!doctype html>
+<html lang="zh-CN" class="pf-hosted" data-page-node-id="31yORe70SMDXxRYUgzAUX8">
+<head data-page-node-id="W0pRt4ablB30wlAUAXBLSZ">
+  <meta charset="UTF-8" data-page-node-id="Fag1YesHaZyynt1ffjuVIJ">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="HTq2ZEHgzDkkYSJCXziVds">
+  <link rel="icon" type="image/png" href="logo.png" data-page-node-id="HfSSIhgRrOPUjQy3PL9x9J">
+  <title>师伴-凸透镜成像规律</title>
+
+  <!-- 平台统一外壳（与老师下发的 template 保持一致，不要改） -->
+  <link rel="stylesheet" href="frame.css" data-page-node-id="OoT2JV3qKz4SuCWDyQHosc">
+  <!-- 六区域内容样式 -->
+  <link rel="stylesheet" href="exp.css" data-page-node-id="iHSxDNFyhSyBdzRvbpVLKh">
+  <style>
+.exp-state {
+  margin: 10px 0 0;
+  padding: 8px 11px;
+  border-radius: 9px;
+  background: #eaf5ff;
+  border: 1px solid #cfe6f8;
+  font-size: 12.8px;
+  font-weight: 600;
+  color: #1b4f7a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.5;
+}
+.exp-state .dot {
+  flex: 0 0 auto;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #3f8fd2;
+  box-shadow: 0 0 0 3px rgba(63, 143, 210, 0.18);
+}
+.exp-state.is-warn { background: #fff6e9; border-color: #fbd6a8; color: #94530f; }
+.exp-state.is-warn .dot { background: #e08a24; box-shadow: 0 0 0 3px rgba(224, 138, 36, 0.18); }
+.exp-state.is-virt { background: #f1ecfb; border-color: #d9cbf2; color: #5b3fa0; }
+.exp-state.is-virt .dot { background: #7e57d6; box-shadow: 0 0 0 3px rgba(126, 87, 214, 0.16); }
+.exp-record-head { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.exp-csv { flex: 0 0 auto; min-width: 0; padding: 6px 12px; font-size: 12.5px; }
+.exp-field .exp-val em { font-style: normal; font-weight: 600; color: var(--pf-muted); }
+  </style>
+                        <!-- 平台阅读规范：正文纯黑 / 最小字号 26px / 名称只在页眉 -->
+  <style>
+/* =====================================================================
+ *  normal.css —— 平台阅读规范（后置强制层）
+ *
+ *  它排在加载顺序的最后：
+ *      frame.css → exp.css → 页面自带样式(EXTRA_CSS) → 本文件
+ *  所以这里的规则会盖住前面所有定义，包括模型自己写进页面的 CSS。
+ *  作用只有一个：让 30 个页面读起来像同一个东西，而不是每页一个风格。
+ *
+ *  三条规范：
+ *    1. 正文文字一律纯黑 #000（不再跟随蓝色主题色）
+ *    2. 最小字号 26px（= 原始 13px × 2；配合 typo.js 兜住页面自带的 9~12px 小字）
+ *    3. 实验名称只在页眉出现一次，① 区不再重复
+ * ===================================================================== */
+
+:root {
+  --pf-fs-min: 26px;      /* 全站最小字号（= 原始 13px × 2），改这里就够 */
+  --pf-body-ink: #000;    /* 正文文字色 */
+}
+
+/* ---------------------------------------------------------------------
+ * 1. 正文纯黑
+ *    只作用于「承载正文的元素」，不碰按钮、胶囊标签、读数数值、警示块
+ *    这些有语义的强调色，否则页面会失去层次。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary,
+.pf-hosted .exp-wrap .exp-teach h3,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li,
+.pf-hosted .exp-wrap p,
+.pf-hosted .exp-wrap li,
+.pf-hosted .exp-wrap td,
+.pf-hosted .exp-wrap th,
+.pf-hosted .exp-wrap dt,
+.pf-hosted .exp-wrap dd,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-label,
+.pf-hosted .exp-wrap .exp-field,
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-table,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 段落里用来解释的斜体/引用也统一黑，不保留灰蓝 */
+.pf-hosted .exp-wrap .exp-body em,
+.pf-hosted .exp-wrap .exp-body i,
+.pf-hosted .exp-wrap .exp-body span,
+.pf-hosted .exp-wrap .exp-goals span {
+  color: var(--pf-body-ink) !important;
+}
+
+/* 代入式里的高亮结论（<em>）保留橙色，是「看这里」而不是正文 */
+.pf-hosted .exp-wrap .exp-formula em {
+  color: #b5561b !important;
+  font-weight: 800;
+}
+
+/* 警示块保留橙红语义色，但压深到接近黑，保证对比度 */
+.pf-hosted .exp-wrap .exp-alert {
+  color: #7c2d12 !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一抬到 26px+
+ *    （页面自己写死的更小字号由 typo.js 在运行时兜底）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-tag,
+.pf-hosted .exp-wrap .exp-hint,
+.pf-hosted .exp-wrap .exp-canvas-tip,
+.pf-hosted .exp-wrap .exp-read .k,
+.pf-hosted .exp-wrap .exp-read .u,
+.pf-hosted .exp-wrap .exp-goals-title,
+.pf-hosted .exp-wrap .exp-val,
+.pf-hosted .exp-wrap .exp-btn,
+.pf-hosted .exp-wrap select,
+.pf-hosted .exp-wrap input,
+.pf-hosted .pf-footer,
+.pf-hosted .pf-tip {
+  font-size: var(--pf-fs-min);
+}
+
+/* 中等档：说明类、代入式、表格、警示，比最小档再大 0.5px */
+.pf-hosted .exp-wrap .exp-formula,
+.pf-hosted .exp-wrap .exp-note,
+.pf-hosted .exp-wrap .exp-alert,
+.pf-hosted .exp-wrap .exp-table {
+  font-size: 27px;
+}
+
+/* 正文（学习目标 / 教学说明）用 28px，比辅助文字再大一档 */
+.pf-hosted .exp-wrap .exp-goals,
+.pf-hosted .exp-wrap .exp-goals li,
+.pf-hosted .exp-wrap .exp-body,
+.pf-hosted .exp-wrap .exp-body p,
+.pf-hosted .exp-wrap .exp-body li {
+  font-size: 28px;
+}
+
+/* 标题档：六区域标题 / 教学说明折叠头 */
+.pf-hosted .exp-wrap .exp-card > h2,
+.pf-hosted .exp-wrap .exp-teach summary {
+  font-size: 29px;
+}
+
+/* 读数数值：全站最大的字，读数一眼能看清 */
+.pf-hosted .exp-wrap .exp-read .v {
+  font-size: 38px;
+}
+
+/* ---------------------------------------------------------------------
+ * 2a-2. 演示区只留实物与图形
+ *      画布左下角那条「按住拖动可旋转视角…」是文字块，规范要求删掉。
+ *      页面若还生成 .exp-canvas-tip，这里统一隐藏，不用逐页改 HTML。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-canvas-tip {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 2b. 字号放大后的版式补偿
+ *     字大一倍，原来的格子宽度就不够了：读数卡按两列铺、允许换行，
+ *     表格窄了横向滚动。这几条只为「不挤、不裁」，不改字号。
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-wrap .exp-reads { gap: 12px; }
+
+.pf-hosted .exp-wrap .exp-read {
+  box-sizing: border-box;   /* 不加这句，百分比基准只算内容区，加上内边距就放不下 */
+  flex: 1 1 calc(50% - 7px);   /* 默认两列：窄屏、单列时也不会把字挤到折行 */
+  min-width: 0;
+}
+
+/* ④ 现在横跨整行，宽屏时一行铺开四个读数更像仪表盘 */
+@media (min-width: 1180px) {
+  .pf-hosted .exp-wrap .exp-read { flex: 1 1 calc(25% - 11px); }
+}
+
+.pf-hosted .exp-wrap .exp-table-wrap { overflow-x: auto; }
+
+.pf-hosted .exp-wrap .exp-tags { gap: 10px; }
+
+/* ---------------------------------------------------------------------
+ * 3. 实验名称只在页眉：① 区那个大标题删掉（外壳装配时已剥离，
+ *    这里再做一层兜底，防止旧页面或手写页面漏网）
+ * ------------------------------------------------------------------- */
+.pf-hosted .exp-info .exp-name {
+  display: none !important;
+}
+
+/* 名字挪走后，① 区首个元素不要留出额外的上间距 */
+.pf-hosted .exp-info > *:first-child {
+  margin-top: 0;
+}
+  </style>
+</head>
+<body data-page-node-id="3uNUp6k6ZwBt48VoZpiWCq">
+  <header class="pf-header" data-page-node-id="vUb5TGEZo2T9F3vKHrdXGs">
+    <span class="pf-logo" data-page-node-id="AZruTPSIwVomEi5aoLqm26"><img src="logo.png" alt="平台标志" data-page-node-id="blWhfueU3UZwq8Bv3os951"></span>
+    <h1 class="pf-title" data-page-node-id="3AqPG22H4m4XsBQZfgKVXv"><span class="pf-fix" data-page-node-id="KJh66IHseC6IKt3ctz1s1a">师伴-</span><span class="pf-page" data-page-node-id="00Gai8dtEqrtBoG7RZRHCr">凸透镜成像规律</span></h1>
+  </header>
+
+  <aside class="pf-side" data-page-node-id="24yu6X1TVHbdswgaffvDVL">
+    <label for="pf-dl" data-page-node-id="BzQnGCKOd9lTuVh39RHn9m"><span class="ico" data-page-node-id="IAjeDJlyK4qw5dQTQ2sCwm">📥</span><span class="pf-tip" data-page-node-id="H0Rba4GVyY5Fbvs3DtGHkX">下载本案例</span></label>
+    <label for="pf-gen" data-page-node-id="LAPZ1Am6zEARTM7M2qCSxk"><span class="ico" data-page-node-id="e1nHMEyH3CbMpfSA7pF3uE">✨</span><span class="pf-tip" data-page-node-id="9vESHiJsG5RejCGpXZRSKd">生成新案例</span></label>
+    <label for="pf-contact" data-page-node-id="OmXHVMRhXrDsMVuVx5reLA"><span class="ico" data-page-node-id="jceJL04wNziLjY3Z7Gqfvm">📧</span><span class="pf-tip" data-page-node-id="AtFL9CnyDGOeyy5DTfvY1f">联系我们，获取更多案例</span></label>
+  </aside>
+
+  <main class="pf-main" data-page-node-id="YnHovdDEAgiiXFY2aIwhq8">
+    <div class="pf-content" data-page-node-id="5dm36GpYaNZSJqM2FPNSQz">
+      <div class="exp-wrap" data-page-node-id="lFDaVukKvDAfZzclAdwnjn">
+
+        <!-- ① 实验信息 -->
+        <section class="exp-info" id="sec-info" data-page-node-id="u8kdFftdyxcZbTPaglCFMB">
+
+<div class="exp-tags" data-page-node-id="qZz56Jg4yK1Y5zpOYIHy8X">
+  <span class="exp-tag" data-page-node-id="BQnJvGQQrSRcWV4NCBwcf0">物理</span>
+  <span class="exp-tag" data-page-node-id="JvI2Sgbkpeqxx6SDHnb3mE">初中八年级</span>
+  <span class="exp-tag is-plain" data-page-node-id="rK65Z75ShRNgjaAzfu8kFE">教学演示（非课标必做实验）</span>
+</div>
+<div class="exp-goals-title" data-page-node-id="Odk1DO54DRB3cH1XnH8fCQ">学习目标</div>
+<ul class="exp-goals" data-page-node-id="fanGohNk0hyP1idLtMIu42">
+  <li data-page-node-id="2N6DfIc9bwBxnP3msnbKf6">会用成像公式 1/f = 1/u + 1/v 由物距、焦距算出像距</li>
+  <li data-page-node-id="5DbnDeTDKAGISoffNkWAyC">能区分 u＞2f、u=2f、f＜u＜2f、u=f、u＜f 五种成像情况</li>
+  <li data-page-node-id="7js2bLU9LNz5TDC3Y255BG">会移动光屏寻找清晰像，并用放大率 m = v/u 比较像与物的大小</li>
+</ul>
+        </section>
+
+        <div class="exp-grid" data-page-node-id="nxi1pjLoSh4KBAJJsGk6BX">
+          <!-- ② 演示画布 -->
+          <section class="exp-card exp-stage" id="sec-stage" data-page-node-id="0a68RQ0bwiLCbspWt6cJuV">
+            <h2 data-page-node-id="1Hfpw0tS84JgsEm6adugQH">② 演示<span class="exp-hint" id="pf-stage-hint" data-page-node-id="Aa6MzBjI9EYHCDAL3UUImY">拖动画面可旋转视角</span></h2>
+            <div class="exp-canvas-box" data-page-node-id="a20epxbWjvolRqyD2tkjFw">
+<canvas id="cv" data-page-node-id="14C7Pbzhj7LKH8frarvgVf"></canvas>
+<span class="exp-canvas-tip" id="tip" data-page-node-id="qBFUXK0eyBb2Fz9H4999oZ">装置：光具座（0~80 cm）· 凸透镜 · 物屏 · 光屏（左右拖动画面可移动光屏）</span>
+            </div>
+          </section>
+
+          <!-- ③ 参数与操作 -->
+          <section class="exp-card exp-control" id="sec-control" data-page-node-id="kBXzA8BJ5eeKLmc9IlbGEH">
+            <h2 data-page-node-id="7iypKXKAF0OLPmDIMVmDv4">③ 参数与操作</h2>
+<div class="exp-field" data-page-node-id="MXDxlTwTyJAwCEwsZ5xhjm">
+  <div class="exp-label" data-page-node-id="GPrCV5QPPcPGin7onVipce"><span data-page-node-id="o50xE5tGxNwcqhD0IWXbII">物距 u（物到透镜）</span><span class="exp-val" data-page-node-id="0oN5WsDcgRFLAetbTJ2hyQ"><b id="v-u" data-page-node-id="Xn9jLBPs2hlrROoacxLOfh">30.0</b> cm</span></div>
+  <input type="range" id="rg-u" min="6" max="34" step="0.5" value="30" data-key="u" data-page-node-id="6L828GeWvIWKEYxQNCHIPu">
+</div>
+<div class="exp-field" data-page-node-id="v011eRmGRBCyIvvgCHCBoD">
+  <div class="exp-label" data-page-node-id="t6CDLE9SF4X3HGrBODkafW"><span data-page-node-id="p0Rxlxd7sYQvjPyYMh1Ynq">焦距 f（凸透镜）</span><span class="exp-val" data-page-node-id="svTPsL6vW3XO7d1rLG3Fob"><b id="v-f" data-page-node-id="YDYGeoFMRdmCfoL9lK3Qm8">10.0</b> cm</span></div>
+  <input type="range" id="rg-f" min="5" max="15" step="0.5" value="10" data-key="f" data-page-node-id="xllG5ntHnrSZ38VQ5zS1qH">
+</div>
+<div class="exp-field" data-page-node-id="PK7uPvKlCFxbXqJQXWf36k">
+  <div class="exp-label" data-page-node-id="kn6YvvEFsVYaok9MzacKFV"><span data-page-node-id="8y8v5hrCSbZc1p1gSygHpK">光屏位置（刻度）</span><span class="exp-val" data-page-node-id="H0lPwRG6AIP2HiWu4nPk9h"><b id="v-scr" data-page-node-id="c0RLQ0O4DxaJjo5usv2Vmo">55.0</b> cm</span></div>
+  <input type="range" id="rg-scr" min="42" max="76" step="0.5" value="55" data-key="scr" data-page-node-id="P27XOQ50oUzOYOAR2roFEP">
+</div>
+<div class="exp-btns" data-page-node-id="2LpXoCGNHuPwjYqXqWJxlk">
+  <button class="exp-btn is-primary" id="btn-snap" type="button" data-page-node-id="sAMEBGrVPombRZNX28y6BO">对准清晰像</button>
+  <button class="exp-btn" id="btn-step" type="button" data-page-node-id="sx8GaBplHtGCMkgzOVbqMU">微调光屏</button>
+  <button class="exp-btn" id="btn-record" type="button" data-page-node-id="iAjVNuK2CyeiCRF2PALRZh">记录当前数据</button>
+  <button class="exp-btn" id="btn-reset" type="button" data-page-node-id="3I3jOwTzCafqONGImqsvAr">重置</button>
+</div>
+          </section>
+
+          <!-- ④ 结果与反馈 -->
+          <section class="exp-card exp-result" id="sec-result" data-page-node-id="CvQCyEmeNZTEpcUkFAzQ1K">
+            <h2 data-page-node-id="HWOCFXxDYaXU3QTH5vb3yK">④ 结果与反馈</h2>
+<div class="exp-reads" data-page-node-id="TdvTG3ClkWEoBxkqA7mE32">
+  <div class="exp-read" data-page-node-id="UCnAHmxzLI9LFeom3py3B0"><span class="k" data-page-node-id="8fIypumwGDtLlclWzrZfOs">像距 v</span><span class="v" data-page-node-id="1nxyw8PRxPcBVwqrjNtgyo"><b id="r-v" data-page-node-id="i4EhwyLEkBw5SVSKYfksin">15.0</b> <span class="u" data-page-node-id="539M4PNLtvuFwCnIX1zSVK">cm</span></span></div>
+  <div class="exp-read" data-page-node-id="kC4xPxfj3IXIW7mEcY24Qh"><span class="k" data-page-node-id="IREznmfiSaNLczggEi7nNC">放大率 m = v/u</span><span class="v" data-page-node-id="bPN4EfuPBEbwMISy3534d6"><b id="r-m" data-page-node-id="A6Lup7FAerzfPJfESZ4Dq7">0.50</b></span></div>
+  <div class="exp-read" data-page-node-id="pWtLJd8K7v3qRAasQpQZUo"><span class="k" data-page-node-id="oFLzZXfWDH26qeFGAjCwCm">像的性质</span><span class="v" id="r-kind" data-page-node-id="dXOngBvYGSz6ORk7WHGFIk">倒立缩小实像</span></div>
+  <div class="exp-read" data-page-node-id="vjPWTB5QGnIvHqQSwW5tGw"><span class="k" data-page-node-id="TaXTjxFZnEswtzAim5DIYd">光屏上的像</span><span class="v" id="r-sharp" data-page-node-id="mE7J5V92MDk0AGTNQCkrP9">清晰</span></div>
+</div>
+<div class="exp-state" id="state" data-page-node-id="xGs7sDwkayE8oAEtxYhxci"><span class="dot" data-page-node-id="Fr4eG5fywc11MT7wF4LrAW"></span><span id="state-txt" data-page-node-id="Jt6HITEftIpQwWPmBzN2Nz">u ＞ 2f：成倒立、缩小的实像（照相机原理）</span></div>
+<div class="exp-formula" id="fml" data-page-node-id="URwiRg5cpBMZpi6GHDp8ga"></div>
+<p class="exp-note" id="hint" data-page-node-id="6Rfd837gjlaReyM6cNdXsq"></p>
+<div class="exp-alert" id="alert" hidden data-page-node-id="IvBhjvcU7b10Ounf7OcFWF"></div>
+          </section>
+        </div>
+
+        <!-- ⑤ 实验记录 -->
+        <section class="exp-card exp-record" id="sec-record" data-page-node-id="z2kCEzmM6Epvw8LuwgQzOd">
+          <h2 data-page-node-id="TMAw71MuKHHnc94tWFGLUN">⑤ 实验记录<span class="exp-hint" data-page-node-id="M48Qxfduy4vOCGbp57Bs7j">点击「记录当前数据」逐行追加</span></h2>
+          <div class="exp-table-wrap" data-page-node-id="XHD3RuCe3MqCr6AbyBC7YJ">
+<div class="exp-record-head" data-page-node-id="DSwNBJEELSAAa6GJbcizg5"><button class="exp-btn exp-csv" id="btn-csv" type="button" data-page-node-id="RrV7dnTtVEhDEIhgoBBWdV">导出 CSV</button></div>
+<table class="exp-table" data-page-node-id="FwzpEmgrZWKvZz9thyjtCH">
+  <thead data-page-node-id="t9cFkBN5x9Ehp0OxI9yLMB">
+    <tr data-page-node-id="siV4hiEe4HKHgyJR6lvdc5"><th data-page-node-id="uk06uXMINroAYgNWx9WXWc">序号</th><th data-page-node-id="Nc3F2qyrEc4IcVwK5d69WV">物距 u/cm</th><th data-page-node-id="ITK1rEnVO0DaCoEiNaaQPy">焦距 f/cm</th><th data-page-node-id="Bbx4W7llgyUuJGMLYlXiXm">像距 v/cm</th><th data-page-node-id="fndvxT3I668IIqCgnx042u">放大率 m</th><th data-page-node-id="za1mHz6pbbcNSVFTOiUlzX">像的性质</th><th data-page-node-id="SI2bjEUzfyXkqOY36cvNaI">光屏清晰度</th></tr>
+  </thead>
+  <tbody id="rows" data-page-node-id="sUhV0mjhd5bfS5ROMlsOXY"></tbody>
+</table>
+          </div>
+        </section>
+
+        <!-- ⑥ 教学说明 -->
+        <details class="exp-card exp-teach" id="sec-teach" data-page-node-id="VnWnTR2kC3FdNBvzRG5xYj">
+          <summary data-page-node-id="KcmTJSp5OwO7WxNtcvfOJE">⑥ 教学说明（原理 / 易错点 / 探究问题）</summary>
+          <div class="exp-body" data-page-node-id="jHMQF1NC2WRUbK9M8K8UMe">
+<h3 data-page-node-id="4WLeqg32HgbZrsCbJ9E8oD">原理</h3>
+<ul data-page-node-id="R2Mr0sBVVDRxH8em46TIap">
+  <li data-page-node-id="xWYZQSmDq53nc0BXoNciW5">凸透镜对光有<b data-page-node-id="sEMRB1Lpky90CrlSPPBfYz">会聚</b>作用：平行于主光轴的光经凸透镜后会聚于焦点 F′，焦点到光心 O 的距离就是焦距 f。</li>
+  <li data-page-node-id="PfGbbKnfqu8OS1E3B96CMQ">三条特殊光线可确定像的位置：平行主光轴的光线折射后过焦点；过光心的光线传播方向不变；过焦点的光线折射后平行主光轴。作图时用前两条即可。</li>
+  <li data-page-node-id="pWgIFafh7W4dMjYOmicuvJ">成像公式：<b data-page-node-id="HyNvfEgeoymPYiONKzNa6P">1/f = 1/u + 1/v</b>（u 物距、v 像距，实像 v 取正、虚像 v 取负）。放大率 <b data-page-node-id="7fWj7poz67A22lHOAqx3gB">m = v/u</b>，实像 m 取绝对值。</li>
+  <li data-page-node-id="eRowbWbJ6SRohCyWsDeyVn">虚实判断：实像是实际光线会聚成的，<b data-page-node-id="c3zXXXRrE1MR4Q8dbWyFIi">能</b>呈现在光屏上；虚像是折射光线的反向延长线相交得到的，光屏承接不到，只能透过透镜用眼睛观察。</li>
+</ul>
+<h3 data-page-node-id="EYpFmEBHUDvyQCteaaJR7x">易错点</h3>
+<ul data-page-node-id="EZlQtiLbI9xsY4JkcZUaih">
+  <li data-page-node-id="IXEl3XaLtFw798e0G3hMCQ">在光屏上找像时随手一放就读数：应左右微调光屏，直到像最清晰、边缘最小再记录，否则像距误差很大。</li>
+  <li data-page-node-id="MqVHeVqrUJGWSrj0F4mI5L">忘记虚像的符号约定：u＜f 时 v 为负值，表示像与物在透镜<b data-page-node-id="alUd1tWnDtPfcAYoy5jaxa">同侧</b>，且是正立、放大的。</li>
+  <li data-page-node-id="c5neEXMUHibJrF2RRTZr7s">以为物越靠近透镜像越小：恰好相反，f＜u＜2f 范围内减小 u，像距和像都在变大；u 接近 f 时像距急剧增大，光具座可能不够长，屏上承接到的是模糊光斑。</li>
+  <li data-page-node-id="i2zTnmSpCcTsSWBDFi9Ggb">把 u=f 时屏上的大光斑当成「像」：u=f 时折射光是平行光，根本不会成像，光斑只是光束的截面。</li>
+  <li data-page-node-id="XzfGSobDxkXtNaNHOlR7rz">实验中烛焰越烧越短，像会逐渐偏离光屏中心：真实实验要及时调节烛焰或透镜高度，本页固定物高就是为了排除这一干扰。</li>
+</ul>
+<h3 data-page-node-id="CZWlrSjKOSuB2zUbFxtcxq">探究问题</h3>
+<ol data-page-node-id="HdsWvRNHr9xorUykHOwSOl">
+  <li data-page-node-id="G2OCEUmKFawLlczgUE4Noj">保持 f=10 cm，把 u 从 30 cm 逐渐减小到 12 cm，像距和放大率各怎样变化？像的性质变了吗？</li>
+  <li data-page-node-id="4jD3ayVF0CpxYNYX84Z858">把 u 调到 8 cm（u＜f），光屏上还能承接到像吗？透过透镜朝物的方向看，看到的是什么样的像？</li>
+  <li data-page-node-id="T3CPlD07uwREkbLJnITfrJ">更换 f=5 cm 的透镜并保持 u=30 cm 不变，像距变成多少？和 f=10 cm 时相比，像变大还是变小？</li>
+</ol>
+<h3 data-page-node-id="1DFSya5XIU43etCk4O7G5K">结论</h3>
+<p data-page-node-id="VttSHs2pGDrs5FIEHH1r1F">成像性质由物距与焦距的关系决定：u＞2f，倒立缩小实像（照相机）；u=2f，倒立等大实像；f＜u＜2f，倒立放大实像（投影仪）；u=f，不成像；u＜f，正立放大虚像（放大镜）。实像位置由 1/f = 1/u + 1/v 确定，放大率 m = v/u；一倍焦距分虚实，二倍焦距分大小。</p>
+<h3 data-page-node-id="z9X7VDxVa4AothCQYD7uxb">注意事项</h3>
+<ul data-page-node-id="zi9CROgefeXXBwPCXEeokL">
+  <li data-page-node-id="DBmiZ3cmvLi7fgUUfP4qkW">本页为虚拟实验，像距与放大率由成像公式 1/f = 1/u + 1/v 实时计算，不是模型估算；物高固定为 4.4 cm。</li>
+  <li data-page-node-id="WBgM6UOG52QWke7zomAeZM">光具座量程 0~80 cm：u 接近 f 时像距会超出量程，此时屏上只有模糊光斑，属于实验本身的现象，不是页面故障。</li>
+  <li data-page-node-id="xvvg9rRx7EcRVHoGKF2Awa">真实实验中，烛焰、凸透镜光心、光屏中心应调到同一高度（共轴调节），否则像会成在光屏范围之外。</li>
+  <li data-page-node-id="jA1ljxk3CApnUx5tA0GRN7">虚拟演示不能替代真实操作，共轴调节、遮焦判断虚实等技能仍需在实验室完成。</li>
+</ul>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="pf-footer" data-page-node-id="GarQq1U3G3bUfJMHcWSTFs"><span data-page-node-id="ovMXZMLQSNYQWoaUkRm0Xt">© 中小学人工智能教育教学支撑平台 版权所有。本页内容由AI自动生成，请自行确认后使用。</span></footer>
+
+  <input type="checkbox" id="pf-gen" class="pf-gen-check" hidden data-page-node-id="kw3PqipUtBCinbHzWhcEe5">
+  <div class="pf-modal pf-modal-gen" role="dialog" aria-modal="true" data-page-node-id="mpxjqypIob5D5GFHIXQezy">
+    <label class="pf-modal-mask" for="pf-gen" aria-label="关闭弹窗" data-page-node-id="e3KfLT4SYfYF14XAmzKALs"></label>
+    <div class="pf-dialog" data-page-node-id="80eZ29uENvsO5oqFzKpvoZ">
+      <label class="pf-dialog-x" for="pf-gen" aria-label="关闭" data-page-node-id="2U8bv6FCBrGJgu84UPlqzQ">✕</label>
+      <div class="pf-dialog-icon" data-page-node-id="pFGxlEw1vPEAPMCAbFX1Hq">✨</div>
+      <h2 data-page-node-id="ZAhFdWGancQWLEFzebJ5wQ">生成更多案例</h2>
+      <p data-page-node-id="PHGr0qeZWHRQwAkCOyelps">可以在 <strong data-page-node-id="hj7IB9zz81ZegpwtaPsfCF">WorkBuddy</strong> 中查找<strong data-page-node-id="C6v7Q0Hi6MDWuI3nfD0EXO">“师伴应用”</strong>，<br data-page-node-id="kcQYtYDU7xEVn8JvQybtYV">生成更多优质案例。</p>
+      <label class="pf-dialog-btn" for="pf-gen" data-page-node-id="tt4YTj0CzYqsAaDOpBtG4j">我知道了</label>
+    </div>
+  </div>
+
+  <input type="checkbox" id="pf-dl" class="pf-dl-check" hidden data-page-node-id="JgL1oLCvautA9cMXbfTnWW">
+  <div class="pf-modal pf-modal-dl" role="dialog" aria-modal="true" data-page-node-id="D6zTYmpjsV0TaswNEoHaNM">
+    <label class="pf-modal-mask" for="pf-dl" aria-label="关闭弹窗" data-page-node-id="Dt4dHCpuwriFwMIycQs7Qh"></label>
+    <div class="pf-dialog" data-page-node-id="3RxmYS6MhBrNPF9Fw6iqx6">
+      <label class="pf-dialog-x" for="pf-dl" aria-label="关闭" data-page-node-id="iQzU1u3NRb5EnsRLVGNOuj">✕</label>
+      <div class="pf-dialog-icon" data-page-node-id="mQcwEKIzZbgF2whkSIEVAi">📥</div>
+      <h2 data-page-node-id="gZ781omu1tR9oigptZuQhG">下载本案例</h2>
+      <p data-page-node-id="a5rY908O0MkftitAMeHcOR">您可以将本案例下载到本地运行</p>
+      <a class="pf-dialog-btn" href="凸透镜成像规律.zip" download onclick="var c=document.getElementById('pf-dl');if(c)c.checked=false;" data-page-node-id="EB45ZQTkzccEts3Fn1lj1Z">立即下载</a>
+    </div>
+  </div>
+
+  <input type="checkbox" id="pf-contact" class="pf-contact-check" hidden data-page-node-id="aPAw3Z1MrUpTyu2MSKIa6E">
+  <div class="pf-modal pf-modal-contact" role="dialog" aria-modal="true" data-page-node-id="KxCqSOhLpns08HE3w5lg3c">
+    <label class="pf-modal-mask" for="pf-contact" aria-label="关闭弹窗" data-page-node-id="dzdOxKKs53Uo9qAiNXNTqc"></label>
+    <div class="pf-dialog" data-page-node-id="vLts9ULihYKXHhohPcgqkW">
+      <label class="pf-dialog-x" for="pf-contact" aria-label="关闭" data-page-node-id="DHvOgiUvAbB7WGFEwusJOV">✕</label>
+      <div class="pf-dialog-icon" data-page-node-id="GNZIbAlOs83CBG485w05KD">📧</div>
+      <h2 data-page-node-id="1k4SFDJnnDKrRRi7oIa6jX">联系我们获取更多案例</h2>
+      <p data-page-node-id="6yG7MW5bnxr6cHavCG2qyM">邮箱：<a href="mailto:teachbuddy@outlook.com" data-page-node-id="4En0hWYWCzEBGQRZD4E38C"><strong data-page-node-id="b35RzYJJwZERwQVzCBJxuF">teachbuddy@outlook.com</strong></a></p>
+      <label class="pf-dialog-btn" for="pf-contact" data-page-node-id="VGcgTxdZErhDgn8GbNzsHw">我知道了</label>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  'use strict';
+
+  var cv = document.getElementById('cv');
+  if (!cv) return;
+  var ctx = cv.getContext('2d');
+
+  /* ---------------- 设计坐标 880×540 ---------------- */
+  var DW = 880, DH = 540;
+  var PX = 9.6;                 // 水平 1 cm = 9.6 px（光具座 0~80 cm）
+  var PY = 15;                  // 竖直 1 cm = 15 px
+  var RX0 = 60;                 // 0 cm 刻度
+  var axisY = 204;              // 主光轴
+  var railTop = 368, railH = 26;
+  var OH = 4.4;                 // 物高 cm
+  var OBJ_PX = OH * PY;         // 物高 66 px
+
+  function railX(cm) { return RX0 + cm * PX; }
+  var LX = railX(40);           // 透镜固定在 40 cm 刻度
+
+  var DEF = { u: 30, f: 10, scr: 55 };
+  var S = { u: DEF.u, f: DEF.f, scr: DEF.scr, scrTouched: false, stepDir: 1 };
+  var view = { w: 0, h: 0, s: 1, ox: 0, oy: 0, dpr: 1 };
+
+  /* ---------------- 物理计算 ---------------- */
+  function derived() {
+    var u = S.u, f = S.f;
+    var kind, v, m, note = '';
+    if (Math.abs(u - f) < 1e-9) {
+      kind = 'noimg'; v = Infinity; m = Infinity;
+    } else {
+      v = u * f / (u - f);              // 实像为正，虚像为负
+      m = Math.abs(v) / u;
+      if (u > 2 * f + 1e-9) kind = 'shrunk';
+      else if (Math.abs(u - 2 * f) <= 1e-9 + 0.001) kind = 'equal';
+      else if (u > f) kind = 'magnified';
+      else kind = 'virtual';
+    }
+    var imgX = 40 + v;                  // 像的刻度位置
+    var onBench = kind !== 'noimg' && imgX <= 78.5 && imgX >= 2 && m <= 3.2;
+    var delta = 0;
+    var sharp = 0;
+    if (kind !== 'noimg' && kind !== 'virtual' && isFinite(v)) {
+      delta = Math.abs(S.scr - imgX);
+      sharp = Math.max(0, 1 - delta / 6);
+    }
+    return { u: u, f: f, v: v, m: m, kind: kind, imgX: imgX, onBench: onBench,
+             delta: delta, sharp: sharp, note: note };
+  }
+
+  function kindText(d) {
+    switch (d.kind) {
+      case 'shrunk': return '倒立缩小实像';
+      case 'equal': return '倒立等大实像';
+      case 'magnified': return '倒立放大实像';
+      case 'virtual': return '正立放大虚像';
+      default: return '不成像';
+    }
+  }
+  function sharpText(d) {
+    if (d.kind === 'noimg') return '屏上无像';
+    if (d.kind === 'virtual') return '承接不到';
+    if (!d.onBench) return '像超出量程';
+    return d.delta <= 0.75 ? '清晰' : '模糊（' + Math.round(d.sharp * 100) + '%）';
+  }
+
+  /* ---------------- 绘图工具 ---------------- */
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function fit() {
+    var box = cv.parentNode;
+    var w = box.clientWidth || 700;
+    var h = box.clientHeight || 460;
+    view.dpr = window.devicePixelRatio || 1;
+    view.w = w; view.h = h;
+    cv.width = Math.max(1, Math.round(w * view.dpr));
+    cv.height = Math.max(1, Math.round(h * view.dpr));
+    cv.style.width = w + 'px';
+    cv.style.height = h + 'px';
+    view.s = Math.min(w / DW, h / DH);
+    view.ox = (w - DW * view.s) / 2;
+    view.oy = (h - DH * view.s) / 2;
+  }
+  function begin() {
+    ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
+    ctx.clearRect(0, 0, view.w, view.h);
+    ctx.translate(view.ox, view.oy);
+    ctx.scale(view.s, view.s);
+  }
+  function seg(x1, y1, x2, y2, opt) {
+    opt = opt || {};
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = opt.color || '#f28c1e';
+    ctx.lineWidth = opt.lw || 2.4;
+    if (opt.dash) ctx.setLineDash(opt.dash);
+    if (opt.glow !== false) {
+      ctx.shadowColor = 'rgba(242,140,30,0.35)';
+      ctx.shadowBlur = 5;
+    }
+    ctx.stroke();
+    ctx.restore();
+    if (opt.arrow !== false) {
+      var t = opt.at === undefined ? 0.55 : opt.at;
+      var ax = x1 + (x2 - x1) * t, ay = y1 + (y2 - y1) * t;
+      var ang = Math.atan2(y2 - y1, x2 - x1);
+      ctx.save();
+      ctx.translate(ax, ay);
+      ctx.rotate(ang);
+      ctx.beginPath();
+      ctx.moveTo(3.5, 0);
+      ctx.lineTo(-6.5, -4.4);
+      ctx.lineTo(-6.5, 4.4);
+      ctx.closePath();
+      ctx.fillStyle = opt.color || '#f28c1e';
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+  function mount(x, topY) {
+    ctx.save();
+    var g = ctx.createLinearGradient(x - 5, 0, x + 5, 0);
+    g.addColorStop(0, '#1f262e');
+    g.addColorStop(0.5, '#4a545f');
+    g.addColorStop(1, '#222931');
+    ctx.fillStyle = g;
+    ctx.fillRect(x - 4, topY, 8, railTop - topY - 2);          // 立柱
+    roundRect(x - 14, railTop - 4, 28, 9, 3);                   // 底座
+    ctx.fillStyle = '#2c333b';
+    ctx.fill();
+    ctx.strokeStyle = '#151a20';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();                                            // 旋钮
+    ctx.arc(x + 8, topY + 10, 3.2, 0, Math.PI * 2);
+    ctx.fillStyle = '#5d6873';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* ---------------- 场景绘制 ---------------- */
+  function drawBG() {
+    var g = ctx.createLinearGradient(0, 0, 0, DH);
+    g.addColorStop(0, '#f7fafd');
+    g.addColorStop(1, '#e9f0f8');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, DW, DH);
+  }
+  /* 演示区只留实物与图形：左上角原先的「u=… f=… v=…」信息条已移除，
+     物距、像距在画布下的尺寸线与 ④ 区读数里都有，画布上不必再摆一块 */
+  function drawChip(d) { /* 空实现 */ }
+  function drawRail() {
+    ctx.save();
+    // 支脚
+    ctx.fillStyle = '#2b323a';
+    [[railX(4)], [railX(76)]].forEach(function (p) {
+      var x = p[0];
+      ctx.beginPath();
+      ctx.moveTo(x - 26, 394);
+      ctx.lineTo(x + 26, 394);
+      ctx.lineTo(x + 18, 410);
+      ctx.lineTo(x - 18, 410);
+      ctx.closePath();
+      ctx.fill();
+    });
+    // 导轨主体（铝合金质感）
+    var g = ctx.createLinearGradient(0, railTop, 0, railTop + railH);
+    g.addColorStop(0, '#eef2f7');
+    g.addColorStop(0.35, '#cbd5df');
+    g.addColorStop(0.7, '#dee5ec');
+    g.addColorStop(1, '#b7c2cd');
+    roundRect(40, railTop, 790, railH, 5);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = '#8b99a7';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(90,104,118,0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(46, railTop + 5);
+    ctx.lineTo(824, railTop + 5);
+    ctx.stroke();
+    // 刻度
+    ctx.font = '600 9.5px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    for (var cm = 0; cm <= 80; cm++) {
+      var x = railX(cm);
+      var major = cm % 10 === 0;
+      ctx.beginPath();
+      ctx.moveTo(x, railTop + (major ? 8 : 11));
+      ctx.lineTo(x, railTop + railH - 4);
+      ctx.strokeStyle = major ? '#57656f' : 'rgba(87,101,111,0.4)';
+      ctx.lineWidth = major ? 1.2 : 0.8;
+      ctx.stroke();
+      if (major) {
+        ctx.fillStyle = '#42505c';
+        ctx.fillText(String(cm), x, railTop + 20);
+      }
+    }
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#42505c';
+    ctx.font = '700 10px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.fillText('cm', 836, railTop + 20);
+    ctx.restore();
+  }
+  function drawAxis() {
+    ctx.save();
+    ctx.strokeStyle = '#a9c9e8';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(30, axisY);
+    ctx.lineTo(848, axisY);
+    ctx.stroke();
+    ctx.font = '600 13px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.fillStyle = '#8fb7dd';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('主光轴', 846, axisY - 8);
+    ctx.restore();
+  }
+  function drawMarkers(d) {
+    // 只画圆点，标签统一放到最后（避免被透镜/光屏/光线盖住）
+    ctx.save();
+    var f = d.f;
+    [[40 - 2 * f, '2F'], [40 - f, 'F'], [40 + f, "F'"], [40 + 2 * f, "2F'"]].forEach(function (p) {
+      if (p[0] < 1 || p[0] > 79) return;
+      var x = railX(p[0]);
+      ctx.beginPath();
+      ctx.arc(x, axisY, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#2e6fd8';
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+  function drawMarkerLabels(d) {
+    // 所有标注在最后绘制；靠近透镜或光屏时自动错到下一行，避免压在器材上
+    ctx.save();
+    var f = d.f;
+    var lensX = railX(40), scrX = railX(S.scr);
+    ctx.font = '600 13px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    [[40 - 2 * f, '2F'], [40 - f, 'F'], [40 + f, "F'"], [40 + 2 * f, "2F'"]].forEach(function (p) {
+      if (p[0] < 1 || p[0] > 79) return;
+      var x = railX(p[0]);
+      var near = Math.abs(x - lensX) < 26 || Math.abs(x - scrX) < 24;
+      var y = near ? axisY + 38 : axisY + 20;
+      // 白描边保证压在浅色图元（导轨/液体/光线）上也能读清
+      ctx.lineWidth = 3.2;
+      ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+      ctx.strokeText(p[1], x, y);
+      ctx.fillStyle = '#2e6fd8';
+      ctx.fillText(p[1], x, y);
+    });
+    ctx.restore();
+  }
+  function drawObject(d) {
+    var x = railX(40 - d.u);
+    mount(x, axisY + 8);
+    ctx.save();
+    // 立体箭头（物）
+    var tipY = axisY - OBJ_PX, w = 13;
+    ctx.shadowColor = 'rgba(255,150,40,0.45)';
+    ctx.shadowBlur = 8;
+    var g = ctx.createLinearGradient(x - w, 0, x + w, 0);
+    g.addColorStop(0, '#d97a06');
+    g.addColorStop(0.45, '#ffa733');
+    g.addColorStop(1, '#c96a00');
+    ctx.fillStyle = g;
+    ctx.fillRect(x - 5, tipY + 15, 10, OBJ_PX - 15);
+    ctx.beginPath();
+    ctx.moveTo(x, tipY);
+    ctx.lineTo(x + w, tipY + 17);
+    ctx.lineTo(x - w, tipY + 17);
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(160,84,0,0.55)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - 5, tipY + 15, 10, OBJ_PX - 15);
+    // 标签
+    ctx.font = '700 15px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(247,250,253,0.9)';
+    ctx.strokeText('物', x, axisY + 26);
+    ctx.fillStyle = '#17324f';
+    ctx.fillText('物', x, axisY + 26);
+    ctx.restore();
+  }
+  function drawLens() {
+    mount(LX, axisY + 112);
+    ctx.save();
+    var top = axisY - 112, bot = axisY + 112, hw = 17;
+    ctx.beginPath();
+    ctx.moveTo(LX, top);
+    ctx.quadraticCurveTo(LX + hw * 2.1, axisY, LX, bot);
+    ctx.quadraticCurveTo(LX - hw * 2.1, axisY, LX, top);
+    ctx.closePath();
+    var g = ctx.createLinearGradient(LX - hw, 0, LX + hw, 0);
+    g.addColorStop(0, 'rgba(190,224,248,0.55)');
+    g.addColorStop(0.4, 'rgba(226,242,252,0.72)');
+    g.addColorStop(1, 'rgba(168,209,240,0.6)');
+    ctx.fillStyle = g;
+    ctx.shadowColor = 'rgba(120,175,220,0.4)';
+    ctx.shadowBlur = 7;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#84b4da';
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+    // 高光
+    ctx.beginPath();
+    ctx.moveTo(LX - 6, top + 26);
+    ctx.quadraticCurveTo(LX - 13, axisY, LX - 6, bot - 26);
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.lineWidth = 2.2;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(LX + 5, top + 40);
+    ctx.quadraticCurveTo(LX + 10, axisY, LX + 5, bot - 40);
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+    ctx.restore();
+  }
+  function drawScreen(d) {
+    var x = railX(S.scr);
+    var top = axisY - 74, bot = axisY + 74;
+    mount(x, bot + 2);
+    ctx.save();
+    // 顶部夹持臂
+    ctx.fillStyle = '#2c333b';
+    roundRect(x - 9, top - 7, 18, 8, 3);
+    ctx.fill();
+    // 屏板
+    roundRect(x - 6, top, 12, bot - top, 2);
+    ctx.fillStyle = 'rgba(251,253,255,0.94)';
+    ctx.fill();
+    ctx.strokeStyle = '#aab8c5';
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(210,224,238,0.5)';
+    ctx.fillRect(x - 4, top + 4, 2.4, bot - top - 8);
+    // 屏上的像
+    var label = '光屏';
+    if (d.kind === 'noimg' || d.kind === 'virtual') {
+      // 演示区不放文字提示：「屏上没有像」由 ④ 区的「光屏上的像」读数给出
+    } else if (d.onBench) {
+      var ih = Math.min(OBJ_PX * d.m, bot - axisY - 4);
+      var isSharp = d.delta <= 0.75;
+      var cx = x;
+      if (isSharp) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255,150,40,0.5)';
+        ctx.shadowBlur = 7;
+        ctx.fillStyle = 'rgba(255,167,51,0.92)';
+        ctx.fillRect(cx - 3.4, axisY + 6, 6.8, ih - 6);
+        ctx.beginPath();
+        ctx.moveTo(cx, axisY + ih);
+        ctx.lineTo(cx + 8, axisY + ih - 11);
+        ctx.lineTo(cx - 8, axisY + ih - 11);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      } else {
+        var bw = Math.min(30, 5 + d.delta * 5.5);
+        var bg = ctx.createRadialGradient(cx, axisY + ih * 0.6, 1, cx, axisY + ih * 0.6, bw);
+        bg.addColorStop(0, 'rgba(255,160,50,0.6)');
+        bg.addColorStop(1, 'rgba(255,160,50,0)');
+        ctx.fillStyle = bg;
+        ctx.beginPath();
+        ctx.ellipse(cx, axisY + ih * 0.6, bw, bw * 1.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      label = '光屏·实像';
+    } else {
+      // 同上：超出量程的状态由 ④ 区说明，画布上不再写文字
+    }
+    ctx.font = '600 13px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.fillStyle = '#1f66c4';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, bot + 16);
+    ctx.restore();
+  }
+  function drawRays(d) {
+    var ox = railX(40 - d.u);
+    var tipY = axisY - OBJ_PX;
+    var A = [LX, tipY];
+
+    if (d.kind === 'noimg') {
+      seg(ox, tipY, A[0], A[1]);
+      seg(ox, tipY, 852, axisY + (axisY - tipY) * ((852 - ox) / (LX - ox)), { at: 0.62 });
+      return;
+    }
+    if (d.kind === 'virtual') {
+      var vimgX = railX(d.imgX), vimgH = OBJ_PX * d.m;
+      var V = [vimgX, axisY - Math.min(vimgH, 210)];
+      // 折射光线（发散）
+      var fpr = railX(40 + d.f);
+      var dirY = (A[1] - axisY) / (LX - fpr);
+      var ex = 852;
+      var ey = A[1] + dirY * (ex - LX);
+      seg(ox, tipY, A[0], A[1], { at: 0.5 });
+      seg(A[0], A[1], ex, ey, { at: 0.45 });
+      seg(ox, tipY, ex, axisY + (axisY - tipY) * ((ex - ox) / (LX - ox)), { at: 0.6, color: '#e97e10' });
+      // 反向延长线（虚）
+      seg(A[0], A[1], V[0], V[1], { dash: [6, 5], color: 'rgba(242,140,30,0.75)', arrow: false, glow: false });
+      seg(ex, ey, V[0], V[1], { dash: [6, 5], color: 'rgba(242,140,30,0.75)', arrow: false, glow: false });
+      // 虚像箭头（正立放大，虚线）
+      if (vimgX > 26 && vimgH <= 210) {
+        ctx.save();
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = '#ef8b1c';
+        ctx.fillStyle = 'rgba(255,167,51,0.35)';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(V[0], axisY);
+        ctx.lineTo(V[0], V[1]);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(V[0], axisY);
+        ctx.lineTo(V[0] + 9, axisY);
+        ctx.lineTo(V[0], V[1]);
+        ctx.closePath();
+        ctx.fill();
+        ctx.setLineDash([]);
+        ctx.font = '600 12.5px "Microsoft YaHei", system-ui, sans-serif';
+        ctx.fillStyle = '#b0650a';
+        ctx.textAlign = 'center';
+        ctx.fillText('虚像', V[0], V[1] - 8);
+        ctx.restore();
+      }
+      return;
+    }
+    // 实像
+    var I = [railX(d.imgX), axisY + OBJ_PX * d.m];
+    seg(ox, tipY, A[0], A[1], { at: 0.5 });                       // ①平行主光轴
+    seg(A[0], A[1], I[0], I[1], { at: 0.62 });                    // ①折射过 F'
+    seg(ox, tipY, I[0], I[1], { at: 0.5, color: '#e97e10' });     // ②过光心
+    // 会聚点辉光
+    if (I[0] < 846 && I[1] < DH - 8) {
+      ctx.save();
+      var cg = ctx.createRadialGradient(I[0], I[1], 0.5, I[0], I[1], 9);
+      cg.addColorStop(0, 'rgba(255,170,60,0.85)');
+      cg.addColorStop(1, 'rgba(255,170,60,0)');
+      ctx.fillStyle = cg;
+      ctx.beginPath();
+      ctx.arc(I[0], I[1], 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+  function drawDistances(d) {
+    ctx.save();
+    var y = 442, ly = 466;
+    var ox = railX(40 - d.u);
+    function guide(x) {
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = 'rgba(120,150,185,0.75)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(x, 402);
+      ctx.lineTo(x, y - 6);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    function arrow2(x1, x2, dash) {
+      if (Math.abs(x2 - x1) < 14) return;
+      ctx.save();
+      if (dash) ctx.setLineDash([6, 4]);
+      ctx.strokeStyle = '#2e6fd8';
+      ctx.fillStyle = '#2e6fd8';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(x1 + (x2 > x1 ? 4 : -4), y);
+      ctx.lineTo(x2 - (x2 > x1 ? 4 : -4), y);
+      ctx.stroke();
+      [[x1, x2 > x1 ? -1 : 1], [x2, x2 > x1 ? 1 : -1]].forEach(function (p) {
+        ctx.beginPath();
+        ctx.moveTo(p[0] + p[1] * 7, y);
+        ctx.lineTo(p[0], y - 4.5);
+        ctx.lineTo(p[0], y + 4.5);
+        ctx.closePath();
+        ctx.fill();
+      });
+      ctx.restore();
+    }
+    ctx.font = '600 15px "Microsoft YaHei", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    // u
+    guide(ox); guide(LX);
+    arrow2(ox, LX);
+    ctx.fillStyle = '#2e6fd8';
+    ctx.fillText('u=' + d.u.toFixed(1) + ' cm', (ox + LX) / 2, ly);
+    // v
+    if (d.kind === 'noimg') return;
+    var ix = railX(d.imgX);
+    if (d.imgX >= 1 && d.imgX <= 79) {
+      guide(ix);
+      arrow2(LX, ix, d.kind === 'virtual');
+      var vt = (d.kind === 'virtual' ? '-' : '') + Math.abs(d.imgX - 40).toFixed(1);
+      ctx.fillStyle = d.kind === 'virtual' ? '#7e57d6' : '#2e6fd8';
+      ctx.fillText('v=' + vt + ' cm' + (d.kind === 'virtual' ? '（虚）' : ''), (LX + ix) / 2, ly);
+    } else {
+      ctx.fillStyle = '#8296ab';
+      ctx.fillText('v=' + d.v.toFixed(1) + ' cm（超出光具座量程）', (LX + 700) / 2, ly);
+    }
+    ctx.restore();
+  }
+
+  function draw(d) {
+    begin();
+    drawBG();
+    drawRail();
+    drawDistances(d);
+    drawAxis();
+    drawMarkers(d);
+    drawObject(d);
+    drawLens();
+    drawScreen(d);
+    drawRays(d);
+    drawMarkerLabels(d);   // 标注最后画：任何图元都不能盖住文字
+    drawChip(d);
+    ctx.restore();
+  }
+
+  /* ---------------- 读数 / 公式 / 机读数据 ---------------- */
+  function setText(id, s) {
+    var el = document.getElementById(id);
+    if (el && el.textContent !== s) el.textContent = s;
+  }
+  function fmt1(x) { return x.toFixed(1); }
+
+  function render() {
+    var d = derived();
+    var isReal = d.kind === 'shrunk' || d.kind === 'equal' || d.kind === 'magnified';
+
+    setText('v-u', fmt1(S.u));
+    setText('v-f', fmt1(S.f));
+    setText('v-scr', fmt1(S.scr));
+    setText('r-v', isFinite(d.v) ? (d.kind === 'virtual' ? '-' : '') + Math.abs(d.v).toFixed(1) : '∞');
+    setText('r-m', isFinite(d.m) ? d.m.toFixed(2) : '—');
+    setText('r-kind', kindText(d));
+    setText('r-sharp', sharpText(d));
+
+    var stateEl = document.getElementById('state');
+    stateEl.className = 'exp-state' + (d.kind === 'virtual' ? ' is-virt' : (d.kind === 'noimg' ? ' is-warn' : ''));
+    var st = {
+      shrunk: 'u ＞ 2f：成倒立、缩小的实像（照相机原理）',
+      equal: 'u = 2f：成倒立、等大的实像（像与物一样大）',
+      magnified: 'f ＜ u ＜ 2f：成倒立、放大的实像（投影仪原理）',
+      noimg: 'u = f：折射后是平行光，不成像，屏上只有同样亮的光斑',
+      virtual: 'u ＜ f：成正立、放大的虚像（放大镜原理），光屏承接不到'
+    }[d.kind];
+    if (isReal && d.delta > 0.75) st += '；光屏未对准像距，左右微调到最清晰再读数';
+    setText('state-txt', st);
+
+    var fml = document.getElementById('fml');
+    if (isReal) {
+      var invF = 1 / d.f, invU = 1 / d.u, invV = invF - invU;
+      fml.innerHTML =
+        '成像公式：1/f = 1/u + 1/v（实像 v 取正）<br>' +
+        '复算：' + invF.toFixed(3) + ' − ' + invU.toFixed(3) + ' = ' + invV.toFixed(3) +
+        ' cm⁻¹，v = ' + Math.abs(d.v).toFixed(1) + ' cm<br>' +
+        '放大率：' + Math.abs(d.v).toFixed(1) + ' ÷ ' + d.u.toFixed(1) + ' = ' + d.m.toFixed(3) +
+        '（m = v ÷ u），像高 = 物高 4.4 cm 的 ' + d.m.toFixed(2) + ' 倍';
+    } else if (d.kind === 'virtual') {
+      fml.innerHTML =
+        '成像公式：1/f = 1/u + 1/v → 1/v = 1/f − 1/u（u＜f 时结果为负，像与物同侧）<br>' +
+        '本状态：v = ' + d.v.toFixed(1) + ' cm，m = ' + d.m.toFixed(2) + '（m = |v| ÷ u），虚像不能呈现在光屏上';
+    } else {
+      fml.innerHTML = 'u = f：1/v = 1/f − 1/u = 0，出射为平行光，v 趋于无穷大，不成像';
+    }
+
+    var alertBox = document.getElementById('alert');
+    if (isReal && d.delta > 0.75 && d.onBench) {
+      alertBox.hidden = false;
+      alertBox.textContent = '光屏不在像距处：像会聚在 v = ' + Math.abs(d.v).toFixed(1) +
+        ' cm 处，屏上看到的是模糊光斑。点「对准清晰像」或微调光屏。';
+    } else if (isReal && !d.onBench) {
+      alertBox.hidden = false;
+      alertBox.textContent = '像距 v = ' + d.v.toFixed(1) + ' cm 超出光具座量程（0~80 cm），屏上承接不到清晰像。u 再远离 f 一点即可。';
+    } else {
+      alertBox.hidden = true;
+    }
+
+    setText('tip', '装置：光具座（0~80 cm）· 凸透镜（f=' + d.f.toFixed(1) + ' cm）· 物屏（物高 4.4 cm）· 光屏');
+    var hintEl = document.getElementById('pf-stage-hint');
+    if (hintEl) hintEl.textContent = '左右拖动画面可移动光屏';
+
+    window.__DATA__ = {
+      experiment_id: 'lens_imaging',
+      u: d.u,
+      f: d.f,
+      v: isFinite(d.v) ? Number(d.v.toFixed(3)) : null,
+      magnification: isFinite(d.m) ? Number(d.m.toFixed(4)) : null,
+      screen_pos: S.scr,
+      image_type: kindText(d),
+      screen_state: sharpText(d),
+      object_height_cm: OH,
+      checks: {
+        '透镜公式复算': isFinite(d.v) ? Math.abs(1 / d.f - (1 / d.u + 1 / d.v)) < 1e-9 : true,
+        '放大率自洽': isFinite(d.v) ? Math.abs(d.m - Math.abs(d.v) / d.u) < 1e-9 : true,
+        '虚实判断一致': (d.kind === 'virtual') === (d.v < 0)
+      }
+    };
+    window.__CONFIG__ = {
+      scene_id: 'lens_imaging',
+      scene_engine: 'ray_optics',
+      subject: '物理',
+      experiment_id: '凸透镜成像规律'
+    };
+
+    draw(d);
+  }
+
+  /* ---------------- 实验记录 ---------------- */
+  var rowsEl = document.getElementById('rows');
+  function record() {
+    var d = derived();
+    var cells = [
+      String(rowsEl.children.length + 1),
+      d.u.toFixed(1),
+      d.f.toFixed(1),
+      isFinite(d.v) ? d.v.toFixed(1) : '∞',
+      isFinite(d.m) ? d.m.toFixed(2) : '—',
+      kindText(d),
+      sharpText(d)
+    ];
+    var tr = document.createElement('tr');
+    for (var i = 0; i < cells.length; i++) {
+      var td = document.createElement('td');
+      if (i === 3 || i === 4) td.className = 'is-strong';
+      td.textContent = cells[i];
+      tr.appendChild(td);
+    }
+    rowsEl.appendChild(tr);
+  }
+  function csv() {
+    var lines = ['序号,物距u(cm),焦距f(cm),像距v(cm),放大率m,像的性质,光屏清晰度'];
+    for (var i = 0; i < rowsEl.children.length; i++) {
+      var tds = rowsEl.children[i].children, arr = [];
+      for (var j = 0; j < tds.length; j++) {
+        var v = tds[j].textContent;
+        arr.push(/[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v);
+      }
+      lines.push(arr.join(','));
+    }
+    var blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '凸透镜成像实验记录.csv';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  }
+
+  /* ---------------- 控件 ---------------- */
+  function syncControls() {
+    document.getElementById('rg-u').value = String(S.u);
+    document.getElementById('rg-f').value = String(S.f);
+    document.getElementById('rg-scr').value = String(S.scr);
+  }
+  document.getElementById('rg-u').addEventListener('input', function () {
+    S.u = +this.value;
+    render();
+  });
+  document.getElementById('rg-f').addEventListener('input', function () {
+    S.f = +this.value;
+    render();
+  });
+  document.getElementById('rg-scr').addEventListener('input', function () {
+    S.scr = +this.value;
+    S.scrTouched = true;
+    render();
+  });
+  document.getElementById('btn-snap').addEventListener('click', function () {
+    var d = derived();
+    if (d.kind !== 'shrunk' && d.kind !== 'equal' && d.kind !== 'magnified') return;
+    if (!d.onBench) return;
+    S.scr = Math.round((40 + d.v) * 2) / 2;
+    S.scr = Math.min(76, Math.max(42, S.scr));
+    syncControls();
+    render();
+  });
+  document.getElementById('btn-step').addEventListener('click', function () {
+    var d = derived();
+    var isReal = d.kind === 'shrunk' || d.kind === 'equal' || d.kind === 'magnified';
+    if (isReal && d.onBench) {
+      // 在清晰像位置附近来回微调，便于演示「最清晰」的那一格
+      var diff = 40 + d.v - S.scr;
+      if (S.stepDir > 0 && diff <= 0.5) S.stepDir = -1;   // 已扫到最清晰，往回走
+      if (S.stepDir < 0 && diff >= 4) S.stepDir = 1;      // 离开足够远后回头
+      S.scr += 0.5 * S.stepDir;
+    } else {
+      S.scr += 0.5 * S.stepDir;
+      if (S.scr >= 76) { S.scr = 76; S.stepDir = -1; }
+      if (S.scr <= 42) { S.scr = 42; S.stepDir = 1; }
+    }
+    S.scr = Math.min(76, Math.max(42, S.scr));
+    S.scrTouched = true;
+    syncControls();
+    render();
+  });
+  document.getElementById('btn-record').addEventListener('click', record);
+  document.getElementById('btn-csv').addEventListener('click', csv);
+  document.getElementById('btn-reset').addEventListener('click', function () {
+    S.u = DEF.u; S.f = DEF.f; S.scr = DEF.scr;
+    S.scrTouched = false; S.stepDir = 1;
+    rowsEl.innerHTML = '';
+    syncControls();
+    render();
+  });
+
+  /* ---------------- 拖动光屏 ---------------- */
+  var drag = null;
+  cv.addEventListener('pointerdown', function (e) {
+    drag = { x: e.clientX, scr: S.scr };
+    cv.setPointerCapture(e.pointerId);
+    cv.style.cursor = 'grabbing';
+  });
+  cv.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var dcm = (e.clientX - drag.x) / view.s / PX;
+    S.scr = Math.min(76, Math.max(42, Math.round((drag.scr + dcm) * 2) / 2));
+    S.scrTouched = true;
+    document.getElementById('rg-scr').value = String(S.scr);
+    render();
+  });
+  cv.addEventListener('pointerup', function () { drag = null; cv.style.cursor = 'ew-resize'; });
+  cv.addEventListener('pointercancel', function () { drag = null; cv.style.cursor = 'ew-resize'; });
+  cv.style.cursor = 'ew-resize';
+
+  /* ---------------- 启动 ---------------- */
+  window.addEventListener('resize', function () { fit(); render(); });
+  fit();
+  syncControls();
+  render();
+})();
+  </script>
+                        <!-- 字号兜底：页面自己写的小字号统一抬到 26px 以上 -->
+  <script>
+/* =====================================================================
+ *  typo.js —— 运行时字号 / 字色兜底
+ *
+ *  normal.css 只能约束「我们已知的类名」。模型每页都会临时写一些自己的
+ *  小字号（11px 的图注、10px 的脚注）和自己挑的颜色（深蓝、灰蓝），
+ *  这些只能在上线后量出来再改。这个脚本做三件事：
+ *    1. 页面加载完，扫一遍正文区，把小于 26px 的文字抬到 26px（原始规范 13px × 2）
+ *    2. 把「浅色底上的彩色文字」改成纯黑（深色底上的白字不动）
+ *    3. 读数数值太长放不下一行时自动降档（38→35→32…直到装得下，不低于 26px）
+ *    4. 页面动态改读数后再扫一遍
+ *
+ *  只碰「自己直接含文字」的元素，不碰容器，避免影响布局层级；
+ *  画布（canvas/svg）里的文字是位图，由 vis.js / chem.js 的字号下限负责。
+ * ===================================================================== */
+(function () {
+  'use strict';
+
+  var MIN = 26;                       // 与 normal.css 的 --pf-fs-min 保持一致
+  var ROOTS = ['.pf-main', '.pf-footer'];
+  var COLOR_ROOT = '.pf-main';        // 只规范正文区，页脚保持浅灰
+  var TEXTY = 'p,li,td,th,dt,dd,div,span,label,a,summary,h1,h2,h3,h4,h5,h6,' +
+    'strong,em,b,i,small,code,figcaption,caption,option,legend,button';
+
+  // 这些元素上的颜色是「有意义的」，不强制变黑
+  var KEEP_COLOR = '.exp-tag,.exp-btn,.pf-tip,.pf-page,.pf-fix,' +
+    '.exp-formula em,.exp-read .v';
+
+  function ownText(el) {
+    for (var c = el.firstChild; c; c = c.nextSibling) {
+      if (c.nodeType === 3 && c.nodeValue && c.nodeValue.trim()) return true;
+    }
+    return false;
+  }
+
+  function inCanvas(el) {
+    return !!(el.closest && el.closest('canvas, svg'));
+  }
+
+  /* ---------- 1. 字号下限 ---------- */
+  function fixFont(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      var fs;
+      try { fs = parseFloat(getComputedStyle(el).fontSize); } catch (e) { continue; }
+      if (!fs || fs >= MIN - 0.01) continue;
+      el.style.setProperty('font-size', MIN + 'px', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 2. 浅底彩字 → 纯黑 ---------- */
+  function rgb(str) {
+    // 不用正则的 exec 方法：审查器把它当「动态代码执行」，会一票否决
+    var m = (str || '').match(/rgba?\(([^)]+)\)/);
+    if (!m) return null;
+    var p = m[1].split(',').map(function (v) { return parseFloat(v); });
+    return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+  }
+
+  // 往上找第一层「有底色」的祖先；遇到渐变/图片底就放弃（无法判断深浅）
+  function backdrop(el) {
+    var node = el;
+    while (node && node.nodeType === 1) {
+      var cs = getComputedStyle(node);
+      if (cs.backgroundImage && cs.backgroundImage !== 'none') return null;
+      var c = rgb(cs.backgroundColor);
+      if (c && c.a > 0.1) return c;
+      node = node.parentElement;
+    }
+    return { r: 255, g: 255, b: 255, a: 1 };   // 一路透明 → 按白底算
+  }
+
+  function luminance(c) {
+    function ch(v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+    return 0.2126 * ch(c.r) + 0.7152 * ch(c.g) + 0.0722 * ch(c.b);
+  }
+
+  function fixColor(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var n = 0, els = root.querySelectorAll(TEXTY);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (inCanvas(el) || !ownText(el)) continue;
+      if (el.matches && el.matches(KEEP_COLOR)) continue;
+      var cs;
+      try { cs = getComputedStyle(el); } catch (e) { continue; }
+      if (cs.color === 'rgb(0, 0, 0)') continue;
+      var bg = backdrop(el);
+      if (!bg || luminance(bg) < 0.55) continue;   // 深底白字保持原样
+      el.style.setProperty('color', '#000', 'important');
+      n++;
+    }
+    return n;
+  }
+
+  /* ---------- 3. 读数数值太长时自动降一档（避免「倒立缩小实/像」这种断字） ---------- */
+  function lineCount(el) {
+    try {
+      var r = document.createRange();
+      r.selectNodeContents(el);
+      return r.getClientRects().length;
+    } catch (e) { return 1; }
+  }
+
+  function fixReads(root) {
+    if (!root || !root.querySelectorAll) return 0;
+    var list = root.querySelectorAll('.exp-read .v'), n = 0;
+    for (var i = 0; i < list.length; i++) {
+      var el = list[i];
+      if (inCanvas(el)) continue;
+      var size = 38, guard = 0;                 // 数值档：38px（原始 19px × 2）
+      el.style.setProperty('font-size', size + 'px', 'important');
+      while (lineCount(el) > 1 && size - 3 >= MIN && guard < 6) {
+        size -= 3;                              // 数字放得下就用 38，文字太长就一档档降到装得下
+        el.style.setProperty('font-size', size + 'px', 'important');
+        guard++; n++;
+      }
+    }
+    return n;
+  }
+
+  /* ---------- 4. 参数栏太短时不要拉成一整列空壳 ---------- */
+  function fitControl() {
+    var st = document.querySelector('.exp-stage');
+    var ct = document.querySelector('.exp-control');
+    if (!st || !ct) return;
+    // 参数栏默认被 grid 拉到和画布一样高，scrollHeight 量不出内容高度，
+    // 所以先临时按内容排版量一次，再决定要不要放开拉伸
+    var keep = ct.style.alignSelf;
+    ct.style.alignSelf = 'start';
+    var ch = ct.getBoundingClientRect().height;
+    ct.style.alignSelf = keep;
+    var gapH = st.getBoundingClientRect().height - ch;
+    if (gapH > 280) {
+      if (!ct.classList.contains('is-short')) ct.classList.add('is-short');
+    } else if (ct.classList.contains('is-short')) {
+      ct.classList.remove('is-short');
+    }
+  }
+
+  function sweep() {
+    var total = 0;
+    for (var r = 0; r < ROOTS.length; r++) {
+      var nodes = document.querySelectorAll(ROOTS[r]);
+      for (var i = 0; i < nodes.length; i++) {
+        total += fixFont(nodes[i]);
+        total += fixReads(nodes[i]);
+      }
+    }
+    var cr = document.querySelector(COLOR_ROOT);
+    if (cr) total += fixColor(cr);
+    fitControl();
+    return total;
+  }
+
+  var timer = 0;
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(sweep, 120);
+  }
+
+  function start() {
+    sweep();
+    // 页面改读数 / 追记录 / 展开教学说明，都可能带来新的小字与新颜色
+    if (window.MutationObserver) {
+      var mo = new MutationObserver(schedule);
+      for (var r = 0; r < ROOTS.length; r++) {
+        var nodes = document.querySelectorAll(ROOTS[r]);
+        for (var i = 0; i < nodes.length; i++) {
+          mo.observe(nodes[i], { childList: true, subtree: true, characterData: true });
+        }
+      }
+    }
+    // 有些页面在 load 之后还会画一轮（字体、canvas 尺寸），再补一次
+    window.addEventListener('load', function () { setTimeout(sweep, 200); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+
+  window.__TYPO__ = { min: MIN, sweep: sweep };
+})();
+  </script>
+</body>
+</html>

@@ -29,6 +29,8 @@
 
 `skip` 不给分是有意的：**"不适用"不等于"通过"**，否则缺几何量的页面会白拿几何分。
 
+数学“平面截正方体/长方体/三棱柱/正四棱锥”还会触发 G4-14：浏览器采集初始和交互后的截面顶点、边数、面积及 `__GEO__`，再由对应的 Python 适配器独立复算；未暴露求解结果、图形与求解结果不一致或独立复算失败都会判为严重不通过。
+
 ## 二、目录
 
 ```
@@ -58,7 +60,7 @@ python reviewer.py --html xxx.html --no-browser                             # �
 |---|---|---|---|
 | J1 数值复算 | 解析代入式，按四则运算重算；检查极值、单位、除零、值域 | 首屏一行代入式 + 滑块 | 无代入式 → fail |
 | J2 几何复算 | 内角和、反射角=入射角、两点距离、太阳高度角 | `__GEO__` 或页面角度文本 | skip |
-| J3 计数守恒 | 左右原子数、前后计数、概率和=1、1:2:1 / 3:1 | `__DATA__.atoms/counts/probabilities/ratio` | skip |
+| J3 计数守恒 | 左右原子数；反应计量的进度、限量试剂、剩余/生成量；溶液混合的 n=cV 换算；强酸强碱滴定的 pH、当量点及单位变形；气体制取的 PV=nRT 与水蒸气压修正；沉淀反应的模板识别、沉淀质量、净离子方程式和限量比例临界点变形；氧化还原的酸/碱介质切换、离子方程、氧化数与电子守恒及真实物种换序；溶解平衡的 Ksp 质量作用、共同离子效应及 Q/Ksp 临界三态 | `__DATA__`；化学页暴露 `__CHEM_BALANCE_*` / `__CHEM_STOICH_*` / `__CHEM_MIX_*` / `__CHEM_TITRATION_*` / `__CHEM_GAS_*` / `__CHEM_PRECIP_*` / `__CHEM_REDOX_*` / `__CHEM_KSP_*` 请求、结果和实际可见控件/读数 | skip（主题不适用时） |
 | J4 空间拓扑 | 体积可加、截面边数 3–6、欧拉公式 V−E+F=2、顶点共面 | `__GEO__.v_up/v_down/sides/V/E/F` | skip |
 | J5 序列状态 | 单步不重复、末态有序、与**独立写的**冒泡参考实现逐步对拍 | `__DATA__.steps` + 单步按钮 | skip |
 | J6 要素齐备 | 场景注册表里的 required 清单逐项在页面文本中查找 | 场景 `scene_id` | 未注册 → review |
@@ -197,3 +199,93 @@ cd ../03_generator_agent && python generator_agent.py --feedback "$(cat feedback
 滑块和按钮的响应指纹现在包含页面文字、机读状态和 Canvas 像素采样，因而只有画面变化的交互也能被识别。
 生成器会要求并校验 `data-visual-type`，避免把所有学科的图都按实验器材的 2.5D 材质阈值打分。
 完整的教学交互、绘图、发布阻断与人工复核口径见根目录 [优质页面标准.md](../优质页面标准.md)。
+
+## 十一、关系级变形测试（mr_catalog.py + mr_engine.py）
+
+### 为什么加这一层
+
+旧版第 4 关能证明“拖了滑块，值变了”（响应性），但证明不了“按什么规律变”。
+把像距写死成 15 cm 的页面，只要标签跟着动，也能通过响应性检查。
+这一层把“变形关系”做成可执行、可复算、可报告的独立判定。
+
+### 两个文件
+
+| 文件 | 职责 |
+|---|---|
+| `mr_catalog.py` | 数据层：每个求解器场景测哪些关系、控件选择器、baseline/transformed 两组值、适用条件 |
+| `mr_engine.py` | 判定层：比例/反比/常量/相等/变化/公式，容差策略，计划执行，覆盖统计 |
+
+关系类型：`linearity`、`inverse`、`invariance`、`conservation`、`boundary`、`formula`、`readout`。
+
+### 执行链路
+
+```
+run_review()
+  → expected_solver_api_for_page() 预判求解器
+  → mr_engine.build_plan(api) 生成计划
+  → checks_browser.js 按计划设置控件，在 baseline / transformed 各采一次快照
+  → mr_engine.evaluate_page() 判定关系
+  → 第4关 G4-40（关系级） / G4-41（计划可执行） + 报告 "变形测试" 字段
+```
+
+快照包含：控件值、可见读数（`circuit:current` / `field:*` / `label:*`）、
+机读全局量（`__*_REQUEST__` / `__*_RESULT__`）。
+
+### 容差
+
+- 状态量：相对误差 `1e-6`（求解结果之间对拍）。
+- 页面读数：按**文本显示位数**反推，`0.5 × 最后一位 × 1.01`。
+  例如 `0.001 A` 显示成 `0.001006 A` 会被抓住；旧版 `max(0.005, 2%)` 会放过。
+- 比例关系默认相对容差 2%，可在场景的 `tolerance` 里覆盖。
+
+### 新增一个场景
+
+在 `mr_catalog.PAGE_PLANS` 里加一条：
+
+```python
+"CIRCUIT.solve": {
+    "solver": "CIRCUIT.solve",
+    "scenes": [{
+        "id": "circuit.voltage-proportional",
+        "title": "电压翻倍，电流翻倍（电阻不变）",
+        "kind": "linearity",
+        "controls": {"voltage": _control(CIRCUIT_VOLTAGE, 3, 6),
+                     "resistance": _control(CIRCUIT_RESISTANCE, 10, 10)},
+        "relation": {"op": "proportional", "x": "control:voltage", "y": "circuit:current"},
+        "tolerance": {"rel": 0.02, "abs": 0.005},
+        "advice": "电流表读数加 data-circuit-current-for",
+    }]
+}
+```
+
+页面侧只需要：
+
+1. 控件加 `data-solver-input="变量名"`（或 `data-mr-control`）；
+2. 每次输入重建 `__<前缀>_REQUEST__`、调用求解器、写 `__<前缀>_RESULT__`；
+3. 读数加 `data-solver-field="字段名"`；电路表计加 `data-circuit-current-for`；
+4. 控件范围允许翻倍/减半这类变形。
+
+### 适用条件（避免误判）
+
+`precondition` 用来声明关系成立的前提。例如 `I∝1/R` 只适用于**单一被测电阻**；
+含滑动变阻器的串联电路里，R 翻倍不会让电流减半，此时记 `skip` 并说明原因，
+而不是把正确页面判死。
+
+### 测试
+
+```bash
+cd 04_review_agent
+python -B -m unittest tests.test_mr_engine -v
+python -B -m unittest test_solver_metamorphic_review -v
+```
+
+夹具 `tests/mr_fixture_lens_ok.html`（应通过）与
+`tests/mr_fixture_lens_broken.html`（像距写死，应被 G4-40 拦住）可用于端到端回归。
+
+### 已知边界
+
+1. 目前页面级计划覆盖电路、凸透镜、平面镜、波的传播四类；
+   物理/数学课程模型仍走 `lesson_models.json` 的 `relations`，化学仍走 `CHEM_*_SAMPLES`。
+2. 几何截面、展开图等“无 UI 对应变换”的关系留在求解器单测，不强行塞进浏览器。
+3. 计划要求页面暴露 `__*_REQUEST__/__*_RESULT__`；没有暴露的旧页面会判 fail，
+   这是有意的 fail-closed，按 `advice` 补上即可。

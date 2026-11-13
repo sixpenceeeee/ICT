@@ -1,15 +1,15 @@
 {
   "文件": "教学资源_凸透镜成像.html",
-  "审查时间": "2026-11-04 14:39:37",
+  "审查时间": "2026-11-13 02:46:06",
   "实验ID": "未登记（应由知识库 experiment_id 提供）",
   "学科": "物理",
   "主题": "凸透镜成像",
-  "引擎": "未声明",
-  "场景": "未登记",
-  "总分": 98.0,
-  "结论": "不通过",
-  "发布状态": "禁止发布",
-  "严重问题数": 1,
+  "引擎": "ray_optics",
+  "场景": "physics-thin-lens",
+  "总分": 100.0,
+  "结论": "通过",
+  "发布状态": "待教师审核",
+  "严重问题数": 0,
   "五关": [
     {
       "关": "G1",
@@ -26,10 +26,10 @@
       "关": "G2",
       "名称": "资源完整性",
       "满分": 25,
-      "得分": 23.04,
-      "通过": 12,
-      "失败": 1,
-      "待审": 2,
+      "得分": 25.0,
+      "通过": 15,
+      "失败": 0,
+      "待审": 0,
       "不适用": 1,
       "无可判项": false
     },
@@ -40,8 +40,8 @@
       "得分": 25.0,
       "通过": 5,
       "失败": 0,
-      "待审": 1,
-      "不适用": 2,
+      "待审": 0,
+      "不适用": 4,
       "无可判项": false
     },
     {
@@ -49,10 +49,10 @@
       "名称": "浏览器测试",
       "满分": 15,
       "得分": 15.0,
-      "通过": 9,
+      "通过": 11,
       "失败": 0,
       "待审": 0,
-      "不适用": 3,
+      "不适用": 4,
       "无可判项": false
     },
     {
@@ -70,10 +70,10 @@
   "判据": {
     "J1": {
       "名称": "数值复算",
-      "pass": 4,
+      "pass": 2,
       "fail": 0,
       "review": 0,
-      "skip": 0
+      "skip": 2
     },
     "J2": {
       "名称": "几何复算",
@@ -82,11 +82,18 @@
       "review": 0,
       "skip": 1
     },
+    "J3": {
+      "名称": "",
+      "pass": 1,
+      "fail": 0,
+      "review": 0,
+      "skip": 0
+    },
     "J6": {
       "名称": "结构要素齐备",
-      "pass": 0,
+      "pass": 1,
       "fail": 0,
-      "review": 1,
+      "review": 0,
       "skip": 0
     },
     "J7": {
@@ -201,14 +208,14 @@
       "gate_name": "结构与安全",
       "judge": "",
       "name": "引擎与场景白名单",
-      "status": "skip",
-      "severity": "一般",
+      "status": "pass",
+      "severity": "严重",
       "weight": 3,
-      "expected": "scene_engine 取自 25 类白名单，scene_id 已注册",
-      "actual": "页面未声明引擎/场景配置",
-      "message": "无配置可比对，本项不适用",
-      "evidence": "",
-      "advice": ""
+      "expected": "引擎取自 25 类白名单，场景与已审核注册表对应",
+      "actual": "引擎 ray_optics / 场景 physics-thin-lens",
+      "message": "配置在许可范围内",
+      "evidence": "{'scene_id': 'physics-thin-lens'}",
+      "advice": "在 registry.ENGINES/SCENES 中登记该引擎与场景，并补充 required 与 facts 绑定"
     },
     {
       "check_id": "G1-08",
@@ -216,14 +223,14 @@
       "gate_name": "结构与安全",
       "judge": "",
       "name": "数值安全范围",
-      "status": "pass",
+      "status": "skip",
       "severity": "一般",
       "weight": 3,
-      "expected": "长度≤120 cm",
-      "actual": "未出现越界值",
-      "message": "数值在安全范围内",
+      "expected": "参数落在真实器材范围内",
+      "actual": "该主题未配置安全阈值",
+      "message": "主题未识别，阈值检查不适用",
       "evidence": "",
-      "advice": "参数上限按真实器材设定：长度≤120 cm；警示语里提到超限值请加「禁止」"
+      "advice": ""
     },
     {
       "check_id": "G2-01",
@@ -261,14 +268,14 @@
       "gate_name": "资源完整性",
       "judge": "",
       "name": "本地资源可解析",
-      "status": "review",
-      "severity": "建议",
+      "status": "pass",
+      "severity": "一般",
       "weight": 4,
-      "expected": "下载弹窗指向的压缩包应随案例一起交付",
-      "actual": "压缩包未生成：凸透镜成像.zip",
-      "message": "页面能正常显示，但「下载本案例」会 404",
+      "expected": "所有相对路径引用的文件都在同目录",
+      "actual": "5 个本地引用全部存在",
+      "message": "资源随页面完整交付",
       "evidence": "",
-      "advice": "打包时把 zip 放到与 html 同目录，或改为指向资源目录"
+      "advice": ""
     },
     {
       "check_id": "G2-04",
@@ -310,7 +317,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "2–4 个关键参数控件",
-      "actual": "3 个滑块 + 4 个按钮",
+      "actual": "0 个滑块 + 2 个按钮",
       "message": "控件数量合适",
       "evidence": "",
       "advice": ""
@@ -351,12 +358,12 @@
       "gate_name": "资源完整性",
       "judge": "",
       "name": "CSV 导出",
-      "status": "review",
+      "status": "pass",
       "severity": "建议",
       "weight": 1,
       "expected": "数值型实验提供「导出 CSV」",
-      "actual": "未提供导出",
-      "message": "数值实验建议补一个导出（非必做）",
+      "actual": "已提供",
+      "message": "可以把数据带到 Excel 里继续分析",
       "evidence": "",
       "advice": "用 Blob + URL.createObjectURL 生成 CSV，与表格共用同一份数据"
     },
@@ -385,7 +392,7 @@
       "severity": "一般",
       "weight": 5,
       "expected": "页面上每段文字的最上层都是文字本身",
-      "actual": "183 段文字实测未被 canvas/img/svg 覆盖",
+      "actual": "139 段文字实测未被 canvas/img/svg 覆盖",
       "message": "DOM 层文字均在最上层",
       "evidence": "",
       "advice": ""
@@ -400,7 +407,7 @@
       "severity": "一般",
       "weight": 4,
       "expected": "文字在最后一步绘制，不被任何后续填充覆盖",
-      "actual": "19 段画布文字均未被后续图元覆盖",
+      "actual": "20 段画布文字均未被后续图元覆盖",
       "message": "绘制顺序正确",
       "evidence": "",
       "advice": ""
@@ -415,7 +422,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "文字包围盒完整落在画布内并留 ≥8px 安全边距",
-      "actual": "19 段文字全部在画布内",
+      "actual": "20 段文字全部在画布内",
       "message": "无文字被裁切",
       "evidence": "",
       "advice": ""
@@ -426,14 +433,14 @@
       "gate_name": "资源完整性",
       "judge": "",
       "name": "画布文字与边框/文字不冲突",
-      "status": "fail",
-      "severity": "严重",
+      "status": "pass",
+      "severity": "一般",
       "weight": 4,
       "expected": "文字与面板描边、相邻标注之间留出可读间距",
-      "actual": "0 处边框冲突、1 处文字重叠：「u = 30.0 cm」与「v = 15.0 cm」重叠(100%)",
-      "message": "描边穿过文字或标注互相盖住，文字不可读",
-      "evidence": "([], [{'first': 'u = 30.0 cm', 'second': 'v = 15.0 cm', 'ratio': 1, 'firstBox': [264, 354, 105, 20], 'secondBox': [264, 354, 104, 20]}])",
-      "advice": "扩大卡片留白并把文字放回内边距内；调整标签锚点/行距，避免文字包围盒相交"
+      "actual": "20 段画布文字未与卡片描边或其他文字相撞",
+      "message": "画布内标注留有可读间距",
+      "evidence": "",
+      "advice": ""
     },
     {
       "check_id": "G2-15",
@@ -476,9 +483,9 @@
       "severity": "major",
       "weight": 8,
       "expected": "按公式独立重算后与显示值一致",
-      "actual": "2 组代入式全部复算通过",
+      "actual": "1 组代入式全部复算通过",
       "message": "页面数值与独立复算一致",
-      "evidence": "15.0 ÷ 30.0 = 0.50",
+      "evidence": "15 cm ÷ 30 cm = 0.5",
       "advice": ""
     },
     {
@@ -488,12 +495,12 @@
       "judge": "J1",
       "judge_name": "数值复算",
       "name": "J1 极值下仍自洽",
-      "status": "pass",
+      "status": "skip",
       "severity": "major",
       "weight": 4,
       "expected": "参数取端点时代入式仍成立",
-      "actual": "1 组极值状态复算通过",
-      "message": "极值端点的数值仍自洽",
+      "actual": "页面没有可拖动参数，或极值状态未产生新的代入式",
+      "message": "无参数可拖，本项不适用",
       "evidence": "",
       "advice": ""
     },
@@ -520,14 +527,14 @@
       "judge": "J1",
       "judge_name": "数值复算",
       "name": "J1 值域与除零",
-      "status": "pass",
+      "status": "skip",
       "severity": "major",
       "weight": 3,
       "expected": "参数上下限有效、不出现除零",
-      "actual": "3 个滑块范围与初值均合法",
-      "message": "参数值域合法",
+      "actual": "页面没有滑块，参数值域不适用",
+      "message": "无参数控件，本项不适用",
       "evidence": "",
-      "advice": "在 setParams 里做上下界校验，除数为 0 时给出提示而不是直接计算"
+      "advice": ""
     },
     {
       "check_id": "J2-01",
@@ -568,14 +575,14 @@
       "judge": "J6",
       "judge_name": "结构要素齐备",
       "name": "J6 强制要素齐备",
-      "status": "review",
-      "severity": "major",
+      "status": "pass",
+      "severity": "critical",
       "weight": 5,
-      "expected": "按已审核场景注册表核对器材/标注/图例",
-      "actual": "场景未注册，仅命中通用标注 0 项（无）",
-      "message": "缺少场景注册表就无法确定「该有哪些器材」，此项交教师确认",
-      "evidence": "",
-      "advice": "在 registry.SCENES 里登记该场景及 required 清单，或先在知识库完成场景审核"
+      "expected": "场景「凸透镜成像」必须具备：凸透镜、光屏、光具座",
+      "actual": "要素齐全",
+      "message": "强制要素完整",
+      "evidence": "凸透镜成像",
+      "advice": "按场景注册表的 required 清单补齐器材与标注，并确保名称与教材一致"
     },
     {
       "check_id": "J7-01",
@@ -594,6 +601,21 @@
       "advice": ""
     },
     {
+      "check_id": "J3-15",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "J3",
+      "name": "凸透镜成像独立复算",
+      "status": "pass",
+      "severity": "严重",
+      "weight": 4,
+      "expected": "初始状态和真实控件变更后的结果、可见读数均与 Python 独立复算一致",
+      "actual": "复核了 9 个页面状态",
+      "message": "页面求解结果及读数核对",
+      "evidence": "",
+      "advice": ""
+    },
+    {
       "check_id": "G4-01",
       "gate": "G4",
       "gate_name": "浏览器测试",
@@ -603,7 +625,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "浏览器能正常加载",
-      "actual": "加载耗时 153 ms",
+      "actual": "加载耗时 197 ms",
       "message": "页面可加载",
       "evidence": "",
       "advice": ""
@@ -624,19 +646,64 @@
       "advice": "常见原因：DOM 取到 null、函数名拼错、脚本早于元素执行"
     },
     {
+      "check_id": "G4-32",
+      "gate": "G4",
+      "gate_name": "浏览器测试",
+      "judge": "",
+      "name": "求解器页面变形测试",
+      "status": "pass",
+      "severity": "严重",
+      "weight": 5,
+      "expected": "改变实际页面输入后，求解请求/结果随之更新，并可对变形状态独立复算",
+      "actual": "浏览器输入变形已到达并更新求解器：凸透镜成像",
+      "message": "页面求解器变形测试通过",
+      "evidence": "凸透镜成像",
+      "advice": "在浏览器实际改变求解控件；确保请求随控件更新、重算结果更新，并由独立参考实现复核变形状态"
+    },
+    {
+      "check_id": "G4-40",
+      "gate": "G4",
+      "gate_name": "浏览器测试",
+      "judge": "",
+      "name": "变形测试：关系级",
+      "status": "pass",
+      "severity": "严重",
+      "weight": 6,
+      "expected": "改变页面控件后，结果按线性/反比/守恒/不变/公式等关系变化，且读数与求解结果一致",
+      "actual": "通过 2 条关系（1 类）",
+      "message": "页面变形关系成立",
+      "evidence": "lens.gauss-formula:pass；lens.magnification:pass",
+      "advice": "继续补充边界与单位换算类变形关系"
+    },
+    {
+      "check_id": "G4-41",
+      "gate": "G4",
+      "gate_name": "浏览器测试",
+      "judge": "",
+      "name": "变形测试：计划可执行",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 2,
+      "expected": "选定的求解器场景能在页面上找到对应控件，并完成 baseline/transformed 两次采样",
+      "actual": "已执行 2 条页面级关系",
+      "message": "计划可执行",
+      "evidence": "",
+      "advice": ""
+    },
+    {
       "check_id": "G4-03",
       "gate": "G4",
       "gate_name": "浏览器测试",
       "judge": "",
       "name": "参数变化有响应",
-      "status": "pass",
-      "severity": "严重",
+      "status": "skip",
+      "severity": "一般",
       "weight": 3,
-      "expected": "拖动每个滑块都有可见变化",
-      "actual": "3/3 个滑块拖动后有变化",
-      "message": "所有滑块都生效",
+      "expected": "拖动任一滑块，读数/图像/代入式至少一处变化",
+      "actual": "页面没有滑块",
+      "message": "无滑块可测，本项不适用",
       "evidence": "",
-      "advice": "检查是否监听 input 事件、是否在 handler 里调用 render()"
+      "advice": ""
     },
     {
       "check_id": "G4-10",
@@ -663,7 +730,7 @@
       "severity": "一般",
       "weight": 2,
       "expected": "点击按钮后页面状态变化",
-      "actual": "2/4 个按钮有响应，死键：光屏自动对焦、三条特殊光线",
+      "actual": "2/2 个按钮有响应",
       "message": "按钮均可用",
       "evidence": "",
       "advice": "给按钮绑定事件；开关类按钮必须改变实验状态并刷新读数"
@@ -693,7 +760,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "渐变/半透明叠层/曲线/无色块堆砌",
-      "actual": "渐变 30% · 叠层 34% · 立体件 11% · 曲线 95% · 纯色块 2 处",
+      "actual": "渐变 28% · 叠层 32% · 立体件 9% · 曲线 95% · 纯色块 30 处",
       "message": "器材画面质感达到基础要求",
       "evidence": "",
       "advice": ""
@@ -783,7 +850,7 @@
       "severity": "一般",
       "weight": 2,
       "expected": "①区给出 1–2 条可观察的学习目标",
-      "actual": "已呈现（需求中 4 条）",
+      "actual": "已呈现（需求中 3 条）",
       "message": "学习目标已呈现",
       "evidence": "",
       "advice": "用「能……」开头写 1–2 条，指向可观察的行为"
@@ -828,8 +895,8 @@
       "severity": "一般",
       "weight": 0,
       "expected": "明确标注实验性质与来源（课标必做 / 常规实验 / 教学演示）",
-      "actual": "出现「课标必做」但未标注来源",
-      "message": "不能把演示误写成课标必做，需教研确认",
+      "actual": "已标注「教学演示」",
+      "message": "性质已写明，课标地位仍需教研确认",
       "evidence": "",
       "advice": ""
     },
@@ -864,67 +931,18 @@
       "advice": ""
     }
   ],
-  "问题清单": [
-    {
-      "维度": "资源完整性",
-      "检查项": "画布文字与边框/文字不冲突",
-      "级别": "严重",
-      "说明": "描边穿过文字或标注互相盖住，文字不可读（0 处边框冲突、1 处文字重叠：「u = 30.0 cm」与「v = 15.0 cm」重叠(100%)）",
-      "建议": "扩大卡片留白并把文字放回内边距内；调整标签锚点/行距，避免文字包围盒相交",
-      "check_id": "G2-13",
-      "status": "fail",
-      "expected": "文字与面板描边、相邻标注之间留出可读间距",
-      "actual": "0 处边框冲突、1 处文字重叠：「u = 30.0 cm」与「v = 15.0 cm」重叠(100%)",
-      "evidence": "([], [{'first': 'u = 30.0 cm', 'second': 'v = 15.0 cm', 'ratio': 1, 'firstBox': [264, 354, 105, 20], 'secondBox': [264, 354, 104, 20]}])"
-    }
-  ],
+  "问题清单": [],
   "待审清单": [
-    {
-      "维度": "资源完整性",
-      "检查项": "本地资源可解析",
-      "级别": "建议",
-      "说明": "页面能正常显示，但「下载本案例」会 404（压缩包未生成：凸透镜成像.zip）",
-      "建议": "打包时把 zip 放到与 html 同目录，或改为指向资源目录",
-      "check_id": "G2-03",
-      "status": "review",
-      "expected": "下载弹窗指向的压缩包应随案例一起交付",
-      "actual": "压缩包未生成：凸透镜成像.zip",
-      "evidence": ""
-    },
-    {
-      "维度": "资源完整性",
-      "检查项": "CSV 导出",
-      "级别": "建议",
-      "说明": "数值实验建议补一个导出（非必做）（未提供导出）",
-      "建议": "用 Blob + URL.createObjectURL 生成 CSV，与表格共用同一份数据",
-      "check_id": "G2-08",
-      "status": "review",
-      "expected": "数值型实验提供「导出 CSV」",
-      "actual": "未提供导出",
-      "evidence": ""
-    },
-    {
-      "维度": "学科判据·J6",
-      "检查项": "J6 强制要素齐备",
-      "级别": "major",
-      "说明": "缺少场景注册表就无法确定「该有哪些器材」，此项交教师确认（场景未注册，仅命中通用标注 0 项（无））",
-      "建议": "在 registry.SCENES 里登记该场景及 required 清单，或先在知识库完成场景审核",
-      "check_id": "J6-01",
-      "status": "review",
-      "expected": "按已审核场景注册表核对器材/标注/图例",
-      "actual": "场景未注册，仅命中通用标注 0 项（无）",
-      "evidence": ""
-    },
     {
       "维度": "教学审核",
       "检查项": "实验性质标注",
       "级别": "一般",
-      "说明": "不能把演示误写成课标必做，需教研确认（出现「课标必做」但未标注来源）",
+      "说明": "性质已写明，课标地位仍需教研确认（已标注「教学演示」）",
       "建议": "",
       "check_id": "G5-04",
       "status": "review",
       "expected": "明确标注实验性质与来源（课标必做 / 常规实验 / 教学演示）",
-      "actual": "出现「课标必做」但未标注来源",
+      "actual": "已标注「教学演示」",
       "evidence": ""
     },
     {
@@ -940,7 +958,58 @@
       "evidence": ""
     }
   ],
-  "修改意见": "上一版质检未通过，请逐条修改（共 1 项）：\n1. [资源完整性/G2-13] 画布文字与边框/文字不冲突：描边穿过文字或标注互相盖住，文字不可读。应为：文字与面板描边、相邻标注之间留出可读间距；实际：0 处边框冲突、1 处文字重叠：「u = 30.0 cm」与「v = 15.0 cm」重叠(100%)。修改建议：扩大卡片留白并把文字放回内边距内；调整标签锚点/行距，避免文字包围盒相交",
+  "修改意见": "",
   "动态验证": "已执行",
+  "变形测试": {
+    "checked": true,
+    "required": true,
+    "ok": true,
+    "api": "PHYS.solveThinLens",
+    "rows": [
+      {
+        "id": "lens.gauss-formula",
+        "title": "每个状态满足 1/f = 1/u + 1/v",
+        "kind": "formula",
+        "status": "pass",
+        "expected": "1/f = 1/u + 1/v",
+        "actual": "两个状态均满足 2 项公式",
+        "evidence": "基线 通过：1/f=0.1, 1/u+1/v=0.1；变换 通过：1/f=0.1, 1/u+1/v=0.1；基线 通过：field:image_distance_cm = 15；变换 通过：field:image_distance_cm = 30",
+        "advice": "每次控件变化都重新调用 PHYS.solveThinLens，并把同一个结果交给读数与光路绘制",
+        "solver": "PHYS.solveThinLens",
+        "source": "plan"
+      },
+      {
+        "id": "lens.magnification",
+        "title": "放大率满足 m = -v/u",
+        "kind": "formula",
+        "status": "pass",
+        "expected": "m = -v/u = -0.5",
+        "actual": "两个状态均满足 2 项公式",
+        "evidence": "基线 通过：m = -0.5；变换 通过：m = -0.333333；基线 通过：field:magnification = -0.5；变换 通过：field:magnification = -0.333333",
+        "advice": "放大率读数必须读取求解结果的 magnification，不能另算一套",
+        "solver": "PHYS.solveThinLens",
+        "source": "plan"
+      }
+    ],
+    "pass": 2,
+    "fail": 0,
+    "skip": 0,
+    "kinds": {
+      "formula": 2
+    },
+    "coverage": {
+      "linearity": 0,
+      "inverse": 0,
+      "invariance": 0,
+      "conservation": 0,
+      "boundary": 0,
+      "formula": 2,
+      "readout": 0
+    },
+    "lesson_states": 9,
+    "chem_kinds": [],
+    "plan_id": "PHYS.solveThinLens",
+    "coverage_note": "页面级关系 2 条（通过 2 / 失败 0 / 跳过 0）；课程模型采样 9 个状态；化学变形 0 类"
+  },
   "独立性说明": "J1–J8 由本文件独立重算，页面自报的 __DATA__.checks 只记为 review，不作为通过依据；J8 依赖 facts.json 中已通过教研复核的条目。"
 }

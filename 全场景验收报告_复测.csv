@@ -1,0 +1,13 @@
+﻿页面,结论,总分,严重,失败项,耗时秒
+化学-chemistry-redox-electron-bala,通过,100.0,0,,4.9
+化学-chemistry-galvanic,不通过,83.6,1,J8-01 J8 答案表比对；G4-13 电路仿真与独立求解器对拍,5.6
+化学-chemistry-change-type,不通过,83.2,0,G2-09 首屏数据完整；J3-11 沉淀反应与质量定量独立复算,5.1
+化学-chemistry-dilution,不通过,84.6,0,J3-08 溶液混合换算与反应计量独立复算,5.7
+化学-chemistry-reaction-amounts,不通过,84.6,0,J3-07 限量试剂与反应计量独立复算,5.7
+化学-chemistry-metal-activity,不通过,81.6,0,J3-06 化学方程式独立配平；J8-01 J8 答案表比对,5.5
+物理-physics-reflection,不通过,92.1,0,J8-01 J8 答案表比对,5.0
+化学-chemistry-crystal,通过,100.0,0,,5.2
+化学-chemistry-isomer,通过,100.0,0,,4.9
+化学-chemistry-mass-conservation,通过,100.0,0,,5.8
+化学-chemistry-rate-equilibrium,通过,100.0,0,,5.9
+化学-chemistry-solubility-curve,通过,100.0,0,,5.9

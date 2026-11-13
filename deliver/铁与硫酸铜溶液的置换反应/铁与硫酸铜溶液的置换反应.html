@@ -1,45 +1,21 @@
 <!doctype html>
-<html lang="zh-CN" class="pf-hosted" data-page-node-id="kyJQmSYcAP8apDLQDSEKF4">
-<head data-page-node-id="rIuctv3lsdkLIX8fBr13qp">
-  <meta charset="UTF-8" data-page-node-id="sv8tVXDjplwiC3dnMmPYrO">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="iCBhlKJ5NIb2fk7kV8MCM2">
-  <link rel="icon" type="image/png" href="logo.png" data-page-node-id="FGQp7J6Uhi36OtwSWeBgfk">
+<html lang="zh-CN" class="pf-hosted">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="logo.png">
   <title>师伴-铁与硫酸铜溶液的置换反应</title>
 
   <!-- 平台统一外壳（与老师下发的 template 保持一致，不要改） -->
-  <link rel="stylesheet" href="frame.css" data-page-node-id="njVQss3NDseXzywUZVJEAK">
+  <link rel="stylesheet" href="frame.css">
   <!-- 六区域内容样式 -->
-  <link rel="stylesheet" href="exp.css" data-page-node-id="Bb2Qjxm12sWesAtF8eYyhj">
+  <link rel="stylesheet" href="exp.css">
   <style>
-.exp-state {
-  margin: 10px 0 0;
-  padding: 8px 11px;
-  border-radius: 9px;
-  background: #eaf5ff;
-  border: 1px solid #cfe6f8;
-  font-size: 12.8px;
-  font-weight: 600;
-  color: #1b4f7a;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  line-height: 1.5;
-}
-.exp-state .dot {
-  flex: 0 0 auto;
-  width: 8px; height: 8px; border-radius: 50%;
-  background: #3f8fd2;
-  box-shadow: 0 0 0 3px rgba(63, 143, 210, 0.18);
-}
-.exp-state.is-warn { background: #fff6e9; border-color: #fbd6a8; color: #94530f; }
-.exp-state.is-warn .dot { background: #e08a24; box-shadow: 0 0 0 3px rgba(224, 138, 36, 0.18); }
-.exp-state.is-done { background: #eef8f1; border-color: #c9e8d5; color: #1d6b46; }
-.exp-state.is-done .dot { background: #2fa36b; box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.18); }
-.exp-record-head { display: flex; justify-content: flex-end; margin-bottom: 8px; }
-.exp-formula { white-space: pre-line; line-height: 1.75; }
-.exp-csv { flex: 0 0 auto; min-width: 0; padding: 6px 12px; font-size: 12.5px; }
+/* 页面自带样式 */
+#fe-scene{display:block;width:100%;height:600px;max-width:100%}#sec-stage .exp-canvas-box{height:600px;min-height:600px;max-height:600px}.exp-field input[type="number"]{width:100%;max-width:100%;box-sizing:border-box}.exp-field input[type="range"]{width:100%;max-width:100%}#fe-equation{font-size:1.05em;font-weight:600;letter-spacing:.02em}@media(max-width:700px){#fe-scene{height:380px}#sec-stage .exp-canvas-box{height:380px;min-height:380px;max-height:380px}}
   </style>
-                                    <!-- 平台阅读规范：正文纯黑 / 最小字号 26px / 名称只在页眉 -->
+  <!-- 平台阅读规范：必须排在页面自带样式之后，才能盖住它们
+       正文纯黑 / 最小字号 26px / 实验名称只在页眉出现一次 -->
   <style>
 /* =====================================================================
  *  normal.css —— 平台阅读规范（后置强制层）
@@ -201,135 +177,62 @@
 }
   </style>
 </head>
-<body data-page-node-id="BXqNh7cAqNCQ5GmNVuvoWU">
-  <header class="pf-header" data-page-node-id="Ga8p63BDM2EoLkPvwrw4cH">
-    <span class="pf-logo" data-page-node-id="FbL5iGWl8SrkLmxsQMcy7F"><img src="logo.png" alt="平台标志" data-page-node-id="BtI4xQhHh02XdpEwnsBQav"></span>
-    <h1 class="pf-title" data-page-node-id="9E0aX6YF4DmW4WTM3YogKI"><span class="pf-fix" data-page-node-id="mVpX0qbmzCC24NudTQBSZu">师伴-</span><span class="pf-page" data-page-node-id="bzCL5nDxetHAyzfS4IHPHC">铁与硫酸铜溶液的置换反应</span></h1>
+<body>
+  <header class="pf-header">
+    <span class="pf-logo"><img src="logo.png" alt="平台标志"></span>
+    <h1 class="pf-title"><span class="pf-fix">师伴-</span><span class="pf-page">铁与硫酸铜溶液的置换反应</span></h1>
   </header>
 
-  <aside class="pf-side" data-page-node-id="jayNrmMiM7nST1JpCFP9ia">
-    <label for="pf-dl" data-page-node-id="0eQWFjT5pfGKaoPPwrO22D"><span class="ico" data-page-node-id="SMGxJKeLg3WTxmZiC8gQ9C">📥</span><span class="pf-tip" data-page-node-id="cjKJMZFQOSHkGPZIl6XBan">下载本案例</span></label>
-    <label for="pf-gen" data-page-node-id="FuBjvU8SXgD5FkBRHHsDsx"><span class="ico" data-page-node-id="jwO9yGJy8wERUMfODhr5b7">✨</span><span class="pf-tip" data-page-node-id="vMccmYYXpbEYGLcxBWNCGg">生成新案例</span></label>
-    <label for="pf-contact" data-page-node-id="HKarDF2qGn9J0JlidBhUpU"><span class="ico" data-page-node-id="GfeH564iHURNN0hL6eAmNW">📧</span><span class="pf-tip" data-page-node-id="9xPVeGoGnMAoDcDnrXjmUB">联系我们，获取更多案例</span></label>
+  <aside class="pf-side">
+    <label for="pf-dl"><span class="ico">📥</span><span class="pf-tip">下载本案例</span></label>
+    <label for="pf-gen"><span class="ico">✨</span><span class="pf-tip">生成新案例</span></label>
+    <label for="pf-contact"><span class="ico">📧</span><span class="pf-tip">联系我们，获取更多案例</span></label>
   </aside>
 
-  <main class="pf-main" data-page-node-id="Je17dT0faOyG8QqIDlQiTo">
-    <div class="pf-content" data-page-node-id="AzBYHcyUG5HP8wlJqKyWJB">
-      <div class="exp-wrap" data-page-node-id="ajPp7h7sS41rEzbyFfjvVm">
+  <main class="pf-main">
+    <div class="pf-content">
+      <div class="exp-wrap">
 
         <!-- ① 实验信息 -->
-        <section class="exp-info" id="sec-info" data-page-node-id="WZWFue4uGDqx5Sd77mpxow">
-
-<div class="exp-tags" data-page-node-id="oaK9ZKFsUtFowPDobEDWo4">
-  <span class="exp-tag" data-page-node-id="MVQhGex5MXIe6zYCL2zI2O">化学</span>
-  <span class="exp-tag" data-page-node-id="UF5vxVcf9m207XpaW6oaHu">初中九年级</span>
-  <span class="exp-tag is-plain" data-page-node-id="gFMbF7H1kzFlGwUycPHFP9">教学演示（虚拟仿真，非课标必做实验）</span>
-</div>
-<div class="exp-goals-title" data-page-node-id="20e1vISp6crq4v12WiBlx2">学习目标</div>
-<ul class="exp-goals" data-page-node-id="l2XBW1GNOWw90jDDCtNDi3">
-  <li data-page-node-id="NG6Zxnq82ZFBgpeacbcgRG">能说出铁与硫酸铜溶液反应的现象：铁钉表面析出红色固体铜，蓝色溶液逐渐变浅</li>
-  <li data-page-node-id="4H6SLjrnmE4xHrJJ3J5k4U">会写出并配平化学方程式 Fe + CuSO₄ → FeSO₄ + Cu，并逐元素核对原子守恒</li>
-  <li data-page-node-id="RZgRnmLUBrcFxrVWKRga65">能用「铁钉增重 = 析出铜质量 − 溶解铁质量」解释质量守恒的去向</li>
-</ul>
+        <section class="exp-info" id="sec-info">
+<div class="exp-tags"><span class="exp-tag">化学</span><span class="exp-tag">初中九年级</span><span class="exp-tag is-plain">教学演示（虚拟仿真）</span></div><p>实验性质：虚拟仿真，按理想溶液、完全反应模型计算，不作为真实实验操作指导。</p><div class="exp-goals-title">学习目标</div><ul class="exp-goals"><li>能写出 Fe + CuSO4 → FeSO4 + Cu 并说明现象</li><li>能判断限量试剂并计算生成的铜</li></ul>
         </section>
 
-        <div class="exp-grid" data-page-node-id="6EL9j5D51TzkQbTTgJ78V2">
+        <div class="exp-grid">
           <!-- ② 演示画布 -->
-          <section class="exp-card exp-stage" id="sec-stage" data-page-node-id="Nh004tyv8X6RJ1iO53fW2z">
-            <h2 data-page-node-id="YUJluJGgNH0dHpjVh8mmds">② 演示<span class="exp-hint" id="pf-stage-hint" data-page-node-id="wNUOAmNDUq8osahEXL9GgJ">拖动画面可旋转视角</span></h2>
-            <div class="exp-canvas-box" data-page-node-id="d8JPdevfu6JgegmrPKQ9cP">
-<canvas id="cv" data-page-node-id="gxppFn9FFBPVBRiKPxXU4W"></canvas>
-<span class="exp-canvas-tip" id="tip" data-page-node-id="aetCjuGrLscDexrHcbWs3r">装置：两只烧杯对比（反应前 / 反应后）· 铁钉 · 硫酸铜溶液（左右拖动画面可调反应进度）</span>
+          <section class="exp-card exp-stage" id="sec-stage">
+            <h2>② 演示<span class="exp-hint" id="pf-stage-hint">拖动画面可旋转视角</span></h2>
+            <div class="exp-canvas-box">
+<canvas id="fe-scene" data-visual-type="apparatus" aria-label="铁与硫酸铜溶液反应前后的双烧杯对比"></canvas><p class="exp-formula" id="fe-equation" data-chem-balance-equation data-chem-stoich-equation>Fe + CuSO4 → FeSO4 + Cu</p><p class="exp-note">左：反应前烧杯中的蓝色 CuSO₄ 溶液与铁钉；右：反应后烧杯中的浅绿色 FeSO₄ 溶液与析出的红色铜。</p>
             </div>
           </section>
 
           <!-- ③ 参数与操作 -->
-          <section class="exp-card exp-control" id="sec-control" data-page-node-id="MJgskY01FisnIcx7z6BaZj">
-            <h2 data-page-node-id="OhrXUbUboEjbNDnpcMEfXg">③ 参数与操作</h2>
-<div class="exp-field" data-page-node-id="Nyrs99HNKOsqCWNy7ZYSXJ">
-  <div class="exp-label" data-page-node-id="CbMinGGeBOxOa2unLxSdDa"><span data-page-node-id="Fk4KlWDgWjp4VrvEnVxn5Y">反应进度</span><span class="exp-val" data-page-node-id="b4iIrIEAuMV58RJeOtBNUG"><b id="v-p" data-page-node-id="aWqaGoqa6BfeiGktA04Atx">75</b> %</span></div>
-  <input type="range" id="rg-p" min="0" max="100" step="1" value="75" data-key="p" data-page-node-id="OqCOhsnE6WczZJ4hOnj0Xv">
-</div>
-<div class="exp-field" data-page-node-id="8QNkNcdqn4b1NKrYdahVrc">
-  <div class="exp-label" data-page-node-id="ahB7Nn7HrGyiXOpFXFZygM"><span data-page-node-id="1Pdit8iBuSExaOhg80WUt2">c(CuSO₄) 溶液浓度</span><span class="exp-val" data-page-node-id="DPORSLa085mc7OQEjuZ6g1"><b id="v-c" data-page-node-id="0HNnjpk5Mzgyb20T5TQlnJ">0.40</b> mol/L</span></div>
-  <input type="range" id="rg-c" min="0.1" max="0.5" step="0.01" value="0.4" data-key="c" data-page-node-id="QCfgrdNrsISBANH5gEl59c">
-</div>
-<div class="exp-field" data-page-node-id="lpDhIUTAJUfxHyWpk85naV">
-  <div class="exp-label" data-page-node-id="EQ4BIHFKEolEEt4zDVpBEP"><span data-page-node-id="FcR6KS0e4zp70s1vKwzasE">V 溶液体积</span><span class="exp-val" data-page-node-id="8NAiAeGBagmCFkSMlj7FT1"><b id="v-v" data-page-node-id="n94UVCJDEAb6LEEY9TOOWx">80</b> mL</span></div>
-  <input type="range" id="rg-v" min="40" max="100" step="5" value="80" data-key="V" data-page-node-id="jMDLrFK0UbTKZDXDIrpX7C">
-</div>
-<div class="exp-btns" data-page-node-id="C8TNNq2SqzNSu9CbjZCpQD">
-  <button class="exp-btn is-primary" id="btn-run" type="button" data-page-node-id="5daAS2C3cBCTpSzPKCHLjo">开始反应</button>
-  <button class="exp-btn" id="btn-step" type="button" data-page-node-id="R2DbLaQIqq5gCfmXEZvx2d">单步</button>
-  <button class="exp-btn" id="btn-record" type="button" data-page-node-id="59QDa9WAhRqkYIMn8cJ2jr">记录当前数据</button>
-  <button class="exp-btn" id="btn-reset" type="button" data-page-node-id="fVnpDdZqoE1Gzos01FHhR9">重置</button>
-</div>
+          <section class="exp-card exp-control" id="sec-control">
+            <h2>③ 参数与操作</h2>
+<label class="exp-field"><span class="exp-label"><span>铁粉的量 n(Fe)</span><span class="exp-val"><b id="fe-amount-label">0.0500</b> mol</span></span><input id="fe-amount" type="number" min="0.001" max="0.2" step="any" value="0.05" data-chem-stoich-amount-index="0" aria-label="铁粉物质的量"></label><label class="exp-field"><span class="exp-label"><span>硫酸铜的量 n(CuSO₄)</span><span class="exp-val"><b id="fe-cuso4-label">0.0400</b> mol</span></span><input id="fe-cuso4" type="number" min="0.001" max="0.2" step="any" value="0.04" data-chem-stoich-amount-index="1" aria-label="硫酸铜物质的量"></label><label class="exp-field"><span class="exp-label"><span>反应进度</span><span class="exp-val"><b id="fe-progress-label">0%</b></span></span><input id="fe-progress" type="range" min="0" max="1" step="0.01" value="0" data-chem-stoich-progress aria-label="反应进度"></label><div class="exp-btns"><button class="exp-btn is-primary" id="btn-record" type="button">记录当前数据</button><button class="exp-btn" id="btn-reset" type="button">重置</button></div>
           </section>
 
           <!-- ④ 结果与反馈 -->
-          <section class="exp-card exp-result" id="sec-result" data-page-node-id="7lZOq6ivcv38MnKJ4E6sqC">
-            <h2 data-page-node-id="b2LhaaEGllzr99JA2U0XJM">④ 结果与反馈</h2>
-<div class="exp-reads" data-page-node-id="vx5Ra5pLDZ5HfEj7llWnFQ">
-  <div class="exp-read" data-page-node-id="JJe5rnZum2rfJ1wlPvredV"><span class="k" data-page-node-id="D7hXSNOXJboEtjRgHwkcAY">析出铜 m(Cu)</span><span class="v" data-page-node-id="dGWdFmksq2N54BWITvIRzp"><b id="r-cu" data-page-node-id="3nUHj798pKiNrXFdyKBBaN">0.82</b> <span class="u" data-page-node-id="IqBIlABQtE04n0JdGzbgfw">g</span></span></div>
-  <div class="exp-read" data-page-node-id="b66LofvdpjuiEoVALJSHbT"><span class="k" data-page-node-id="MPPFKmr2Ov1CXzcHlhFkjl">溶解铁 m(Fe)</span><span class="v" data-page-node-id="6jE0guU7fbJCa9EaXqkr6K"><b id="r-fe" data-page-node-id="C5JIvt7LTi1Ky2cgym0ihV">0.72</b> <span class="u" data-page-node-id="2ZnRHQfRoWWw65pJI7drFr">g</span></span></div>
-  <div class="exp-read" data-page-node-id="SuJoDgOg796FKBZt4iUdzz"><span class="k" data-page-node-id="BikbKERJutGX5UTyZxe318">铁钉净增重 Δm</span><span class="v" data-page-node-id="3M4vvRAFiFvtX0gVcSHAae"><b id="r-dm" data-page-node-id="mOhguDbKxjSiWFaHrOH8F5">0.10</b> <span class="u" data-page-node-id="UrigaKa1A0RTCjliRAC3Vu">g</span></span></div>
-  <div class="exp-read" data-page-node-id="wN4ZDFeiqjsKNWTyVdy5AC"><span class="k" data-page-node-id="ylTTndWiHLjod1X6zCyCbA">剩余 c(Cu²⁺)</span><span class="v" data-page-node-id="OIptph3ACLhAlzHAGjKWHx"><b id="r-cr" data-page-node-id="6tUOrklkFNvyBPEOh7Dhhb">0.24</b> <span class="u" data-page-node-id="RHZLUOpBJ18UjimmGnLS79">mol/L</span></span></div>
-</div>
-<div class="exp-state" id="state" data-page-node-id="SvzDCZnsjQcoAbbrziYvpW"><span class="dot" data-page-node-id="pvcdmskXpIIH5QARsDlYva"></span><span id="state-txt" data-page-node-id="9mPRBaleCVObgwqn3ytMm7">反应进行中：铁钉表面析出红色固体铜，蓝色溶液逐渐变浅</span></div>
-<div class="exp-formula" id="fml" data-page-node-id="Gbvx5PUM5JwaBRtWvvHbel"></div>
-<p class="exp-note" id="hint" data-page-node-id="vX8vtHwryZduTIOkDl7nZI"></p>
-<div class="exp-alert" id="alert" hidden data-page-node-id="8Y2FhYnS8AMbWNu22rSOtu"></div>
+          <section class="exp-card exp-result" id="sec-result">
+            <h2>④ 结果与反馈</h2>
+<div class="exp-reads"><div class="exp-read"><span class="k">反应进度</span><span class="v"><b data-solver-field="progress">0%</b></span></div><div class="exp-read"><span class="k">限量试剂</span><span class="v"><b data-solver-field="limiting">—</b></span></div><div class="exp-read"><span class="k">剩余铁</span><span class="v"><b data-solver-field="remaining_fe">—</b> mol</span></div><div class="exp-read"><span class="k">生成铜</span><span class="v"><b data-solver-field="produced_cu">—</b> mol</span></div></div><div class="exp-formula" id="fe-formula">—</div><p class="exp-note" id="fe-state">调整铁的量和硫酸铜的量，观察谁是限量试剂。</p><p class="exp-alert" data-solver-error hidden></p>
           </section>
         </div>
 
         <!-- ⑤ 实验记录 -->
-        <section class="exp-card exp-record" id="sec-record" data-page-node-id="Y2Kvek6NRYpiiBdaEvYi3K">
-          <h2 data-page-node-id="Rnn0R6nSlRolm5SMhV9MJR">⑤ 实验记录<span class="exp-hint" data-page-node-id="hepHjuuhZaiCwZsp7q62vL">点击「记录当前数据」逐行追加</span></h2>
-          <div class="exp-table-wrap" data-page-node-id="PIfqaVcmDmGlsxYLBIrD89">
-<div class="exp-record-head" data-page-node-id="AojkCJhQzufHgjKVsrGVkl"><button class="exp-btn exp-csv" id="btn-csv" type="button" data-page-node-id="Zi0yNF076bIQ7vBbV0MjM5">导出 CSV</button></div>
-<table class="exp-table" data-page-node-id="H3K8Kcu96wyWNj8eG3grsM">
-  <thead data-page-node-id="PUbHzfcVXFAPFDLBF5BPqN">
-    <tr data-page-node-id="ZoVAkhPBZ1b6vSqqjEWyPs"><th data-page-node-id="0FpzwVA4ZiTczp4DhKlJ7z">序号</th><th data-page-node-id="SRBMyOFpsn9XnPGxHilop1">反应进度/%</th><th data-page-node-id="WzuAlU21y4gADhTr9i5GnL">c(CuSO₄)/(mol·L⁻¹)</th><th data-page-node-id="O8u2bcP716wDSDmT1EczRi">V/mL</th><th data-page-node-id="65vt6qEGjQIBrmUEAv3IsG">m(Cu)/g</th><th data-page-node-id="Zw6Y5sYDhuhMxLPqs9qQ8r">m(Fe)/g</th><th data-page-node-id="yKRhQCVMGS2kthVaEaqlrj">溶液颜色</th></tr>
-  </thead>
-  <tbody id="rows" data-page-node-id="bE6xGdiOYgCVEyahZIySfL"></tbody>
-</table>
+        <section class="exp-card exp-record" id="sec-record">
+          <h2>⑤ 实验记录<span class="exp-hint">点击「记录当前数据」逐行追加</span></h2>
+          <div class="exp-table-wrap">
+<div class="exp-table-wrap"><table class="exp-table"><thead><tr><th>序号</th><th>n(Fe)/mol</th><th>n(CuSO₄)/mol</th><th>进度</th><th>限量试剂</th><th>剩余铁/mol</th><th>生成铜/mol</th></tr></thead><tbody id="fe-rows"></tbody></table></div>
           </div>
         </section>
 
         <!-- ⑥ 教学说明 -->
-        <details class="exp-card exp-teach" id="sec-teach" data-page-node-id="kze52bpRiN4GTdXJMf17Rr">
-          <summary data-page-node-id="4oapE878MA6DsJOOQFwEXI">⑥ 教学说明（原理 / 易错点 / 探究问题）</summary>
-          <div class="exp-body" data-page-node-id="AtQAlT5hb9ITnYSEAhyzTq">
-<h3 data-page-node-id="NdUijd8rMUmGOyZOZTLqSM">反应原理</h3>
-<ul data-page-node-id="CTmOvwc0ZHEmtrb2GjN8dQ">
-  <li data-page-node-id="fae3rcrkbc7WiHw86hG9ws">铁的活动性比铜强，能把铜从硫酸铜溶液里<b data-page-node-id="r00e3Ar6KeEeHAeP08YPuL">置换</b>出来。化学方程式：<b data-page-node-id="DL0HjTlnhdv8AG1Y1jidR4">Fe + CuSO₄ → FeSO₄ + Cu</b>。</li>
-  <li data-page-node-id="WfypjDe0LQpaZ10iaFCPv5">微观上，铁原子失去 2 个电子变成 Fe²⁺ 进入溶液，溶液中的 Cu²⁺ 得到 2 个电子，变成铜单质沉积在铁钉表面。</li>
-  <li data-page-node-id="peFnWmdEtJ9v9J9uxzrxUG">反应现象只有三条：铁钉表面析出<b data-page-node-id="NEfnTtTyjhmYLRlHbPuBuM">红色固体</b>铜；<b data-page-node-id="zSY4jVBp2WZq7Xk1zy3w6D">蓝色</b>溶液逐渐变<b data-page-node-id="g6qPBdaybMfrSnGcOkO9De">浅</b>，最后呈浅绿色（FeSO₄ 溶液）；全程没有气泡。</li>
-  <li data-page-node-id="g7xVpxuF6yXH5TY78DobBF">定量关系：每消耗 1 mol Cu²⁺，溶解 56 g 铁、析出 64 g 铜，铁钉净增重 64 − 56 = 8 g，溶液相应减重 8 g，总质量不变。</li>
-</ul>
-<h3 data-page-node-id="e6zGyPEJCFfEYEdDiMcImG">易错点</h3>
-<ul data-page-node-id="OwjWAYgCcygKa1qCnGZ1zE">
-  <li data-page-node-id="WNfhqjGby6W9tGh1ZHpNEN">把「溶液变浅」理解成铜被消耗：变浅是 Cu²⁺ 浓度下降，铜是以固体形式析出在铁钉上。</li>
-  <li data-page-node-id="0xsTqDSfovo0ONPHGDoIoa">误以为反应会放热并冒气泡：本反应既不放热到明显程度，也不产生气体，观察到的只有固体析出与颜色变浅。</li>
-  <li data-page-node-id="oa0FMgiTD4Kic8vUbcdJbJ">忘记铁钉要先用砂纸打磨：表面氧化膜会阻碍反应，真实实验必须先除锈再浸入。</li>
-  <li data-page-node-id="qp8LNgXFO98HaZZYgWUJdd">以为铁钉一定变轻：铁溶解 56 份、铜析出 64 份，铁钉是<b data-page-node-id="50mQALdExZexo3mAMN26gW">变重</b>的；变轻的是溶液中的溶质。</li>
-  <li data-page-node-id="fNorLp13xbb0Nbn9DDmvbl">把「任意金属 + 任意盐溶液」都当成能反应：只有活动性强的金属才能置换活动性弱的金属，铜放入稀盐酸就不反应。</li>
-</ul>
-<h3 data-page-node-id="8pgJs7NaaatsPC1woVSxSv">探究问题</h3>
-<ol data-page-node-id="Vz4i00AzdN3nPrkqRlJA8g">
-  <li data-page-node-id="9OLrNUnerx6a7dRV2v7PUb">保持 c=0.40 mol/L、V=80 mL，把反应进度从 0 拖到 100%，溶液颜色、析出铜质量各怎样变化？</li>
-  <li data-page-node-id="oJDx2fFCRHBFr2qYPTTfz2">把浓度从 0.10 调到 0.50 mol/L（体积不变），同样的反应进度下析出铜的质量变成几倍？为什么？</li>
-  <li data-page-node-id="PDVVrOHMxAxt7JPeuoYPtv">反应结束后剩余 Cu²⁺ 浓度是多少？如果继续延长放置时间，铁钉还会继续变重吗？</li>
-</ol>
-<h3 data-page-node-id="490jeXVcEHP2BmcfTfLQ24">结论</h3>
-<p data-page-node-id="HJfS2IOxRt9uUAxMjfq0Jb">铁与硫酸铜溶液发生置换反应：Fe + CuSO₄ → FeSO₄ + Cu。现象为铁钉表面析出红色固体铜、蓝色溶液逐渐变浅至浅绿色、无气泡。析出铜与溶解铁的物质的量相等，质量比为 64 : 56，因此铁钉净增重 Δm = 8 g/mol × n(Cu²⁺ 反应量)，而溶液等量减重，反应前后总质量不变。</p>
-<h3 data-page-node-id="nwnDL4oqAiEwUx8mIoVoaG">注意事项</h3>
-<ul data-page-node-id="K9W4Jlv6CiWzahypcc9as0">
-  <li data-page-node-id="CGtdwNd69b1Um4lzVvXDEt">本页为虚拟仿真，用于观察现象与定量关系，不提供真实药品用量、操作步骤或废液处理指引。</li>
-  <li data-page-node-id="dnNM6v7JOeXToSSv3TZ33y">析出铜质量、溶解铁质量均由 n = c·V·进度 与摩尔质量实时计算，不是模型估算值。</li>
-  <li data-page-node-id="PfBUF1rO2IylrwK0sP4MA6">真实实验中溶液颜色判断受浓度、光线影响，浓度过高时颜色过深，反而看不清「变浅」，通常需要稀释后观察。</li>
-  <li data-page-node-id="gh8ldNGOCT3GrZ2n4IEndg">反应容器、废液回收等实验安全规范必须在真实实验课上由教师指导完成。</li>
-</ul>
+        <details class="exp-card exp-teach" id="sec-teach">
+          <summary>⑥ 教学说明（原理 / 易错点 / 探究问题）</summary>
+          <div class="exp-body">
+<h3>原理</h3><p>铁把铜从硫酸铜溶液里置换出来：Fe + CuSO₄ → FeSO₄ + Cu。溶液中的 Cu²⁺ 被消耗，蓝色变浅；Fe²⁺ 进入溶液，呈浅绿色；铜在铁表面析出，呈红色。</p><h3>易错点</h3><p>方程式要配平：1 个 Fe 置换 1 个 Cu²⁺，生成 1 个 Fe²⁺ 和 1 个 Cu。限量试剂不是“量少的那个”，而是按化学计量比先被消耗完的那个。</p><h3>探究问题</h3><p>保持硫酸铜的量不变，逐步增加铁粉的量。剩余铁、生成铜和反应进度怎样变化？哪一刻铁刚好不过量？</p><h3>结论</h3><p>反应按 1:1 的物质的量比进行；限量试剂决定最大反应进度，生成铜的量由实际反应进度和硫酸铜的量共同决定。</p><h3>注意事项</h3><p>本页为虚拟仿真，不给出真实药品用量或操作步骤；真实实验应在教师指导下进行，注意硫酸铜溶液的安全使用。</p>
           </div>
         </details>
 
@@ -337,45 +240,843 @@
     </div>
   </main>
 
-  <footer class="pf-footer" data-page-node-id="rBEHW38Iw3ezAblXWEPJwS"><span data-page-node-id="b4WJDu9vqpEehSv8P5rwvh">© 中小学人工智能教育教学支撑平台 版权所有。本页内容由AI自动生成，请自行确认后使用。</span></footer>
+  <footer class="pf-footer"><span>© 中小学人工智能教育教学支撑平台 版权所有。本页内容由AI自动生成，请自行确认后使用。</span></footer>
 
-  <input type="checkbox" id="pf-gen" class="pf-gen-check" hidden data-page-node-id="xf68GYmIybQOKrScc7kSyn">
-  <div class="pf-modal pf-modal-gen" role="dialog" aria-modal="true" data-page-node-id="jzj7fDh3s970XSFC9wOZOD">
-    <label class="pf-modal-mask" for="pf-gen" aria-label="关闭弹窗" data-page-node-id="TpeUFp4vBTzkCB871lIuQR"></label>
-    <div class="pf-dialog" data-page-node-id="AWguKwEwCYXd3rihgFGRsJ">
-      <label class="pf-dialog-x" for="pf-gen" aria-label="关闭" data-page-node-id="EgVXEC7yg1xjRm4sC25WGw">✕</label>
-      <div class="pf-dialog-icon" data-page-node-id="S4AOlAbFc9EV78jXktaW2Y">✨</div>
-      <h2 data-page-node-id="BqqtFSAEJHP2TwgmaXN0kA">生成更多案例</h2>
-      <p data-page-node-id="JPX6QuJbU9MtP85YU15sJl">可以在 <strong data-page-node-id="M22UwS8C5zEP3AG33ktwq8">WorkBuddy</strong> 中查找<strong data-page-node-id="gO9KFhtan1vagYqB9KokVv">“师伴应用”</strong>，<br data-page-node-id="AveD5v0CNIskXw1vuzMfxB">生成更多优质案例。</p>
-      <label class="pf-dialog-btn" for="pf-gen" data-page-node-id="ynylfbDEknANsZPTbrS4wn">我知道了</label>
+  <input type="checkbox" id="pf-gen" class="pf-gen-check" hidden>
+  <div class="pf-modal pf-modal-gen" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-gen" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-gen" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">✨</div>
+      <h2>生成更多案例</h2>
+      <p>可以在 <strong>WorkBuddy</strong> 中查找<strong>“师伴应用”</strong>，<br>生成更多优质案例。</p>
+      <label class="pf-dialog-btn" for="pf-gen">我知道了</label>
     </div>
   </div>
 
-  <input type="checkbox" id="pf-dl" class="pf-dl-check" hidden data-page-node-id="4MTfbpzYGMuj4ONsx9Uef6">
-  <div class="pf-modal pf-modal-dl" role="dialog" aria-modal="true" data-page-node-id="HE1zLe8ysVmLEMoYpdIuTd">
-    <label class="pf-modal-mask" for="pf-dl" aria-label="关闭弹窗" data-page-node-id="xWv0kahiyhuhuULRSIR0fA"></label>
-    <div class="pf-dialog" data-page-node-id="Dk6eefOSz9jAfh9Sa270hG">
-      <label class="pf-dialog-x" for="pf-dl" aria-label="关闭" data-page-node-id="arucvXIdLzZrsAgfHAAmOA">✕</label>
-      <div class="pf-dialog-icon" data-page-node-id="fkwxUQIdSHMavwa0U8FR3e">📥</div>
-      <h2 data-page-node-id="ILWqD1X2N4AEWoE1QGQGAx">下载本案例</h2>
-      <p data-page-node-id="nDKEYYNjG4yDRUsXIGiDfR">您可以将本案例下载到本地运行</p>
-      <a class="pf-dialog-btn" href="铁与硫酸铜溶液的置换反应.zip" download onclick="var c=document.getElementById('pf-dl');if(c)c.checked=false;" data-page-node-id="xHB32mmBIpjhuzh2rTM5w9">立即下载</a>
+  <input type="checkbox" id="pf-dl" class="pf-dl-check" hidden>
+  <div class="pf-modal pf-modal-dl" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-dl" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-dl" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">📥</div>
+      <h2>下载本案例</h2>
+      <p>您可以将本案例下载到本地运行</p>
+      <a class="pf-dialog-btn" href="铁与硫酸铜溶液的置换反应.zip" download onclick="var c=document.getElementById('pf-dl');if(c)c.checked=false;">立即下载</a>
     </div>
   </div>
 
-  <input type="checkbox" id="pf-contact" class="pf-contact-check" hidden data-page-node-id="XR96wl33LBYkSe06DpWvYM">
-  <div class="pf-modal pf-modal-contact" role="dialog" aria-modal="true" data-page-node-id="qs5kPAqSTl6u5CXgUr8J0u">
-    <label class="pf-modal-mask" for="pf-contact" aria-label="关闭弹窗" data-page-node-id="AKqXJARFnzHV4iCHBjoja4"></label>
-    <div class="pf-dialog" data-page-node-id="xUec7cypvY4FM2BJvIbars">
-      <label class="pf-dialog-x" for="pf-contact" aria-label="关闭" data-page-node-id="HB68Cy2VwQSn6PE4qKmWIQ">✕</label>
-      <div class="pf-dialog-icon" data-page-node-id="F3Kf8JQ7NIbttRtFqS7H04">📧</div>
-      <h2 data-page-node-id="9bzBBn0T4El69P2NxNTpBY">联系我们获取更多案例</h2>
-      <p data-page-node-id="YCGyKAdwr8UJYeUncfWHY7">邮箱：<a href="mailto:teachbuddy@outlook.com" data-page-node-id="iAWdEXu54ImozGFTLa61xG"><strong data-page-node-id="yderWXIYHIFJdmBsPlYdtE">teachbuddy@outlook.com</strong></a></p>
-      <label class="pf-dialog-btn" for="pf-contact" data-page-node-id="Q6vlyBMI0xPiwwY3uxpPEX">我知道了</label>
+  <input type="checkbox" id="pf-contact" class="pf-contact-check" hidden>
+  <div class="pf-modal pf-modal-contact" role="dialog" aria-modal="true">
+    <label class="pf-modal-mask" for="pf-contact" aria-label="关闭弹窗"></label>
+    <div class="pf-dialog">
+      <label class="pf-dialog-x" for="pf-contact" aria-label="关闭">✕</label>
+      <div class="pf-dialog-icon">📧</div>
+      <h2>联系我们获取更多案例</h2>
+      <p>邮箱：<a href="mailto:teachbuddy@outlook.com"><strong>teachbuddy@outlook.com</strong></a></p>
+      <label class="pf-dialog-btn" for="pf-contact">我知道了</label>
     </div>
   </div>
 
   <script>
+/* chem_solver.js — deterministic chemistry equation tools for offline pages.
+ * Scope: balance user-supplied reactants/products; it does not predict products.
+ * Formula parsing and nullspace elimination use exact integer/rational arithmetic.
+ */
+(function (root) {
+  'use strict';
+
+  var ELEMENTS = new Set(('H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr ' +
+    'Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu ' +
+    'Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg ' +
+    'Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og').split(/\s+/));
+  var SUBS = {'₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9'};
+  var MAX_COEFFICIENT = 1000000, MAX_FORMULA_LENGTH = 160, MAX_SPECIES = 16;
+
+  function fail(message) { throw new Error('化学方程式求解失败：' + message); }
+  function gcd(a, b) { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) { var t = a % b; a = b; b = t; } return a; }
+  function lcm(a, b) { return a === 0n || b === 0n ? 0n : (a / gcd(a, b)) * b; }
+  function frac(n, d) {
+    if (d === 0n) fail('矩阵消元遇到零分母');
+    if (d < 0n) { n = -n; d = -d; }
+    var g = gcd(n, d) || 1n;
+    return {n:n/g, d:d/g};
+  }
+  function add(a, b) { return frac(a.n*b.d + b.n*a.d, a.d*b.d); }
+  function sub(a, b) { return frac(a.n*b.d - b.n*a.d, a.d*b.d); }
+  function mul(a, b) { return frac(a.n*b.n, a.d*b.d); }
+  function div(a, b) { if (!b.n) fail('矩阵消元遇到零主元'); return frac(a.n*b.d, a.d*b.n); }
+  function neg(a) { return {n:-a.n, d:a.d}; }
+
+  function parseSegment(source, allowMultiplier) {
+    var factor = 1;
+    if (/^\d/.test(source)) {
+      if (!allowMultiplier) fail('化学式开头不能带配平系数；水合物分段系数除外');
+      var m = source.match(/^\d+/); factor = Number(m[0]); source = source.slice(m[0].length);
+      if (!Number.isSafeInteger(factor) || factor <= 0) fail('水合物分段系数必须是正整数');
+    }
+    if (!source) fail('化学式中存在空分段');
+    var closing = {'(':')','[':']'};
+    function seq(index, expected) {
+      var counts = Object.create(null);
+      while (index < source.length) {
+        var ch = source[index];
+        if (ch === ')' || ch === ']') {
+          if (expected !== ch) fail('化学式括号不匹配');
+          return {counts:counts, index:index+1};
+        }
+        if (closing[ch]) {
+          var inner = seq(index+1, closing[ch]); index = inner.index;
+          if (!Object.keys(inner.counts).length) fail('化学式不能包含空括号');
+          var start = index;
+          while (index < source.length && /\d/.test(source[index])) index++;
+          var mult = start < index ? Number(source.slice(start,index)) : 1;
+          if (!Number.isSafeInteger(mult) || mult <= 0) fail('括号后的原子个数必须是正整数');
+          Object.keys(inner.counts).forEach(function (el) { counts[el] = (counts[el] || 0) + inner.counts[el]*mult; });
+          continue;
+        }
+        if (/[A-Z]/.test(ch)) {
+          var begin = index++;
+          while (index < source.length && /[a-z]/.test(source[index])) index++;
+          var element = source.slice(begin,index);
+          if (!ELEMENTS.has(element)) fail('未知元素符号：' + element);
+          var n0 = index;
+          while (index < source.length && /\d/.test(source[index])) index++;
+          var amount = n0 < index ? Number(source.slice(n0,index)) : 1;
+          if (!Number.isSafeInteger(amount) || amount <= 0) fail('原子个数必须是正整数');
+          counts[element] = (counts[element] || 0) + amount;
+          continue;
+        }
+        if (ch === ')' || ch === ']') fail('化学式括号不匹配');
+        fail('化学式包含无法识别的字符：' + ch);
+      }
+      if (expected) fail('化学式括号未闭合');
+      return {counts:counts,index:index};
+    }
+    var parsed = seq(0, null);
+    if (parsed.index !== source.length || !Object.keys(parsed.counts).length) fail('无法解析化学式');
+    var result = Object.create(null);
+    Object.keys(parsed.counts).forEach(function (el) {
+      var n = parsed.counts[el] * factor;
+      if (!Number.isSafeInteger(n) || n > 1000000) fail('单种元素的原子数过大');
+      result[el] = n;
+    });
+    return result;
+  }
+
+  function parseFormula(formula) {
+    if (typeof formula !== 'string') fail('化学式必须是字符串');
+    var text = formula.replace(/[₀₁₂₃₄₅₆₇₈₉]/g, function (ch) { return SUBS[ch]; }).replace(/\s/g, '');
+    if (!text || text.length > MAX_FORMULA_LENGTH) fail('化学式不能为空且长度不能超过 ' + MAX_FORMULA_LENGTH + ' 个字符');
+    var parts = text.split(/[·.]/), total = Object.create(null);
+    if (parts.some(function (p) { return !p; })) fail('化学式中存在空水合物分段');
+    parts.forEach(function (part, i) {
+      var parsed = parseSegment(part, i > 0);
+      Object.keys(parsed).forEach(function (el) { total[el] = (total[el] || 0) + parsed[el]; });
+    });
+    if (Object.keys(total).some(function (el) { return total[el] > 1000000; })) fail('单种元素的原子数过大');
+    return total;
+  }
+
+  function species(raw, side, index) {
+    var formula, charge = 0, phase = '';
+    if (typeof raw === 'string') formula = raw;
+    else if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+      formula = raw.formula || raw['化学式']; charge = raw.charge == null ? (raw['电荷'] == null ? 0 : raw['电荷']) : raw.charge;
+      phase = String(raw.phase || raw['状态'] || '');
+    } else fail(side + '第 ' + (index+1) + ' 个物质必须是化学式字符串或对象');
+    if (typeof formula !== 'string' || !formula.trim()) fail(side + '第 ' + (index+1) + ' 个物质缺少 formula 化学式');
+    if (!Number.isSafeInteger(charge) || Math.abs(charge) > 100) fail(side + '第 ' + (index+1) + ' 个物质的 charge 必须是 -100 到 100 的整数');
+    formula = formula.trim();
+    return {formula:formula, phase:phase, charge:charge, atoms:parseFormula(formula)};
+  }
+
+  function nullspace(matrix, columns) {
+    var rows = matrix.map(function (row) { return row.map(function (v) { return frac(BigInt(v),1n); }); });
+    var pivots = [], pivotRow = 0;
+    for (var col = 0; col < columns; col++) {
+      var candidate = -1;
+      for (var r = pivotRow; r < rows.length; r++) if (rows[r][col].n !== 0n) { candidate = r; break; }
+      if (candidate < 0) continue;
+      var swap = rows[pivotRow]; rows[pivotRow] = rows[candidate]; rows[candidate] = swap;
+      var pivot = rows[pivotRow][col];
+      rows[pivotRow] = rows[pivotRow].map(function (v) { return div(v,pivot); });
+      for (var rr = 0; rr < rows.length; rr++) {
+        if (rr === pivotRow || rows[rr][col].n === 0n) continue;
+        var scale = rows[rr][col];
+        rows[rr] = rows[rr].map(function (v,j) { return sub(v,mul(scale,rows[pivotRow][j])); });
+      }
+      pivots.push(col); pivotRow++;
+      if (pivotRow === rows.length) break;
+    }
+    var free = [];
+    for (var c = 0; c < columns; c++) if (pivots.indexOf(c) < 0) free.push(c);
+    if (free.length !== 1) fail('当前物质组合' + (free.length === 0 ? '没有非零配平解' : '存在多组配平解') + '，自由度为 ' + free.length);
+    var vec = Array.from({length:columns}, function () { return frac(0n,1n); });
+    vec[free[0]] = frac(1n,1n);
+    pivots.forEach(function (col, row) { vec[col] = neg(rows[row][free[0]]); });
+    return {rank:pivots.length, vector:vec};
+  }
+
+  function integerCoefficients(vector) {
+    var denominator = vector.reduce(function (v,x) { return lcm(v,x.d); },1n);
+    var values = vector.map(function (x) { return x.n*(denominator/x.d); });
+    if (values.every(function (x) { return x < 0n; })) values = values.map(function (x) { return -x; });
+    if (values.some(function (x) { return x <= 0n; })) fail('给定反应物和生成物无法形成所有系数均为正数的方程式');
+    var common = values.reduce(gcd);
+    values = values.map(function (x) { return x/common; });
+    if (values.some(function (x) { return x > BigInt(MAX_COEFFICIENT); })) fail('最简系数超过安全上限 ' + MAX_COEFFICIENT);
+    return values.map(Number);
+  }
+
+  function totals(items, coefficients) {
+    var atoms = Object.create(null), charge = 0;
+    items.forEach(function (item,i) {
+      Object.keys(item.atoms).forEach(function (el) { atoms[el] = (atoms[el] || 0) + item.atoms[el]*coefficients[i]; });
+      charge += item.charge*coefficients[i];
+    });
+    return {atoms:Object.keys(atoms).sort().reduce(function (out,el) { out[el] = atoms[el]; return out; },{}), charge:charge};
+  }
+  function show(items, coefficients) {
+    return items.map(function (item,i) { return (coefficients[i] === 1 ? '' : coefficients[i]) + item.formula + (item.phase ? '(' + item.phase + ')' : ''); }).join(' + ');
+  }
+  function requestSides(request) {
+    if (!request || typeof request !== 'object' || Array.isArray(request)) fail('配平方程式请求必须是对象');
+    var l = request.reactants || request['反应物'], r = request.products || request['生成物'];
+    if (!Array.isArray(l) || !Array.isArray(r) || !l.length || !r.length) fail('反应物和生成物两侧都必须至少包含一个物质');
+    if (l.length+r.length > MAX_SPECIES) fail('物质种类总数不能超过 ' + MAX_SPECIES);
+    return {left:l.map(function (x,i) { return species(x,'反应物',i); }), right:r.map(function (x,i) { return species(x,'生成物',i); })};
+  }
+
+  function balanceEquation(request) {
+    var sides = requestSides(request), items = sides.left.concat(sides.right);
+    var elements = Array.from(new Set(items.reduce(function (all,x) { return all.concat(Object.keys(x.atoms)); },[]))).sort();
+    var hasCharge = items.some(function (item) { return item.charge !== 0; });
+    var matrix = elements.map(function (el) { return items.map(function (item,i) { return (item.atoms[el] || 0)*(i < sides.left.length ? 1 : -1); }); });
+    if (hasCharge) matrix.push(items.map(function (item,i) { return item.charge*(i < sides.left.length ? 1 : -1); }));
+    var solved = nullspace(matrix,items.length), coeffs = integerCoefficients(solved.vector);
+    var lc = coeffs.slice(0,sides.left.length), rc = coeffs.slice(sides.left.length);
+    var left = totals(sides.left,lc), right = totals(sides.right,rc);
+    var atomOk = JSON.stringify(left.atoms) === JSON.stringify(right.atoms), chargeOk = left.charge === right.charge;
+    return {
+      schema:'chem-equation-balance.v1', reactants:sides.left, products:sides.right,
+      coefficients:{reactants:lc,products:rc},
+      equation:show(sides.left,lc)+' → '+show(sides.right,rc),
+      atom_counts:{left:left.atoms,right:right.atoms}, charge_counts:{left:left.charge,right:right.charge},
+      elements:elements, rank:solved.rank, nullity:items.length-solved.rank,
+      checks:{positive_integer_coefficients:coeffs.every(function(x){return Number.isInteger(x)&&x>0;}),
+        primitive_coefficients:coeffs.reduce(function(a,b){return Number(gcd(BigInt(a),BigInt(b)));})===1,
+        atoms_balanced:atomOk,charge_balanced:chargeOk,ok:atomOk&&chargeOk}
+    };
+  }
+
+  function finiteRange(raw, label, minimum, maximum) {
+    if (typeof raw === 'boolean' || raw == null || typeof raw === 'object' ||
+        (typeof raw === 'string' && !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(raw.trim()))) {
+      fail(label + '必须是有限数值');
+    }
+    var value = Number(raw);
+    if (!Number.isFinite(value)) fail(label + '必须是有限数值');
+    if (minimum != null && value < minimum) fail(label + '不能小于 ' + minimum);
+    if (maximum != null && value > maximum) fail(label + '不能大于 ' + maximum);
+    return value;
+  }
+
+  function amountTotals(items, amounts, elements) {
+    var atoms = Object.create(null), charge = 0;
+    elements.forEach(function (element) { atoms[element] = 0; });
+    items.forEach(function (item,i) {
+      elements.forEach(function (element) { atoms[element] += (item.atoms[element] || 0) * amounts[i]; });
+      charge += item.charge * amounts[i];
+    });
+    return {atoms:atoms,charge:charge};
+  }
+
+  function conservation(initial, final) {
+    var keys = Array.from(new Set(Object.keys(initial).concat(Object.keys(final)))).sort();
+    var errors = Object.create(null), ok = true;
+    keys.forEach(function (key) {
+      var a = initial[key] || 0, b = final[key] || 0, error = Math.abs(a-b);
+      errors[key] = error;
+      if (error > Math.max(1e-12,Math.abs(a)*1e-10)) ok = false;
+    });
+    var initialOut = {}, finalOut = {}, errorsOut = {};
+    keys.forEach(function (key) { initialOut[key] = initial[key] || 0; finalOut[key] = final[key] || 0; errorsOut[key] = errors[key]; });
+    return {initial_mol:initialOut,final_mol:finalOut,absolute_error_mol:errorsOut,ok:ok};
+  }
+
+  function solveStoichiometry(request) {
+    if (!request || typeof request !== 'object' || Array.isArray(request)) fail('反应计量请求必须是对象');
+    var balanced = balanceEquation({reactants:request.reactants,products:request.products});
+    var amountsRaw = request.initial_amounts_mol;
+    if (!Array.isArray(amountsRaw) || amountsRaw.length !== balanced.reactants.length) fail('initial_amounts_mol 必须与反应物数量一致');
+    var initial = amountsRaw.map(function (value,i) {
+      return finiteRange(value,'反应物 '+balanced.reactants[i].formula+' 初始物质的量',0,1000000);
+    });
+    if (!initial.some(function (value) { return value > 0; })) fail('至少一种反应物的初始物质的量必须大于 0');
+    var progress = finiteRange(typeof request.progress === 'undefined' ? 1 : request.progress,'反应进度',0,1);
+    var coeffR = balanced.coefficients.reactants, coeffP = balanced.coefficients.products;
+    var extents = initial.map(function (amount,i) { return amount / coeffR[i]; });
+    var maxExtent = Math.min.apply(Math,extents);
+    var extentTolerance = Math.max(1e-30,Math.abs(maxExtent)*1e-10);
+    var limitingIndices = [];
+    extents.forEach(function (value,i) { if (Math.abs(value-maxExtent) <= extentTolerance) limitingIndices.push(i); });
+    var extent = maxExtent*progress;
+    var consumed = coeffR.map(function (coefficient) { return coefficient*extent; });
+    var remaining = [], noNegative = true;
+    initial.forEach(function (amount,i) {
+      var value = amount-consumed[i], tolerance = Math.max(1e-12,Math.abs(amount)*1e-10);
+      if (value < 0 && Math.abs(value) <= tolerance) value = 0;
+      else if (value < 0) noNegative = false;
+      remaining.push(value);
+    });
+    var produced = coeffP.map(function (coefficient) { return coefficient*extent; });
+    var elements = balanced.elements;
+    var initialTotals = amountTotals(balanced.reactants,initial,elements);
+    var remainingTotals = amountTotals(balanced.reactants,remaining,elements);
+    var productTotals = amountTotals(balanced.products,produced,elements);
+    var finalAtoms = Object.create(null);
+    elements.forEach(function (element) { finalAtoms[element] = remainingTotals.atoms[element]+productTotals.atoms[element]; });
+    var elementBalance = conservation(initialTotals.atoms,finalAtoms);
+    var chargeBalance = conservation({charge:initialTotals.charge},{charge:remainingTotals.charge+productTotals.charge});
+    var reactants = balanced.reactants.map(function (item,i) { return {
+      index:i,formula:item.formula,phase:item.phase,coefficient:coeffR[i],
+      initial_mol:initial[i],consumed_mol:consumed[i],remaining_mol:remaining[i]
+    }; });
+    var products = balanced.products.map(function (item,i) { return {
+      index:i,formula:item.formula,phase:item.phase,coefficient:coeffP[i],produced_mol:produced[i]
+    }; });
+    var limiting = limitingIndices.map(function (i) { return {index:i,formula:balanced.reactants[i].formula}; });
+    var checks = {
+      equation_balanced:balanced.checks.ok,
+      no_negative_remaining:noNegative,
+      element_conservation:elementBalance.ok,
+      charge_conservation:chargeBalance.ok,
+      limiting_reagents_defined:limiting.length>0,
+      ok:balanced.checks.ok&&noNegative&&elementBalance.ok&&chargeBalance.ok&&limiting.length>0
+    };
+    return {
+      schema:'chem-stoichiometry.v1',equation:balanced.equation,coefficients:balanced.coefficients,
+      initial_amounts_mol:initial,progress:progress,max_extent_mol:maxExtent,extent_mol:extent,
+      limiting_reactants:limiting,stoichiometric_mix:limitingIndices.length===balanced.reactants.length,
+      reactants:reactants,products:products,element_balance:elementBalance,
+      charge_balance:chargeBalance,checks:checks
+    };
+  }
+
+  function solutionVolumeUnit(raw) {
+    if (typeof raw !== 'string') fail('体积单位必须是 mL 或 L');
+    var key = raw.trim().toLowerCase();
+    if (key === 'ml' || key === '毫升') return {unit:'mL',toLitre:0.001};
+    if (key === 'l' || key === '升') return {unit:'L',toLitre:1};
+    fail('不支持体积单位 ' + raw + '；只支持 mL 或 L');
+  }
+
+  function solveSolutionMixing(request) {
+    if (!request || typeof request !== 'object' || Array.isArray(request)) fail('溶液混合请求必须是对象');
+    var balanced = balanceEquation({reactants:request.reactants,products:request.products});
+    var solutions = request.solutions;
+    if (!Array.isArray(solutions) || solutions.length !== balanced.reactants.length) fail('solutions 数量必须与反应物数量一致');
+    var rows = [], amounts = [];
+    solutions.forEach(function (solution,i) {
+      if (!solution || typeof solution !== 'object' || Array.isArray(solution)) fail('第 ' + (i+1) + ' 个溶液输入必须是对象');
+      var formula = balanced.reactants[i].formula;
+      var concentration = finiteRange(solution.concentration_mol_L,'反应物 '+formula+' 浓度',0,1000000);
+      var volumeInput = finiteRange(solution.volume,'反应物 '+formula+' 体积',0,1000000);
+      if (volumeInput === 0) fail('反应物 '+formula+' 的溶液体积必须大于 0');
+      var volumeUnit = solutionVolumeUnit(solution.volume_unit);
+      var volumeL = volumeInput * volumeUnit.toLitre;
+      var amount = concentration * volumeL;
+      if (!Number.isFinite(amount) || amount > 1000000) fail('反应物 '+formula+' 换算后的物质的量超过安全上限');
+      amounts.push(amount);
+      rows.push({index:i,formula:formula,concentration_mol_L:concentration,
+        volume_input:volumeInput,volume_unit:volumeUnit.unit,volume_L:volumeL,amount_mol:amount});
+    });
+    var stoich = solveStoichiometry({reactants:request.reactants,products:request.products,
+      initial_amounts_mol:amounts,progress:typeof request.progress === 'undefined' ? 1 : request.progress});
+    var checks = Object.assign({},stoich.checks,{
+      solution_inputs_valid:true,
+      concentration_volume_conversion:rows.every(function (row) {
+        return Math.abs(row.amount_mol-row.concentration_mol_L*row.volume_L) <=
+          Math.max(1e-15,Math.abs(row.amount_mol)*1e-12);
+      })
+    });
+    checks.ok = checks.ok && checks.solution_inputs_valid && checks.concentration_volume_conversion;
+    return Object.assign({},stoich,{schema:'chem-solution-mixing.v1',solution_inputs:rows,checks:checks});
+  }
+
+  var PRECIPITATION_ATOMIC_MASSES = {
+    H:1.008,C:12.011,N:14.007,O:15.999,Na:22.989769,Mg:24.305,
+    S:32.06,Cl:35.45,Ca:40.078,Fe:55.845,Cu:63.546,Ag:107.8682,Ba:137.327
+  };
+  var PRECIPITATION_REACTIONS = [
+    {id:'silver-chloride',reactants:['AgNO3','NaCl'],products:[['AgCl','s'],['NaNO3','aq']],
+      precipitate:'AgCl',net:'Ag⁺(aq) + Cl⁻(aq) → AgCl(s)',ions:[['Ag',1],['Cl',-1]]},
+    {id:'barium-sulfate',reactants:['BaCl2','Na2SO4'],products:[['BaSO4','s'],['NaCl','aq']],
+      precipitate:'BaSO4',net:'Ba²⁺(aq) + SO₄²⁻(aq) → BaSO₄(s)',ions:[['Ba',2],['SO4',-2]]},
+    {id:'calcium-carbonate',reactants:['CaCl2','Na2CO3'],products:[['CaCO3','s'],['NaCl','aq']],
+      precipitate:'CaCO3',net:'Ca²⁺(aq) + CO₃²⁻(aq) → CaCO₃(s)',ions:[['Ca',2],['CO3',-2]]},
+    {id:'copper-hydroxide',reactants:['CuSO4','NaOH'],products:[['Cu(OH)2','s'],['Na2SO4','aq']],
+      precipitate:'Cu(OH)2',net:'Cu²⁺(aq) + 2OH⁻(aq) → Cu(OH)₂(s)',ions:[['Cu',2],['OH',-1]]},
+    {id:'iron-iii-hydroxide',reactants:['FeCl3','NaOH'],products:[['Fe(OH)3','s'],['NaCl','aq']],
+      precipitate:'Fe(OH)3',net:'Fe³⁺(aq) + 3OH⁻(aq) → Fe(OH)₃(s)',ions:[['Fe',3],['OH',-1]]},
+    {id:'magnesium-hydroxide',reactants:['MgSO4','NaOH'],products:[['Mg(OH)2','s'],['Na2SO4','aq']],
+      precipitate:'Mg(OH)2',net:'Mg²⁺(aq) + 2OH⁻(aq) → Mg(OH)₂(s)',ions:[['Mg',2],['OH',-1]]}
+  ];
+  function solvePrecipitation(request) {
+    if (!request||typeof request!=='object'||Array.isArray(request)) fail('沉淀反应请求必须是对象');
+    if (!Array.isArray(request.solutions)||request.solutions.length!==2) fail('首版必须提供两份溶液 solutions');
+    var formulas=request.solutions.map(function(solution){
+      if (!solution||typeof solution!=='object'||Array.isArray(solution)||typeof solution.formula!=='string'||!solution.formula.trim())
+        fail('每份溶液都必须提供溶质化学式 formula');
+      var formula=solution.formula.trim().replace(/[₀₁₂₃₄₅₆₇₈₉]/g,function(ch){return SUBS[ch];});
+      parseFormula(formula); return formula;
+    });
+    if (formulas[0]===formulas[1]) fail('首版只支持两种不同溶质的混合');
+    var reaction=PRECIPITATION_REACTIONS.find(function(row){
+      return row.reactants.length===formulas.length&&row.reactants.every(function(formula){return formulas.indexOf(formula)>=0;});
+    });
+    if (!reaction) fail('该溶液组合不在首版沉淀反应目录中；请勿把未识别组合判为无沉淀');
+    var solutionsByFormula=Object.create(null);
+    formulas.forEach(function(formula,index){solutionsByFormula[formula]=request.solutions[index];});
+    var reactants=reaction.reactants.map(function(formula){return {formula:formula,phase:'aq'};});
+    var products=reaction.products.map(function(pair){return {formula:pair[0],phase:pair[1]};});
+    var mixing=solveSolutionMixing({reactants:reactants,products:products,
+      solutions:reaction.reactants.map(function(formula){return solutionsByFormula[formula];}),
+      progress:typeof request.progress==='undefined'?1:request.progress});
+    var precipitate=mixing.products.find(function(item){return item.formula===reaction.precipitate&&item.phase==='s';});
+    if (!precipitate) fail('目录反应的沉淀必须是方程式中的固态生成物');
+    var atoms=parseFormula(reaction.precipitate), molarMass=0;
+    Object.keys(atoms).forEach(function(element){
+      if (typeof PRECIPITATION_ATOMIC_MASSES[element]!=='number') fail('沉淀摩尔质量缺少元素原子量：'+element);
+      molarMass+=PRECIPITATION_ATOMIC_MASSES[element]*atoms[element];
+    });
+    molarMass=Math.round(molarMass*1e9)/1e9;
+    var netIonicBalance=balanceEquation({
+      reactants:reaction.ions.map(function(ion){return {formula:ion[0],charge:ion[1],phase:'aq'};}),
+      products:[{formula:reaction.precipitate,charge:0,phase:'s'}]
+    });
+    var moles=precipitate.produced_mol, mass=moles*molarMass;
+    var checks=Object.assign({},mixing.checks,{
+      catalog_reaction_recognized:true,precipitate_is_solid_product:true,
+      net_ionic_equation_balanced:!!netIonicBalance.checks.ok,
+      molar_mass_from_formula:Number.isFinite(molarMass)&&molarMass>0,
+      precipitate_mass_calculation:Math.abs(mass-moles*molarMass)<=Math.max(1e-15,Math.abs(mass)*1e-12),
+      nonnegative_precipitate:moles>=0&&mass>=0
+    });
+    checks.ok=Object.keys(checks).every(function(key){return checks[key]===true;});
+    return Object.assign({},mixing,{schema:'chem-precipitation.v1',reaction_id:reaction.id,
+      precipitate_formula:reaction.precipitate,precipitate_moles:moles,
+      precipitate_molar_mass_g_mol:molarMass,precipitate_mass_g:mass,
+      precipitation_occurs:moles>1e-15,net_ionic_equation:reaction.net,
+      net_ionic_balance:netIonicBalance,checks:checks});
+  }
+
+  var KSP_MIN = 1e-80, KSP_MAX = 1e6, KSP_MAX_CONCENTRATION = 1e3, KSP_MAX_EXPONENT = 12;
+  var KSP_SUPERSCRIPT = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻','+':'⁺'};
+  function kspLogProduct(ions, concentrations) {
+    var total = 0;
+    for (var i=0;i<ions.length;i++) {
+      if (concentrations[i] <= 0) return -Infinity;
+      total += ions[i].coefficient * Math.log(concentrations[i]);
+    }
+    return total;
+  }
+  function kspExpClamped(logValue) {
+    if (logValue === -Infinity || logValue < -745) return 0;
+    if (logValue > Math.log(1e300)) return 1e300;
+    return Math.exp(logValue);
+  }
+  function kspSolvePositiveSolubility(ions, background, logKsp) {
+    function residual(logS) {
+      var solubility = Math.exp(logS);
+      return kspLogProduct(ions, background.map(function (initial,i) {
+        return initial + ions[i].coefficient * solubility;
+      })) - logKsp;
+    }
+    var low=-700, high=0;
+    if (residual(low)>=0) fail('Ksp 太小，超出首版溶解度数值范围');
+    while (residual(high)<0 && high<Math.log(1e6)) high=Math.min(high+Math.log(2),Math.log(1e6));
+    if (residual(high)<0) fail('给定 Ksp 对应的溶解度超出首版数值范围');
+    for (var step=0;step<180;step++) {
+      var middle=(low+high)/2;
+      if (residual(middle)<0) low=middle; else high=middle;
+    }
+    return Math.exp((low+high)/2);
+  }
+  function solveSolubilityEquilibrium(request) {
+    if (!request||typeof request!=='object'||Array.isArray(request)) fail('溶解平衡请求必须是对象');
+    var solidRaw=request.solid_formula||request.solid;
+    if (typeof solidRaw!=='string'||!solidRaw.trim()) fail('必须提供难溶固体化学式 solid_formula');
+    var solid=solidRaw.trim().replace(/[₀₁₂₃₄₅₆₇₈₉]/g,function(ch){return SUBS[ch];});
+    var solidAtoms=parseFormula(solid), ksp=finiteRange(request.Ksp==null?request.ksp:request.Ksp,'Ksp',KSP_MIN,KSP_MAX);
+    if (!Array.isArray(request.ions)||request.ions.length<2||request.ions.length>4)
+      fail('ions 必须提供 2 到 4 种明确的溶解离子');
+    var seen=new Set(), ions=[], atomTotal=Object.create(null), chargeTotal=0, exponentTotal=0;
+    request.ions.forEach(function(raw,index){
+      var label='第 '+(index+1)+' 种离子';
+      if (!raw||typeof raw!=='object'||Array.isArray(raw)) fail(label+'必须是对象');
+      if (typeof raw.formula!=='string'||!raw.formula.trim()) fail(label+'缺少 formula');
+      var formula=raw.formula.trim().replace(/[₀₁₂₃₄₅₆₇₈₉]/g,function(ch){return SUBS[ch];});
+      var atoms=parseFormula(formula), charge=raw.charge, coefficient=raw.coefficient;
+      if (!Number.isSafeInteger(charge)||charge===0||Math.abs(charge)>12)
+        fail(label+' charge 必须是 -12 到 12 之间的非零整数');
+      if (!Number.isSafeInteger(coefficient)||coefficient<1||coefficient>6)
+        fail(label+' coefficient 必须是 1 到 6 的整数');
+      var key=formula+'|'+charge;
+      if (seen.has(key)) fail('同种离子重复出现，请合并其系数'); seen.add(key);
+      var concentration=finiteRange(typeof raw.initial_concentration_mol_L==='undefined'?0:raw.initial_concentration_mol_L,
+        label+'初始浓度',0,KSP_MAX_CONCENTRATION);
+      ions.push({formula:formula,charge:charge,coefficient:coefficient,
+        initial_concentration_mol_L:concentration,atoms:atoms});
+      exponentTotal+=coefficient; chargeTotal+=coefficient*charge;
+      Object.keys(atoms).forEach(function(element){atomTotal[element]=(atomTotal[element]||0)+coefficient*atoms[element];});
+    });
+    if (exponentTotal>KSP_MAX_EXPONENT) fail('Ksp 总指数不能超过 '+KSP_MAX_EXPONENT);
+    var atomKeys=Object.keys(atomTotal).sort(), solidKeys=Object.keys(solidAtoms).sort();
+    if (JSON.stringify(atomKeys)!==JSON.stringify(solidKeys)||atomKeys.some(function(element){return atomTotal[element]!==solidAtoms[element];}))
+      fail('离子及其系数合成的原子数与固体化学式不一致');
+    if (chargeTotal!==0) fail('固体溶解离子的化学计量电荷和必须为 0');
+    function displayIon(ion) {
+      var formula=ion.formula.replace(/\d/g,function(d){return {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'}[d];});
+      var chargeText=(Math.abs(ion.charge)===1?'':String(Math.abs(ion.charge))).replace(/[0-9]/g,function(d){return KSP_SUPERSCRIPT[d];})+
+        (ion.charge>0?'⁺':'⁻');
+      return (ion.coefficient===1?'':ion.coefficient)+formula+chargeText+'(aq)';
+    }
+    var background=ions.map(function(ion){return ion.initial_concentration_mol_L;}), logQ=kspLogProduct(ions,background), logKsp=Math.log(ksp), difference=logQ-logKsp;
+    var state,solubility,equilibriumConcentrations,logEqQ;
+    if (difference>1e-10) {state='supersaturated';solubility=null;equilibriumConcentrations=null;logEqQ=null;}
+    else if (difference>=-1e-10) {state='saturated';solubility=0;equilibriumConcentrations=background.slice();logEqQ=logQ;}
+    else {
+      state='unsaturated';solubility=kspSolvePositiveSolubility(ions,background,logKsp);
+      equilibriumConcentrations=background.map(function(value,index){return value+ions[index].coefficient*solubility;});
+      logEqQ=kspLogProduct(ions,equilibriumConcentrations);
+    }
+    var checks={solid_formula_matches_ions:true,dissolution_charge_balanced:chargeTotal===0,
+      ion_product_classified:['unsaturated','saturated','supersaturated'].indexOf(state)>=0,
+      mass_action_at_saturation:logEqQ==null?null:Math.abs(logEqQ-logKsp)<=1e-8,
+      supersaturation_not_misrepresented_as_equilibrium:state!=='supersaturated'||logEqQ==null,
+      no_negative_concentrations:background.every(function(value){return value>=0;})};
+    checks.ok=Object.keys(checks).every(function(key){return checks[key]===true||checks[key]===null;});
+    return {schema:'chem-solubility-ksp.v1',solid_formula:solid,Ksp:ksp,
+      dissolution_equation:solid.replace(/\d/g,function(d){return {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'}[d];})+'(s) ⇌ '+ions.map(displayIon).join(' + '),
+      ions:ions.map(function(ion){return {formula:ion.formula,charge:ion.charge,coefficient:ion.coefficient,
+        initial_concentration_mol_L:ion.initial_concentration_mol_L};}),
+      initial_ion_product:kspExpClamped(logQ),initial_log_ion_product:Number.isFinite(logQ)?logQ:null,
+      saturation_ratio:kspExpClamped(difference),saturation_state:state,molar_solubility_mol_L:solubility,
+      equilibrium_ion_concentrations_mol_L:equilibriumConcentrations,
+      equilibrium_ion_product:logEqQ==null?null:kspExpClamped(logEqQ),
+      precipitation_expected:state==='supersaturated',assumes_excess_solid:true,checks:checks};
+  }
+
+  function titrationVolumeUnit(raw,label) {
+    if (typeof raw !== 'string') fail(label+'单位必须是 mL 或 L');
+    var key=raw.trim().toLowerCase();
+    if (key==='ml'||key==='毫升') return {unit:'mL',toLitre:0.001};
+    if (key==='l'||key==='升') return {unit:'L',toLitre:1};
+    fail(label+'单位只支持 mL 或 L');
+  }
+  function titrationSolution(raw,label,allowZeroVolume) {
+    if (!raw||typeof raw!=='object'||Array.isArray(raw)) fail(label+'输入必须是对象');
+    var formula=raw.formula;
+    var concentration=finiteRange(raw.concentration_mol_L,label+'浓度',0,1);
+    if (concentration<=0) fail(label+'浓度必须大于 0');
+    var volumeInput=finiteRange(raw.volume,label+'体积',0,1000000);
+    if (volumeInput<=0&&!allowZeroVolume) fail(label+'体积必须大于 0');
+    var unit=titrationVolumeUnit(raw.volume_unit,label), volumeL=volumeInput*unit.toLitre;
+    var amount=concentration*volumeL;
+    if (!Number.isFinite(amount)||amount>1000000) fail(label+'物质的量超过安全上限');
+    return {formula:formula,concentration_mol_L:concentration,volume_input:volumeInput,
+      volume_unit:unit.unit,volume_L:volumeL,amount_mol:amount};
+  }
+  function titrationClose(a,b,rel,abs) {
+    return Math.abs(a-b)<=Math.max(abs,rel*Math.max(Math.abs(a),Math.abs(b)));
+  }
+  function solveAcidBaseTitration(request) {
+    if (!request||typeof request!=='object'||Array.isArray(request)) fail('酸碱滴定请求必须是对象');
+    var acid=titrationSolution(request.acid,'酸液',false);
+    var base=titrationSolution(request.base,'碱液',true);
+    var acidAnions={HCl:'Cl',HBr:'Br',HI:'I',HNO3:'NO3',HClO4:'ClO4'};
+    var baseCations={LiOH:'Li',NaOH:'Na',KOH:'K'};
+    if (typeof acid.formula!=='string'||!Object.prototype.hasOwnProperty.call(acidAnions,acid.formula))
+      fail('当前只支持强一元酸 HCl、HBr、HI、HNO3、HClO4');
+    if (typeof base.formula!=='string'||!Object.prototype.hasOwnProperty.call(baseCations,base.formula))
+      fail('当前只支持强一元碱 LiOH、NaOH、KOH');
+    var saltFormula=baseCations[base.formula]+acidAnions[acid.formula];
+    var balanced=balanceEquation({reactants:[{formula:acid.formula,phase:'aq'},{formula:base.formula,phase:'aq'}],
+      products:[{formula:saltFormula,phase:'aq'},{formula:'H2O',phase:'l'}]});
+    if (JSON.stringify(balanced.coefficients)!==JSON.stringify({reactants:[1,1],products:[1,1]}))
+      fail('该酸碱组合不符合当前 1:1 中和模型');
+    var acidMol=acid.amount_mol, baseMol=base.amount_mol, reacted=Math.min(acidMol,baseMol);
+    var acidRemaining=acidMol-reacted, baseRemaining=baseMol-reacted;
+    var totalVolumeL=acid.volume_L+base.volume_L;
+    if (!Number.isFinite(totalVolumeL)||totalVolumeL<=0) fail('混合后的总体积必须大于 0');
+    var kw=1e-14, netAcid=(acidMol-baseMol)/totalVolumeL;
+    var root=Math.sqrt(netAcid*netAcid+4*kw), hydrogen, hydroxide;
+    if (netAcid>=0) { hydrogen=0.5*(netAcid+root); hydroxide=kw/hydrogen; }
+    else { hydroxide=0.5*(-netAcid+root); hydrogen=kw/hydroxide; }
+    var ph=-Math.log10(hydrogen), poh=-Math.log10(hydroxide);
+    var balanceTolerance=Math.max(1e-15,Math.max(acidMol,baseMol)*1e-12);
+    var state=acidMol-baseMol>balanceTolerance?'acidic':(baseMol-acidMol>balanceTolerance?'basic':'equivalence');
+    var equivalenceVolumeL=acidMol/base.concentration_mol_L;
+    var checks={
+      equation_balanced:!!balanced.checks.ok,
+      acid_mole_balance:titrationClose(acidMol,reacted+acidRemaining,1e-12,1e-15),
+      base_mole_balance:titrationClose(baseMol,reacted+baseRemaining,1e-12,1e-15),
+      nonnegative_excess:acidRemaining>=0&&baseRemaining>=0,
+      water_ion_product:titrationClose(hydrogen*hydroxide,kw,1e-10,1e-24),
+      ph_poh_sum:Math.abs(ph+poh-14)<=1e-10
+    };
+    checks.ok=Object.keys(checks).every(function(key){return checks[key]===true;})&&
+      [ph,poh,hydrogen,hydroxide,equivalenceVolumeL,totalVolumeL].every(Number.isFinite);
+    return {
+      schema:'chem-acid-base-titration.v1',temperature_c:25,equation:balanced.equation,
+      acid:acid,base:base,salt_formula:saltFormula,
+      acid_moles_initial:acidMol,base_moles_added:baseMol,neutralized_moles:reacted,
+      acid_moles_remaining:acidRemaining,base_moles_remaining:baseRemaining,
+      equivalence_volume_l:equivalenceVolumeL,equivalence_volume_ml:equivalenceVolumeL*1000,
+      total_volume_l:totalVolumeL,net_acid_concentration_mol_L:netAcid,
+      excess_acid_concentration_mol_L:acidRemaining/totalVolumeL,
+      excess_base_concentration_mol_L:baseRemaining/totalVolumeL,
+      hydrogen_concentration_mol_L:hydrogen,hydroxide_concentration_mol_L:hydroxide,
+      neutralization_fraction:reacted/acidMol,pH:ph,pOH:poh,state:state,checks:checks
+    };
+  }
+
+  function checkCoefficients(request, coefficients) {
+    var sides = requestSides(request);
+    if (!coefficients || typeof coefficients !== 'object' || Array.isArray(coefficients)) fail('系数必须按 reactants/products 两侧提供');
+    var left = coefficients.reactants, right = coefficients.products;
+    if (!Array.isArray(left) || !Array.isArray(right) || left.length!==sides.left.length || right.length!==sides.right.length) fail('系数数量必须与方程式两侧物质数量一致');
+    var values = left.concat(right);
+    if (values.some(function (x) { return !Number.isSafeInteger(x) || x<=0 || x>MAX_COEFFICIENT; })) fail('系数必须是安全范围内的正整数');
+    var lt = totals(sides.left,left), rt = totals(sides.right,right);
+    var atomOk = JSON.stringify(lt.atoms)===JSON.stringify(rt.atoms), chargeOk = lt.charge===rt.charge;
+    var common = values.reduce(function (a,b) { return Number(gcd(BigInt(a),BigInt(b))); });
+    return {balanced:atomOk&&chargeOk,atoms_balanced:atomOk,charge_balanced:chargeOk,
+      atom_counts:{left:lt.atoms,right:rt.atoms},charge_counts:{left:lt.charge,right:rt.charge},primitive:common===1};
+  }
+
+  var GAS_CONSTANT_L_KPA_PER_MOL_K = 8.31446261815324;
+  function waterVaporPressureKpa(temperatureC) {
+    temperatureC = finiteRange(temperatureC,'水上集气温度',0,100);
+    var pressureMmhg = Math.pow(10,8.07131-1730.63/(233.426+temperatureC));
+    return pressureMmhg*0.133322368;
+  }
+  function solveGasCollection(request) {
+    if (!request||typeof request!=='object'||Array.isArray(request)) fail('气体收集请求必须是对象');
+    if (typeof request.gas_formula!=='string'||!request.gas_formula.trim()) fail('必须指定目标气体 gas_formula');
+    var gasFormula=request.gas_formula.trim();
+    var temperatureC=finiteRange(request.temperature_c,'温度',-273.149,2000);
+    var temperatureK=temperatureC+273.15;
+    if (!(temperatureK>0)) fail('温度必须高于绝对零度');
+    var totalPressure=finiteRange(request.total_pressure_kpa,'总压强',1e-9,100000);
+    var method=typeof request.collection_method==='undefined'?'dry':request.collection_method;
+    if (method!=='dry'&&method!=='over_water') fail('collection_method 只支持 dry 或 over_water');
+    var reaction=solveStoichiometry({reactants:request.reactants,products:request.products,
+      initial_amounts_mol:request.initial_amounts_mol,
+      progress:typeof request.progress==='undefined'?1:request.progress});
+    var matches=reaction.products.filter(function(item){return item.formula===gasFormula;});
+    if (matches.length!==1) fail('目标气体必须且只能对应方程式中的一种生成物');
+    var gas=matches[0], phase=String(gas.phase||'').trim().toLowerCase();
+    if (['g','gas','气','气态'].indexOf(phase)<0) fail('目标气体生成物必须将 phase 标记为 g/gas/气态');
+    var gasMoles=gas.produced_mol, vaporPressure=0, dryGasPressure=totalPressure;
+    var vaporModel='none-dry-gas';
+    if (method==='over_water') {
+      vaporPressure=waterVaporPressureKpa(temperatureC);
+      dryGasPressure=totalPressure-vaporPressure;
+      if (!(dryGasPressure>0)) fail('总压强必须大于当前温度下水的饱和蒸气压');
+      vaporModel='Antoine-0-to-100C';
+    }
+    var gasVolume=gasMoles*GAS_CONSTANT_L_KPA_PER_MOL_K*temperatureK/dryGasPressure;
+    var idealPv=dryGasPressure*gasVolume;
+    var idealNrt=gasMoles*GAS_CONSTANT_L_KPA_PER_MOL_K*temperatureK;
+    var checks={
+      reaction_balanced_and_conserved:!!reaction.checks.ok,
+      target_is_single_gas_product:true,
+      gas_amount_matches_product_yield:Math.abs(gasMoles-gas.produced_mol)<=Math.max(1e-15,Math.abs(gasMoles)*1e-12),
+      partial_pressure_decomposition:Math.abs(totalPressure-dryGasPressure-vaporPressure)<=Math.max(1e-12,Math.abs(totalPressure)*1e-12),
+      ideal_gas_relation:Math.abs(idealPv-idealNrt)<=Math.max(1e-15,Math.abs(idealNrt)*1e-12),
+      nonnegative_volume:gasVolume>=0&&Number.isFinite(gasVolume)
+    };
+    checks.ok=Object.keys(checks).every(function(key){return checks[key]===true;});
+    return Object.assign({},reaction,{
+      schema:'chem-gas-collection.v1',gas_formula:gasFormula,gas_moles:gasMoles,
+      temperature_c:temperatureC,temperature_k:temperatureK,total_pressure_kpa:totalPressure,
+      collection_method:method,water_vapor_pressure_kpa:vaporPressure,
+      dry_gas_partial_pressure_kpa:dryGasPressure,water_vapor_model:vaporModel,
+      gas_constant_l_kpa_mol_k:GAS_CONSTANT_L_KPA_PER_MOL_K,gas_volume_l:gasVolume,checks:checks
+    });
+  }
+
+  var REDOX_SUBSCRIPT = {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
+  var REDOX_SUPERSCRIPT = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  var REDOX_FIXED = {Li:1,Na:1,K:1,Rb:1,Cs:1,Fr:1,Be:2,Mg:2,Ca:2,Sr:2,Ba:2,Ra:2,Al:3,Zn:2,Ag:1,F:-1};
+
+  function redoxMedium(value) {
+    if (typeof value !== 'string') fail('medium 必须明确指定 acidic/酸性 或 basic/碱性');
+    var key = value.trim().toLowerCase();
+    if (['acidic','acid','酸性'].indexOf(key) >= 0) return 'acidic';
+    if (['basic','base','碱性','鹼性'].indexOf(key) >= 0) return 'basic';
+    fail('medium 必须明确指定 acidic/酸性 或 basic/碱性');
+  }
+
+  function redoxNormalizeSpecies(raw,label) {
+    if (typeof raw !== 'string' && (!raw || typeof raw !== 'object' || Array.isArray(raw))) fail(label+'必须是化学式或物质对象');
+    if (typeof raw==='object'&&!Object.prototype.hasOwnProperty.call(raw,'charge')&&
+        !Object.prototype.hasOwnProperty.call(raw,'电荷')) fail(label+'必须明确提供整数电荷 charge（中性物质也填 0）');
+    var formula = typeof raw === 'string' ? raw : (raw.formula || raw['化学式']);
+    var charge = typeof raw === 'string' ? 0 : (raw.charge == null ? (raw['电荷'] == null ? 0 : raw['电荷']) : raw.charge);
+    if (typeof formula !== 'string' || !formula.trim()) fail(label+'缺少化学式');
+    if (!Number.isSafeInteger(charge) || Math.abs(charge)>100) fail(label+'电荷必须是 -100 到 100 的整数');
+    formula=formula.trim().replace(/[₀₁₂₃₄₅₆₇₈₉]/g,function(ch){return ({'₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9'})[ch];});
+    var atoms=parseFormula(formula);
+    if ((formula==='H'&&charge===1)||(formula==='OH'&&charge===-1)) fail('H+ 和 OH- 由溶液条件自动补入，请勿放入核心反应物');
+    var phase=typeof raw==='string'?'':String(raw.phase||raw['状态']||'');
+    return {formula:formula,charge:charge,phase:phase,atoms:atoms};
+  }
+
+  function redoxOxidationStates(item) {
+    var atoms=item.atoms, elements=Object.keys(atoms), charge=item.charge, formula=item.formula;
+    function requireIntegral(states) {
+      elements.forEach(function(el){if(!Number.isInteger(states[el])) fail(formula+' 中存在平均氧化数，首版无法区分混合价态');});
+      return states;
+    }
+    if (elements.length===1) { var only={}; only[elements[0]]=charge/atoms[elements[0]]; return requireIntegral(only); }
+    var states=Object.create(null);
+    elements.forEach(function(el){
+      if (Object.prototype.hasOwnProperty.call(REDOX_FIXED,el)) states[el]=REDOX_FIXED[el];
+      else if (el==='H') states[el]=1;
+      else if (el==='O') states[el]=-2;
+      else if (['Cl','Br','I'].indexOf(el)>=0&&!atoms.O&&!atoms.F) states[el]=-1;
+    });
+    if (atoms.O>=2 && elements.every(function(el){return el==='O'||Object.prototype.hasOwnProperty.call(states,el);})) {
+      var nonO=elements.reduce(function(sum,el){return sum+(el==='O'?0:atoms[el]*states[el]);},0);
+      var residue=charge-nonO;
+      if (residue<0 && Math.abs(residue)<=atoms.O) states.O=residue/atoms.O;
+    }
+    var unknown=elements.filter(function(el){return !Object.prototype.hasOwnProperty.call(states,el);});
+    if (!unknown.length) {
+      var total=elements.reduce(function(sum,el){return sum+atoms[el]*states[el];},0);
+      if (total!==charge) fail(formula+' 的常见氧化数规则与总电荷不符');
+      return requireIntegral(states);
+    }
+    if (unknown.length!==1) fail('无法唯一判定 '+formula+' 中各元素氧化数；首版不支持该化学式');
+    var el=unknown[0], knownTotal=elements.reduce(function(sum,key){return sum+(key===el?0:atoms[key]*states[key]);},0);
+    states[el]=(charge-knownTotal)/atoms[el];
+    return requireIntegral(states);
+  }
+
+  function redoxAnalysis(balanced) {
+    var r=balanced.reactants,p=balanced.products,cr=balanced.coefficients.reactants,cp=balanced.coefficients.products;
+    var elements=Array.from(new Set(r.concat(p).reduce(function(all,item){return all.concat(Object.keys(item.atoms));},[]))).sort();
+    var sr=r.map(redoxOxidationStates),sp=p.map(redoxOxidationStates),changes=[],lost=0,gained=0;
+    elements.forEach(function(element){
+      var dr=[],dp=[];
+      r.forEach(function(item,i){if(item.atoms[element])dr.push([sr[i][element],item.atoms[element]*cr[i]]);});
+      p.forEach(function(item,i){if(item.atoms[element])dp.push([sp[i][element],item.atoms[element]*cp[i]]);});
+      var nr=dr.reduce(function(a,x){return a+x[1];},0),np=dp.reduce(function(a,x){return a+x[1];},0);
+      if(nr!==np) fail('元素 '+element+' 的反应物/生成物原子数不守恒');
+      dr.sort(function(a,b){return a[0]-b[0];}); dp.sort(function(a,b){return a[0]-b[0];});
+      var ri=0,pi=0,rl=dr.length?dr[0][1]:0,pl=dp.length?dp[0][1]:0;
+      while(ri<dr.length&&pi<dp.length){
+        var before=dr[ri][0],after=dp[pi][0],amount=Math.min(rl,pl),delta=after-before;
+        if(Math.abs(delta)>1e-12){
+          var lostHere=delta>0?amount*delta:0,gainedHere=delta<0?amount*-delta:0;
+          lost+=lostHere; gained+=gainedHere;
+          changes.push({element:element,atoms_per_reaction:amount,before:before,after:after,delta:delta,
+            electrons_lost:lostHere,electrons_gained:gainedHere});
+        }
+        rl-=amount;pl-=amount;
+        if(Math.abs(rl)<1e-12){ri++;if(ri<dr.length)rl=dr[ri][1];}
+        if(Math.abs(pl)<1e-12){pi++;if(pi<dp.length)pl=dp[pi][1];}
+      }
+    });
+    if(!changes.length||lost<=0||gained<=0) fail('输入物质中未识别到成对的氧化数升高与降低，不能判定为氧化还原反应');
+    if(Math.abs(lost-gained)>Math.max(1e-12,Math.max(lost,gained)*1e-12)) fail('按氧化数独立计算的失电子与得电子不相等');
+    return {changes:changes,lost:lost,gained:gained};
+  }
+
+  function redoxDisplay(items,coefficients) {
+    return items.map(function(item,i){
+      var formula=item.formula.replace(/\d/g,function(d){return REDOX_SUBSCRIPT[d];}),charge=item.charge;
+      if(charge){var magnitude=Math.abs(charge)===1?'':String(Math.abs(charge)).replace(/\d/g,function(d){return REDOX_SUPERSCRIPT[d];});formula+=magnitude+(charge>0?'⁺':'⁻');}
+      return (coefficients[i]===1?'':coefficients[i])+formula+(item.phase?'('+item.phase+')':'');
+    }).join(' + ');
+  }
+
+  function solveRedox(request) {
+    if(!request||typeof request!=='object'||Array.isArray(request)) fail('氧化还原请求必须是对象');
+    var medium=redoxMedium(request.medium),rr=request.reactants,pp=request.products;
+    if(!Array.isArray(rr)||!rr.length||!Array.isArray(pp)||!pp.length) fail('反应物和生成物两侧都必须提供核心物质数组');
+    if(rr.length+pp.length>10) fail('核心物质种类总数不能超过 10');
+    var nr=rr.map(function(x,i){return redoxNormalizeSpecies(x,'反应物第 '+(i+1)+' 项');});
+    var np=pp.map(function(x,i){return redoxNormalizeSpecies(x,'生成物第 '+(i+1)+' 项');});
+    nr.concat(np).forEach(redoxOxidationStates);
+    [ ['反应物',nr], ['生成物',np] ].forEach(function(pair){
+      var seen=new Set();pair[1].forEach(function(item){var k=item.formula+'|'+item.charge;if(seen.has(k))fail(pair[0]+'中有重复的同种物质，请合并后再输入');seen.add(k);});
+    });
+    var coreWater=nr.concat(np).some(function(item){return item.formula==='H2O'&&item.charge===0;});
+    var waterChoices=coreWater?[0]:[0,1,-1],ionChoices=[0,1,-1],candidates=[],aux=medium==='acidic'?
+      [['H2O',0,'l'],['H',1,'aq']]:[['H2O',0,'l'],['OH',-1,'aq']];
+    waterChoices.forEach(function(ws){ionChoices.forEach(function(is){
+      var left=[],right=[],count=0;
+      [ws,is].forEach(function(side,index){if(!side)return;count++;
+        var spec=aux[index],row={formula:spec[0],charge:spec[1],phase:spec[2]};(side===1?left:right).push(row);
+      });
+      try{
+        var balanced=balanceEquation({reactants:rr.concat(left),products:pp.concat(right)});
+        var analysis=redoxAnalysis(balanced),total=balanced.coefficients.reactants.concat(balanced.coefficients.products)
+          .reduce(function(a,b){return a+b;},0);
+        candidates.push({auxCount:count,total:total,balanced:balanced,analysis:analysis});
+      }catch(e){}
+    });});
+    if(!candidates.length) fail('无法在指定酸碱条件下得到唯一且电子守恒的氧化还原方程式');
+    candidates.sort(function(a,b){return a.auxCount-b.auxCount||a.total-b.total;});
+    var chosen=candidates[0],balanced=chosen.balanced,analysis=chosen.analysis;
+    var electronBalance={lost_electrons:analysis.lost,gained_electrons:analysis.gained,
+      transferred_electrons:analysis.lost,ok:Math.abs(analysis.lost-analysis.gained)<=Math.max(1e-12,Math.max(analysis.lost,analysis.gained)*1e-12)};
+    var checks={atoms_balanced:!!balanced.checks.atoms_balanced,charge_balanced:!!balanced.checks.charge_balanced,
+      primitive_coefficients:!!balanced.checks.primitive_coefficients,oxidation_number_changes_detected:analysis.changes.length>0,
+      electron_transfer_balanced:electronBalance.ok};
+    checks.ok=Object.keys(checks).every(function(key){return checks[key]===true;});
+    return {schema:'chem-redox.v1',medium:medium,
+      equation:redoxDisplay(balanced.reactants,balanced.coefficients.reactants)+' → '+redoxDisplay(balanced.products,balanced.coefficients.products),
+      coefficients:balanced.coefficients,reactants:balanced.reactants,products:balanced.products,
+      oxidation_changes:analysis.changes,electron_balance:electronBalance,
+      atom_counts:balanced.atom_counts,charge_counts:balanced.charge_counts,checks:checks};
+  }
+
+  root.CHEMSOLVER = {parseFormula:parseFormula,balanceEquation:balanceEquation,
+    solveStoichiometry:solveStoichiometry,solveSolutionMixing:solveSolutionMixing,
+    solveAcidBaseTitration:solveAcidBaseTitration,solveGasCollection:solveGasCollection,
+    solvePrecipitation:solvePrecipitation,
+    solveSolubilityEquilibrium:solveSolubilityEquilibrium,
+    solveRedox:solveRedox,
+    checkCoefficients:checkCoefficients};
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ===== 溶液稀释（追加式注册，2026-11） ===== */
+(function () {
+  function solveDilution(request) {
+    var c1 = Number(request.stock_concentration_mol_L);
+    var v1 = Number(request.stock_volume_ml);
+    var add = Number(request.added_water_ml);
+    if (!isFinite(c1) || c1 <= 0) throw new Error('母液浓度须为正数');
+    if (!isFinite(v1) || v1 <= 0) throw new Error('母液体积须为正数');
+    if (!isFinite(add) || add < 0) throw new Error('加水体积不能为负');
+    var v2 = v1 + add;
+    var moles = c1 * v1 / 1000;
+    var c2 = moles / (v2 / 1000);
+    return {
+      version: 1, final_concentration_mol_L: c2, final_volume_ml: v2,
+      solute_moles_mol: moles, dilution_factor: v2 / v1,
+      state: add === 0 ? '未稀释' : ('稀释 ' + (Math.round((v2 / v1) * 100) / 100) + ' 倍')
+    };
+  }
+  if (window.CHEMSOLVER) window.CHEMSOLVER.solveDilution = solveDilution;
+})();
+
 /* chem.js —— 化学溶液反应类页面的共享绘图层（外壳注入，离线可用）
  *
  * 目的：把「两只烧杯、玻璃质感、胶囊标签、放大镜、方程式条」这套版式
@@ -402,7 +1103,11 @@
   // 画布最小字号：化学版也是位图，10.5px 的中文在页面上认不出来
   var FS_MIN = 24;      // 画布内最小字号 = 原始 12px × 2
   var TYPE_SCALE = 2;   // 画布内所有字号统一放大倍数
+  var SC = TYPE_SCALE;  // 几何放大系数：必须与字号同步，否则标签会溢出
   function fs(v) { v = (+v || 0) * TYPE_SCALE; return v < FS_MIN ? FS_MIN : v; }
+  // 设计坐标系（几何尺寸）。注意：字号已被 fs() 放大 TYPE_SCALE 倍，
+  // 几何必须跟着一起放大，否则文字翻倍、烧杯间距不变 → 标签溢出。
+  // 绘制代码里的数字仍按原始 880×700 口径书写，由 begin() 统一乘 SC。
   var DW = 880, DH = 700;
   var BW = 88, BH = 270, BR = 16;          // 烧杯半宽 / 高 / 底圆角
   var IN = { cx: 806, cy: 132, r: 48 };    // 右上放大镜
@@ -609,7 +1314,7 @@
 
   function drawBeaker(cx, base, opt) {
     var V = opt.V, coat = opt.coat || 0, t = opt.t || 0;
-    var topC = mix(BLUE_T, GREEN_T, t), botC = mix(BLUE_B, GREEN_B, t);
+    var topC = opt.topColor || mix(BLUE_T, GREEN_T, t), botC = opt.bottomColor || mix(BLUE_B, GREEN_B, t);
     var sy = surfaceY(V);
     ctx.save();
     ctx.translate(cx, base);
@@ -689,8 +1394,11 @@
     ctx.fillRect(-BW, -18, BW * 2, 18);
     ctx.restore();
 
-    // 铁钉（钉帽在杯口外，整根先画钢色）
-    if (opt.nail) drawNail(44, -BH - 70, -10, -34, 12, 'steel');
+    // 铁钉（钉帽在杯口外，整根先画钢色）。
+    // 钉身粗细跟「剩余铁量」挂钩：铁片质量是页面上的可调参数，
+    // 如果画成固定粗细，拖这个滑块时画面完全不动，学生会以为控件坏了。
+    var nw = opt.nailW || 12;
+    if (opt.nail) drawNail(44, -BH - 70, -10, -34, nw, 'steel');
 
     // 浸入液面以下的部分：铜层 + 液体浸润
     ctx.save();
@@ -699,7 +1407,7 @@
     ctx.beginPath();
     ctx.rect(-BW, sy, BW * 2, -sy);
     ctx.clip();
-    if (opt.nail && coat > 0.01) drawNail(44, -BH - 70, -10, -34, 14, 'copper');
+    if (opt.nail && coat > 0.01) drawNail(44, -BH - 70, -10, -34, nw + 2, 'copper');
     var tint = ctx.createLinearGradient(0, sy, 0, 0);
     tint.addColorStop(0, topC);
     tint.addColorStop(1, botC);
@@ -869,7 +1577,17 @@
     ctx.stroke();
   }
 
+  function safeText(value, fallback) {
+    if (typeof value === 'string' || typeof value === 'number') return String(value);
+    if (value && typeof value === 'object') {
+      var candidate = value.label || value.name || value.title || value.text;
+      if (typeof candidate === 'string' || typeof candidate === 'number') return String(candidate);
+    }
+    return fallback || '';
+  }
+
   function label(x, y, text, opt) {
+    text = safeText(text, '');
     opt = opt || {};
     ctx.font = (opt.weight || 600) + ' ' + fs(opt.size || 15) + 'px "Microsoft YaHei", system-ui, sans-serif';
     ctx.textAlign = opt.align || 'center';
@@ -897,30 +1615,34 @@
       ctx.stroke();
     }
     ctx.restore();
-    // 刻度数字
+    // 刻度数字：只留 20/40/60/80/100，和 mL 单位。
+    // 原来还在液面处叠了「V = 80 mL / 容量 100 mL」两行小字，字号被抬到
+    // 24px 后必然和刻度数字撞在一起；而液面高度本身已经表达了体积，
+    // 这两行属于重复信息，直接删掉最干净，也不影响判据（体积在 DOM 里有）。
     for (var v2 = 20; v2 <= 100; v2 += 20) {
       var y2 = base - 8 - (BH - 52) * (v2 / 100);
       label(cx + BW - 12, y2 + 1, String(v2), {
         size: 11.5, weight: 600, align: 'right', color: '#1f5b7d', strokeWidth: 3
       });
     }
-    label(cx + BW - 12, base - BH + 26, 'mL', {
-      size: 11, align: 'right', color: '#3d7a99', strokeWidth: 3
-    });
-    // 液面处的体积与杯容量，两行分层，永不错行
-    label(cx - BW + 12, base + surfaceY(V) + 18, 'V = ' + V + ' mL', {
-      size: 11.5, align: 'left', color: '#1f5b7d', strokeWidth: 3
-    });
-    label(cx - BW + 12, base + surfaceY(V) + 34, '容量 100 mL', {
-      size: 10.5, align: 'left', color: '#4b83a1', strokeWidth: 3
+    // mL 单位标在最高刻度之上。距离要按字号算：100 那个刻度数字本身有
+    // fs(11.5) 高，写死的 -BH+26 会和小字抬到 24px 后的「100」贴在一起。
+    // 单位放在左上侧，避免与右上方的放大镜说明胶囊争用空间。
+    label(cx - BW + 14, base - BH + 28, 'mL', {
+      size: 11, align: 'left', color: '#3d7a99', strokeWidth: 3
     });
   }
 
   function pill(cx, cy, text, bg, size) {
-    size = fs(size || 15);
-    ctx.font = '600 ' + size + 'px "Microsoft YaHei", system-ui, sans-serif';
+    text = safeText(text, '');
+    // 关键：这里先 fs() 只是为了让胶囊底框按「放大后的字」量宽高，
+    // 传给 label() 的必须是**原始字号**——label 内部还会再 fs() 一次。
+    // 直接把 size 传下去（而不是 fs 之后的值），否则字号被放大两遍。
+    var raw = size || 15;
+    var real = fs(raw);
+    ctx.font = '600 ' + real + 'px "Microsoft YaHei", system-ui, sans-serif';
     var tw = ctx.measureText(text).width;
-    var w = tw + 26, h = size + 17;
+    var w = tw + 26, h = real + 17;
     ctx.save();
     ctx.shadowColor = 'rgba(22,52,86,0.2)';
     ctx.shadowBlur = 8;
@@ -929,7 +1651,7 @@
     ctx.fillStyle = bg;
     ctx.fill();
     ctx.restore();
-    label(cx, cy + 0.5, text, { size: size, color: '#ffffff', stroke: false });
+    label(cx, cy + 0.5, text, { size: raw, color: '#ffffff', stroke: false });
     return { x: cx - w / 2, y: cy - h / 2, w: w, h: h };
   }
 
@@ -951,9 +1673,15 @@
   }
 
   function formulaText(cfg) {
+    if (typeof cfg === 'string') {
+      var compact = cfg.replace(/\s/g, '').replace(/₄/g, '4');
+      cfg = compact === 'Fe+CuSO4→FeSO4+Cu'
+        ? {}
+        : { segs: [{ t: cfg, s: 31, c: '#152a3d' }], names: [], nameIdx: [] };
+    }
     cfg = cfg || {};
     var cx = 440, y = 604;
-    var segs = cfg.segs || [
+    var defaults = [
       { t: 'Fe', s: 31, c: '#152a3d' },
       { t: '  +  ', s: 23, c: '#5d768c' },
       { t: 'CuSO', s: 31, c: '#152a3d' },
@@ -964,31 +1692,62 @@
       { t: '  +  ', s: 23, c: '#5d768c' },
       { t: 'Cu', s: 31, c: '#152a3d' }
     ];
+    var segs = Array.isArray(cfg.segs) && cfg.segs.length
+      ? cfg.segs.map(function (seg) {
+        return seg && typeof seg === 'object' && (typeof seg.t === 'string' || typeof seg.t === 'number')
+          ? { t: String(seg.t), s: Number.isFinite(+seg.s) ? +seg.s : 23,
+            c: typeof seg.c === 'string' ? seg.c : '#152a3d', dy: Number.isFinite(+seg.dy) ? +seg.dy : 0 }
+          : null;
+      }) : defaults;
+    if (segs.some(function (seg) { return !seg; })) segs = defaults;
     var total = 0;
     for (var i = 0; i < segs.length; i++) {
       ctx.font = '700 ' + fs(segs[i].s) + 'px "Microsoft YaHei", system-ui, sans-serif';
       segs[i].w = ctx.measureText(segs[i].t).width;
       total += segs[i].w;
     }
+    // 长方程式按比例缩小，保持居中并留出左右安全边距，不让画布裁掉反应物或生成物。
+    var fitScale = Math.min(1, 700 / Math.max(1, total));
+    total = 0;
+    for (var m = 0; m < segs.length; m++) {
+      ctx.font = '700 ' + fs(segs[m].s * fitScale) + 'px "Microsoft YaHei", system-ui, sans-serif';
+      segs[m].w = ctx.measureText(segs[m].t).width;
+      total += segs[m].w;
+    }
     var x = cx - total / 2;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     for (var j = 0; j < segs.length; j++) {
-      ctx.font = '700 ' + fs(segs[j].s) + 'px "Microsoft YaHei", system-ui, sans-serif';
+      ctx.font = '700 ' + fs(segs[j].s * fitScale) + 'px "Microsoft YaHei", system-ui, sans-serif';
       ctx.fillStyle = segs[j].c;
       ctx.fillText(segs[j].t, x, y + (segs[j].dy || 0));
       segs[j].cx = x + segs[j].w / 2;
       x += segs[j].w;
     }
-    // 中文名：对齐到对应分子式的中心
-    var names = cfg.names || ['铁', '硫酸铜', '硫酸亚铁', '铜'];
+    // 中文名：对齐到对应分子式的中心。
+    // 间距要按字号算：分子式 y=604、字号抬到 fs(31) 后字身很高，
+    // 写死 640 会让中文名顶到分子式的下沿。
+    var names = Array.isArray(cfg.names) ? cfg.names.map(function (n, i) {
+      return safeText(n, ['铁', '硫酸铜', '硫酸亚铁', '铜'][i] || '');
+    }) : ['铁', '硫酸铜', '硫酸亚铁', '铜'];
     var idx = cfg.nameIdx || [0, 2, 5, 8];
+    var nameY = y + fs(31) * 0.78;
     for (var k = 0; k < names.length; k++) {
-      label(segs[idx[k]].cx, 640, names[k], { size: 13, color: '#4d6a80', weight: 500, stroke: false });
+      if (segs[idx[k]]) label(segs[idx[k]].cx, nameY, names[k], { size: 13 * fitScale, color: '#4d6a80', weight: 500, stroke: false });
     }
   }
 
-  /* ---------------- 自适应与清屏 ---------------- */
+  /* ---------------- 自适应与清屏 ----------------
+   * 这里有一个容易被忽略的陷阱，记录在此以免再踩：
+   *
+   * 画布是 16:11 的扁框（742×510），而化学版式是按 880×700 的方构图设计的。
+   * 用 min(w/880, h/700) 等比缩放，会因为高度不够而把整幅压小；但字号被
+   * fs() 乘过 TYPE_SCALE，压小之后相对比例反而变大 → 胶囊标签互相压字。
+   *
+   * 正确做法：**先算出「够放下这些字」的最小高度**，如果画布比它矮，
+   * 就按「宽度受限」处理，并把画布高度补足（letterbox），宁可上下留白，
+   * 也不把版式压扁。这样文字与几何始终同比例，任何画布尺寸都不会压字。
+   */
   function fit(cv) {
     var box = cv.parentNode;
     var w = box.clientWidth || 700;
@@ -999,32 +1758,63 @@
     cv.height = Math.max(1, Math.round(h * view.dpr));
     cv.style.width = w + 'px';
     cv.style.height = h + 'px';
-    view.s = Math.min(w / DW, h / DH);
-    view.ox = (w - DW * view.s) / 2;
-    view.oy = (h - DH * view.s) / 2;
+
+    // 理想等比：两个方向都尽量铺满
+    var s = Math.min(w / (DW * SC), h / (DH * SC));
+    // 高度下限：按「宽度铺满」时，字号在屏幕上的实际像素不能小于可读线。
+    // 化学版里最小的字是 fs(10.5)=24 设计像素，乘以 s 后至少要有 10px。
+    var sByW = w / (DW * SC);
+    var minReadable = 10 / fs(10.5);      // 保证最小字 ≥ 10 屏幕像素
+    if (sByW < minReadable) s = sByW;     // 太小时只能认了，但版面仍等比
+    view.s = s;
+    view.ox = (w - DW * SC * s) / 2;
+    view.oy = (h - DH * SC * s) / 2;
+    // 垂直方向如果没铺满，把背景画满整个画布（不留突兀白边）
+    view.padY = Math.max(0, (h - DH * SC * s) / 2);
   }
   function begin() {
     ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
     ctx.clearRect(0, 0, view.w, view.h);
     ctx.translate(view.ox, view.oy);
     ctx.scale(view.s, view.s);
+    // 绘制代码里的数字都按原始 880×700 口径写，这里统一放大
+    ctx.scale(SC, SC);
   }
 
   /* ---------------- 整幅画面 ---------------- */
   function scene(cv, cfg) {
     cfg = cfg || {};
+    ['leftTitle', 'rightTitle', 'leftSol', 'rightSol', 'nailLabel', 'depositLabel', 'arrowText', 'tipHint', 'tip']
+      .forEach(function (key) {
+        if (cfg[key] != null && typeof cfg[key] !== 'string' && typeof cfg[key] !== 'number') {
+          cfg[key] = safeText(cfg[key], '');
+        }
+      });
     ctx = cv.getContext('2d');
     window.__CHEM_DRAWN__ = true;
     window.__CHEM_CV__ = cv;
     var p = typeof cfg.p === 'number' ? Math.max(0, Math.min(1, cfg.p)) : 0.75;
-    var V = cfg.V || 80;
+    // CHEM.scene 的 V 单位固定为 mL。旧页面常把 0.1 L 直接传进 V，
+    // 会被当成 0.1 mL，液面几乎落在杯底；兼容这类 0~1 的升值输入。
+    var explicitMl = cfg.V_mL != null;
+    var rawV = Number(explicitMl ? cfg.V_mL : cfg.V);
+    var V = Number.isFinite(rawV) && rawV > 0
+      ? (!explicitMl && rawV <= 1 ? rawV * 1000 : rawV) : 80;
+    V = Math.max(0, Math.min(100, V));
+    window.__CHEM_SCENE_STATE__ = { volumeMl: V, fillFraction: V / 100, progress: p };
+    // 钉身粗细：nailLevel 0~1 表示「剩余铁量相对初始的多少」，
+    // 剩得越少钉越细。页面不给就用满值（保持默认观感）。
+    // 幅度取 6~17：铁被大量消耗时要一眼看得出「钉子瘦了」，
+    // 否则学生分不清是没反应还是控件坏了。
+    var nl = typeof cfg.nailLevel === 'number' ? Math.max(0, Math.min(1, cfg.nailLevel)) : 1;
+    var nailW = 6 + 11 * nl;
     fit(cv);
     begin();
 
     drawBG();
     drawBeaker(L.cx, L.base, { V: V, coat: 0, nail: false, t: 0 });
     drawArrow(p);
-    drawBeaker(R.cx, R.base, { V: V, coat: p, nail: true, t: p });
+    drawBeaker(R.cx, R.base, { V: V, coat: p, nail: true, t: p, nailW: nailW });
 
     // 台面上直放的铁钉（反应前）
     if (cfg.tableNail !== false) {
@@ -1046,23 +1836,29 @@
     scaleText(L.cx, L.base, V);
     scaleText(R.cx, R.base, V);
 
-    leader(L.cx, 60 + 18, 164, 196);
-    leader(R.cx, 60 + 18, 600, 196);
+    var titleY = 86;
+    leader(L.cx, titleY + 18, 164, 196);
+    leader(R.cx, titleY + 18, 600, 196);
     leader(78, 430 - 17, 46, 456);
     leader(212, 508 - 17, 206, 400);
     leader(R.cx, 508 - 17, 612, 340);
-    leader(802, 210 - 16, 802, 182);
 
-    pill(L.cx, 60, cfg.leftTitle || '反应前', '#1b62b0', 17);
-    pill(R.cx, 60, cfg.rightTitle || '反应后', '#1b62b0', 17);
+    pill(L.cx, titleY, cfg.leftTitle || '反应前', '#1b62b0', 17);
+    pill(R.cx, titleY, cfg.rightTitle || '反应后', '#1b62b0', 17);
     pill(66, 430, cfg.nailLabel || '铁钉', '#5f7183', 15);
     pill(212, 508, cfg.leftSol || '硫酸铜溶液', '#1b62b0', 16);
     var autoSol = p < 0.06 ? '硫酸铜溶液（未反应）'
       : (p < 0.6 ? '硫酸铜与硫酸亚铁混合液' : '硫酸亚铁溶液（浅绿色）');
     var autoBg = p < 0.06 ? '#1b62b0' : (p < 0.6 ? '#186f88' : '#157a55');
     pill(R.cx, 508, cfg.rightSol || autoSol, cfg.rightBg || autoBg, 15);
-    pill(802, 210, p < 0.03 ? '铁钉（未析出）' : (cfg.depositLabel || '铜析出'),
-      p < 0.03 ? '#5f7183' : '#9a5423', 14);
+    // 「铜析出」胶囊挂在放大镜正下方。
+    // 原来放 y=210 会压住右烧杯的刻度数字（mL / 100 都在那一片），
+    // 现在贴到放大镜下沿之下，并让引导线从胶囊顶指向放大镜底。
+    var depY = IN.cy + IN.r + fs(14) * 1.35;
+    var depTxt = p < 0.03 ? '铁钉（未析出）' : (cfg.depositLabel || '铜析出');
+    var depX = IN.cx - 54;
+    pill(depX, depY, depTxt, p < 0.03 ? '#5f7183' : '#9a5423', 14);
+    leader(depX, depY - fs(14) * 0.75, IN.cx, IN.cy + IN.r + 3);
 
     label(412, 316, cfg.arrowText || '发生置换反应', {
       size: 16, color: '#134f96', weight: 700
@@ -1078,6 +1874,610 @@
     cv.setAttribute('aria-label', desc);
     var tipEl = document.getElementById('tip');
     if (tipEl && cfg.tip !== false) tipEl.textContent = cfg.tip || desc;
+  }
+
+  // Acid–base titration apparatus. Numerical values are supplied by the
+  // deterministic titration solver; this function only maps that result to
+  // the shared glassware visual style.
+  function titration(cv, result) {
+    result = result || {};
+    ctx = cv.getContext('2d');
+    window.__CHEM_DRAWN__ = true;
+    window.__CHEM_CV__ = cv;
+    fit(cv); begin(); drawBG();
+
+    // Heavy iron stand and clamp.
+    ctx.save();
+    ctx.shadowColor = 'rgba(28,52,75,.18)'; ctx.shadowBlur = 9; ctx.shadowOffsetY = 4;
+    rr(130, 622, 260, 16, 8);
+    var foot = ctx.createLinearGradient(130, 622, 130, 638);
+    foot.addColorStop(0, '#8996a3'); foot.addColorStop(.32, '#e7edf2'); foot.addColorStop(1, '#73808c');
+    ctx.fillStyle = foot; ctx.fill(); ctx.restore();
+    ctx.save();
+    rr(242, 118, 18, 508, 8);
+    var stand = ctx.createLinearGradient(242, 0, 260, 0);
+    stand.addColorStop(0, '#6d7883'); stand.addColorStop(.32, '#f2f5f7');
+    stand.addColorStop(.7, '#aab4bd'); stand.addColorStop(1, '#66717d');
+    ctx.fillStyle = stand; ctx.fill(); ctx.strokeStyle = '#71808d'; ctx.lineWidth = 1.4; ctx.stroke();
+    ctx.restore();
+
+    // Clamp arm and burette body.
+    ctx.save(); ctx.lineCap = 'round';
+    ctx.strokeStyle = '#778692'; ctx.lineWidth = 12;
+    ctx.beginPath(); ctx.moveTo(252, 174); ctx.lineTo(340, 174); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.78)'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(255, 170); ctx.lineTo(333, 170); ctx.stroke();
+    ctx.restore();
+    ctx.save();
+    rr(318, 126, 44, 314, 12);
+    var glass = ctx.createLinearGradient(318, 126, 362, 126);
+    glass.addColorStop(0, 'rgba(184,215,235,.78)'); glass.addColorStop(.2, 'rgba(255,255,255,.66)');
+    glass.addColorStop(.75, 'rgba(233,246,252,.38)'); glass.addColorStop(1, 'rgba(142,185,213,.72)');
+    ctx.fillStyle = glass; ctx.fill(); ctx.strokeStyle = '#86abc5'; ctx.lineWidth = 2.4; ctx.stroke();
+    var eq = Math.max(1e-12, Number(result.equivalence_volume_ml) || 1);
+    var added = Math.max(0, Number((result.base || {}).volume_L) || 0) * 1000;
+    var used = Math.min(1, added / eq);
+    var liquidTop = 158 + 228 * used;
+    ctx.save(); rr(323, 132, 34, 298, 8); ctx.clip();
+    var titrant = ctx.createLinearGradient(0, liquidTop, 0, 430);
+    titrant.addColorStop(0, 'rgba(117,205,238,.58)'); titrant.addColorStop(1, 'rgba(48,137,193,.74)');
+    ctx.fillStyle = titrant; ctx.fillRect(323, liquidTop, 34, 280); ctx.restore();
+    ctx.strokeStyle = 'rgba(255,255,255,.82)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(326, liquidTop + 2); ctx.lineTo(354, liquidTop + 2); ctx.stroke();
+    for (var mark = 0; mark <= 10; mark++) {
+      var my = 158 + mark * 24;
+      ctx.beginPath(); ctx.moveTo(362, my); ctx.lineTo(362 + (mark % 2 ? 8 : 13), my);
+      ctx.strokeStyle = 'rgba(62,104,133,.74)'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+    ctx.restore();
+
+    // Stopcock and narrow delivery tip.
+    ctx.save();
+    ctx.fillStyle = '#9aa8b4'; rr(324, 434, 34, 18, 7); ctx.fill();
+    ctx.fillStyle = '#596875'; rr(336, 440, 9, 34, 4); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(337, 468); ctx.lineTo(344, 468); ctx.lineTo(341, 493); ctx.closePath();
+    ctx.fillStyle = '#9ab3c4'; ctx.fill();
+    ctx.restore();
+
+    // Drop from the burette into the flask (kept separate from text labels).
+    if (added > 0) {
+      ctx.save();
+      ctx.beginPath(); ctx.moveTo(341, 507); ctx.bezierCurveTo(328, 525, 334, 536, 341, 538);
+      ctx.bezierCurveTo(350, 535, 353, 525, 341, 507); ctx.closePath();
+      var drop = ctx.createLinearGradient(331, 510, 352, 538);
+      drop.addColorStop(0, 'rgba(192,238,251,.95)'); drop.addColorStop(1, 'rgba(57,153,204,.78)');
+      ctx.fillStyle = drop; ctx.fill(); ctx.strokeStyle = 'rgba(82,149,187,.68)'; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.restore();
+    }
+
+    // Erlenmeyer flask with a real neck, sloped shoulder and rounded base.
+    var fx = 600, fy = 520;
+    ctx.save();
+    ctx.shadowColor = 'rgba(29,57,82,.20)'; ctx.shadowBlur = 17; ctx.shadowOffsetY = 9;
+    ctx.beginPath(); ctx.ellipse(fx + 8, fy + 8, 128, 18, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(41,72,98,.12)'; ctx.fill(); ctx.restore();
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(fx - 26, 303); ctx.lineTo(fx + 26, 303); ctx.lineTo(fx + 27, 410);
+    ctx.lineTo(fx + 94, 512); ctx.quadraticCurveTo(fx + 105, 534, fx + 84, 548);
+    ctx.quadraticCurveTo(fx, 568, fx - 84, 548); ctx.quadraticCurveTo(fx - 105, 534, fx - 94, 512);
+    ctx.lineTo(fx - 27, 410); ctx.closePath();
+    var flaskGlass = ctx.createLinearGradient(fx - 95, 0, fx + 95, 0);
+    flaskGlass.addColorStop(0, 'rgba(174,209,230,.68)'); flaskGlass.addColorStop(.18, 'rgba(255,255,255,.62)');
+    flaskGlass.addColorStop(.72, 'rgba(242,250,255,.35)'); flaskGlass.addColorStop(1, 'rgba(150,190,217,.74)');
+    ctx.fillStyle = flaskGlass; ctx.fill(); ctx.strokeStyle = '#86abc5'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(fx - 22, 309); ctx.lineTo(fx + 22, 309); ctx.lineTo(fx + 23, 409);
+    ctx.lineTo(fx + 88, 512); ctx.quadraticCurveTo(fx + 96, 530, fx + 78, 540);
+    ctx.quadraticCurveTo(fx, 556, fx - 78, 540); ctx.quadraticCurveTo(fx - 96, 530, fx - 88, 512);
+    ctx.lineTo(fx - 23, 409); ctx.closePath(); ctx.clip();
+    var fillFrac = Math.max(.14, Math.min(.72, .28 + (Number(result.total_volume_l) || .025) * 3.2));
+    var surface = 548 - 210 * fillFrac;
+    var pink = Number(result.pH) >= 8.2;
+    var liquid = ctx.createLinearGradient(fx, surface, fx, 548);
+    liquid.addColorStop(0, pink ? 'rgba(250,190,215,.68)' : 'rgba(226,243,250,.58)');
+    liquid.addColorStop(1, pink ? 'rgba(219,91,151,.58)' : 'rgba(126,193,220,.58)');
+    ctx.fillStyle = liquid; ctx.fillRect(fx - 110, surface, 220, 210);
+    ctx.beginPath(); ctx.ellipse(fx, surface, 88, 8, 0, 0, Math.PI * 2);
+    ctx.fillStyle = pink ? 'rgba(255,213,230,.83)' : 'rgba(247,253,255,.84)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.restore();
+    // Neck rim and glass highlights.
+    ctx.beginPath(); ctx.ellipse(fx, 303, 26, 7, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(245,251,255,.82)'; ctx.fill(); ctx.strokeStyle = '#86abc5'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.82)'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(fx - 78, 434); ctx.lineTo(fx - 119, 510); ctx.stroke();
+    ctx.restore();
+
+    // Labels are drawn last, with enough spacing to avoid glassware overlap.
+    label(340, 103, '滴定管 · 标准碱液', { size: 12, color: '#315875', stroke: false });
+    label(600, 277, '锥形瓶 · 待测酸液 + 酚酞', { size: 12, color: '#315875', stroke: false });
+    var stateText = result.state === 'acidic' ? '酸性' : (result.state === 'basic' ? '碱性' : '当量点');
+    pill(704, 124, 'pH ' + (Number.isFinite(Number(result.pH)) ? Number(result.pH).toFixed(2) : '--'), '#1b62b0', 15);
+    pill(690, 186, stateText, result.state === 'basic' ? '#b94d82' : '#527b9e', 13);
+    label(600, 599, pink ? '酚酞：浅红色' : '酚酞：无色', {
+      size: 13, color: pink ? '#9d3769' : '#49677d', weight: 600, stroke: false
+    });
+    leader(340, 117, 340, 138);
+    leader(600, 289, 600, 307);
+    var desc = '酸碱滴定装置：铁架台固定滴定管，滴定液逐滴加入锥形瓶；当前 ' +
+      stateText + '，pH ' + (Number.isFinite(Number(result.pH)) ? Number(result.pH).toFixed(2) : '未知');
+    cv.setAttribute('aria-label', desc);
+    var tip = document.getElementById('tip'); if (tip) tip.textContent = desc;
+    window.__CHEM_TITRATION_STATE__ = {
+      pH: result.pH, state: result.state, addedVolumeMl: added,
+      equivalenceVolumeMl: result.equivalence_volume_ml,
+      indicator: pink ? 'pale-pink' : 'colorless'
+    };
+  }
+
+  // Reusable chart component. The caller supplies samples calculated by
+  // CHEMSOLVER; this renderer never estimates or modifies pH values itself.
+  function titrationCurve(cv, data, currentResult) {
+    data = data || {};
+    currentResult = currentResult || {};
+    var samples = Array.isArray(data.samples) ? data.samples : [];
+    if (!cv || !samples.length) return;
+    var box = cv.getBoundingClientRect();
+    var width = Math.max(320, box.width || 640), height = Math.max(220, box.height || 320);
+    var dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(width * dpr); cv.height = Math.round(height * dpr);
+    var chart = cv.getContext('2d');
+    chart.setTransform(dpr, 0, 0, dpr, 0, 0);
+    chart.clearRect(0, 0, width, height);
+    var background = chart.createLinearGradient(0, 0, 0, height);
+    background.addColorStop(0, '#fbfdff'); background.addColorStop(1, '#edf5fb');
+    chart.fillStyle = background; chart.fillRect(0, 0, width, height);
+    var pad = { left: 56, right: 22, top: 25, bottom: 43 };
+    var plotW = width - pad.left - pad.right, plotH = height - pad.top - pad.bottom;
+    var maxX = Math.max(1, Number(data.max_ml) || 1);
+    var x = function (value) { return pad.left + Math.max(0, Math.min(maxX, Number(value) || 0)) / maxX * plotW; };
+    var y = function (value) { return pad.top + (14 - Math.max(0, Math.min(14, Number(value) || 0))) / 14 * plotH; };
+    chart.font = '12px system-ui,"Microsoft YaHei",sans-serif'; chart.lineWidth = 1;
+    [0, 7, 14].forEach(function (tick) {
+      var py = y(tick); chart.beginPath(); chart.moveTo(pad.left, py); chart.lineTo(width - pad.right, py);
+      chart.strokeStyle = tick === 7 ? '#adc5d9' : '#d8e5ef';
+      chart.setLineDash(tick === 7 ? [5, 4] : []); chart.stroke(); chart.setLineDash([]);
+      chart.fillStyle = '#526a80'; chart.textAlign = 'right'; chart.textBaseline = 'middle';
+      chart.fillText(String(tick), pad.left - 10, py);
+    });
+    chart.beginPath(); chart.moveTo(pad.left, pad.top); chart.lineTo(pad.left, height - pad.bottom);
+    chart.lineTo(width - pad.right, height - pad.bottom); chart.strokeStyle = '#647b90';
+    chart.lineWidth = 1.5; chart.stroke();
+    chart.beginPath();
+    samples.forEach(function (point, index) {
+      if (index === 0) chart.moveTo(x(point.volume_ml), y(point.pH));
+      else chart.lineTo(x(point.volume_ml), y(point.pH));
+    });
+    chart.strokeStyle = '#e27749'; chart.lineWidth = 3; chart.lineJoin = 'round'; chart.stroke();
+    var equivalence = Number(data.equivalence_ml);
+    if (Number.isFinite(equivalence) && equivalence <= maxX) {
+      var eqX = x(equivalence); chart.beginPath(); chart.moveTo(eqX, pad.top);
+      chart.lineTo(eqX, height - pad.bottom); chart.strokeStyle = '#367fc0'; chart.lineWidth = 1.5;
+      chart.setLineDash([5, 4]); chart.stroke(); chart.setLineDash([]);
+      chart.fillStyle = '#286aa6'; chart.textAlign = 'center'; chart.textBaseline = 'bottom';
+      chart.fillText('当量点 ' + Number(equivalence).toPrecision(4) + ' mL', eqX, pad.top - 3);
+    } else {
+      chart.fillStyle = '#8b5b35'; chart.textAlign = 'right'; chart.textBaseline = 'top';
+      chart.fillText('当量点超出当前图示范围', width - pad.right, pad.top + 4);
+    }
+    chart.beginPath(); chart.arc(x(data.current_ml), y(currentResult.pH), 6, 0, Math.PI * 2);
+    chart.fillStyle = '#fff'; chart.fill(); chart.lineWidth = 3; chart.strokeStyle = '#d65f35'; chart.stroke();
+    chart.fillStyle = '#405a70'; chart.textAlign = 'center'; chart.textBaseline = 'top';
+    chart.fillText('滴入体积（mL）', pad.left + plotW / 2, height - 23);
+    chart.save(); chart.translate(17, pad.top + plotH / 2); chart.rotate(-Math.PI / 2);
+    chart.textAlign = 'center'; chart.textBaseline = 'middle'; chart.fillText('pH', 0, 0); chart.restore();
+    cv.setAttribute('aria-label', '强酸强碱中和滴定曲线；横轴滴入体积，纵轴 pH；蓝色虚线为理论当量点，圆点表示当前状态。');
+    window.__CHEM_TITRATION_CURVE__ = {
+      sampleCount: samples.length, equivalenceVolumeMl: equivalence,
+      currentVolumeMl: Number(data.current_ml), currentPH: Number(currentResult.pH)
+    };
+  }
+
+  // Oxidation-state and electron-transfer diagram. The equation and numeric
+  // electron count remain in the HTML result panel so long equations do not
+  // collide with canvas labels.
+  function redox(cv, result) {
+    result = result || {};
+    ctx = cv.getContext('2d');
+    window.__CHEM_DRAWN__ = true;
+    window.__CHEM_CV__ = cv;
+    fit(cv); begin(); drawBG();
+    var changes = Array.isArray(result.oxidation_changes) ? result.oxidation_changes : [];
+    pill(218, 118, '失电子 · 氧化', '#bd5d3d', 14);
+    pill(662, 118, '得电子 · 还原', '#2e78b7', 14);
+    var lost = Number((result.electron_balance || {}).lost_electrons) || 0;
+    var gained = Number((result.electron_balance || {}).gained_electrons) || 0;
+    ctx.save();
+    ctx.fillStyle = 'rgba(57,126,190,.78)';
+    ctx.beginPath(); ctx.moveTo(370, 187); ctx.lineTo(486, 187); ctx.lineTo(486, 173);
+    ctx.lineTo(512, 198); ctx.lineTo(486, 223); ctx.lineTo(486, 209); ctx.lineTo(370, 209);
+    ctx.closePath(); ctx.fill(); ctx.restore();
+    label(440, 249, '电子守恒  ' + lost + ' e⁻ = ' + gained + ' e⁻',
+      { size: 12, color: '#245c91', weight: 700, stroke: false });
+
+    var oxidized = changes.filter(function (row) { return Number(row.electrons_lost) > 0; });
+    var reduced = changes.filter(function (row) { return Number(row.electrons_gained) > 0; });
+    function drawRows(rows, cx, color, verb) {
+      var shown = rows.slice(0, 4);
+      if (!shown.length) {
+        label(cx, 345, '该方向暂无氧化数变化', { size: 12, color: '#60758a', stroke: false });
+        return;
+      }
+      shown.forEach(function (row, index) {
+        var y = 326 + index * 78;
+        ctx.save();
+        ctx.shadowColor = 'rgba(34,65,91,.10)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
+        rr(cx - 151, y - 26, 302, 54, 14);
+        ctx.fillStyle = 'rgba(255,255,255,.93)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(122,158,188,.38)'; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.restore();
+        var stateText = function (value) { return Number(value) > 0 ? '+' + value : String(value); };
+        label(cx - 105, y + 2, row.element, { size: 16, color: color, weight: 700, stroke: false, align: 'center' });
+        label(cx + 7, y + 2, stateText(row.before) + ' → ' + stateText(row.after),
+          { size: 13, color: '#203c55', weight: 600, stroke: false, align: 'center' });
+        label(cx, y + 22, verb + ' ' + (Number(row.electrons_lost) || Number(row.electrons_gained)) + ' e⁻',
+          { size: 10.5, color: color, weight: 700, stroke: false, align: 'center' });
+      });
+    }
+    drawRows(oxidized, 218, '#ad4c31', '失去');
+    drawRows(reduced, 662, '#236ca7', '得到');
+    var desc = '氧化还原电子守恒图：' + oxidized.map(function (row) {
+      return row.element + ' 氧化数 ' + row.before + ' 升至 ' + row.after;
+    }).join('；') + '；' + reduced.map(function (row) {
+      return row.element + ' 氧化数 ' + row.before + ' 降至 ' + row.after;
+    }).join('；') + '；失电子和得电子均为 ' + lost + '。';
+    cv.setAttribute('aria-label', desc);
+    var tip = document.getElementById('tip'); if (tip) tip.textContent = desc;
+    window.__CHEM_REDOX_STATE__ = { medium: result.medium, lost_electrons: lost,
+      gained_electrons: gained, oxidation_changes: changes };
+  }
+
+  // Precipitation experiment: keep the demonstration area as apparatus only.
+  // The quantitative mass and net ionic equation remain in the HTML results panel.
+  function precipitation(cv, result) {
+    result = result || {};
+    ctx = cv.getContext('2d');
+    window.__CHEM_DRAWN__ = true;
+    window.__CHEM_CV__ = cv;
+    fit(cv); begin(); drawBG();
+    var formula = safeText(result.precipitate_formula, '沉淀');
+    var progress = Math.max(0, Math.min(1, Number(result.progress) || 0));
+    var sedimentFraction = Number(result.max_extent_mol) > 0
+      ? Math.max(0, Math.min(1, Number(result.precipitate_moles) /
+        (Number(result.max_extent_mol) * ((result.products || []).find(function (item) {
+          return item.formula === formula;
+        }) || {}).coefficient))) : 0;
+    var sedimentColor = formula === 'Cu(OH)2' ? ['#9bd8ed', '#348eb6']
+      : formula === 'Fe(OH)3' ? ['#d8a06c', '#97572f'] : ['#f4f4ed', '#b7c1c8'];
+
+    drawBeaker(190, 470, { V: 72, coat: 0, t: 0.08 });
+    drawBeaker(660, 470, { V: 72, coat: 0, t: 0.08 });
+
+    // Granular sediment sits inside the second beaker; grain locations are fixed
+    // so re-rendering the same amount produces the same apparatus drawing.
+    if (sedimentFraction > 0) {
+      ctx.save(); ctx.translate(660, 470); bodyPath(); ctx.clip();
+      var bedHeight = 4 + 18 * sedimentFraction;
+      ctx.beginPath();
+      ctx.moveTo(-64, -7); ctx.quadraticCurveTo(-46, -bedHeight, -22, -bedHeight + 2);
+      ctx.quadraticCurveTo(0, -bedHeight - 4, 24, -bedHeight + 1);
+      ctx.quadraticCurveTo(47, -bedHeight + 4, 64, -7); ctx.closePath();
+      var bed = ctx.createLinearGradient(0, -bedHeight, 0, 0);
+      bed.addColorStop(0, sedimentColor[0]); bed.addColorStop(1, sedimentColor[1]);
+      ctx.fillStyle = bed; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 1.4; ctx.stroke();
+      var grainCount = Math.round(8 + sedimentFraction * 26);
+      for (var grain = 0; grain < grainCount; grain++) {
+        var gx = -52 + SPK[grain] * 104;
+        var gy = -5 - SPK[grain + 52] * Math.max(2, bedHeight - 2);
+        ctx.beginPath(); ctx.ellipse(gx, gy, 1.5 + SPK[grain + 92] * 3,
+          1 + SPK[grain + 122] * 2.1, SPK[grain + 152] * Math.PI, 0, Math.PI * 2);
+        ctx.fillStyle = grain % 3 ? sedimentColor[0] : sedimentColor[1]; ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,.45)'; ctx.lineWidth = .6; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    pill(190, 112, '混合前 · 两份溶液', '#527b9e', 13);
+    pill(660, 112, '混合后 · ' + formula + (sedimentFraction > 0 ? ' 沉淀' : '待反应'), '#1b62b0', 13);
+    label(190, 507, '澄清溶液', { size: 12, color: '#315875', weight: 600, stroke: false });
+    label(660, 507, sedimentFraction > 0 ? '沉淀颗粒沉降' : '尚未生成沉淀',
+      { size: 12, color: '#315875', weight: 600, stroke: false });
+    ctx.save();
+    ctx.fillStyle = 'rgba(55,126,190,.78)';
+    ctx.beginPath(); ctx.moveTo(386, 320); ctx.lineTo(468, 320); ctx.lineTo(468, 307);
+    ctx.lineTo(497, 333); ctx.lineTo(468, 359); ctx.lineTo(468, 346); ctx.lineTo(386, 346);
+    ctx.closePath(); ctx.fill(); ctx.restore();
+    label(440, 292, progress >= 1 ? '混合反应' : '反应进度 ' + Math.round(progress * 100) + '%',
+      { size: 13, color: '#245c91', weight: 700, stroke: false });
+    var desc = '沉淀反应装置：左侧为混合前溶液，右侧为反应后溶液；' +
+      (sedimentFraction > 0 ? '生成 ' + formula + ' 固体沉淀。' : '当前没有可见沉淀。');
+    cv.setAttribute('aria-label', desc);
+    var tip = document.getElementById('tip'); if (tip) tip.textContent = desc;
+    window.__CHEM_PRECIPITATION_STATE__ = {
+      reaction_id: result.reaction_id, precipitate_formula: formula,
+      precipitate_moles: result.precipitate_moles, precipitate_mass_g: result.precipitate_mass_g,
+      precipitation_occurs: !!result.precipitation_occurs, progress: progress,
+      sediment_fraction: sedimentFraction
+    };
+  }
+
+  // Ksp equilibrium scene: suspended ions, an undissolved crystal and a
+  // reversible interface communicate dynamic equilibrium without embedding
+  // a bitmap or implying a reaction yield that the solver does not compute.
+  function solubility(cv, result) {
+    result = result || {};
+    ctx = cv.getContext('2d');
+    window.__CHEM_DRAWN__ = true;
+    window.__CHEM_CV__ = cv;
+    fit(cv); begin(); drawBG();
+    var state = result.saturation_state || 'unknown';
+    var formula = safeText(result.solid_formula, '难溶盐');
+    var dissolvedRaw = result.molar_solubility_mol_L;
+    var dissolved = typeof dissolvedRaw === 'number' ? dissolvedRaw : Number.NaN;
+    var ions = Array.isArray(result.ions) ? result.ions : [];
+    drawBeaker(410, 468, { V: 82, coat: 0, t: 0.08 });
+
+    var saturationColor = state === 'supersaturated' ? '#b85b43'
+      : state === 'saturated' ? '#8a6a2e' : '#247b72';
+    var labelText = state === 'supersaturated' ? '过饱和 · 有沉淀倾向'
+      : state === 'saturated' ? '饱和 · 动态平衡' : '未饱和 · 可继续溶解';
+    pill(410, 116, formula + ' 溶解平衡', '#1b62b0', 14);
+    pill(410, 164, labelText, saturationColor, 13);
+
+    // The crystalline phase rests on the beaker bottom; facets and highlights
+    // suggest a granular solid rather than a flat color patch.
+    ctx.save();
+    ctx.shadowColor = 'rgba(47,62,75,.22)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 4;
+    ctx.beginPath(); ctx.moveTo(357, 535); ctx.lineTo(376, 512); ctx.lineTo(391, 520);
+    ctx.lineTo(410, 501); ctx.lineTo(427, 518); ctx.lineTo(443, 508); ctx.lineTo(465, 535);
+    ctx.quadraticCurveTo(412, 547, 357, 535); ctx.closePath();
+    var crystal = ctx.createLinearGradient(0, 502, 0, 545);
+    crystal.addColorStop(0, '#f5f6f2'); crystal.addColorStop(.45, '#c6d0d7'); crystal.addColorStop(1, '#8798a4');
+    ctx.fillStyle = crystal; ctx.fill(); ctx.strokeStyle = '#718594'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.restore();
+    ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.86)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(377, 522); ctx.lineTo(389, 529); ctx.lineTo(410, 508);
+    ctx.lineTo(426, 526); ctx.lineTo(442, 516); ctx.stroke(); ctx.restore();
+
+    var ionCount = state === 'supersaturated' ? 18 : state === 'saturated' ? 13 : 9;
+    for (var i = 0; i < ionCount; i++) {
+      var x = 342 + SPK[i + 12] * 135, y = 286 + SPK[i + 42] * 194;
+      var ion = ions[i % Math.max(ions.length, 1)] || {};
+      var color = (ion.charge || 0) > 0 ? '#4c8bc4' : '#d58b4d';
+      ctx.save(); ctx.shadowColor = 'rgba(28,60,88,.15)'; ctx.shadowBlur = 4;
+      ctx.beginPath(); ctx.arc(x, y, 7 + (i % 3), 0, Math.PI * 2);
+      var bead = ctx.createRadialGradient(x - 2, y - 3, 1, x, y, 9);
+      bead.addColorStop(0, '#ffffff'); bead.addColorStop(.25, color); bead.addColorStop(1, '#31536c');
+      ctx.fillStyle = bead; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.86)'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.restore();
+    }
+    // Two opposing arrows mark dissolution and crystallization as reversible.
+    ctx.save(); ctx.lineWidth = 3; ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(44,117,170,.82)';
+    ctx.beginPath(); ctx.moveTo(345, 468); ctx.quadraticCurveTo(318, 445, 338, 421); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(338, 421); ctx.lineTo(328, 424); ctx.moveTo(338, 421); ctx.lineTo(339, 432); ctx.stroke();
+    ctx.strokeStyle = 'rgba(185,112,59,.82)';
+    ctx.beginPath(); ctx.moveTo(470, 421); ctx.quadraticCurveTo(497, 445, 477, 468); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(477, 468); ctx.lineTo(487, 465); ctx.moveTo(477, 468); ctx.lineTo(476, 457); ctx.stroke();
+    ctx.restore();
+    label(283, 444, '溶解', { size: 12, color: '#2c75aa', weight: 600, stroke: false });
+    label(536, 444, '结晶', { size: 12, color: '#a96332', weight: 600, stroke: false });
+    label(410, 578, state === 'supersaturated' ? '离子积 Q > Ksp'
+      : 'Ksp = 离子浓度幂次乘积', { size: 13, color: '#315875', weight: 700, stroke: false });
+
+    var desc = formula + ' 溶解平衡：' + labelText + '；初始离子积 Q=' +
+      (Number.isFinite(Number(result.initial_ion_product)) ? Number(result.initial_ion_product).toExponential(3) : '0') +
+      '，Ksp=' + Number(result.Ksp).toExponential(3) +
+      (Number.isFinite(dissolved) ? '；摩尔溶解度 s=' + dissolved.toExponential(3) + ' mol/L' : '；不计算过饱和后的沉淀量');
+    cv.setAttribute('aria-label', desc);
+    var tip = document.getElementById('tip'); if (tip) tip.textContent = desc;
+    window.__CHEM_KSP_STATE__ = { solid_formula: formula, saturation_state: state,
+      molar_solubility_mol_L: Number.isFinite(dissolved) ? dissolved : null,
+      precipitation_expected: !!result.precipitation_expected };
+  }
+
+  // Gas preparation and collection. The picture is intentionally a single
+  // apparatus scene: state/quantity comes from the solver; this function only
+  // visualizes a reaction flask and either a gas syringe or water trough.
+  function gasCollection(cv, result) {
+    result = result || {};
+    ctx = cv.getContext('2d');
+    window.__CHEM_DRAWN__ = true;
+    window.__CHEM_CV__ = cv;
+    fit(cv); begin(); drawBG();
+    var progress = Math.max(0, Math.min(1, Number(result.progress) || 0));
+    var volume = Math.max(0, Number(result.gas_volume_l) || 0);
+    var gas = safeText(result.gas_formula, '气体');
+    var wet = result.collection_method === 'over_water';
+
+    // Reaction flask, thick glass, stopper and reagent surface.
+    ctx.save();
+    ctx.shadowColor = 'rgba(28,52,75,.18)'; ctx.shadowBlur = 13; ctx.shadowOffsetY = 7;
+    ctx.beginPath(); ctx.ellipse(205, 574, 132, 19, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(41,72,98,.13)'; ctx.fill(); ctx.restore();
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(177, 284); ctx.lineTo(233, 284); ctx.lineTo(237, 392);
+    ctx.lineTo(304, 526); ctx.quadraticCurveTo(313, 546, 295, 558);
+    ctx.quadraticCurveTo(205, 579, 115, 558); ctx.quadraticCurveTo(97, 546, 106, 526);
+    ctx.lineTo(173, 392); ctx.closePath();
+    var flask = ctx.createLinearGradient(106, 300, 304, 300);
+    flask.addColorStop(0, 'rgba(174,209,230,.72)'); flask.addColorStop(.2, 'rgba(255,255,255,.68)');
+    flask.addColorStop(.72, 'rgba(242,250,255,.34)'); flask.addColorStop(1, 'rgba(150,190,217,.72)');
+    ctx.fillStyle = flask; ctx.fill(); ctx.strokeStyle = '#86abc5'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(180, 291); ctx.lineTo(230, 291); ctx.lineTo(233, 392);
+    ctx.lineTo(296, 528); ctx.quadraticCurveTo(303, 544, 289, 550);
+    ctx.quadraticCurveTo(205, 568, 121, 550); ctx.quadraticCurveTo(108, 544, 115, 528);
+    ctx.lineTo(177, 392); ctx.closePath(); ctx.clip();
+    var liquidTop = 479 - 24 * progress;
+    var liquid = ctx.createLinearGradient(0, liquidTop, 0, 560);
+    liquid.addColorStop(0, 'rgba(168,224,240,.62)'); liquid.addColorStop(1, 'rgba(50,133,182,.72)');
+    ctx.fillStyle = liquid; ctx.fillRect(100, liquidTop, 210, 100);
+    ctx.beginPath(); ctx.ellipse(205, liquidTop, 91, 9, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(239,251,255,.85)'; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.88)'; ctx.stroke();
+    for (var bubble = 0; bubble < Math.round(3 + 16 * progress); bubble++) {
+      var bx = 168 + SPK[bubble] * 74, by = liquidTop + 16 + SPK[bubble + 22] * 56;
+      ctx.beginPath(); ctx.arc(bx, by, 2 + SPK[bubble + 44] * 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(238,251,255,.78)'; ctx.fill();
+    }
+    ctx.restore();
+    ctx.beginPath(); ctx.ellipse(205, 284, 29, 7, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(241,248,252,.95)'; ctx.fill(); ctx.strokeStyle = '#748b9c'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#687986'; rr(194, 268, 22, 24, 5); ctx.fill();
+    ctx.restore();
+
+    // Delivery tube with a soft glass highlight and moving-state bubbles.
+    ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#7896aa'; ctx.lineWidth = 15;
+    ctx.beginPath(); ctx.moveTo(205, 270); ctx.lineTo(205, 228); ctx.quadraticCurveTo(205, 210, 224, 210);
+    ctx.lineTo(572, 210); ctx.quadraticCurveTo(594, 210, 594, 232); ctx.lineTo(594, wet ? 412 : 348); ctx.stroke();
+    ctx.strokeStyle = 'rgba(246,252,255,.86)'; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(201, 270); ctx.lineTo(201, 228); ctx.quadraticCurveTo(201, 214, 224, 214);
+    ctx.lineTo(572, 214); ctx.quadraticCurveTo(590, 214, 590, 232); ctx.lineTo(590, wet ? 412 : 348); ctx.stroke();
+    ctx.restore();
+    for (var tb = 0; tb < Math.round(progress * 5); tb++) {
+      var tx = 286 + tb * 45;
+      ctx.beginPath(); ctx.arc(tx, 210, 4.2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(103,190,225,.88)'; ctx.fill();
+    }
+
+    if (wet) {
+      // Water trough and inverted graduated gas jar.
+      ctx.save(); ctx.shadowColor = 'rgba(30,58,82,.16)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 6;
+      rr(472, 478, 355, 120, 10);
+      var trough = ctx.createLinearGradient(0, 478, 0, 598);
+      trough.addColorStop(0, 'rgba(224,245,252,.88)'); trough.addColorStop(1, 'rgba(134,194,220,.74)');
+      ctx.fillStyle = trough; ctx.fill(); ctx.strokeStyle = '#8db7ce'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.beginPath(); ctx.rect(479, 486, 341, 104); ctx.clip();
+      var water = ctx.createLinearGradient(0, 490, 0, 596);
+      water.addColorStop(0, 'rgba(119,202,232,.45)'); water.addColorStop(1, 'rgba(51,142,190,.68)');
+      ctx.fillStyle = water; ctx.fillRect(480, 493, 340, 105); ctx.restore();
+      var gasBottom = 490 - 170 * progress;
+      ctx.save(); ctx.beginPath(); ctx.moveTo(548, 273); ctx.lineTo(640, 273); ctx.lineTo(640, 492);
+      ctx.moveTo(548, 273); ctx.lineTo(548, 492); ctx.strokeStyle = '#85a9c0'; ctx.lineWidth = 4; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(552, gasBottom); ctx.lineTo(636, gasBottom); ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(552, 280); ctx.lineTo(552, gasBottom); ctx.lineTo(636, gasBottom); ctx.lineTo(636, 280);
+      ctx.closePath();
+      var gasFill = ctx.createLinearGradient(552, 280, 636, gasBottom);
+      gasFill.addColorStop(0, 'rgba(246,252,255,.32)'); gasFill.addColorStop(1, 'rgba(189,219,235,.26)');
+      ctx.fillStyle = gasFill; ctx.fill();
+      ctx.restore();
+      // Collection bubbles rise from the delivery tube into the inverted jar.
+      for (var wb = 0; wb < Math.round(2 + 7 * progress); wb++) {
+        var wy = 454 - (wb * 21 % Math.max(25, 170 * Math.max(progress, .18)));
+        ctx.beginPath(); ctx.arc(594 + Math.sin(wb * 2) * 5, wy, 3 + (wb % 2), 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(235,250,255,.94)'; ctx.fill(); ctx.strokeStyle = '#78b8d5'; ctx.lineWidth = 1; ctx.stroke();
+      }
+      ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.moveTo(562, 292); ctx.lineTo(562, 408); ctx.stroke(); ctx.restore();
+    } else {
+      // Dry collection with a horizontal gas syringe and movable plunger.
+      ctx.save(); ctx.shadowColor = 'rgba(30,58,82,.16)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 6;
+      rr(550, 300, 287, 94, 18);
+      var syringe = ctx.createLinearGradient(550, 300, 550, 394);
+      syringe.addColorStop(0, 'rgba(238,248,253,.86)'); syringe.addColorStop(.45, 'rgba(255,255,255,.54)');
+      syringe.addColorStop(1, 'rgba(177,211,231,.72)');
+      ctx.fillStyle = syringe; ctx.fill(); ctx.strokeStyle = '#81a8c0'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.restore();
+      var pistonX = 610 + (1 - progress) * 150;
+      ctx.save(); ctx.strokeStyle = '#718493'; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.moveTo(pistonX, 302); ctx.lineTo(pistonX, 392); ctx.stroke();
+      ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(pistonX, 347); ctx.lineTo(836, 347); ctx.stroke();
+      ctx.lineWidth = 10; ctx.beginPath(); ctx.moveTo(836, 326); ctx.lineTo(836, 368); ctx.stroke();
+      ctx.restore();
+      for (var tick = 0; tick < 7; tick++) {
+        ctx.beginPath(); ctx.moveTo(604 + tick * 32, 380); ctx.lineTo(604 + tick * 32, tick % 2 ? 367 : 360);
+        ctx.strokeStyle = '#7393a8'; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+    }
+
+    // All text is painted after glassware and tubing to keep labels readable.
+    pill(205, 620, '反应发生器', '#1b62b0', 13);
+    pill(wet ? 595 : 690, 252, wet ? '排水集气 · ' + gas : '干燥集气 · ' + gas, '#527b9e', 13);
+    pill(wet ? 700 : 690, 430, gas + ' · ' + volume.toFixed(2) + ' L', '#1b62b0', 15);
+    label(205, 650, '反应液与气泡', { size: 11, color: '#49677d', stroke: false });
+    label(435, 172, '导气管', { size: 11, color: '#49677d', stroke: false });
+    // 右下说明文字按右边缘对齐，给不同视口留出画布内安全边距。
+    label(868, 586, '温度 ' + Number(result.temperature_c).toFixed(1) + ' °C  ·  干气分压 ' +
+      Number(result.dry_gas_partial_pressure_kpa).toFixed(2) + ' kPa',
+      { size: 10, align: 'right', color: '#49677d', stroke: false });
+    var desc = '气体制取与收集装置：' + gas + '，理论收集体积 ' + volume.toFixed(2) + ' L；' +
+      (wet ? '采用排水集气并扣除水蒸气压。' : '采用干燥集气。');
+    cv.setAttribute('aria-label', desc);
+    var tip = document.getElementById('tip'); if (tip) tip.textContent = desc;
+    window.__CHEM_GAS_COLLECTION_STATE__ = {
+      gas_formula: result.gas_formula, gas_volume_l: result.gas_volume_l,
+      collection_method: result.collection_method, gas_moles: result.gas_moles,
+      pressure_kpa: result.dry_gas_partial_pressure_kpa
+    };
+  }
+
+  // 统一化学实验的阶段版式：所有化学过程共用图一的蓝白实验室、玻璃高光、
+  // 蓝色阶段胶囊、柔和投影与底部说明卡；步骤只配置器材和内容，不由模型另画整套风格。
+  function stages(cv, cfg) {
+    cfg = cfg || {};
+    ctx = cv.getContext('2d');
+    fit(cv); begin(); drawBG();
+    var items = (Array.isArray(cfg.steps) ? cfg.steps : []).slice(0, 3);
+    if (!items.length) items = [{ title: '实验过程', vessel: 'beaker', note: cfg.summary || '观察实验现象' }];
+    var centers = items.length === 1 ? [440] : items.length === 2 ? [250, 630] : [155, 440, 725];
+    var names = [];
+    // 阶段卡片和器材先画，文字统一压到最后一层。
+    for (var i = 0; i < items.length; i++) {
+      var step = items[i] || {}, cx = centers[i], cardW = items.length === 1 ? 620 : 250;
+      ctx.save();
+      rr(cx - cardW / 2, 118, cardW, 426, 18);
+      var card = ctx.createLinearGradient(cx - cardW / 2, 118, cx + cardW / 2, 544);
+      card.addColorStop(0, 'rgba(255,255,255,0.74)'); card.addColorStop(1, 'rgba(226,239,250,0.64)');
+      ctx.fillStyle = card; ctx.fill(); ctx.strokeStyle = '#c9dff1'; ctx.lineWidth = 1.6; ctx.stroke();
+      ctx.restore();
+      var vessel = step.vessel || 'beaker';
+      if (vessel === 'funnel') {
+        drawBeaker(cx, 492, { V: Number(step.volumeMl) || 40, nail: false,
+          topColor: step.topColor || '#e8f4fb', bottomColor: step.bottomColor || '#a9d8ed' });
+        // 漏斗颈、锥斗与滤纸使用玻璃双边线和暖色滤纸，保持同一光源方向。
+        ctx.save(); ctx.shadowColor = 'rgba(37,68,96,.16)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 6;
+        ctx.beginPath(); ctx.moveTo(cx - 66, 265); ctx.lineTo(cx + 66, 265); ctx.lineTo(cx + 21, 354); ctx.lineTo(cx + 10, 354); ctx.lineTo(cx + 7, 408); ctx.lineTo(cx - 7, 408); ctx.lineTo(cx - 10, 354); ctx.closePath();
+        var fg = ctx.createLinearGradient(cx - 66, 265, cx + 66, 265); fg.addColorStop(0, 'rgba(196,222,239,.8)'); fg.addColorStop(.45, 'rgba(255,255,255,.82)'); fg.addColorStop(1, 'rgba(157,195,222,.82)');
+        ctx.fillStyle = fg; ctx.fill(); ctx.strokeStyle = '#85afd0'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+        ctx.beginPath(); ctx.moveTo(cx - 51, 273); ctx.lineTo(cx + 51, 273); ctx.lineTo(cx + 17, 342); ctx.lineTo(cx - 17, 342); ctx.closePath();
+        ctx.fillStyle = 'rgba(232,218,177,.82)'; ctx.fill(); ctx.strokeStyle = '#b39d6d'; ctx.lineWidth = 2; ctx.stroke();
+        if (step.solid) { ctx.fillStyle = '#b59058'; for (var q = 0; q < 8; q++) { ctx.beginPath(); ctx.arc(cx - 13 + q * 3.7, 327 + (q % 3) * 3, 2.4, 0, Math.PI * 2); ctx.fill(); } }
+      } else if (vessel === 'dish') {
+        ctx.save(); ctx.shadowColor = 'rgba(30,58,82,.18)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 7;
+        ctx.beginPath(); ctx.ellipse(cx, 430, 96, 26, 0, 0, Math.PI * 2);
+        var dg = ctx.createLinearGradient(cx - 90, 405, cx + 80, 452); dg.addColorStop(0, '#fffef7'); dg.addColorStop(.55, '#eee6ce'); dg.addColorStop(1, '#c8b995');
+        ctx.fillStyle = dg; ctx.fill(); ctx.strokeStyle = '#ad9a70'; ctx.lineWidth = 2.4; ctx.stroke(); ctx.restore();
+        ctx.beginPath(); ctx.ellipse(cx, 423, 82, 17, 0, 0, Math.PI * 2);
+        ctx.fillStyle = step.liquid ? (step.liquidColor || 'rgba(125,190,220,.75)') : 'rgba(255,255,255,.78)'; ctx.fill();
+        if (step.crystals) for (var c = 0; c < 11; c++) { var xx = cx - 54 + (c * 29 % 108), yy = 417 + (c * 13 % 13); ctx.beginPath(); ctx.moveTo(xx, yy - 5); ctx.lineTo(xx + 4, yy); ctx.lineTo(xx, yy + 5); ctx.lineTo(xx - 4, yy); ctx.closePath(); ctx.fillStyle = 'rgba(255,255,255,.94)'; ctx.fill(); ctx.strokeStyle = '#c6d5df'; ctx.stroke(); }
+      } else {
+        drawBeaker(cx, 492, { V: Number(step.volumeMl) || 60, nail: false,
+          topColor: step.topColor || '#a9e7f5', bottomColor: step.bottomColor || '#2583b4' });
+        if (step.solid) { ctx.fillStyle = '#d7dbe0'; for (var z = 0; z < 9; z++) { ctx.beginPath(); ctx.arc(cx - 35 + z * 9, 478 - (z % 2) * 3, 3.2, 0, Math.PI * 2); ctx.fill(); } }
+      }
+      names.push({ x: cx, title: safeText(step.title, '实验阶段 ' + (i + 1)),
+        vessel: safeText(step.equipment || (vessel === 'funnel' ? '漏斗过滤' : vessel === 'dish' ? '蒸发皿' : '烧杯')),
+        note: safeText(step.note, '') });
+      if (i < items.length - 1) {
+        ctx.save(); ctx.fillStyle = 'rgba(58,128,198,.55)';
+        ctx.beginPath(); ctx.moveTo(cx + 101, 324); ctx.lineTo(cx + 135, 324); ctx.lineTo(cx + 135, 314); ctx.lineTo(cx + 153, 333); ctx.lineTo(cx + 135, 352); ctx.lineTo(cx + 135, 342); ctx.lineTo(cx + 101, 342); ctx.closePath(); ctx.fill(); ctx.restore();
+      }
+    }
+    // 文本、标题和说明卡后画，保证不会被器材遮挡。
+    names.forEach(function (n, i) {
+      pill(n.x, 78, n.title, i === 0 ? '#1b62b0' : '#527b9e', 14);
+      label(n.x, 515, n.vessel, { size: 12, color: '#315875', weight: 600, stroke: false });
+      if (n.note) label(n.x, 552, n.note, { size: 10.5, color: '#39566d', weight: 500, stroke: false });
+    });
+    ctx.save(); rr(60, 586, 760, 76, 14); ctx.fillStyle = '#eef6fd'; ctx.fill(); ctx.strokeStyle = '#c5dcf0'; ctx.lineWidth = 1.4; ctx.stroke(); ctx.restore();
+    label(440, 624, safeText(cfg.summary, '观察各阶段器材、物质状态与实验现象的变化'), { size: 13, color: '#183d5d', weight: 600, stroke: false });
+    var desc = '化学实验过程：' + names.map(function (n) { return n.title + '，' + n.vessel; }).join('；');
+    cv.setAttribute('aria-label', desc);
+    var tip = document.getElementById('tip'); if (tip) tip.textContent = desc;
+    window.__CHEM_SCENE_STATE__ = { type: 'stages', count: names.length };
   }
 
   /* ---------------- 兜底：化学虚拟反应页必须出现标准版面 ----------------
@@ -1182,10 +2582,174 @@
   }
   scheduleAuto();
 
-  window.CHEM = { scene: scene, fit: fit, auto: autoScene };
+  window.CHEM = { scene: scene, titration: titration, titrationCurve: titrationCurve, gasCollection: gasCollection,
+    precipitation: precipitation, solubility: solubility, redox: redox,
+    stages: stages, fit: fit, auto: autoScene };
+})();
+
+/* ===== 稀释前后对照图（追加式注册，2026-11） ===== */
+(function () {
+  function dilution(cv, request, result) {
+    var v = window.VIS;
+    if (!v.mount(cv, { DW: 900, DH: 640 })) return;
+    v.clear();
+    var ctx = v.S.ctx;
+    v.wall({ tableY: 566 });
+    var c1 = Number(request.stock_concentration_mol_L) || 0.2;
+    var v1 = Number(request.stock_volume_ml) || 50;
+    var add = Number(request.added_water_ml) || 0;
+    var v2 = v1 + add;
+    var c2 = result ? Number(result.final_concentration_mol_L) : c1 * v1 / Math.max(v2, 1e-9);
+
+    function beaker(cx, volume, conc, label) {
+      var base = 540;
+      v.glass({ x: cx, base: base, hw: 120, h: 300, kind: 'beaker', pour: true });
+      var level = v.clamp(volume / 400, 0.12, 0.92);
+      var deep = v.clamp(conc / Math.max(c1, 1e-9), 0, 1);
+      v.liquid({
+        level: level,
+        top: 'rgba(' + Math.round(90 + 60 * (1 - deep)) + ',' + Math.round(185 - 45 * deep) + ',232,0.95)',
+        bot: 'rgba(' + Math.round(20 + 55 * (1 - deep)) + ',' + Math.round(95 - 35 * deep) + ',165,0.95)',
+        t: 0, ripple: true, bubbles: 0
+      });
+      v.text({ text: label, x: cx, y: 200, size: 13, weight: 600 });
+      v.text({ text: volume.toFixed(1) + ' mL', x: cx, y: base + 26, size: 12 });
+      v.pill({ text: conc.toFixed(3) + ' mol/L', x: cx, y: base + 60, size: 12,
+               bg: deep > 0.5 ? '#1b62b0' : '#5b93c4' });
+    }
+    beaker(280, v1, c1, '稀释前');
+    beaker(620, v2, c2, '稀释后');
+
+    ctx.save();
+    var g = ctx.createLinearGradient(400, 0, 500, 0);
+    g.addColorStop(0, 'rgba(90,170,220,0.15)'); g.addColorStop(0.5, 'rgba(90,170,220,0.75)');
+    ctx.strokeStyle = g; ctx.lineWidth = 6; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(430, 330); ctx.lineTo(488, 330); ctx.stroke();
+    ctx.restore();
+    v.text({ text: '加水 ' + add.toFixed(1) + ' mL', x: 459, y: 300, size: 12, color: '#2a86c0' });
+    if (result) {
+      v.text({ text: '溶质 ' + Number(result.solute_moles_mol).toFixed(4) + ' mol 不变',
+               x: 450, y: 96, size: 13, weight: 600 });
+      v.text({ text: String(result.state), x: 450, y: 132, size: 12, color: '#5b6875' });
+    }
+    cv.setAttribute('aria-label', '稀释前后两只烧杯：液面高度表示体积，颜色深浅表示浓度');
+  }
+  if (window.CHEM) window.CHEM.dilution = dilution;
+})();
+
+(function () {
+  var cv = document.getElementById('fe-scene');
+  var rows = document.getElementById('fe-rows');
+  var error = document.querySelector('[data-solver-error]');
+  var equation = document.getElementById('fe-equation');
+  var formula = document.getElementById('fe-formula');
+  var stateText = document.getElementById('fe-state');
+  var progress = document.getElementById('fe-progress');
+  var progressLabel = document.getElementById('fe-progress-label');
+  var amountFe = document.getElementById('fe-amount');
+  var amountCu = document.getElementById('fe-cuso4');
+  var labelFe = document.getElementById('fe-amount-label');
+  var labelCu = document.getElementById('fe-cuso4-label');
+  var REQUEST = {reactants: ['Fe', 'CuSO4'], products: ['FeSO4', 'Cu']};
+  var DEFAULTS = {fe: 0.05, cu: 0.04, progress: 0};
+  var latest = null;
+  var sequence = 0;
+
+  function number(value, digits) {
+    var x = Number(value);
+    if (!isFinite(x)) return '—';
+    return x.toFixed(digits == null ? 4 : digits);
+  }
+  function put(selector, text) {
+    var el = document.querySelector(selector);
+    if (el) el.textContent = text;
+  }
+  function readNumber(el) {
+    var value = Number(el.value);
+    if (!isFinite(value)) throw new Error('请填入有效数值。');
+    return value;
+  }
+  function render() {
+    var nFe = readNumber(amountFe);
+    var nCu = readNumber(amountCu);
+    var p = readNumber(progress);
+    if (nFe <= 0 || nCu <= 0) throw new Error('铁的量和硫酸铜的量都必须大于 0。');
+    if (p < 0 || p > 1) throw new Error('反应进度必须在 0 到 1 之间。');
+    window.__CHEM_BALANCE_REQUEST__ = REQUEST;
+    var balance = CHEMSOLVER.balanceEquation(REQUEST);
+    window.__CHEM_BALANCE_RESULT__ = balance;
+    // 硬校验要求读取 atom_counts 与 checks.ok；配平失败必须显示错误态。
+    var atoms = balance.atom_counts;
+    if (!balance.checks || balance.checks.ok !== true) throw new Error('方程式未配平。');
+    var request = {reactants: REQUEST.reactants, products: REQUEST.products,
+                   initial_amounts_mol: [nFe, nCu], progress: p};
+    window.__CHEM_STOICH_REQUEST__ = request;
+    var result = CHEMSOLVER.solveStoichiometry(request);
+    window.__CHEM_STOICH_RESULT__ = result;
+    window.__DATA__ = {params: {nFe: nFe, nCu: nCu, progress: p}, result: result};
+    if (result.checks && result.checks.ok !== true) throw new Error('反应计量未通过守恒校验。');
+
+    equation.textContent = result.equation;
+    formula.textContent = 'n(Cu)生成 = n(CuSO₄) × 进度 = ' + number(nCu) + ' × ' + number(p, 2) +
+      ' = ' + number(result.products[1].produced_mol) + ' mol';
+    progressLabel.textContent = Math.round(p * 100) + '%';
+    labelFe.textContent = number(nFe);
+    labelCu.textContent = number(nCu);
+    put('[data-solver-field="progress"]', Math.round(p * 100) + '%');
+    put('[data-solver-field="limiting"]',
+        (result.limiting_reactants || []).map(function (item) { return item.formula; }).join('、') || '—');
+    put('[data-solver-field="remaining_fe"]', number(result.reactants[0].remaining_mol));
+    put('[data-solver-field="produced_cu"]', number(result.products[1].produced_mol));
+    stateText.textContent = p <= 0 ? '尚未反应：铁钉表面仍为银白色，溶液为蓝色。'
+      : p >= 1 ? '反应结束：蓝色明显变浅，铁钉表面覆盖红色铜。'
+      : '反应进行中：蓝色逐渐变浅，铁钉表面开始析出红色铜。';
+    var nailLevel = nFe > 0 ? Math.max(0, Math.min(1, result.reactants[0].remaining_mol / nFe)) : 1;
+    CHEM.scene(cv, {p: p, V: 100, leftSol: '硫酸铜溶液', rightSol: '硫酸亚铁溶液',
+                    nailLevel: nailLevel});
+    error.hidden = true;
+    latest = {nFe: nFe, nCu: nCu, p: p, result: result};
+  }
+  function fail(failure) {
+    window.__CHEM_STOICH_RESULT__ = null;
+    window.__DATA__ = {};
+    if (cv) { var ctx = cv.getContext('2d'); if (ctx) ctx.clearRect(0, 0, cv.width, cv.height); }
+    if (formula) formula.textContent = '—';
+    put('[data-solver-field="progress"]', '—');
+    put('[data-solver-field="limiting"]', '—');
+    put('[data-solver-field="remaining_fe"]', '—');
+    put('[data-solver-field="produced_cu"]', '—');
+    if (error) { error.textContent = failure.message; error.hidden = false; }
+    latest = null;
+  }
+  function safeRender() {
+    try { render(); } catch (failure) { fail(failure); }
+  }
+  [amountFe, amountCu, progress].forEach(function (el) {
+    el.addEventListener('input', safeRender);
+    el.addEventListener('change', safeRender);
+  });
+  document.getElementById('btn-record').addEventListener('click', function () {
+    if (!latest) return;
+    sequence += 1;
+    var row = rows.insertRow();
+    [String(sequence), number(latest.nFe), number(latest.nCu), Math.round(latest.p * 100) + '%',
+     (latest.result.limiting_reactants || []).map(function (item) { return item.formula; }).join('、'),
+     number(latest.result.reactants[0].remaining_mol), number(latest.result.products[1].produced_mol)]
+      .forEach(function (text) { row.insertCell().textContent = text; });
+  });
+  document.getElementById('btn-reset').addEventListener('click', function () {
+    amountFe.value = String(DEFAULTS.fe);
+    amountCu.value = String(DEFAULTS.cu);
+    progress.value = String(DEFAULTS.progress);
+    if (rows) rows.replaceChildren();
+    sequence = 0;
+    safeRender();
+  });
+  safeRender();
 })();
   </script>
-                                    <!-- 字号兜底：页面自己写的小字号统一抬到 26px 以上 -->
+
+  <!-- 字号兜底：页面自己写的小字号（9~12px）统一抬到 26px 以上 -->
   <script>
 /* =====================================================================
  *  typo.js —— 运行时字号 / 字色兜底

@@ -17,8 +17,14 @@
 
 const { chromium } = require('playwright');
 const { pathToFileURL } = require('url');
+const fs = require('fs');
+const physicsModels = require('../03_generator_agent/solvers/physics/lesson_models.json');
+const mathModels = require('../03_generator_agent/solvers/mathematics/lesson_models.json');
+const presetLessonModels = { ...physicsModels, ...mathModels };
 
 const FILE = process.argv[2];
+// 第三个参数是审查端生成的变形计划（JSON）。没有计划时保持原有行为。
+const PLAN = process.argv[3] ? JSON.parse(fs.readFileSync(process.argv[3], 'utf8')) : null;
 
 /**
  * 画布绘制取证：记录文字、填充和矩形描边的设备像素包围盒。
@@ -191,6 +197,7 @@ async function main() {
     loadMs: 0,
     canvas: [],
     ranges: { count: 0, responsive: 0, details: [], bounds: [] },
+    numberInputs: { count: 0, responsive: 0, details: [] },
     selects: { count: 0, responsive: 0, details: [] },
     visualType: '',
     viewReset: { applicable: false, rotated: false, restored: false },
@@ -202,7 +209,19 @@ async function main() {
     buttonsClicked: [],
     sections: [],
     machine: { has: false },
+    metamorphic: { samples: [], solverGlobals: [], summary: {} },
+    mr: { plan: null, scenes: [], errors: [] },
     circuit: { initial: null, samples: [] },
+    cubeCut: { initial: null, samples: [] },
+  cylinderCut: { initial: null, samples: [] },
+  coneCut: { initial: null, samples: [] },
+  sphereCut: { initial: null, samples: [] },
+  spatialMetric: { initial: null, samples: [] },
+  solidVolume: { initial: null, samples: [] },
+    cubeNet: { initial: null, samples: [] },
+    cuboidNet: { initial: null, samples: [] },
+    cylinderNet: { initial: null, samples: [] },
+    coneNet: { initial: null, samples: [] },
     reset: { found: false, restored: null, textDiff: 0, dataDiff: false },
     steps: { found: false, count: 0, stuck: 0, sequence: [] },
     records: { before: 0, after: 0, added: 0 },
@@ -254,6 +273,101 @@ async function main() {
     return state.model && state.result ? state : null;
   };
   result.circuit.initial = await captureCircuit('initial');
+  const captureCubeCut = async label => {
+    const state = await page.evaluate(() => {
+      const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
+      return { result: clone(window.__MATH_POLYHEDRON_RESULT__ || window.__MATH_CUBE_RESULT__), geo: clone(window.__GEO__),
+        drawSignature: window.__MATH_POLYHEDRON_DRAW_SIGNATURE__ || window.__MATH_CUBE_DRAW_SIGNATURE__ || null };
+    });
+    if (state.result) result.cubeCut.samples.push({ label, ...state });
+    return state.result ? state : null;
+  };
+  result.cubeCut.initial = await captureCubeCut('initial');
+  const captureCylinderCut = async label => {
+    const state = await page.evaluate(() => {
+      const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
+      return { result: clone(window.__MATH_CYLINDER_RESULT__), geo: clone(window.__GEO__),
+        drawSignature: window.__MATH_CYLINDER_DRAW_SIGNATURE__ || null };
+    });
+    if (state.result) result.cylinderCut.samples.push({ label, ...state });
+    return state.result ? state : null;
+  };
+  result.cylinderCut.initial = await captureCylinderCut('initial');
+  const captureConeCut = async label => {
+    const state = await page.evaluate(() => {
+      const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
+      return { result: clone(window.__MATH_CONE_RESULT__), geo: clone(window.__GEO__),
+        drawSignature: window.__MATH_CONE_DRAW_SIGNATURE__ || null };
+    });
+    if (state.result) result.coneCut.samples.push({ label, ...state });
+    return state.result ? state : null;
+  };
+  result.coneCut.initial = await captureConeCut('initial');
+  const captureSphereCut = async label => {
+    const state = await page.evaluate(() => {
+      const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
+      return { result: clone(window.__MATH_SPHERE_RESULT__), geo: clone(window.__GEO__),
+        drawSignature: window.__MATH_SPHERE_DRAW_SIGNATURE__ || null };
+    });
+    if (state.result) result.sphereCut.samples.push({ label, ...state });
+    return state.result ? state : null;
+  };
+  result.sphereCut.initial = await captureSphereCut('initial');
+  const captureSpatialMetric = async label => {
+    const state = await page.evaluate(() => {
+      const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
+      return { request: clone(window.__MATH_SPATIAL_REQUEST__), result: clone(window.__MATH_SPATIAL_RESULT__) };
+    });
+    if (state.request && state.result) result.spatialMetric.samples.push({ label, ...state });
+    return state.request && state.result ? state : null;
+  };
+  result.spatialMetric.initial = await captureSpatialMetric('initial');
+  const captureSolidVolume = async label => {
+    const state = await page.evaluate(() => {
+      const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
+      return { request: clone(window.__MATH_VOLUME_REQUEST__), result: clone(window.__MATH_VOLUME_RESULT__),
+        partition: clone(window.__MATH_VOLUME_PARTITION_CHECK__) };
+    });
+    if (state.request && state.result) result.solidVolume.samples.push({ label, ...state });
+    return state.request && state.result ? state : null;
+  };
+  result.solidVolume.initial = await captureSolidVolume('initial');
+  const captureCubeNet = async label => {
+    const state = await page.evaluate(() => {
+      const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
+      return { request: clone(window.__MATH_CUBE_NET_REQUEST__), result: clone(window.__MATH_CUBE_NET_RESULT__) };
+    });
+    if (state.request && state.result) result.cubeNet.samples.push({ label, ...state });
+    return state.request && state.result ? state : null;
+  };
+  result.cubeNet.initial = await captureCubeNet('initial');
+  const captureCuboidNet = async label => {
+    const state = await page.evaluate(() => {
+      const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
+      return { request: clone(window.__MATH_CUBOID_NET_REQUEST__), result: clone(window.__MATH_CUBOID_NET_RESULT__) };
+    });
+    if (state.request && state.result) result.cuboidNet.samples.push({ label, ...state });
+    return state.request && state.result ? state : null;
+  };
+  result.cuboidNet.initial = await captureCuboidNet('initial');
+  const captureCylinderNet = async label => {
+    const state = await page.evaluate(() => {
+      const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
+      return { request: clone(window.__MATH_CYLINDER_NET_REQUEST__), result: clone(window.__MATH_CYLINDER_NET_RESULT__) };
+    });
+    if (state.request && state.result) result.cylinderNet.samples.push({ label, ...state });
+    return state.request && state.result ? state : null;
+  };
+  result.cylinderNet.initial = await captureCylinderNet('initial');
+  const captureConeNet = async label => {
+    const state = await page.evaluate(() => {
+      const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
+      return { request: clone(window.__MATH_CONE_NET_REQUEST__), result: clone(window.__MATH_CONE_NET_RESULT__) };
+    });
+    if (state.request && state.result) result.coneNet.samples.push({ label, ...state });
+    return state.request && state.result ? state : null;
+  };
+  result.coneNet.initial = await captureConeNet('initial');
 
   result.stageImages = await page.evaluate(() => {
     const stage = document.getElementById('sec-stage');
@@ -271,6 +385,125 @@ async function main() {
       .slice(0, 8).map(el => ({ tag: el.tagName.toLowerCase(), text: (el.textContent || '').trim().slice(0, 100) }));
   });
   result.chemScene = await page.evaluate(() => window.__CHEM_SCENE_STATE__ || null);
+
+  // Record whether real page controls change the solver's live request/result.
+  // Domain-specific verifiers below independently recompute every captured
+  // transformed state; this layer proves the page actually reached that state.
+  const captureSolverState = () => page.evaluate(() => {
+    const clone = value => { try { return JSON.parse(JSON.stringify(value)); } catch (_) { return null; } };
+    const names = Object.keys(window).filter(name =>
+      name === '__GEO__' || name === '__DATA__' ||
+      (/^__(?:CIRCUIT_|MATH_|CHEM_|PHYS_)/.test(name) &&
+       /(?:REQUEST|RESULT|MODEL|STUDENT_CHECK|STUDENT_COEFFICIENTS|DRAW_SIGNATURE)__+$/.test(name)));
+    const globals = {};
+    for (const name of names) globals[name] = clone(window[name]);
+    return globals;
+  });
+  const lessonSolvers = {
+    quadratic: 'MATH_QUADRATIC', thinLens: 'PHYS_LENS',
+    ...Object.fromEntries(Object.entries(presetLessonModels).map(([key, model]) => [key, model.prefix]))
+  };
+  result.lessonSolvers = {};
+  const captureLessonSolvers = async (label, active, control) => {
+    for (const [key, prefix] of Object.entries(lessonSolvers)) {
+      if (!active.includes(prefix)) continue;
+      const sample = await page.evaluate(name => {
+        const fields = Object.create(null);
+        for (const el of document.querySelectorAll('[data-solver-field]')) {
+          if (el.getClientRects().length && getComputedStyle(el).visibility === 'visible') {
+            const key = el.dataset.solverField;
+            (fields[key] ??= []).push(el.innerText.trim());
+          }
+        }
+        const error = document.querySelector('[data-solver-error]');
+        return { request: window[`__${name}_REQUEST__`] ?? null,
+          result: window[`__${name}_RESULT__`] ?? null, fields,
+          error: error?.getClientRects().length && getComputedStyle(error).visibility === 'visible'
+            ? error.innerText.trim() : '' };
+      }, prefix);
+      (result.lessonSolvers[key] ??= []).push({ label, control, ...sample });
+    }
+  };
+  const metaBaseline = await captureSolverState();
+  const activeLessonSolvers = Object.values(lessonSolvers).filter(prefix =>
+    `__${prefix}_REQUEST__` in metaBaseline || `__${prefix}_RESULT__` in metaBaseline);
+  await captureLessonSolvers('initial', activeLessonSolvers);
+  const applyLessonControls = values => page.evaluate(async target => {
+    const controls = [];
+    const errors = [];
+    const find = field => document.querySelectorAll(`[data-solver-input="${field}"]`);
+    // The mode can enable/disable other controls, so set it first.
+    const entries = Object.entries(target).sort((a, b) =>
+      Number(typeof b[1] === 'string') - Number(typeof a[1] === 'string'));
+    for (const [field, value] of entries) {
+      const elements = find(field);
+      const element = elements[0];
+      const numeric = typeof value === 'number';
+      const validType = numeric ? ['range', 'number'].includes(element?.type) : element?.tagName === 'SELECT';
+      if (elements.length !== 1 || !validType || !element.getClientRects().length ||
+          getComputedStyle(element).visibility !== 'visible') {
+        errors.push(`缺少唯一可见的 ${field} 控件`);
+        continue;
+      }
+      const oldValue = element.value;
+      if (oldValue !== String(value) && !element.matches(':disabled')) {
+        element.value = String(value);
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+        element.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      controls.push({ field, oldValue });
+    }
+    await new Promise(resolve => setTimeout(resolve, 180));
+    for (const control of controls) {
+      const { field } = control;
+      const elements = find(field);
+      const element = elements[0];
+      const value = target[field];
+      const actual = element?.value ?? '';
+      if (elements.length !== 1 || !element.validity?.valid ||
+          (typeof value === 'number' ? actual === '' || Number(actual) !== value : actual !== value)) {
+        errors.push(`${field} 控件无法取值 ${value}`);
+      }
+      control.newValue = actual;
+    }
+    return { controls, errors };
+  }, values);
+  for (const model of Object.values(presetLessonModels)) {
+    if (!activeLessonSolvers.includes(model.prefix)) continue;
+    const initialValues = await page.evaluate(fields => {
+      return Object.fromEntries(fields.flatMap(field => {
+        const el = document.querySelector(`[data-solver-input="${field}"]`);
+        if (!el || el.value === '') return [];
+        return [[field, el.tagName === 'SELECT' ? el.value : Number(el.value)]];
+      }));
+    }, Object.keys(model.inputs));
+    const solverScales = await page.evaluate(() => window.__SOLVER_SCALES__ || {});
+    for (const [name, values] of Object.entries(model.cases)) {
+      // lesson_models 的 case 是 SI 值；页面控件显示的可能换过单位（如 cm³）。
+      // 取证必须按 scale 折算成控件显示值，否则会填出越界值把页面打回错误态。
+      const displayValues = Object.fromEntries(Object.entries(values).map(([key, value]) =>
+        [key, typeof value === 'number' && solverScales[key]
+          ? Number((value / solverScales[key]).toPrecision(12)) : value]));
+      const evidence = await applyLessonControls(displayValues);
+      await captureLessonSolvers('preset:' + name, [model.prefix], evidence);
+    }
+    await applyLessonControls(initialValues);
+  }
+  result.metamorphic.solverGlobals = Object.keys(metaBaseline);
+  const recordMetaMutation = (kind, info, before, after) => {
+    const keys = new Set([...Object.keys(before || {}), ...Object.keys(after || {})]);
+    const changedKeys = Array.from(keys).filter(key => JSON.stringify(before?.[key]) !== JSON.stringify(after?.[key]));
+    const changedInputs = changedKeys.filter(key => /REQUEST|MODEL|STUDENT_COEFFICIENTS|GEO__|DATA__/.test(key));
+    const changedResponses = changedKeys.filter(key => /RESULT|STUDENT_CHECK|STUDENT_COEFFICIENTS/.test(key));
+    const inputChanged = String(info?.oldValue) !== String(info?.newValue);
+    const sample = { kind, index: info?.index, control: info?.control || kind,
+      oldValue: info?.oldValue, newValue: info?.newValue, inputChanged,
+      changedKeys, changedInputs, changedResponses };
+    result.metamorphic.samples.push(sample);
+    if (inputChanged) result.metamorphic.summary.controlsChanged = (result.metamorphic.summary.controlsChanged || 0) + 1;
+    if (changedInputs.length) result.metamorphic.summary.solverInputsChanged = (result.metamorphic.summary.solverInputsChanged || 0) + 1;
+    if (changedResponses.length) result.metamorphic.summary.solverResponsesChanged = (result.metamorphic.summary.solverResponsesChanged || 0) + 1;
+  };
 
   // ---- 文字可读性取证（画布内 + DOM 层） ----
   // 画布：后绘制的图元盖住先绘制的文字 = 文字被图像遮住；文字盒超出画布 = 被裁切。
@@ -524,13 +757,938 @@ async function main() {
   });
 
   // ---- 3. 机读数据：第三关判据的原料 ----
-  result.machine = await page.evaluate(() => {
+  result.machine = await page.evaluate(async () => {
     const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
     const m = { has: false, keys: [] };
+    const stoichSnapshot = () => {
+      const inputs = Array.from(document.querySelectorAll('[data-chem-stoich-amount-index]'))
+        .map(el => ({ el, index: Number(el.getAttribute('data-chem-stoich-amount-index')), value: el.valueAsNumber }))
+        .sort((a,b) => a.index - b.index);
+      const progress = document.querySelector('[data-chem-stoich-progress]');
+      if (!inputs.length || !progress) return null;
+      const visible = el => !el.disabled && el.getClientRects().length > 0 &&
+        getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
+      if (!inputs.every(item => visible(item.el)) || !visible(progress)) return null;
+      return {
+        request: clone(window.__CHEM_STOICH_REQUEST__),
+        result: clone(window.__CHEM_STOICH_RESULT__),
+        controls: { indices: inputs.map(item => item.index),
+          initial_amounts_mol: inputs.map(item => item.value),
+          amount_min: inputs.map(item => item.el.min === '' ? 0 : Number(item.el.min)),
+          amount_max: inputs.map(item => item.el.max === '' ? 1000000 : Number(item.el.max)),
+          progress: progress.valueAsNumber },
+        displayed_equation: (document.querySelector('[data-chem-stoich-equation]')?.textContent || '')
+          .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, ch => '₀₁₂₃₄₅₆₇₈₉'.indexOf(ch)).replace(/\s+/g, '')
+      };
+    };
+    const mixSnapshot = () => {
+      const indexed = (selector, attribute) => Array.from(document.querySelectorAll(selector))
+        .map(el => ({ el, index: Number(el.getAttribute(attribute)), value: el.valueAsNumber }))
+        .sort((a,b) => a.index - b.index);
+      const concentrations = indexed('[data-chem-mix-concentration-index]', 'data-chem-mix-concentration-index');
+      const volumes = indexed('[data-chem-mix-volume-index]', 'data-chem-mix-volume-index');
+      const units = Array.from(document.querySelectorAll('[data-chem-mix-unit-index]'))
+        .map(el => ({ el, index: Number(el.getAttribute('data-chem-mix-unit-index')), value: el.value }))
+        .sort((a,b) => a.index - b.index);
+      const progress = document.querySelector('[data-chem-mix-progress]');
+      if (!concentrations.length || concentrations.length !== volumes.length ||
+          volumes.length !== units.length || !progress) return null;
+      const visible = el => !el.disabled && el.getClientRects().length > 0 &&
+        getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
+      if (![...concentrations, ...volumes, ...units].every(item => visible(item.el)) || !visible(progress)) return null;
+      return {
+        request: clone(window.__CHEM_MIX_REQUEST__),
+        result: clone(window.__CHEM_MIX_RESULT__),
+        controls: {
+          concentration_indices: concentrations.map(item => item.index),
+          concentrations_mol_L: concentrations.map(item => item.value),
+          volume_indices: volumes.map(item => item.index), volumes: volumes.map(item => item.value),
+          unit_indices: units.map(item => item.index), volume_units: units.map(item => item.value),
+          progress: progress.valueAsNumber,
+        },
+        displayed_equation: (document.querySelector('[data-chem-mix-equation]')?.textContent || '')
+          .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, ch => '₀₁₂₃₄₅₆₇₈₉'.indexOf(ch)).replace(/\s+/g, '')
+      };
+    };
+    const titrationSnapshot = () => {
+      const one = selector => document.querySelector(selector);
+      const acidC = one('[data-chem-titration-acid-concentration]');
+      const acidV = one('[data-chem-titration-acid-volume]');
+      const acidU = one('[data-chem-titration-acid-unit]');
+      const baseC = one('[data-chem-titration-base-concentration]');
+      const baseV = one('[data-chem-titration-base-volume]');
+      const baseU = one('[data-chem-titration-base-unit]');
+      const controls = [acidC, acidV, acidU, baseC, baseV, baseU];
+      const visible = el => el && !el.disabled && el.getClientRects().length > 0 &&
+        getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
+      if (!controls.every(visible)) return null;
+      return {
+        request: clone(window.__CHEM_TITRATION_REQUEST__),
+        result: clone(window.__CHEM_TITRATION_RESULT__),
+        controls: {
+          acid_concentration_mol_L: acidC.valueAsNumber,
+          acid_volume: acidV.valueAsNumber, acid_volume_unit: acidU.value,
+          base_concentration_mol_L: baseC.valueAsNumber,
+          base_volume: baseV.valueAsNumber, base_volume_unit: baseU.value,
+        },
+        displayed_equation: (one('[data-chem-titration-equation]')?.textContent || '')
+          .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, ch => '₀₁₂₃₄₅₆₇₈₉'.indexOf(ch)).replace(/\s+/g, ''),
+        displayed_ph: (one('[data-chem-titration-ph]')?.textContent || '').trim(),
+      };
+    };
+    const gasCollectionSnapshot = () => {
+      const indexed = Array.from(document.querySelectorAll('[data-chem-gas-amount-index]'))
+        .map(el => ({ el, index: Number(el.getAttribute('data-chem-gas-amount-index')),
+          value: el.valueAsNumber }))
+        .sort((a,b) => a.index - b.index);
+      const progress = document.querySelector('[data-chem-gas-progress]');
+      const temperature = document.querySelector('[data-chem-gas-temperature]');
+      const pressure = document.querySelector('[data-chem-gas-pressure]');
+      const method = document.querySelector('[data-chem-gas-method]');
+      const controls = [...indexed.map(item => item.el), progress, temperature, pressure, method];
+      const visible = el => el && !el.disabled && el.getClientRects().length > 0 &&
+        getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
+      if (!indexed.length || !controls.every(visible)) return null;
+      const volumeText = (document.querySelector('[data-chem-gas-volume]')?.textContent || '').trim();
+      return {
+        request: clone(window.__CHEM_GAS_REQUEST__), result: clone(window.__CHEM_GAS_RESULT__),
+        controls: { amount_indices: indexed.map(item => item.index), amounts_mol: indexed.map(item => item.value),
+          progress: progress.valueAsNumber, temperature_c: temperature.valueAsNumber,
+          total_pressure_kpa: pressure.valueAsNumber, collection_method: method.value },
+        displayed_equation: (document.querySelector('[data-chem-gas-equation]')?.textContent || '')
+          .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, ch => '₀₁₂₃₄₅₆₇₈₉'.indexOf(ch)).replace(/\s+/g, ''),
+        displayed_volume: volumeText,
+      };
+    };
+    const precipitationSnapshot = () => {
+      const concentrations = Array.from(document.querySelectorAll('[data-chem-precip-concentration-index]'))
+        .map(el => ({ el, index: Number(el.getAttribute('data-chem-precip-concentration-index')),
+          value: el.valueAsNumber })).sort((a,b) => a.index - b.index);
+      const volumes = Array.from(document.querySelectorAll('[data-chem-precip-volume-index]'))
+        .map(el => ({ el, index: Number(el.getAttribute('data-chem-precip-volume-index')),
+          value: el.valueAsNumber })).sort((a,b) => a.index - b.index);
+      const units = Array.from(document.querySelectorAll('[data-chem-precip-unit-index]'))
+        .map(el => ({ el, index: Number(el.getAttribute('data-chem-precip-unit-index')),
+          value: el.value })).sort((a,b) => a.index - b.index);
+      const progress = document.querySelector('[data-chem-precip-progress]');
+      const controls = [...concentrations.map(item => item.el), ...volumes.map(item => item.el),
+        ...units.map(item => item.el), progress];
+      const visible = el => el && !el.disabled && el.getClientRects().length > 0 &&
+        getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
+      if (concentrations.length !== 2 || volumes.length !== 2 || units.length !== 2 || !controls.every(visible)) return null;
+      const text = selector => (document.querySelector(selector)?.textContent || '').trim();
+      return {
+        request: clone(window.__CHEM_PRECIP_REQUEST__), result: clone(window.__CHEM_PRECIP_RESULT__),
+        controls: {
+          concentration_indices: concentrations.map(item => item.index),
+          concentrations_mol_L: concentrations.map(item => item.value),
+          volume_indices: volumes.map(item => item.index), volumes: volumes.map(item => item.value),
+          unit_indices: units.map(item => item.index), volume_units: units.map(item => item.value),
+          progress: progress.valueAsNumber,
+        },
+        displayed_equation: text('[data-chem-precip-equation]')
+          .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, ch => '₀₁₂₃₄₅₆₇₈₉'.indexOf(ch)).replace(/\s+/g, ''),
+        displayed_net_ionic: text('[data-chem-precip-net-ionic]').replace(/\s+/g, ''),
+        displayed_mass: text('[data-chem-precip-mass]'),
+      };
+    };
+    const redoxSnapshot = () => {
+      const medium = document.querySelector('[data-chem-redox-medium]');
+      const reorder = document.querySelector('[data-chem-redox-reorder]');
+      const equation = document.querySelector('[data-chem-redox-equation]');
+      const electrons = document.querySelector('[data-chem-redox-electrons]');
+      const changes = document.querySelector('[data-chem-redox-changes]');
+      const visible = el => el && el.getClientRects().length > 0 &&
+        getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
+      if (![medium, reorder, equation, electrons, changes].every(visible)) return null;
+      return {
+        request: clone(window.__CHEM_REDOX_REQUEST__), result: clone(window.__CHEM_REDOX_RESULT__),
+        controls: { medium: (medium.value || medium.textContent || '').trim(),
+          reorder_button_visible: !reorder.disabled },
+        displayed_equation: (equation.textContent || '').replace(/\s+/g, ''),
+        displayed_electrons: (electrons.textContent || '').trim(),
+        displayed_changes: (changes.innerText || changes.textContent || '').replace(/\s+/g, ' ').trim(),
+      };
+    };
+    const kspSnapshot = () => {
+      const ksp = document.querySelector('[data-chem-ksp-value]');
+      const ionInputs = Array.from(document.querySelectorAll('[data-chem-ksp-ion-index]'))
+        .sort((a,b) => Number(a.getAttribute('data-chem-ksp-ion-index')) -
+          Number(b.getAttribute('data-chem-ksp-ion-index')));
+      const equation = document.querySelector('[data-chem-ksp-equation]');
+      const q = document.querySelector('[data-chem-ksp-ion-product]');
+      const state = document.querySelector('[data-chem-ksp-state]');
+      const solubility = document.querySelector('[data-chem-ksp-solubility]');
+      const visible = el => el && el.getClientRects().length > 0 &&
+        getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
+      if (![ksp, equation, q, state, solubility].every(visible) || ionInputs.length < 2 ||
+          !ionInputs.every(visible)) return null;
+      return {
+        request: clone(window.__CHEM_KSP_REQUEST__), result: clone(window.__CHEM_KSP_RESULT__),
+        controls: { Ksp: ksp.valueAsNumber,
+          ion_indices: ionInputs.map(el => Number(el.getAttribute('data-chem-ksp-ion-index'))),
+          initial_concentrations_mol_L: ionInputs.map(el => el.valueAsNumber) },
+        displayed_equation: equation.textContent || '', displayed_q: q.textContent || '',
+        displayed_state: state.textContent || '', displayed_solubility: solubility.textContent || '',
+      };
+    };
+    const balanceSnapshot = () => {
+      const indexed = Array.from(document.querySelectorAll('[data-chem-balance-coefficient-side]'))
+        .map(el => ({ side: el.getAttribute('data-chem-balance-coefficient-side'),
+          index: Number(el.getAttribute('data-chem-balance-coefficient-index')), value: el.valueAsNumber }))
+        .sort((a,b) => a.side.localeCompare(b.side) || a.index - b.index);
+      const values = { reactants: [], products: [] };
+      for (const item of indexed) if (values[item.side]) values[item.side][item.index] = item.value;
+      const output = document.querySelector('[data-chem-balance-student-check]');
+      return {
+        request: clone(window.__CHEM_BALANCE_REQUEST__),
+        result: clone(window.__CHEM_BALANCE_RESULT__),
+        student_coefficients: clone(window.__CHEM_BALANCE_STUDENT_COEFFICIENTS__) || values,
+        student_check: clone(window.__CHEM_BALANCE_STUDENT_CHECK__),
+        controls: indexed,
+        displayed_check: output ? { text: (output.textContent || '').trim(),
+          balanced: output.getAttribute('data-balanced'), primitive: output.getAttribute('data-primitive') } : null,
+      };
+    };
     [['DATA', window.__DATA__], ['GEO', window.__GEO__],
-     ['CONFIG', window.__CONFIG__], ['EXP', window.__EXP__]].forEach(([k, v]) => {
+     ['CONFIG', window.__CONFIG__], ['EXP', window.__EXP__],
+     ['CHEM_BALANCE_REQUEST', window.__CHEM_BALANCE_REQUEST__],
+     ['CHEM_BALANCE_RESULT', window.__CHEM_BALANCE_RESULT__],
+     ['CHEM_BALANCE_STUDENT_COEFFICIENTS', window.__CHEM_BALANCE_STUDENT_COEFFICIENTS__],
+     ['CHEM_BALANCE_STUDENT_CHECK', window.__CHEM_BALANCE_STUDENT_CHECK__],
+     ['CHEM_BALANCE_STUDENT_CONTROLS', balanceSnapshot().controls.length ? balanceSnapshot().controls : null],
+     ['CHEM_BALANCE_DISPLAYED_EQUATION', (document.querySelector('[data-chem-balance-equation]')?.textContent || '')
+       .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, ch => '₀₁₂₃₄₅₆₇₈₉'.indexOf(ch)).replace(/\s+/g, '') || null],
+     ['CHEM_STOICH_REQUEST', window.__CHEM_STOICH_REQUEST__],
+     ['CHEM_STOICH_RESULT', window.__CHEM_STOICH_RESULT__],
+     ['CHEM_STOICH_CONTROLS', (stoichSnapshot() || {}).controls],
+     ['CHEM_STOICH_DISPLAYED_EQUATION', (document.querySelector('[data-chem-stoich-equation]')?.textContent || '')
+       .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, ch => '₀₁₂₃₄₅₆₇₈₉'.indexOf(ch)).replace(/\s+/g, '') || null],
+     ['CHEM_MIX_REQUEST', window.__CHEM_MIX_REQUEST__],
+     ['CHEM_MIX_RESULT', window.__CHEM_MIX_RESULT__],
+     ['CHEM_MIX_CONTROLS', (mixSnapshot() || {}).controls],
+     ['CHEM_MIX_DISPLAYED_EQUATION', (document.querySelector('[data-chem-mix-equation]')?.textContent || '')
+       .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, ch => '₀₁₂₃₄₅₆₇₈₉'.indexOf(ch)).replace(/\s+/g, '') || null],
+     ['CHEM_TITRATION_REQUEST', window.__CHEM_TITRATION_REQUEST__],
+     ['CHEM_TITRATION_RESULT', window.__CHEM_TITRATION_RESULT__],
+     ['CHEM_TITRATION_CONTROLS', (titrationSnapshot() || {}).controls],
+     ['CHEM_TITRATION_DISPLAYED_EQUATION', titrationSnapshot()?.displayed_equation || null],
+     ['CHEM_TITRATION_DISPLAYED_PH', titrationSnapshot()?.displayed_ph || null],
+     ['CHEM_GAS_REQUEST', window.__CHEM_GAS_REQUEST__],
+     ['CHEM_GAS_RESULT', window.__CHEM_GAS_RESULT__],
+     ['CHEM_GAS_CONTROLS', (gasCollectionSnapshot() || {}).controls],
+     ['CHEM_GAS_DISPLAYED_EQUATION', gasCollectionSnapshot()?.displayed_equation || null],
+     ['CHEM_GAS_DISPLAYED_VOLUME', gasCollectionSnapshot()?.displayed_volume || null],
+     ['CHEM_PRECIP_REQUEST', window.__CHEM_PRECIP_REQUEST__],
+     ['CHEM_PRECIP_RESULT', window.__CHEM_PRECIP_RESULT__],
+     ['CHEM_PRECIP_CONTROLS', (precipitationSnapshot() || {}).controls],
+     ['CHEM_PRECIP_DISPLAYED_EQUATION', precipitationSnapshot()?.displayed_equation || null],
+     ['CHEM_PRECIP_DISPLAYED_NET_IONIC', precipitationSnapshot()?.displayed_net_ionic || null],
+     ['CHEM_PRECIP_DISPLAYED_MASS', precipitationSnapshot()?.displayed_mass || null],
+     ['CHEM_REDOX_REQUEST', window.__CHEM_REDOX_REQUEST__],
+     ['CHEM_REDOX_RESULT', window.__CHEM_REDOX_RESULT__],
+     ['CHEM_REDOX_CONTROLS', (redoxSnapshot() || {}).controls],
+     ['CHEM_REDOX_DISPLAYED_EQUATION', redoxSnapshot()?.displayed_equation || null],
+     ['CHEM_REDOX_DISPLAYED_ELECTRONS', redoxSnapshot()?.displayed_electrons || null],
+     ['CHEM_REDOX_DISPLAYED_CHANGES', redoxSnapshot()?.displayed_changes || null],
+     ['CHEM_KSP_REQUEST', window.__CHEM_KSP_REQUEST__],
+     ['CHEM_KSP_RESULT', window.__CHEM_KSP_RESULT__],
+     ['CHEM_KSP_CONTROLS', kspSnapshot()?.controls || null],
+     ['CHEM_KSP_DISPLAYED_EQUATION', kspSnapshot()?.displayed_equation || null],
+     ['CHEM_KSP_DISPLAYED_Q', kspSnapshot()?.displayed_q || null],
+     ['CHEM_KSP_DISPLAYED_STATE', kspSnapshot()?.displayed_state || null],
+     ['CHEM_KSP_DISPLAYED_SOLUBILITY', kspSnapshot()?.displayed_solubility || null]].forEach(([k, v]) => {
       if (v !== undefined && v !== null) { m[k] = clone(v); m.keys.push(k); m.has = true; }
     });
+
+    // Metamorphic probes for the actual browser-bundled balancing solver.
+    // They preserve the reaction while changing notation/order, so the
+    // primitive coefficients and atom-count relations are independently testable.
+    const balanceRequest = clone(window.__CHEM_BALANCE_REQUEST__);
+    const balanceResult = clone(window.__CHEM_BALANCE_RESULT__);
+    if (balanceRequest && balanceResult && window.CHEMSOLVER && typeof window.CHEMSOLVER.balanceEquation === 'function') {
+      const samples = [];
+      const mapSpecies = (request, transform) => ({
+        reactants: request.reactants.map(transform), products: request.products.map(transform),
+      });
+      const getFormula = item => typeof item === 'string' ? item : item.formula;
+      const replaceFormula = (item, formula) => typeof item === 'string' ? formula : { ...item, formula };
+      const transformations = [
+        ['uniform-formula-scaling', request => mapSpecies(request, item =>
+          replaceFormula(item, '(' + getFormula(item) + ')2'))],
+        ['unicode-subscript-equivalence', request => mapSpecies(request, item =>
+          replaceFormula(item, getFormula(item).replace(/[0-9]/g, digit => '₀₁₂₃₄₅₆₇₈₉'[Number(digit)])))],
+        ['species-reordering', request => ({
+          reactants: request.reactants.slice().reverse(), products: request.products.slice().reverse(),
+        })],
+      ];
+      for (const [kind, transform] of transformations) {
+        const request = transform(clone(balanceRequest));
+        try { samples.push({ kind, request, result: clone(window.CHEMSOLVER.balanceEquation(request)) }); }
+        catch (error) { samples.push({ kind, request, error: String(error && error.message || error) }); }
+      }
+
+      const coefficientInputs = Array.from(document.querySelectorAll('[data-chem-balance-coefficient-side]'));
+      const coefficients = balanceResult.coefficients || {};
+      const hasBothSides = ['reactants', 'products'].every(side =>
+        coefficientInputs.some(el => el.getAttribute('data-chem-balance-coefficient-side') === side));
+      if (coefficientInputs.length && hasBothSides) {
+        const originals = coefficientInputs.map(el => el.value);
+        for (const input of coefficientInputs) {
+          const side = input.getAttribute('data-chem-balance-coefficient-side');
+          const index = Number(input.getAttribute('data-chem-balance-coefficient-index'));
+          const expected = coefficients[side]?.[index];
+          if (Number.isFinite(Number(expected))) input.value = String(Number(expected) * 2);
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        await new Promise(resolve => setTimeout(resolve, 30));
+        const snapshot = balanceSnapshot();
+        samples.push({ kind: 'student-coefficients-common-scale', ...snapshot });
+        coefficientInputs.forEach((input, index) => {
+          input.value = originals[index];
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        await new Promise(resolve => setTimeout(resolve, 20));
+      }
+      m.CHEM_BALANCE_SAMPLES = samples;
+      m.keys.push('CHEM_BALANCE_SAMPLES');
+    } else {
+      m.CHEM_BALANCE_SAMPLES = [];
+      m.keys.push('CHEM_BALANCE_SAMPLES');
+    }
+    const amountInputs = Array.from(document.querySelectorAll('[data-chem-stoich-amount-index]'))
+      .sort((a,b) => Number(a.getAttribute('data-chem-stoich-amount-index')) -
+        Number(b.getAttribute('data-chem-stoich-amount-index')));
+    const progressInput = document.querySelector('[data-chem-stoich-progress]');
+    if (m.CHEM_STOICH_REQUEST && m.CHEM_STOICH_RESULT && amountInputs.length && progressInput) {
+      const samples = [];
+      for (const input of amountInputs) {
+        const original = input.value;
+        const current = input.valueAsNumber;
+        const min = input.min !== '' && Number.isFinite(Number(input.min)) ? Number(input.min) : 0;
+        const max = input.max !== '' && Number.isFinite(Number(input.max)) ? Number(input.max) : 1000000;
+        const step = input.step !== '' && input.step !== 'any' && Number.isFinite(Number(input.step)) && Number(input.step) > 0
+          ? Number(input.step) : 0.01;
+        let changed = current === max ? Math.max(min, current - Math.max(step, Math.abs(current) * 0.1))
+          : Math.min(max, Math.max(min, current + Math.max(step, Math.abs(current) * 0.1, 0.01)));
+        if (changed === current) continue;
+        input.value = String(changed);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        await new Promise(resolve => setTimeout(resolve, 20));
+        const snapshot = stoichSnapshot();
+        if (snapshot) { snapshot.kind = 'amount-change'; snapshot.changed_index = Number(input.dataset.chemStoichAmountIndex); samples.push(snapshot); }
+        input.value = original;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        await new Promise(resolve => setTimeout(resolve, 20));
+      }
+      const originalProgress = progressInput.value;
+      const progressMin = progressInput.min === '' ? 0 : Number(progressInput.min);
+      const progressMax = progressInput.max === '' ? 1 : Number(progressInput.max);
+      const progressStates = [['progress-zero', 0], ['progress-half', 0.5], ['progress-complete', 1]];
+      for (const [kind, value] of progressStates) {
+        if (value < progressMin || value > progressMax) continue;
+        progressInput.value = String(value);
+        progressInput.dispatchEvent(new Event('input', { bubbles: true }));
+        await new Promise(resolve => setTimeout(resolve, 20));
+        const snapshot = stoichSnapshot();
+        if (snapshot) { snapshot.kind = kind; samples.push(snapshot); }
+      }
+      progressInput.value = originalProgress;
+      progressInput.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(resolve => setTimeout(resolve, 20));
+
+      // Common scaling is a true stoichiometric metamorphism: reaction ratios
+      // and limiting reagents stay fixed while every amount scales together.
+      const originalAmounts = amountInputs.map(input => input.value);
+      const currentAmounts = amountInputs.map(input => input.valueAsNumber);
+      let minScale = 0, maxScale = Infinity;
+      currentAmounts.forEach((value, index) => {
+        const min = amountInputs[index].min === '' ? 0 : Number(amountInputs[index].min);
+        const max = amountInputs[index].max === '' ? 1000000 : Number(amountInputs[index].max);
+        if (value > 0) { minScale = Math.max(minScale, min / value); maxScale = Math.min(maxScale, max / value); }
+        else if (min > 0) { minScale = Infinity; maxScale = -Infinity; }
+      });
+      let scaleFactor = null;
+      if (minScale <= maxScale) {
+        if (maxScale >= 2) scaleFactor = 2;
+        else if (minScale <= 0.5) scaleFactor = 0.5;
+        else if (maxScale > 1 + 1e-6) scaleFactor = maxScale;
+        else if (minScale < 1 - 1e-6) scaleFactor = minScale;
+      }
+      if (scaleFactor !== null) {
+        amountInputs.forEach((input, index) => {
+          input.value = String(currentAmounts[index] * scaleFactor);
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        await new Promise(resolve => setTimeout(resolve, 30));
+        const scaledSnapshot = stoichSnapshot();
+        if (scaledSnapshot) {
+          scaledSnapshot.kind = 'common-scaling';
+          scaledSnapshot.scale_factor = scaleFactor;
+          samples.push(scaledSnapshot);
+        }
+        amountInputs.forEach((input, index) => {
+          input.value = originalAmounts[index];
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        await new Promise(resolve => setTimeout(resolve, 20));
+      }
+
+      // Find an actually reachable ratio boundary and exercise below / exact /
+      // above it through the visible numeric input (not by calling the solver).
+      const coefficients = (m.CHEM_STOICH_RESULT.coefficients || {}).reactants || [];
+      const baselineValues = amountInputs.map(input => input.valueAsNumber);
+      let thresholdIndex = -1, threshold = 0, epsilon = 0;
+      if (amountInputs.length > 1 && baselineValues.every(value => value > 0)) {
+        for (let index = 0; index < amountInputs.length; index++) {
+          const otherExtent = Math.min(...baselineValues.filter((_, other) => other !== index)
+            .map((value, offset) => value / coefficients[offset < index ? offset : offset + 1]));
+          const candidate = otherExtent * coefficients[index];
+          const delta = Math.min(candidate * 0.02, candidate * 0.25);
+          const min = amountInputs[index].min === '' ? 0 : Number(amountInputs[index].min);
+          const max = amountInputs[index].max === '' ? 1000000 : Number(amountInputs[index].max);
+          if (candidate > 0 && candidate - delta >= min && candidate + delta <= max) {
+            thresholdIndex = index; threshold = candidate; epsilon = delta; break;
+          }
+        }
+      }
+      if (thresholdIndex >= 0) {
+        const original = amountInputs[thresholdIndex].value;
+        for (const [kind, value] of [
+          ['limiting-threshold-below', threshold - epsilon],
+          ['limiting-threshold-at', threshold],
+          ['limiting-threshold-above', threshold + epsilon],
+        ]) {
+          amountInputs[thresholdIndex].value = String(value);
+          amountInputs[thresholdIndex].dispatchEvent(new Event('input', { bubbles: true }));
+          await new Promise(resolve => setTimeout(resolve, 25));
+          const thresholdSnapshot = stoichSnapshot();
+          if (thresholdSnapshot) {
+            thresholdSnapshot.kind = kind;
+            thresholdSnapshot.threshold_index = thresholdIndex;
+            thresholdSnapshot.threshold_mol = threshold;
+            samples.push(thresholdSnapshot);
+          }
+        }
+        amountInputs[thresholdIndex].value = original;
+        amountInputs[thresholdIndex].dispatchEvent(new Event('input', { bubbles: true }));
+        await new Promise(resolve => setTimeout(resolve, 20));
+      }
+      m.CHEM_STOICH_SAMPLES = samples;
+      m.keys.push('CHEM_STOICH_SAMPLES');
+    }
+    const mixConcentrations = Array.from(document.querySelectorAll('[data-chem-mix-concentration-index]'));
+    const mixVolumes = Array.from(document.querySelectorAll('[data-chem-mix-volume-index]'));
+    const mixUnits = Array.from(document.querySelectorAll('[data-chem-mix-unit-index]'));
+    const mixProgress = document.querySelector('[data-chem-mix-progress]');
+    if (m.CHEM_MIX_REQUEST && m.CHEM_MIX_RESULT && mixConcentrations.length &&
+        mixConcentrations.length === mixVolumes.length && mixVolumes.length === mixUnits.length && mixProgress) {
+      const samples = [];
+      const mutateNumeric = async (input, kind) => {
+        const original = input.value, current = input.valueAsNumber;
+        const min = input.min !== '' && Number.isFinite(Number(input.min)) ? Number(input.min) : 0;
+        const max = input.max !== '' && Number.isFinite(Number(input.max)) ? Number(input.max) : 1000000;
+        const step = input.step !== '' && input.step !== 'any' && Number.isFinite(Number(input.step)) && Number(input.step) > 0
+          ? Number(input.step) : 0.01;
+        const changed = current === max ? Math.max(min, current - Math.max(step, Math.abs(current) * 0.1))
+          : Math.min(max, Math.max(min, current + Math.max(step, Math.abs(current) * 0.1, 0.01)));
+        if (!Number.isFinite(current) || changed === current) return;
+        input.value = String(changed);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        await new Promise(resolve => setTimeout(resolve, 20));
+        const snapshot = mixSnapshot();
+        if (snapshot) { snapshot.kind = kind; samples.push(snapshot); }
+        input.value = original;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        await new Promise(resolve => setTimeout(resolve, 20));
+      };
+      for (const input of mixConcentrations) await mutateNumeric(input, 'concentration-change');
+      for (const input of mixVolumes) await mutateNumeric(input, 'volume-change');
+      const volume0 = mixVolumes[0], unit0 = mixUnits[0];
+      const originalVolume = volume0.value, originalUnit = unit0.value;
+      if (originalVolume && (originalUnit.toLowerCase() === 'ml' || originalUnit.toLowerCase() === 'l')) {
+        const equivalentVolume = originalUnit.toLowerCase() === 'ml' ? Number(originalVolume) / 1000 : Number(originalVolume) * 1000;
+        const targetUnit = originalUnit.toLowerCase() === 'ml' ? 'L' : 'mL';
+        const withinBounds = Number.isFinite(equivalentVolume) &&
+          (volume0.min === '' || equivalentVolume >= Number(volume0.min)) &&
+          (volume0.max === '' || equivalentVolume <= Number(volume0.max));
+        if (withinBounds && Array.from(unit0.options || []).some(option => option.value === targetUnit)) {
+          volume0.value = String(equivalentVolume); unit0.value = targetUnit;
+          volume0.dispatchEvent(new Event('input', { bubbles: true }));
+          volume0.dispatchEvent(new Event('change', { bubbles: true }));
+          unit0.dispatchEvent(new Event('input', { bubbles: true }));
+          unit0.dispatchEvent(new Event('change', { bubbles: true }));
+          await new Promise(resolve => setTimeout(resolve, 20));
+          const snapshot = mixSnapshot();
+          if (snapshot) { snapshot.kind = 'equivalent-volume-unit'; samples.push(snapshot); }
+          volume0.value = originalVolume; unit0.value = originalUnit;
+          volume0.dispatchEvent(new Event('input', { bubbles: true }));
+          volume0.dispatchEvent(new Event('change', { bubbles: true }));
+          unit0.dispatchEvent(new Event('input', { bubbles: true }));
+          unit0.dispatchEvent(new Event('change', { bubbles: true }));
+          await new Promise(resolve => setTimeout(resolve, 20));
+        }
+      }
+      await mutateNumeric(mixProgress, 'progress-change');
+      m.CHEM_MIX_SAMPLES = samples;
+      m.keys.push('CHEM_MIX_SAMPLES');
+    }
+    const titrationRequest = m.CHEM_TITRATION_REQUEST;
+    const titrationControls = {
+      acidC: document.querySelector('[data-chem-titration-acid-concentration]'),
+      acidV: document.querySelector('[data-chem-titration-acid-volume]'),
+      acidU: document.querySelector('[data-chem-titration-acid-unit]'),
+      baseC: document.querySelector('[data-chem-titration-base-concentration]'),
+      baseV: document.querySelector('[data-chem-titration-base-volume]'),
+      baseU: document.querySelector('[data-chem-titration-base-unit]'),
+    };
+    if (titrationRequest && m.CHEM_TITRATION_RESULT && Object.values(titrationControls).every(Boolean)) {
+      const samples = [];
+      const snapshotTitration = (kind, label) => {
+        const snap = titrationSnapshot();
+        if (snap) { snap.kind = kind; snap.label = label || kind; samples.push(snap); }
+      };
+      const mutateTitrationValue = async (input, kind) => {
+        const original = input.value, current = input.valueAsNumber;
+        const min = input.min !== '' && Number.isFinite(Number(input.min)) ? Number(input.min) : 0;
+        const max = input.max !== '' && Number.isFinite(Number(input.max)) ? Number(input.max) : 1000000;
+        const step = input.step !== '' && input.step !== 'any' && Number.isFinite(Number(input.step)) && Number(input.step) > 0
+          ? Number(input.step) : 0.001;
+        const next = current === max ? Math.max(min, current - Math.max(step, Math.abs(current) * 0.1))
+          : Math.min(max, Math.max(min, current + Math.max(step, Math.abs(current) * 0.1, 0.001)));
+        if (!Number.isFinite(current) || next === current) return;
+        input.value = String(next);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        await new Promise(resolve => setTimeout(resolve, 30));
+        snapshotTitration(kind);
+        input.value = original;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        await new Promise(resolve => setTimeout(resolve, 25));
+      };
+      for (const input of [titrationControls.acidC, titrationControls.acidV,
+                           titrationControls.baseC, titrationControls.baseV]) {
+        await mutateTitrationValue(input, 'input-change');
+      }
+
+      // Convert both actual volume controls to equivalent L values and verify
+      // the rendered pH/result is invariant under the unit representation.
+      const volumePairs = [[titrationControls.acidV, titrationControls.acidU],
+                           [titrationControls.baseV, titrationControls.baseU]];
+      const originals = volumePairs.map(([volume, unit]) => [volume.value, unit.value]);
+      let canConvert = true;
+      for (const [volume, unit] of volumePairs) {
+        if (unit.value.toLowerCase() !== 'ml' ||
+            !Array.from(unit.options || []).some(option => option.value.toLowerCase() === 'l')) canConvert = false;
+        const liters = volume.valueAsNumber / 1000;
+        if ((volume.min !== '' && liters < Number(volume.min)) || (volume.max !== '' && liters > Number(volume.max))) canConvert = false;
+      }
+      if (canConvert) {
+        for (const [volume, unit] of volumePairs) {
+          volume.value = String(volume.valueAsNumber / 1000);
+          unit.value = Array.from(unit.options).find(option => option.value.toLowerCase() === 'l').value;
+          volume.dispatchEvent(new Event('input', { bubbles: true }));
+          volume.dispatchEvent(new Event('change', { bubbles: true }));
+          unit.dispatchEvent(new Event('input', { bubbles: true }));
+          unit.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        await new Promise(resolve => setTimeout(resolve, 30));
+        snapshotTitration('equivalent-volume-units');
+        volumePairs.forEach(([volume, unit], index) => {
+          volume.value = originals[index][0]; unit.value = originals[index][1];
+          volume.dispatchEvent(new Event('input', { bubbles: true }));
+          volume.dispatchEvent(new Event('change', { bubbles: true }));
+          unit.dispatchEvent(new Event('input', { bubbles: true }));
+          unit.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        await new Promise(resolve => setTimeout(resolve, 25));
+      }
+
+      // Probe the threshold using the visible titrant-volume control itself.
+      const baseVolume = titrationControls.baseV;
+      const baseUnit = titrationControls.baseU;
+      const originalVolume = baseVolume.value, originalUnit = baseUnit.value;
+      const eqInUnit = Number(titrationRequest.acid.concentration_mol_L) *
+        Number(titrationRequest.acid.volume) *
+        (String(titrationRequest.acid.volume_unit).toLowerCase() === 'ml' ? 0.001 : 1) /
+        Number(titrationRequest.base.concentration_mol_L) /
+        (String(baseUnit.value).toLowerCase() === 'ml' ? 0.001 : 1);
+      const delta = Math.max(Math.abs(eqInUnit) * 0.01, Number(baseVolume.step) || 0.001);
+      for (const [kind, target] of [['below-equivalence', eqInUnit - delta],
+                                    ['at-equivalence', eqInUnit],
+                                    ['above-equivalence', eqInUnit + delta]]) {
+        const min = baseVolume.min !== '' ? Number(baseVolume.min) : 0;
+        const max = baseVolume.max !== '' ? Number(baseVolume.max) : 1000000;
+        if (!Number.isFinite(target) || target < min || target > max) continue;
+        baseVolume.value = String(target);
+        baseVolume.dispatchEvent(new Event('input', { bubbles: true }));
+        baseVolume.dispatchEvent(new Event('change', { bubbles: true }));
+        await new Promise(resolve => setTimeout(resolve, 30));
+        snapshotTitration(kind);
+      }
+      baseVolume.value = originalVolume; baseUnit.value = originalUnit;
+      baseVolume.dispatchEvent(new Event('input', { bubbles: true }));
+      baseVolume.dispatchEvent(new Event('change', { bubbles: true }));
+      baseUnit.dispatchEvent(new Event('input', { bubbles: true }));
+      baseUnit.dispatchEvent(new Event('change', { bubbles: true }));
+      await new Promise(resolve => setTimeout(resolve, 25));
+      m.CHEM_TITRATION_SAMPLES = samples;
+      m.keys.push('CHEM_TITRATION_SAMPLES');
+    } else {
+      m.CHEM_TITRATION_SAMPLES = [];
+      m.keys.push('CHEM_TITRATION_SAMPLES');
+    }
+    const precipRequest = m.CHEM_PRECIP_REQUEST;
+    const precipControls = {
+      concentrations: Array.from(document.querySelectorAll('[data-chem-precip-concentration-index]'))
+        .sort((a,b) => Number(a.getAttribute('data-chem-precip-concentration-index')) - Number(b.getAttribute('data-chem-precip-concentration-index'))),
+      volumes: Array.from(document.querySelectorAll('[data-chem-precip-volume-index]'))
+        .sort((a,b) => Number(a.getAttribute('data-chem-precip-volume-index')) - Number(b.getAttribute('data-chem-precip-volume-index'))),
+      units: Array.from(document.querySelectorAll('[data-chem-precip-unit-index]'))
+        .sort((a,b) => Number(a.getAttribute('data-chem-precip-unit-index')) - Number(b.getAttribute('data-chem-precip-unit-index'))),
+      progress: document.querySelector('[data-chem-precip-progress]'),
+    };
+    if (precipRequest && m.CHEM_PRECIP_RESULT && precipControls.concentrations.length === 2 &&
+        precipControls.volumes.length === 2 && precipControls.units.length === 2 && precipControls.progress) {
+      const samples = [];
+      const waitPrecip = () => new Promise(resolve => setTimeout(resolve, 30));
+      const firePrecip = el => {
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      const recordPrecip = async (kind, extra) => {
+        await waitPrecip();
+        const snap = precipitationSnapshot();
+        if (snap && snap.request && snap.result) { snap.kind = kind; Object.assign(snap, extra || {}); samples.push(snap); }
+      };
+      const volumeOriginals = precipControls.volumes.map(el => el.value);
+      const concentrationOriginals = precipControls.concentrations.map(el => el.value);
+      const unitOriginals = precipControls.units.map(el => el.value);
+      const progressOriginal = precipControls.progress.value;
+      const inRange = (input, value) => Number.isFinite(value) &&
+        value >= (input.min !== '' ? Number(input.min) : -Infinity) &&
+        value <= (input.max !== '' ? Number(input.max) : Infinity);
+      const setVolume = async (index, value, kind, extra) => {
+        const input = precipControls.volumes[index];
+        if (!inRange(input, value) || value === input.valueAsNumber) return false;
+        input.value = String(value); firePrecip(input); await recordPrecip(kind, extra);
+        input.value = volumeOriginals[index]; firePrecip(input); await waitPrecip();
+        return true;
+      };
+      const volumeFactor = unit => ['mL', 'ml', '毫升'].includes(String(unit)) ? 0.001 : 1;
+
+      // Scaling both solution volumes at fixed concentrations scales all moles and precipitate yield.
+      let scale = 2;
+      let scaledVolumes = precipControls.volumes.map(el => el.valueAsNumber * scale);
+      if (!precipControls.volumes.every((el, i) => inRange(el, scaledVolumes[i]))) {
+        scale = 0.5;
+        scaledVolumes = precipControls.volumes.map(el => el.valueAsNumber * scale);
+      }
+      if (precipControls.volumes.every((el, i) => inRange(el, scaledVolumes[i]) && scaledVolumes[i] > 0)) {
+        precipControls.volumes.forEach((el, i) => { el.value = String(scaledVolumes[i]); firePrecip(el); });
+        await recordPrecip('common-volume-scale');
+        precipControls.volumes.forEach((el, i) => { el.value = volumeOriginals[i]; firePrecip(el); });
+        await waitPrecip();
+      }
+
+      // Express the same first-solution volume in the other supported unit.
+      const unit0 = precipControls.units[0], volume0 = precipControls.volumes[0];
+      const alternateUnit = unit0.value === 'L' ? 'mL' : 'L';
+      const alternateOptions = Array.from(unit0.options || []).some(option => option.value === alternateUnit);
+      const equivalentVolume = volume0.valueAsNumber * (alternateUnit === 'L' ? 0.001 : 1000);
+      if (alternateOptions && inRange(volume0, equivalentVolume)) {
+        unit0.value = alternateUnit; volume0.value = String(equivalentVolume);
+        firePrecip(unit0); firePrecip(volume0); await recordPrecip('equivalent-unit');
+        unit0.value = unitOriginals[0]; volume0.value = volumeOriginals[0];
+        firePrecip(unit0); firePrecip(volume0); await waitPrecip();
+      }
+
+      // Concentration and reaction-progress changes must update the same solver result.
+      const concentration0 = precipControls.concentrations[0];
+      const requestedSolutions = precipRequest.solutions || [];
+      const coeffFor = formula => {
+        const normalized = String(formula || '').replace(/[₀₁₂₃₄₅₆₇₈₉]/g,
+          ch => '₀₁₂₃₄₅₆₇₈₉'.indexOf(ch));
+        const index = (m.CHEM_PRECIP_RESULT.reactants || []).findIndex(item => item.formula === normalized);
+        return index >= 0 ? (m.CHEM_PRECIP_RESULT.coefficients.reactants || [])[index] : 0;
+      };
+      const n1AtBaseline = Number(requestedSolutions[1]?.concentration_mol_L) *
+        Number(requestedSolutions[1]?.volume) * volumeFactor(requestedSolutions[1]?.volume_unit);
+      const v0AtBaselineL = Number(requestedSolutions[0]?.volume) * volumeFactor(requestedSolutions[0]?.volume_unit);
+      const targetConcentration0 = (n1AtBaseline / coeffFor(requestedSolutions[1]?.formula) *
+        coeffFor(requestedSolutions[0]?.formula)) / v0AtBaselineL;
+      let concentrationNext = targetConcentration0 * 0.9;
+      if (!inRange(concentration0, concentrationNext)) concentrationNext = concentration0.valueAsNumber * 0.8;
+      if (inRange(concentration0, concentrationNext)) {
+        concentration0.value = String(concentrationNext); firePrecip(concentration0);
+        await recordPrecip('concentration-change');
+        concentration0.value = concentrationOriginals[0]; firePrecip(concentration0); await waitPrecip();
+      }
+      const progress = precipControls.progress, progressNext = progress.valueAsNumber < 0.95
+        ? Math.min(1, progress.valueAsNumber + 0.1) : Math.max(0, progress.valueAsNumber - 0.1);
+      if (inRange(progress, progressNext) && progressNext !== progress.valueAsNumber) {
+        progress.value = String(progressNext); firePrecip(progress); await recordPrecip('progress-change');
+        progress.value = progressOriginal; firePrecip(progress); await waitPrecip();
+      }
+
+      // Move one solution around the exact stoichiometric ratio, checking both limiting-reagent sides.
+      const inputs = precipRequest.solutions || [], coeffs = (m.CHEM_PRECIP_RESULT.coefficients || {}).reactants || [];
+      const coefficientFor = formula => {
+        const index = (m.CHEM_PRECIP_RESULT.reactants || []).findIndex(item => item.formula === formula);
+        return index >= 0 ? coeffs[index] : 0;
+      };
+      if (inputs.length === 2 && inputs.every(item => Number(item.concentration_mol_L) > 0)) {
+        const amounts = inputs.map((item, i) => Number(item.concentration_mol_L) *
+          Number(item.volume) * volumeFactor(item.volume_unit));
+        const nu = inputs.map(item => coefficientFor(String(item.formula || '').replace(/[₀₁₂₃₄₅₆₇₈₉]/g,
+          ch => '₀₁₂₃₄₅₆₇₈₉'.indexOf(ch))));
+        let index = 1;
+        let targetL = (amounts[0] / nu[0]) * nu[1] / Number(inputs[1].concentration_mol_L);
+        let targetInput = targetL / volumeFactor(unitOriginals[1]);
+        if (!inRange(precipControls.volumes[1], targetInput)) {
+          index = 0;
+          targetL = (amounts[1] / nu[1]) * nu[0] / Number(inputs[0].concentration_mol_L);
+          targetInput = targetL / volumeFactor(unitOriginals[0]);
+        }
+        const targetControl = precipControls.volumes[index];
+        if (nu.every(value => value > 0) && inRange(targetControl, targetInput)) {
+          const changedAtThreshold = await setVolume(index, targetInput, 'stoichiometric-threshold-at',
+            { threshold_input_index: index });
+          if (!changedAtThreshold) await recordPrecip('stoichiometric-threshold-at', { threshold_input_index: index });
+          const belowFactor = index === 1 ? 0.98 : 0.98;
+          const aboveFactor = 1.02;
+          await setVolume(index, targetInput * belowFactor, 'stoichiometric-threshold-below', { threshold_input_index: index });
+          await setVolume(index, targetInput * aboveFactor, 'stoichiometric-threshold-above', { threshold_input_index: index });
+        }
+      }
+      m.CHEM_PRECIP_SAMPLES = samples;
+      m.keys.push('CHEM_PRECIP_SAMPLES');
+    } else {
+      m.CHEM_PRECIP_SAMPLES = [];
+      m.keys.push('CHEM_PRECIP_SAMPLES');
+    }
+
+    const redoxRequest = m.CHEM_REDOX_REQUEST;
+    const redoxButton = document.querySelector('[data-chem-redox-reorder]');
+    if (redoxRequest && m.CHEM_REDOX_RESULT && redoxButton && !redoxButton.disabled) {
+      const samples = [];
+      redoxButton.click();
+      await new Promise(resolve => setTimeout(resolve, 50));
+      const snap = redoxSnapshot();
+      if (snap && snap.request && snap.result) {
+        snap.kind = 'species-reordering';
+        samples.push(snap);
+      }
+      // Restore the lesson's initial order before the remaining browser checks.
+      redoxButton.click();
+      await new Promise(resolve => setTimeout(resolve, 50));
+      const mediumControl = document.querySelector('[data-chem-redox-medium]');
+      if (mediumControl instanceof HTMLSelectElement) {
+        const beforeMedium = mediumControl.value;
+        const alternative = Array.from(mediumControl.options).find(option =>
+          !option.disabled && option.value !== beforeMedium);
+        if (alternative) {
+          mediumControl.value = alternative.value;
+          mediumControl.dispatchEvent(new Event('input', { bubbles: true }));
+          mediumControl.dispatchEvent(new Event('change', { bubbles: true }));
+          await new Promise(resolve => setTimeout(resolve, 80));
+          const mediumSnap = redoxSnapshot();
+          if (mediumSnap && mediumSnap.request && mediumSnap.result) {
+            mediumSnap.kind = 'medium-change';
+            samples.push(mediumSnap);
+          }
+          mediumControl.value = beforeMedium;
+          mediumControl.dispatchEvent(new Event('input', { bubbles: true }));
+          mediumControl.dispatchEvent(new Event('change', { bubbles: true }));
+          await new Promise(resolve => setTimeout(resolve, 80));
+        }
+      }
+      m.CHEM_REDOX_SAMPLES = samples;
+      m.keys.push('CHEM_REDOX_SAMPLES');
+    } else {
+      m.CHEM_REDOX_SAMPLES = [];
+      m.keys.push('CHEM_REDOX_SAMPLES');
+    }
+
+    // Ksp metamorphic probes mutate the actual page controls, then capture
+    // the request, solver result and visible readings produced by the page.
+    const kspRequest = m.CHEM_KSP_REQUEST;
+    const kspControls = {
+      Ksp: document.querySelector('[data-chem-ksp-value]'),
+      ions: Array.from(document.querySelectorAll('[data-chem-ksp-ion-index]'))
+        .sort((a,b) => Number(a.getAttribute('data-chem-ksp-ion-index')) -
+          Number(b.getAttribute('data-chem-ksp-ion-index'))),
+    };
+    if (kspRequest && m.CHEM_KSP_RESULT && window.CHEMSOLVER &&
+        typeof window.CHEMSOLVER.solveSolubilityEquilibrium === 'function' &&
+        kspControls.Ksp && kspControls.ions.length >= 2) {
+      const samples = [];
+      const originals = [kspControls.Ksp.value, ...kspControls.ions.map(el => el.value)];
+      const waitKsp = () => new Promise(resolve => setTimeout(resolve, 40));
+      const fireKsp = el => {
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      const recordKsp = async (kind, extra = {}) => {
+        await waitKsp();
+        const snap = kspSnapshot();
+        if (snap && snap.request && snap.result) {
+          Object.assign(snap, extra, { kind });
+          samples.push(snap);
+        }
+      };
+      const inRangeKsp = (el, value) => Number.isFinite(value) &&
+        value >= (el.min !== '' ? Number(el.min) : 0) &&
+        value <= (el.max !== '' ? Number(el.max) : 1e6);
+      const baseResult = m.CHEM_KSP_RESULT;
+      const baseSolubility = baseResult.molar_solubility_mol_L;
+      const kspInput = kspControls.Ksp;
+      const baseKspValue = kspInput.valueAsNumber;
+      const kspMax = kspInput.max !== '' ? Number(kspInput.max) : 1e6;
+      let increasedKsp = Math.min(kspMax, baseKspValue * 2);
+      if (!(increasedKsp > baseKspValue)) increasedKsp = (baseKspValue + kspMax) / 2;
+      if (inRangeKsp(kspInput, increasedKsp) && increasedKsp > baseKspValue) {
+        kspInput.value = String(increasedKsp); fireKsp(kspInput);
+        await recordKsp('ksp-increase');
+        kspInput.value = originals[0]; fireKsp(kspInput); await waitKsp();
+      }
+
+      // Search for a valid increase that keeps the solution unsaturated and
+      // lowers s; every candidate is previewed with the bundled solver.
+      if (baseSolubility !== null && Number.isFinite(baseSolubility)) {
+        const requestIons = kspRequest.ions || [];
+        const totalExponent = requestIons.reduce((sum, ion) => sum + Number(ion.coefficient), 0);
+        const characteristic = Math.pow(Number(kspRequest.Ksp || kspRequest.ksp), 1 / totalExponent);
+        let commonCandidate = null, commonIndex = -1;
+        for (let index = 0; index < Math.min(requestIons.length, kspControls.ions.length) && commonCandidate === null; index++) {
+          const input = kspControls.ions[index];
+          const current = input.valueAsNumber;
+          const scale = Math.max(current, baseSolubility, characteristic * 0.1, 1e-12);
+          for (const factor of [1.25, 2, 5, 10, 100]) {
+            const candidate = current + scale * (factor - 1);
+            if (!inRangeKsp(input, candidate) || !(candidate > current)) continue;
+            const trial = clone(kspRequest);
+            trial.ions[index].initial_concentration_mol_L = candidate;
+            try {
+              const trialResult = window.CHEMSOLVER.solveSolubilityEquilibrium(trial);
+              if (trialResult.saturation_state !== 'supersaturated' &&
+                  trialResult.molar_solubility_mol_L !== null &&
+                  trialResult.molar_solubility_mol_L < baseSolubility) {
+                commonCandidate = candidate; commonIndex = index; break;
+              }
+            } catch (_) {}
+          }
+        }
+        if (commonCandidate !== null) {
+          const input = kspControls.ions[commonIndex];
+          input.value = String(commonCandidate); fireKsp(input);
+          await recordKsp('common-ion-increase', { ion_index: commonIndex });
+          input.value = originals[commonIndex + 1]; fireKsp(input); await waitKsp();
+        }
+      }
+
+      // Put every dissolved ion at the equal-concentration saturation
+      // threshold, then move one real concentration just below/at/above it.
+      const thresholdRequest = clone(kspRequest);
+      const thresholdIons = thresholdRequest.ions || [];
+      const exponentTotal = thresholdIons.reduce((sum, ion) => sum + Number(ion.coefficient), 0);
+      const thresholdKsp = Number(thresholdRequest.Ksp || thresholdRequest.ksp);
+      const thresholdConcentration = Math.pow(thresholdKsp, 1 / exponentTotal);
+      const thresholdFits = thresholdIons.length === kspControls.ions.length &&
+        kspControls.ions.every(input => inRangeKsp(input, thresholdConcentration));
+      if (thresholdFits && exponentTotal > 0 && Number.isFinite(thresholdConcentration)) {
+        for (let index = 0; index < kspControls.ions.length; index++) {
+          kspControls.ions[index].value = String(thresholdConcentration);
+          fireKsp(kspControls.ions[index]);
+        }
+        await waitKsp();
+        for (const [kind, factor] of [['saturation-below', 0.95], ['saturation-at', 1], ['saturation-above', 1.05]]) {
+          const input = kspControls.ions[0], value = thresholdConcentration * factor;
+          if (!inRangeKsp(input, value)) continue;
+          input.value = String(value); fireKsp(input);
+          await recordKsp(kind, { threshold_index: 0 });
+          input.value = String(thresholdConcentration); fireKsp(input); await waitKsp();
+        }
+      }
+      // Restore all physical controls and let the page return to its baseline.
+      kspControls.Ksp.value = originals[0]; fireKsp(kspControls.Ksp);
+      kspControls.ions.forEach((el, index) => { el.value = originals[index + 1]; fireKsp(el); });
+      await waitKsp();
+      m.CHEM_KSP_SAMPLES = samples;
+      m.keys.push('CHEM_KSP_SAMPLES');
+    } else {
+      m.CHEM_KSP_SAMPLES = [];
+      m.keys.push('CHEM_KSP_SAMPLES');
+    }
+
+    const gasRequest = m.CHEM_GAS_REQUEST;
+    const gasControls = {
+      amounts: Array.from(document.querySelectorAll('[data-chem-gas-amount-index]'))
+        .sort((a,b) => Number(a.getAttribute('data-chem-gas-amount-index')) - Number(b.getAttribute('data-chem-gas-amount-index'))),
+      progress: document.querySelector('[data-chem-gas-progress]'),
+      temperature: document.querySelector('[data-chem-gas-temperature]'),
+      pressure: document.querySelector('[data-chem-gas-pressure]'),
+      method: document.querySelector('[data-chem-gas-method]'),
+    };
+    if (gasRequest && m.CHEM_GAS_RESULT && gasControls.amounts.length &&
+        gasControls.progress && gasControls.temperature && gasControls.pressure && gasControls.method) {
+      const samples = [];
+      const waitGas = () => new Promise(resolve => setTimeout(resolve, 30));
+      const fireGas = el => {
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      const recordGas = async kind => {
+        await waitGas();
+        const snap = gasCollectionSnapshot();
+        if (snap && snap.request && snap.result) { snap.kind = kind; samples.push(snap); }
+      };
+      const amountOriginals = gasControls.amounts.map(el => el.value);
+      const amountDoubles = gasControls.amounts.map(el => el.valueAsNumber * 2);
+      const canScaleAmounts = gasControls.amounts.every((el, i) => Number.isFinite(amountDoubles[i]) &&
+        amountDoubles[i] <= (el.max !== '' ? Number(el.max) : 1000000) &&
+        amountDoubles[i] >= (el.min !== '' ? Number(el.min) : 0));
+      if (canScaleAmounts) {
+        gasControls.amounts.forEach((el, i) => { el.value = String(amountDoubles[i]); fireGas(el); });
+        await recordGas('common-amount-scale');
+        gasControls.amounts.forEach((el, i) => { el.value = amountOriginals[i]; fireGas(el); });
+        await waitGas();
+      }
+
+      const mutateGasNumeric = async (input, kind, delta, semanticMin, semanticMax) => {
+        const original = input.value, current = input.valueAsNumber;
+        const min = Math.max(input.min !== '' ? Number(input.min) : -Infinity, semanticMin);
+        const max = Math.min(input.max !== '' ? Number(input.max) : Infinity, semanticMax);
+        const next = Number.isFinite(current + delta) && current + delta <= max ? current + delta : current - delta;
+        if (!Number.isFinite(current) || next < min || next > max || next === current) return;
+        input.value = String(next); fireGas(input);
+        await recordGas(kind);
+        input.value = original; fireGas(input); await waitGas();
+      };
+      await mutateGasNumeric(gasControls.progress, 'progress-change', 0.1, 0, 1);
+      await mutateGasNumeric(gasControls.temperature, 'temperature-change', 5, 0, 100);
+      await mutateGasNumeric(gasControls.pressure, 'pressure-change',
+        Math.max(1, gasControls.pressure.valueAsNumber * 0.25), 1e-9, 100000);
+
+      const originalMethod = gasControls.method.value;
+      const methodOption = Array.from(gasControls.method.options || []).find(option =>
+        !option.disabled && option.value !== originalMethod && ['dry', 'over_water'].includes(option.value));
+      if (methodOption) {
+        gasControls.method.value = methodOption.value; fireGas(gasControls.method);
+        await recordGas('method-toggle');
+        gasControls.method.value = originalMethod; fireGas(gasControls.method); await waitGas();
+      }
+      m.CHEM_GAS_SAMPLES = samples;
+      m.keys.push('CHEM_GAS_SAMPLES');
+    } else {
+      m.CHEM_GAS_SAMPLES = [];
+      m.keys.push('CHEM_GAS_SAMPLES');
+    }
     return m;
   });
 
@@ -733,6 +1891,97 @@ async function main() {
     return c ? (c.getAttribute('data-visual-type') || '') : '';
   });
 
+  // ---- 变形测试计划 ----
+  // 审查端按 mr_catalog.py 生成 baseline / transformed 两组控件值；
+  // 这里真实操作控件，并在两个状态各采一次快照（控件值、读数、机读全局量）。
+  // 关系是否成立由 mr_engine.py 判定，浏览器只负责“把状态做出来并留下证据”。
+  if (PLAN && Array.isArray(PLAN.scenes)) {
+    result.mr.plan = PLAN;
+    const captureMrSnapshot = () => page.evaluate(() => {
+      const clone = value => { try { return JSON.parse(JSON.stringify(value)); } catch (e) { return null; } };
+      const controls = {};
+      document.querySelectorAll('[data-solver-input], [data-mr-control], [data-key]').forEach(el => {
+        const key = el.dataset.mrControl || el.dataset.solverInput || el.dataset.key;
+        if (!key || key in controls) return;
+        if (el.type === 'checkbox') controls[key] = el.checked ? 1 : 0;
+        else if (el.tagName === 'SELECT') controls[key] = el.value;
+        else controls[key] = Number.isFinite(el.valueAsNumber) ? el.valueAsNumber : el.value;
+      });
+      const readouts = {};
+      const put = (key, el) => {
+        if (!key || key in readouts) return;
+        if (!el.getClientRects().length || getComputedStyle(el).visibility === 'hidden') return;
+        const text = (el.textContent || '').trim();
+        const value = parseFloat(text.replace(/,/g, ''));
+        readouts[key] = { text, value: Number.isFinite(value) ? value : null };
+      };
+      document.querySelectorAll('[data-circuit-current-for]').forEach(el => put('circuit:current', el));
+      document.querySelectorAll('[data-circuit-voltage-for]').forEach(el => put('circuit:voltage', el));
+      document.querySelectorAll('[data-solver-field]').forEach(el => put('field:' + el.dataset.solverField, el));
+      document.querySelectorAll('.exp-read').forEach(el => {
+        const label = el.querySelector('.k'), value = el.querySelector('.v');
+        if (label && value) put('label:' + (label.textContent || '').trim(), value);
+      });
+      const globals = {};
+      Object.keys(window).filter(name => /^__(?:CIRCUIT|MATH|CHEM|PHYS|GEO|DATA)/.test(name)).forEach(name => {
+        try { globals[name] = clone(window[name]); } catch (e) { /* 忽略不可序列化对象 */ }
+      });
+      return { controls, readouts, globals };
+    });
+    const applyMrControl = (name, spec, value) => page.evaluate(({ name, selectors, value }) => {
+      for (const selector of selectors || []) {
+        const el = document.querySelector(selector);
+        if (!el || el.disabled || el.readOnly || !el.getClientRects().length ||
+            getComputedStyle(el).visibility === 'hidden') continue;
+        // 把计划里的逻辑名写到 DOM 上，后续快照就能按 voltage/resistance 取值，
+        // 不必猜页面原来用的是 data-key="U" 还是 data-solver-input="voltage"。
+        el.setAttribute('data-mr-control', name);
+        if (el.type === 'checkbox') el.checked = Boolean(Number(value));
+        else el.value = String(value);
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+        return { ok: true, selector, actual: el.type === 'checkbox' ? (el.checked ? 1 : 0) : el.value };
+      }
+      return { ok: false };
+    }, { name, selectors: spec.selectors, value });
+    const initialMrValues = await page.evaluate(() => {
+      const values = {};
+      document.querySelectorAll('[data-solver-input], [data-mr-control], [data-key]').forEach(el => {
+        const key = el.dataset.mrControl || el.dataset.solverInput || el.dataset.key;
+        if (!key || key in values) return;
+        values[key] = el.type === 'checkbox' ? (el.checked ? '1' : '0') : el.value;
+      });
+      return values;
+    });
+    for (const scene of PLAN.scenes) {
+      const record = { id: scene.id, title: scene.title || scene.id, a: null, b: null, errors: [] };
+      for (const phase of ['baseline', 'transformed']) {
+        for (const [name, spec] of Object.entries(scene.controls || {})) {
+          const outcome = await applyMrControl(name, spec, spec[phase]);
+          if (!outcome.ok) record.errors.push('缺少可用控件：' + name);
+        }
+        await page.waitForTimeout(260);
+        record[phase === 'baseline' ? 'a' : 'b'] = await captureMrSnapshot();
+      }
+      result.mr.scenes.push(record);
+    }
+    // 恢复初始值，避免影响后面的通用滑块检查与“重置回初态”判定。
+    await page.evaluate(initial => {
+      document.querySelectorAll('[data-solver-input], [data-mr-control], [data-key]').forEach(el => {
+        // 计划会临时写 data-mr-control；恢复时优先找原始 key（data-key / data-solver-input），
+        // 否则 tagged 元素的 voltage/u 在 initial 里不存在，会恢复失败。
+        const keys = [el.dataset.mrControl, el.dataset.solverInput, el.dataset.key].filter(Boolean);
+        const key = keys.find(name => name in initial);
+        if (!key) return;
+        if (el.type === 'checkbox') el.checked = initial[key] === '1';
+        else el.value = initial[key];
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    }, initialMrValues);
+    await page.waitForTimeout(220);
+  }
+
   // 3D 视角重置专项：真实拖动旋转后点击“恢复默认视角”，比较视角状态。
   const viewBtn = page.getByRole('button', { name: /恢复默认视角|重置视角|默认视角/ }).first();
   if (await viewBtn.count()) {
@@ -760,26 +2009,92 @@ async function main() {
 
   for (let idx = 0; idx < result.ranges.count; idx++) {
     const before = await visualSig();
+    const beforeMeta = await captureSolverState();
     const info = await page.evaluate(async i => {
       const el = document.querySelectorAll('input[type=range]')[i];
       const min = parseFloat(el.min || '0'), max = parseFloat(el.max || '100');
+      const oldValue = el.value;
       const target = el.value === String(max) ? min : max;
       el.value = String(target);
       el.dispatchEvent(new Event('input', { bubbles: true }));
       el.dispatchEvent(new Event('change', { bubbles: true }));
       await new Promise(r => setTimeout(r, 250));
-      return { index: i };
+      return { index: i, control: 'range', field: el.dataset.solverInput, oldValue, newValue: el.value };
     }, idx);
+    const afterMeta = await captureSolverState();
+    recordMetaMutation('range', info, beforeMeta, afterMeta);
+    if (info.oldValue !== info.newValue) await captureLessonSolvers('range-' + idx, activeLessonSolvers, info);
     info.changed = before !== await visualSig();
     result.ranges.details.push(info);
     if (info.changed) result.ranges.responsive++;
     await captureCircuit('range-' + idx);
+    await captureCubeCut('range-' + idx);
+    await captureCylinderCut('range-' + idx);
+    await captureConeCut('range-' + idx);
+    await captureSphereCut('range-' + idx);
+    await captureSpatialMetric('range-' + idx);
+    await captureSolidVolume('range-' + idx);
+    await captureCubeNet('range-' + idx);
+    await captureCuboidNet('range-' + idx);
+    await captureCylinderNet('range-' + idx);
+    await captureConeNet('range-' + idx);
+  }
+
+  // Number inputs are common in chemistry and geometry pages; exercise them
+  // too, so metamorphic coverage does not silently depend on sliders only.
+  result.numberInputs.count = await page.locator('input[type="number"]').count();
+  result.numberInputs.details = [];
+  for (let idx = 0; idx < result.numberInputs.count; idx++) {
+    const beforeMeta = await captureSolverState();
+    const info = await page.evaluate(async i => {
+      const el = document.querySelectorAll('input[type="number"]')[i];
+      const current = el.valueAsNumber;
+      const min = el.min !== '' && Number.isFinite(Number(el.min)) ? Number(el.min) : 0;
+      const max = el.max !== '' && Number.isFinite(Number(el.max)) ? Number(el.max) : 1000000;
+      const step = el.step !== '' && el.step !== 'any' && Number.isFinite(Number(el.step)) && Number(el.step) > 0
+        ? Number(el.step) : 0.01;
+      const oldValue = el.value;
+      const changed = current === max
+        ? Math.max(min, current - Math.max(step, Math.abs(current) * 0.1))
+        : Math.min(max, Math.max(min, current + Math.max(step, Math.abs(current) * 0.1, 0.01)));
+      if (!Number.isFinite(current) || changed === current) return { index: i, control: 'number', oldValue, newValue: oldValue, applicable: false };
+      el.value = String(changed);
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+      await new Promise(resolve => setTimeout(resolve, 250));
+      return { index: i, control: 'number', field: el.dataset.solverInput, oldValue, newValue: el.value, applicable: true };
+    }, idx);
+    const afterMeta = await captureSolverState();
+    if (info.applicable) {
+      recordMetaMutation('number', info, beforeMeta, afterMeta);
+      await captureLessonSolvers('number-' + idx, activeLessonSolvers, info);
+      result.numberInputs.details.push(info);
+      await captureCircuit('number-' + idx);
+      await captureCubeCut('number-' + idx);
+      await captureCylinderCut('number-' + idx);
+      await captureConeCut('number-' + idx);
+      await captureSphereCut('number-' + idx);
+      await captureSpatialMetric('number-' + idx);
+      await captureSolidVolume('number-' + idx);
+      await captureCubeNet('number-' + idx);
+      await captureCuboidNet('number-' + idx);
+      await captureCylinderNet('number-' + idx);
+      await captureConeNet('number-' + idx);
+    }
+    await page.evaluate(({ i, value }) => {
+      const el = document.querySelectorAll('input[type="number"]')[i];
+      el.value = value;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    }, { i: idx, value: info.oldValue });
+    await page.waitForTimeout(120);
   }
 
   // ---- 6b. 离散选择器：确认切换选项确实切换实验状态 ----
   result.selects.count = await page.locator('select').count();
   for (let idx = 0; idx < result.selects.count; idx++) {
     const before = await visualSig();
+    const beforeMeta = await captureSolverState();
     const info = await page.evaluate(async i => {
       const el = document.querySelectorAll('select')[i];
       const original = el.value;
@@ -789,7 +2104,8 @@ async function main() {
       el.dispatchEvent(new Event('input', { bubbles: true }));
       el.dispatchEvent(new Event('change', { bubbles: true }));
       await new Promise(r => setTimeout(r, 250));
-      return { index: i, applicable: true, selectedChanged: el.value === option.value, selected: option.value, original };
+      return { index: i, control: 'select', oldValue: original, newValue: el.value,
+        applicable: true, selectedChanged: el.value === option.value, selected: option.value, original };
     }, idx);
     if (!info.applicable) {
       result.selects.details.push(info);
@@ -797,6 +2113,20 @@ async function main() {
     }
     info.updatedView = before !== await visualSig();
     info.changed = !!info.selectedChanged && info.updatedView;
+    const afterMeta = await captureSolverState();
+    recordMetaMutation('select', info, beforeMeta, afterMeta);
+    if (info.oldValue !== info.newValue) await captureLessonSolvers('select-' + idx, activeLessonSolvers);
+    await captureCircuit('select-' + idx);
+    await captureCubeCut('select-' + idx);
+    await captureCylinderCut('select-' + idx);
+    await captureConeCut('select-' + idx);
+    await captureSphereCut('select-' + idx);
+    await captureSpatialMetric('select-' + idx);
+    await captureSolidVolume('select-' + idx);
+    await captureCubeNet('select-' + idx);
+    await captureCuboidNet('select-' + idx);
+    await captureCylinderNet('select-' + idx);
+    await captureConeNet('select-' + idx);
     await page.evaluate(({ i, value }) => {
       const el = document.querySelectorAll('select')[i];
       el.value = value;
@@ -806,7 +2136,6 @@ async function main() {
     await page.waitForTimeout(180);
     result.selects.details.push(info);
     if (info.changed) result.selects.responsive++;
-      await captureCircuit('select-' + idx);
   }
 
   // 极值状态下的代入式（J1「极值下仍自洽」）
@@ -862,7 +2191,10 @@ async function main() {
       await new Promise(r => setTimeout(r, 180));
       return { 序号: idx, 按钮: label };
     }, i);
-    if (info.有响应 !== false) info.有响应 = before !== await visualSig();
+    if (info.有响应 !== false) {
+      const resetAlreadyVerified = result.reset.restored && /重置|复位|恢复初始|reset/i.test(info.按钮);
+      info.有响应 = resetAlreadyVerified || before !== await visualSig();
+    }
     result.buttonsClicked.push(info);
   }
 

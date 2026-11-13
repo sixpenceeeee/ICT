@@ -157,6 +157,12 @@ window.__DATA__ = {
 - 数学 / 几何类用 `window.__GEO__`（sides / area / volume 等），其余学科用 `window.__DATA__`
 - 审查脚本会把它和页面上显示的文字逐一比对，**数字对不上就判不合格**
 - 有恒等关系的（质量守恒、体积可加、原子数守恒、比较次数、概率总和=1）一定要写进 checks
+- **变形测试契约（必做）**：每个自变量控件都要能被 `[data-solver-input="变量名"]`
+  定位（或加 `data-mr-control="变量名"`），并在 `render()` 里用当前控件值重建 request；
+  求解器页必须暴露 `window.__<前缀>_REQUEST__` 与 `window.__<前缀>_RESULT__`（前缀见本提示词
+  的物理/数学场景表）；读数元素必须有 `data-solver-field="字段名"`，电路表计用
+  `data-circuit-current-for` / `data-circuit-voltage-for`。控件范围必须允许“翻倍/减半”
+  这类变形（例如电压 0–12 V、电阻 1–20 Ω），否则审查端无法执行关系级变形测试。
 
 ## 六、学科与核验要求
 
@@ -225,23 +231,46 @@ window.__DATA__ = {
    刻度读数与 DOM 读数必须同源一致
 7. 用固定设计坐标（如 780×600）按容器等比缩放绘制，不同屏幕不变形；
    半浸入物体在水面上下分开绘制，水下部分加蓝色调与 2px 折射偏移
-8. 光学/光具座类页面按「实验室实景」画，直接调 `PHYS.optics`（它的版面就是按下面
+8. 凸透镜光具座按「实验室实景」画，直接调 `PHYS.optics`（它的版面就是按下面
    这份标准做的，不要另起一套手画）：铝合金导轨带 cm 刻度与黑色支脚；器材用黑色立柱
    支架安装在导轨上；透镜画玻璃质感（半透明渐变 + 白色高光弧）；光线用橙色带箭头折线；
    物与像用粗橙色箭头表示，虚像用虚线；物距/像距在导轨下方用蓝色双箭头标注
    （虚线引导线 + u=xx.x cm 字样）；左上角放白底蓝字读数卡（u= f= v=）；
    主光轴用浅蓝细线并在右端标注；F、2F、F′、2F′ 用蓝色圆点标记在轴上。
-   库没覆盖的光学变体（如平面镜、折射）才用 VIS.lens / VIS.ray 自己拼。
+   平面镜和折射根据对应求解结果使用 VIS 绘图原语拼装镜面与光线。
 9. **②区一律优先调用「学科场景库」**，不要自己从零画版面——这些版面已经把光影、
    材质、标注位置固定好了，纯靠文字描述是画不出来的：
    | 需求命中这些词 | 库 | 现成版面 |
    |---|---|---|
+   | Ksp、溶度积、溶解平衡、共同离子效应 | 化学 CHEM | 每次 render 调用 `CHEMSOLVER.solveSolubilityEquilibrium(request)`，暴露 `window.__CHEM_KSP_REQUEST__` / `window.__CHEM_KSP_RESULT__`，并调用 `CHEM.solubility(cv,result)`。必须明确输入难溶盐化学式、解离离子/电荷/系数、Ksp 及各离子初始浓度；方程、Q、饱和状态和摩尔溶解度均由同一结果驱动。`data-chem-ksp-equation` 只显示 `result.dissolution_equation` 本身，禁止把 Q/Ksp 说明、公式或其他文字拼接到方程元素；需要补充表达式时放进独立的 `data-chem-ksp-expression` 元素。状态显示须映射为“不饱和 / 饱和 / 过饱和”，不要直接显示内部英文枚举；过饱和时溶解度显示“无定义（过饱和）”或“不计算（过饱和）”。Ksp 和浓度用 `step=any` 的 number 控件；保留共同离子、Ksp 与 Q/Ksp 临界点三组真实控件变形。首版不计算过饱和后的沉淀量、络合或活度系数。 |
+   | 氧化还原、电子守恒、电子转移、半反应法、氧化数变化 | 化学 CHEM | 每次 render 调用 `CHEMSOLVER.solveRedox(request)`，暴露 `window.__CHEM_REDOX_REQUEST__` / `window.__CHEM_REDOX_RESULT__`，再调用 `CHEM.redox(cv,result)`。请求明确给出介质、反应物/生成物化学式和离子电荷；求解器按酸/碱条件自动补 H₂O 与 H⁺/OH⁻，独立核验原子、电荷、氧化数与电子守恒。可见离子方程式、电子数和氧化数变化表分别用 `data-chem-redox-equation`、`data-chem-redox-electrons`、`data-chem-redox-changes`；必须保留 `data-chem-redox-reorder` 物种换序验证按钮，供真实页面层变形测试。首版不预测产物或反应是否热力学可行，氧化数无法唯一判定时显示错误。 |
+   | 限量试剂、过量试剂、理论产量、反应进度、反应计量 | 化学 CHEM | 每次 render 调用 `CHEMSOLVER.solveStoichiometry(request)`，暴露 `window.__CHEM_STOICH_REQUEST__` / `window.__CHEM_STOICH_RESULT__`，展示方程、限量试剂、剩余量、产物量和守恒检查。物质的量控件按反应物顺序标记 `data-chem-stoich-amount-index`；进度必须是 `min=0,max=1` 的实际 input，标记 `data-chem-stoich-progress`。J3-07 会实操全部物质的量同比缩放、反应进度 0/0.5/1 和化学计量比临界点下方/等值/上方，再由 Python 参考实现复算；页面输入范围要允许临界点变形。物质的量单位为 mol；不从质量/溶液浓度换算、不预测产物。 |
+   | 沉淀反应、生成沉淀、沉淀质量、氯化银/硫酸钡/碳酸钙/金属氢氧化物沉淀 | 化学 CHEM | 每次 render 调用 `CHEMSOLVER.solvePrecipitation(request)`，暴露 `window.__CHEM_PRECIP_REQUEST__` / `window.__CHEM_PRECIP_RESULT__`，再调用 `CHEM.precipitation(cv,result)`；两份溶液的浓度、体积、单位与进度控件均使用 `data-chem-precip-*` 标记；沉淀质量、限量试剂、净离子方程式都由同一结果驱动。质量以 g 显示至少保留三位小数，或改用 mg。首版只支持注册的六种沉淀反应模板，其他组合显示不支持。演示区只画混合前后烧杯和沉淀。 |
+   | 酸碱中和滴定、酸碱滴定 | 化学 CHEM | 每次 render 调用 `CHEMSOLVER.solveAcidBaseTitration(request)`，暴露 `window.__CHEM_TITRATION_REQUEST__` / `window.__CHEM_TITRATION_RESULT__`，再调用 `CHEM.titration(cv,result)`；浓度、样品体积、滴定体积和单位控件都要带对应 `data-chem-titration-*` 标记，pH/当量体积/过量量从 result 读取。适用范围为强一元酸与强一元碱滴定。 |
+   | 气体制取、排水集气、制取氢气/氧气/二氧化碳、气体体积 | 化学 CHEM | 每次 render 调用 `CHEMSOLVER.solveGasCollection(request)`，暴露 `window.__CHEM_GAS_REQUEST__` / `window.__CHEM_GAS_RESULT__`，再调用 `CHEM.gasCollection(cv,result)`；反应方程、反应物物质的量、进度、温度、总压和集气方式都必须来自可见控件/明确反应，读数统一取 result。使用 `PV=nRT`；排水集气须扣除 Antoine 水蒸气压。演示区只画实验装置，不在画布内排步骤卡。 |
    | 置换反应、酸碱中和、溶液颜色变化、反应前后对比 | 化学 CHEM | `CHEM.scene(cv,{p,V,leftSol,rightSol,formula})`；`V` 必须用 mL，若计算状态以 L 保存要传 `V: volumeL * 1000` |
    | 溶解-过滤-蒸发、多步骤实验、分离提纯 | 化学 CHEM | `CHEM.stages(cv,{steps:[{title,vessel:'beaker'|'funnel'|'dish',volumeMl,topColor,bottomColor,solid,crystals,equipment,note}],summary})`；阶段顺序按实验过程配置 |
-   | 浮力、测力计、浸没、浮沉、排开 | 物理 PHYS | `PHYS.floating(cv,{objRho,liqRho,mode:'hang'|'free',sub})` |
-   | 凸透镜、成像、光具座、物距像距 | 物理 PHYS | `PHYS.optics(cv,{u,f,scr})` |
-   | 正方体截面、截平面、几何体 | 数学 MATH | `MATH.cubeCut(cv,{a,theta,phi,t})` 真 3D 立方体，自带拖动旋转视角；“恢复默认视角”必须调用 `MATH.resetView(cv)`，不可只重新 render |
-   | 函数图像、抛物线、一次/二次函数 | 数学 MATH | `MATH.funcPlot(cv,{a,b,c})` |
+   | 浮力、阿基米德原理、浮沉、排开液体 | 物理 PHYS | 每次 render 调用 `const result=PHYS.solveBuoyancy(request)`，暴露 `window.__PHYS_BUOYANCY_REQUEST__` / `window.__PHYS_BUOYANCY_RESULT__`，再用 `PHYS.floating(cv,request,result)` 绘制。request 必须用 SI：`object_density` / `liquid_density` 用 kg/m³、`volume` 用 m³、`fraction` 用 0–1、`mode` 用 hang/free，g=9.8 N/kg；控件加 `data-solver-input`，排液体积/浮力/测力计读数用 `data-solver-field`，不能另算一套 g=10 的结果 |
+   | 杠杆平衡、液体压强、比热容 | 物理 PHYS | 分别调用 `PHYS.solveLever`、`PHYS.solveLiquidPressure`、`PHYS.solveSpecificHeat`，图示和读数取自同一结果 |
+   | 匀变速直线运动、平抛运动、折射与全反射 | 物理 PHYS | 分别调用 `PHYS.solveUniformAcceleration`、`PHYS.solveHorizontalProjectile`、`PHYS.solveRefraction`，从结果读取轨迹、速度分量或角度 |
+   | 凸透镜成像 | 物理 PHYS | 调用 `const result=PHYS.solveThinLens(request)`，暴露 `window.__PHYS_LENS_REQUEST__` / `window.__PHYS_LENS_RESULT__`，再用 `PHYS.optics(cv,cfg,result)` 绘制；物距 u、焦距 f 控件用 `data-solver-input` 标记，像距/放大率读数用 `data-solver-field` 标记 |
+   | 平面镜成像 | 物理 PHYS | 调用 `PHYS.solvePlaneMirror(request)`，暴露 `window.__PHYS_PLANE_MIRROR_REQUEST__` / `window.__PHYS_PLANE_MIRROR_RESULT__`，根据像坐标、可见区间和 `result.visible_rays` 绘制；物距、物高、观察者位置与镜面半高控件用 `data-solver-input` 标记 |
+   | 波的传播、声速、波长 | 物理 PHYS | 每次 render 调用 `PHYS.solveWavePropagation(request)`，暴露 `window.__PHYS_WAVE_PROPAGATION_REQUEST__` / `window.__PHYS_WAVE_PROPAGATION_RESULT__`，再用 `PHYS.drawWavePropagation(cv,request,result)` 绘制；频率、探测距离、传播耗时、观察时间控件用 `data-solver-input` 标记 |
+   | 长方体截面、平面截长方体 | 数学 MATH | 每次 render 调用 `var cut=MATH.solveCuboidCut({dimensions:[长,宽,高],n,offset})`，赋给 `window.__MATH_POLYHEDRON_RESULT__`，再 `MATH.cuboidSection(cv,cfg,cut)`；图形、顶点与结果共用 cut，复位视角调用 `MATH.resetView(cv)` |
+   | 三棱柱截面、平面截三棱柱 | 数学 MATH | 每次 render 调用 `var cut=MATH.solveTriangularPrismCut({base,triangleHeight,length,n,offset})`，赋给 `window.__MATH_POLYHEDRON_RESULT__`，再 `MATH.triangularPrismSection(cv,cfg,cut)`；几何图、截面与结果共用 cut |
+   | 正四棱锥截面、平面截四棱锥 | 数学 MATH | 每次 render 调用 `var cut=MATH.solveSquarePyramidCut({base,height,n,offset})`，赋给 `window.__MATH_POLYHEDRON_RESULT__`，再 `MATH.squarePyramidSection(cv,cfg,cut)`；绘图、截面和结果共用 cut |
+   | 圆柱截面、平面截圆柱 | 数学 MATH | 每次 render 调用 `var cut=MATH.solveCylinderCut({radius,height,n,offset})`，赋给 `window.__MATH_CYLINDER_RESULT__`，再 `MATH.cylinderSection(cv,cfg,cut)`；截面面积和边界必须共用 cut |
+   | 圆锥截面、平面截圆锥 | 数学 MATH | 每次 render 调用 `var cut=MATH.solveConeCut({radius,height,n,offset})`，赋给 `window.__MATH_CONE_RESULT__`，再 `MATH.coneSection(cv,cfg,cut)`；截面面积和边界必须共用 cut |
+   | 球体截面、平面截球 | 数学 MATH | 每次 render 调用 `var cut=MATH.solveSphereCut({radius,n,offset})`，赋给 `window.__MATH_SPHERE_RESULT__`，再 `MATH.sphereSection(cv,cfg,cut)`；圆心、半径、面积和边界必须共用 cut |
+   | 空间距离、空间角度、线面角、异面直线距离 | 数学 MATH | 每次 render 构造结构化 request，调用 `MATH.solveSpatialMetrics(request)`，保存 `window.__MATH_SPATIAL_REQUEST__` / `window.__MATH_SPATIAL_RESULT__`；读数从 result.value 和 result.unit 读取 |
+   | 立体体积、组合体体积 | 数学 MATH | 每次 render 调用 `MATH.solveSolidVolume(request)` 并保存 `window.__MATH_VOLUME_REQUEST__` / `window.__MATH_VOLUME_RESULT__`；读数使用 result.volume/result.unit，组合体只能对明确不重叠的分块求和 |
+   | 正方体展开图、正方体展开与折叠 | 数学 MATH | 每次状态更新调用 `MATH.solveCubeNet({cells,edge_length})` 并保存 `window.__MATH_CUBE_NET_REQUEST__` / `window.__MATH_CUBE_NET_RESULT__`；有效性提示与折叠空间图必须使用同一 result.faces；六个整数网格面必须连通、恰有五条公共棱，折叠后六个法向不同且铰链端点闭合 |
+   | 长方体展开图、长方体展开与折叠 | 数学 MATH | 每次状态更新调用 `MATH.solveCuboidNet(request)`，request 为 `{dimensions:[长,宽,高],faces:[{x,y,width,height},...]}`；暴露 `window.__MATH_CUBOID_NET_REQUEST__` / `window.__MATH_CUBOID_NET_RESULT__`；展开面不得重叠，公共棱须完整等长，折叠后各面的尺寸/朝向/铰链闭合均须匹配 |
+   | 圆柱展开图、圆柱侧面展开 | 数学 MATH | 每次状态更新调用 `MATH.solveCylinderNet(request)` 并暴露 `window.__MATH_CYLINDER_NET_REQUEST__` / `window.__MATH_CYLINDER_NET_RESULT__`；侧面矩形宽=2πr、高=h，两个底圆半径=r；有效结果中的 `surface_grid` 驱动折叠圆柱绘图 |
+   | 圆锥展开图、圆锥侧面展开 | 数学 MATH | 每次状态更新调用 `MATH.solveConeNet(request)` 并暴露 `window.__MATH_CONE_NET_REQUEST__` / `window.__MATH_CONE_NET_RESULT__`；扇形半径=母线长，弧长=2πr，扇形角=360r/l，底圆半径=r；有效结果的 `sector_boundary` 与 `side_grid` 驱动平面和折叠图 |
+   | 平面截正方体、正方体截面 | 数学 MATH | 每次 render 先 `var cut=MATH.solveCubeCut({a,n,offset})`，再 `MATH.cubeCut(cv,cfg,cut)`，真 3D 立方体自带拖动旋转视角；“恢复默认视角”必须调用 `MATH.resetView(cv)`，不可只重新 render |
+   | 二次函数、抛物线 | 数学 MATH | 调用 `const result=MATH.solveQuadratic(request)`，暴露请求和结果，再用 `MATH.funcPlot(cv,cfg,result)` 绘制 |
+   | 其他函数图像 | 数学 MATH | `MATH.funcPlot(cv,{a,b,c})` |
    | 显微镜观察、细胞、洋葱表皮、染色 | 生物 BIO  | `BIO.microscope(cv,{mag,cells,stain:'onion'|'blood'|'leaf'})` |
    | 地球自转、公转、昼夜、季节 | 地理 GEO  | `GEO.earth(cv,{tilt,season})` |
    | 地层、圈层、剖面 | 地理 GEO  | `GEO.profile(cv,{})` |
@@ -259,7 +288,11 @@ window.__DATA__ = {
    ```js
    var cv = document.getElementById('cv');
    function render() {
-     MATH.cubeCut(cv, { a: 2, theta: +th.value, phi: +ph.value, t: +tt.value / 100 });
+     var cfg = { a: 2, theta: +th.value, phi: +ph.value, t: +tt.value / 100 };
+     var n = [Math.sin(cfg.theta*Math.PI/180)*Math.cos(cfg.phi*Math.PI/180), Math.sin(cfg.theta*Math.PI/180)*Math.sin(cfg.phi*Math.PI/180), Math.cos(cfg.theta*Math.PI/180)];
+     var cut = MATH.solveCubeCut({ a: cfg.a, n: n, offset: cfg.a/2*cfg.t });
+     window.__MATH_CUBE_RESULT__ = cut;
+     MATH.cubeCut(cv, cfg, cut);
      // ④区读数、⑤区表格都从 window.__GEO__ 取值，别自己重算
    }
    ['th', 'ph', 'tt'].forEach(function (id) {

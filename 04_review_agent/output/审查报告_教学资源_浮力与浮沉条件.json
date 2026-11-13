@@ -1,35 +1,35 @@
 {
   "文件": "教学资源_浮力与浮沉条件.html",
-  "审查时间": "2026-11-03 21:35:05",
+  "审查时间": "2026-11-12 01:04:13",
   "实验ID": "未登记（应由知识库 experiment_id 提供）",
   "学科": "物理",
   "主题": "浮力",
   "引擎": "未声明",
-  "场景": "未登记",
-  "总分": 87.5,
-  "结论": "通过",
-  "发布状态": "待教师审核",
-  "严重问题数": 0,
+  "场景": "physics-buoyancy",
+  "总分": 81.0,
+  "结论": "不通过",
+  "发布状态": "禁止发布",
+  "严重问题数": 4,
   "五关": [
     {
       "关": "G1",
       "名称": "结构与安全",
       "满分": 25,
-      "得分": 25.0,
+      "得分": 22.5,
       "通过": 7,
-      "失败": 0,
+      "失败": 1,
       "待审": 0,
-      "不适用": 1,
+      "不适用": 0,
       "无可判项": false
     },
     {
       "关": "G2",
       "名称": "资源完整性",
       "满分": 25,
-      "得分": 25.0,
-      "通过": 13,
-      "失败": 0,
-      "待审": 2,
+      "得分": 23.21,
+      "通过": 14,
+      "失败": 1,
+      "待审": 0,
       "不适用": 1,
       "无可判项": false
     },
@@ -37,20 +37,20 @@
       "关": "G3",
       "名称": "学科判据",
       "满分": 25,
-      "得分": 12.5,
-      "通过": 3,
+      "得分": 13.1,
+      "通过": 2,
       "失败": 2,
       "待审": 1,
-      "不适用": 2,
+      "不适用": 4,
       "无可判项": false
     },
     {
       "关": "G4",
       "名称": "浏览器测试",
       "满分": 15,
-      "得分": 15.0,
+      "得分": 12.22,
       "通过": 9,
-      "失败": 0,
+      "失败": 1,
       "待审": 0,
       "不适用": 3,
       "无可判项": false
@@ -71,9 +71,9 @@
     "J1": {
       "名称": "数值复算",
       "pass": 2,
-      "fail": 2,
+      "fail": 0,
       "review": 0,
-      "skip": 0
+      "skip": 2
     },
     "J2": {
       "名称": "几何复算",
@@ -81,6 +81,13 @@
       "fail": 0,
       "review": 0,
       "skip": 1
+    },
+    "J3": {
+      "名称": "",
+      "pass": 0,
+      "fail": 1,
+      "review": 0,
+      "skip": 0
     },
     "J6": {
       "名称": "结构要素齐备",
@@ -98,8 +105,8 @@
     },
     "J8": {
       "名称": "答案表比对",
-      "pass": 1,
-      "fail": 0,
+      "pass": 0,
+      "fail": 1,
       "review": 0,
       "skip": 0
     }
@@ -201,14 +208,14 @@
       "gate_name": "结构与安全",
       "judge": "",
       "name": "引擎与场景白名单",
-      "status": "skip",
-      "severity": "一般",
+      "status": "fail",
+      "severity": "严重",
       "weight": 3,
-      "expected": "scene_engine 取自 25 类白名单，scene_id 已注册",
-      "actual": "页面未声明引擎/场景配置",
-      "message": "无配置可比对，本项不适用",
-      "evidence": "",
-      "advice": ""
+      "expected": "引擎取自 25 类白名单，场景与已审核注册表对应",
+      "actual": "场景「physics-buoyancy」未在 registry.SCENES 注册",
+      "message": "不允许模型自由创造引擎名并执行",
+      "evidence": "{'scene_id': 'physics-buoyancy'}",
+      "advice": "在 registry.ENGINES/SCENES 中登记该引擎与场景，并补充 required 与 facts 绑定"
     },
     {
       "check_id": "G1-08",
@@ -261,14 +268,14 @@
       "gate_name": "资源完整性",
       "judge": "",
       "name": "本地资源可解析",
-      "status": "review",
-      "severity": "建议",
+      "status": "pass",
+      "severity": "一般",
       "weight": 4,
-      "expected": "下载弹窗指向的压缩包应随案例一起交付",
-      "actual": "压缩包未生成：浮力与浮沉条件.zip",
-      "message": "页面能正常显示，但「下载本案例」会 404",
+      "expected": "所有相对路径引用的文件都在同目录",
+      "actual": "5 个本地引用全部存在",
+      "message": "资源随页面完整交付",
       "evidence": "",
-      "advice": "打包时把 zip 放到与 html 同目录，或改为指向资源目录"
+      "advice": ""
     },
     {
       "check_id": "G2-04",
@@ -310,7 +317,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "2–4 个关键参数控件",
-      "actual": "3 个滑块 + 3 个按钮",
+      "actual": "0 个滑块 + 10 个按钮",
       "message": "控件数量合适",
       "evidence": "",
       "advice": ""
@@ -336,13 +343,13 @@
       "gate_name": "资源完整性",
       "judge": "",
       "name": "具备重置功能",
-      "status": "pass",
+      "status": "fail",
       "severity": "一般",
       "weight": 4,
       "expected": "点重置后与首屏状态完全一致",
-      "actual": "已回到初态",
-      "message": "重置有效",
-      "evidence": "",
+      "actual": "重置后状态与首屏不一致（机读数据差异=True，文本差异≈4 字）",
+      "message": "重置没回到同一初始状态，两轮实验的数据不可比",
+      "evidence": "师伴-浮力与浮沉条件 📥 ✨ 📧 物理 初中八年级 教学演示（虚拟仿真） 来源：物理知识库「浮力」 实验性质：虚拟仿真，数值取自理想模型，不作为真实测量数据。 学习目标 观察排开液体体积与浮力的关系 判断物体上浮、悬浮或下沉 ② 演示拖动画面可旋转视角 物块液面测力计 ③ 参数与操作 物块密度 600 kg/m³ 液体",
       "advice": "reset 里逐个恢复每个参数与状态变量，再调用 render()，不要只清记录表"
     },
     {
@@ -351,12 +358,12 @@
       "gate_name": "资源完整性",
       "judge": "",
       "name": "CSV 导出",
-      "status": "review",
+      "status": "pass",
       "severity": "建议",
       "weight": 1,
       "expected": "数值型实验提供「导出 CSV」",
-      "actual": "未提供导出",
-      "message": "数值实验建议补一个导出（非必做）",
+      "actual": "已提供",
+      "message": "可以把数据带到 Excel 里继续分析",
       "evidence": "",
       "advice": "用 Blob + URL.createObjectURL 生成 CSV，与表格共用同一份数据"
     },
@@ -385,7 +392,7 @@
       "severity": "一般",
       "weight": 5,
       "expected": "页面上每段文字的最上层都是文字本身",
-      "actual": "203 段文字实测未被 canvas/img/svg 覆盖",
+      "actual": "207 段文字实测未被 canvas/img/svg 覆盖",
       "message": "DOM 层文字均在最上层",
       "evidence": "",
       "advice": ""
@@ -472,14 +479,14 @@
       "judge": "J1",
       "judge_name": "数值复算",
       "name": "J1 代入式可复算",
-      "status": "fail",
-      "severity": "critical",
+      "status": "pass",
+      "severity": "major",
       "weight": 8,
       "expected": "按公式独立重算后与显示值一致",
-      "actual": "「2.00 g/cm³ × 10 N/kg × 100 cm³ = 2.00」显示 2，独立重算应为 2000（共 1 组不一致）",
-      "message": "代入式的算术结果与显示值不符，学生会照着一个错数学习",
-      "evidence": "「2.00 g/cm³ × 10 N/kg × 100 cm³ = 2.00」=2≠2000",
-      "advice": "把核心公式写成带数值的代入式：F浮 = ρ液 g V排 = 1000 kg/m³ × 10 N/kg × 0.0002 m³ = 2.00 N（g 取 10 N/kg，体积先换算成 m³；不要用 1.0×10³ 这类科学计数法写代入式）"
+      "actual": "2 组代入式全部复算通过",
+      "message": "页面数值与独立复算一致",
+      "evidence": "1000 kg/m³ × 9.8 N/kg × 0.00009999999999999999 m³ = 0.9799999999999999 N",
+      "advice": ""
     },
     {
       "check_id": "J1-02",
@@ -488,14 +495,14 @@
       "judge": "J1",
       "judge_name": "数值复算",
       "name": "J1 极值下仍自洽",
-      "status": "fail",
+      "status": "skip",
       "severity": "major",
       "weight": 4,
       "expected": "参数取端点时代入式仍成立",
-      "actual": "极值处 1 组不一致，例如「2.00 g/cm³ × 10 N/kg × 100 cm³ = 2.00」显示 2，应为 2000",
-      "message": "参数变化后读数没有跟着重算，常见原因是只在初始化时算了一次",
+      "actual": "页面没有可拖动参数，或极值状态未产生新的代入式",
+      "message": "无参数可拖，本项不适用",
       "evidence": "",
-      "advice": "每次参数变化都走同一个 render()，读数、画布、代入式同源"
+      "advice": ""
     },
     {
       "check_id": "J1-03",
@@ -520,14 +527,14 @@
       "judge": "J1",
       "judge_name": "数值复算",
       "name": "J1 值域与除零",
-      "status": "pass",
+      "status": "skip",
       "severity": "major",
       "weight": 3,
       "expected": "参数上下限有效、不出现除零",
-      "actual": "3 个滑块范围与初值均合法",
-      "message": "参数值域合法",
+      "actual": "页面没有滑块，参数值域不适用",
+      "message": "无参数控件，本项不适用",
       "evidence": "",
-      "advice": "在 setParams 里做上下界校验，除数为 0 时给出提示而不是直接计算"
+      "advice": ""
     },
     {
       "check_id": "J2-01",
@@ -552,14 +559,14 @@
       "judge": "J8",
       "judge_name": "答案表比对",
       "name": "J8 答案表比对",
-      "status": "pass",
-      "severity": "major",
+      "status": "fail",
+      "severity": "critical",
       "weight": 6,
       "expected": "页面表述与已审核事实表一致",
-      "actual": "[PHY-F-004] 命中：浮力、阿基米德、排开",
-      "message": "关键现象与结论与审核事实一致",
-      "evidence": "",
-      "advice": ""
+      "actual": "[PHY-F-004] 出现错误表述「漂浮时浮力小于重力」（事实：F浮 = ρ液 g V排。浸没时 V排 等于物体体积；漂浮时 F浮 = G物。浮力大小与液体密度和排开液体体积有关。）",
+      "message": "页面出现与教材事实相反的表述，属于科学性错误",
+      "evidence": "[PHY-F-004] 出现错误表述「漂浮时浮力小于重力」（事实：F浮 = ρ液 g V排。浸没时 V排 等于物体体积；漂浮时 F浮 = G物。浮力大小与液体密度和排开液体体积有关。）",
+      "advice": "对照 facts.json 的『禁止出现』逐条改写；不确定的现象宁可不写，也不要编造"
     },
     {
       "check_id": "J6-01",
@@ -572,7 +579,7 @@
       "severity": "major",
       "weight": 5,
       "expected": "按已审核场景注册表核对器材/标注/图例",
-      "actual": "场景未注册，仅命中通用标注 1 项（单位）",
+      "actual": "场景未注册，仅命中通用标注 0 项（无）",
       "message": "缺少场景注册表就无法确定「该有哪些器材」，此项交教师确认",
       "evidence": "",
       "advice": "在 registry.SCENES 里登记该场景及 required 清单，或先在知识库完成场景审核"
@@ -594,6 +601,21 @@
       "advice": ""
     },
     {
+      "check_id": "J3-16",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "J3",
+      "name": "浮力与浮沉独立复算",
+      "status": "fail",
+      "severity": "严重",
+      "weight": 4,
+      "expected": "初始状态和真实控件变更后的结果、可见读数均与 Python 独立复算一致",
+      "actual": "preset:partial 合法输入仍显示求解错误；preset:partial 缺少求解结果；preset:double_displacement 合法输入仍显示求解错误；preset:double_displacement 缺少求解结果；preset:double_volume 合法输入仍显示求解错误；preset:double_volume 缺少求解结果；preset:denser_liquid 合法输入仍显示求解错误；preset:denser_liquid 缺少求解结果；preset:slack 合法输入仍显示求解错误；preset:slack 缺少求解结果",
+      "message": "页面求解结果及读数核对",
+      "evidence": "",
+      "advice": ""
+    },
+    {
       "check_id": "G4-01",
       "gate": "G4",
       "gate_name": "浏览器测试",
@@ -603,7 +625,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "浏览器能正常加载",
-      "actual": "加载耗时 170 ms",
+      "actual": "加载耗时 139 ms",
       "message": "页面可加载",
       "evidence": "",
       "advice": ""
@@ -624,19 +646,34 @@
       "advice": "常见原因：DOM 取到 null、函数名拼错、脚本早于元素执行"
     },
     {
+      "check_id": "G4-32",
+      "gate": "G4",
+      "gate_name": "浏览器测试",
+      "judge": "",
+      "name": "求解器页面变形测试",
+      "status": "fail",
+      "severity": "严重",
+      "weight": 5,
+      "expected": "改变实际页面输入后，求解请求/结果随之更新，并可对变形状态独立复算",
+      "actual": "缺少有效页面变形状态：浮力与浮沉（partial 未通过真实控件到达验收输入；double_displacement 未通过真实控件到达验收输入；double_volume 未通过真实控件到达验收输入）",
+      "message": "页面变形状态或学科关系未通过",
+      "evidence": "浮力与浮沉（partial 未通过真实控件到达验收输入；double_displacement 未通过真实控件到达验收输入；double_volume 未通过真实控件到达验收输入）",
+      "advice": "在浏览器实际改变求解控件；确保请求随控件更新、重算结果更新，并由独立参考实现复核变形状态"
+    },
+    {
       "check_id": "G4-03",
       "gate": "G4",
       "gate_name": "浏览器测试",
       "judge": "",
       "name": "参数变化有响应",
-      "status": "pass",
-      "severity": "严重",
+      "status": "skip",
+      "severity": "一般",
       "weight": 3,
-      "expected": "拖动每个滑块都有可见变化",
-      "actual": "3/3 个滑块拖动后有变化",
-      "message": "所有滑块都生效",
+      "expected": "拖动任一滑块，读数/图像/代入式至少一处变化",
+      "actual": "页面没有滑块",
+      "message": "无滑块可测，本项不适用",
       "evidence": "",
-      "advice": "检查是否监听 input 事件、是否在 handler 里调用 render()"
+      "advice": ""
     },
     {
       "check_id": "G4-10",
@@ -644,14 +681,14 @@
       "gate_name": "浏览器测试",
       "judge": "",
       "name": "离散选项切换有效",
-      "status": "skip",
+      "status": "pass",
       "severity": "一般",
       "weight": 2,
-      "expected": "每个下拉选择器切换后同步更新实验状态和可见结果",
-      "actual": "页面没有下拉选择器",
-      "message": "本页不使用离散选择器",
-      "evidence": "",
-      "advice": ""
+      "expected": "切换选项后共享状态、画面/读数/公式同步更新",
+      "actual": "1/1 个有效选择器切换后状态与视图均变化",
+      "message": "离散选项确实驱动了页面",
+      "evidence": "[{'index': 0, 'control': 'select', 'oldValue': 'hang', 'newValue': 'free', 'applicable': True, 'selectedChanged': True, 'selected': 'free', 'original': 'hang', 'updatedView': True, 'changed': True}]",
+      "advice": "为 select 监听 change 事件；把所选值写入 state 并统一调用 render()"
     },
     {
       "check_id": "G4-04",
@@ -663,7 +700,7 @@
       "severity": "一般",
       "weight": 2,
       "expected": "点击按钮后页面状态变化",
-      "actual": "3/3 个按钮有响应",
+      "actual": "6/6 个按钮有响应",
       "message": "按钮均可用",
       "evidence": "",
       "advice": "给按钮绑定事件；开关类按钮必须改变实验状态并刷新读数"
@@ -693,7 +730,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "渐变/半透明叠层/曲线/无色块堆砌",
-      "actual": "渐变 31% · 叠层 55% · 立体件 15% · 曲线 88% · 纯色块 3 处",
+      "actual": "渐变 31% · 叠层 55% · 立体件 15% · 曲线 88% · 纯色块 21 处",
       "message": "器材画面质感达到基础要求",
       "evidence": "",
       "advice": ""
@@ -828,7 +865,7 @@
       "severity": "一般",
       "weight": 0,
       "expected": "明确标注实验性质与来源（课标必做 / 常规实验 / 教学演示）",
-      "actual": "已标注「课标必做」",
+      "actual": "已标注「教学演示」",
       "message": "性质已写明，课标地位仍需教研确认",
       "evidence": "",
       "advice": ""
@@ -866,77 +903,89 @@
   ],
   "问题清单": [
     {
-      "维度": "学科判据·J1",
-      "检查项": "J1 代入式可复算",
-      "级别": "critical",
-      "说明": "代入式的算术结果与显示值不符，学生会照着一个错数学习（「2.00 g/cm³ × 10 N/kg × 100 cm³ = 2.00」显示 2，独立重算应为 2000（共 1 组不一致））",
-      "建议": "把核心公式写成带数值的代入式：F浮 = ρ液 g V排 = 1000 kg/m³ × 10 N/kg × 0.0002 m³ = 2.00 N（g 取 10 N/kg，体积先换算成 m³；不要用 1.0×10³ 这类科学计数法写代入式）",
-      "check_id": "J1-01",
+      "维度": "结构与安全",
+      "检查项": "引擎与场景白名单",
+      "级别": "严重",
+      "说明": "不允许模型自由创造引擎名并执行（场景「physics-buoyancy」未在 registry.SCENES 注册）",
+      "建议": "在 registry.ENGINES/SCENES 中登记该引擎与场景，并补充 required 与 facts 绑定",
+      "check_id": "G1-07",
       "status": "fail",
-      "expected": "按公式独立重算后与显示值一致",
-      "actual": "「2.00 g/cm³ × 10 N/kg × 100 cm³ = 2.00」显示 2，独立重算应为 2000（共 1 组不一致）",
-      "evidence": "「2.00 g/cm³ × 10 N/kg × 100 cm³ = 2.00」=2≠2000"
+      "expected": "引擎取自 25 类白名单，场景与已审核注册表对应",
+      "actual": "场景「physics-buoyancy」未在 registry.SCENES 注册",
+      "evidence": "{'scene_id': 'physics-buoyancy'}"
     },
     {
-      "维度": "学科判据·J1",
-      "检查项": "J1 极值下仍自洽",
-      "级别": "major",
-      "说明": "参数变化后读数没有跟着重算，常见原因是只在初始化时算了一次（极值处 1 组不一致，例如「2.00 g/cm³ × 10 N/kg × 100 cm³ = 2.00」显示 2，应为 2000）",
-      "建议": "每次参数变化都走同一个 render()，读数、画布、代入式同源",
-      "check_id": "J1-02",
+      "维度": "资源完整性",
+      "检查项": "具备重置功能",
+      "级别": "一般",
+      "说明": "重置没回到同一初始状态，两轮实验的数据不可比（重置后状态与首屏不一致（机读数据差异=True，文本差异≈4 字））",
+      "建议": "reset 里逐个恢复每个参数与状态变量，再调用 render()，不要只清记录表",
+      "check_id": "G2-07",
       "status": "fail",
-      "expected": "参数取端点时代入式仍成立",
-      "actual": "极值处 1 组不一致，例如「2.00 g/cm³ × 10 N/kg × 100 cm³ = 2.00」显示 2，应为 2000",
+      "expected": "点重置后与首屏状态完全一致",
+      "actual": "重置后状态与首屏不一致（机读数据差异=True，文本差异≈4 字）",
+      "evidence": "师伴-浮力与浮沉条件 📥 ✨ 📧 物理 初中八年级 教学演示（虚拟仿真） 来源：物理知识库「浮力」 实验性质：虚拟仿真，数值取自理想模型，不作为真实测量数据。 学习目标 观察排开液体体积与浮力的关系 判断物体上浮、悬浮或下沉 ② 演示拖动画面可旋转视角 物块液面测力计 ③ 参数与操作 物块密度 600 kg/m³ 液体"
+    },
+    {
+      "维度": "学科判据·J8",
+      "检查项": "J8 答案表比对",
+      "级别": "critical",
+      "说明": "页面出现与教材事实相反的表述，属于科学性错误（[PHY-F-004] 出现错误表述「漂浮时浮力小于重力」（事实：F浮 = ρ液 g V排。浸没时 V排 等于物体体积；漂浮时 F浮 = G物。浮力大小与液体密度和排开液体体积有关。））",
+      "建议": "对照 facts.json 的『禁止出现』逐条改写；不确定的现象宁可不写，也不要编造",
+      "check_id": "J8-01",
+      "status": "fail",
+      "expected": "页面表述与已审核事实表一致",
+      "actual": "[PHY-F-004] 出现错误表述「漂浮时浮力小于重力」（事实：F浮 = ρ液 g V排。浸没时 V排 等于物体体积；漂浮时 F浮 = G物。浮力大小与液体密度和排开液体体积有关。）",
+      "evidence": "[PHY-F-004] 出现错误表述「漂浮时浮力小于重力」（事实：F浮 = ρ液 g V排。浸没时 V排 等于物体体积；漂浮时 F浮 = G物。浮力大小与液体密度和排开液体体积有关。）"
+    },
+    {
+      "维度": "学科判据·J3",
+      "检查项": "浮力与浮沉独立复算",
+      "级别": "严重",
+      "说明": "页面求解结果及读数核对（preset:partial 合法输入仍显示求解错误；preset:partial 缺少求解结果；preset:double_displacement 合法输入仍显示求解错误；preset:double_displacement 缺少求解结果；preset:double_volume 合法输入仍显示求解错误；preset:double_volume 缺少求解结果；preset:denser_liquid 合法输入仍显示求解错误；preset:denser_liquid 缺少求解结果；preset:slack 合法输入仍显示求解错误；preset:slack 缺少求解结果）",
+      "建议": "",
+      "check_id": "J3-16",
+      "status": "fail",
+      "expected": "初始状态和真实控件变更后的结果、可见读数均与 Python 独立复算一致",
+      "actual": "preset:partial 合法输入仍显示求解错误；preset:partial 缺少求解结果；preset:double_displacement 合法输入仍显示求解错误；preset:double_displacement 缺少求解结果；preset:double_volume 合法输入仍显示求解错误；preset:double_volume 缺少求解结果；preset:denser_liquid 合法输入仍显示求解错误；preset:denser_liquid 缺少求解结果；preset:slack 合法输入仍显示求解错误；preset:slack 缺少求解结果",
       "evidence": ""
+    },
+    {
+      "维度": "浏览器测试",
+      "检查项": "求解器页面变形测试",
+      "级别": "严重",
+      "说明": "页面变形状态或学科关系未通过（缺少有效页面变形状态：浮力与浮沉（partial 未通过真实控件到达验收输入；double_displacement 未通过真实控件到达验收输入；double_volume 未通过真实控件到达验收输入））",
+      "建议": "在浏览器实际改变求解控件；确保请求随控件更新、重算结果更新，并由独立参考实现复核变形状态",
+      "check_id": "G4-32",
+      "status": "fail",
+      "expected": "改变实际页面输入后，求解请求/结果随之更新，并可对变形状态独立复算",
+      "actual": "缺少有效页面变形状态：浮力与浮沉（partial 未通过真实控件到达验收输入；double_displacement 未通过真实控件到达验收输入；double_volume 未通过真实控件到达验收输入）",
+      "evidence": "浮力与浮沉（partial 未通过真实控件到达验收输入；double_displacement 未通过真实控件到达验收输入；double_volume 未通过真实控件到达验收输入）"
     }
   ],
   "待审清单": [
     {
-      "维度": "资源完整性",
-      "检查项": "本地资源可解析",
-      "级别": "建议",
-      "说明": "页面能正常显示，但「下载本案例」会 404（压缩包未生成：浮力与浮沉条件.zip）",
-      "建议": "打包时把 zip 放到与 html 同目录，或改为指向资源目录",
-      "check_id": "G2-03",
-      "status": "review",
-      "expected": "下载弹窗指向的压缩包应随案例一起交付",
-      "actual": "压缩包未生成：浮力与浮沉条件.zip",
-      "evidence": ""
-    },
-    {
-      "维度": "资源完整性",
-      "检查项": "CSV 导出",
-      "级别": "建议",
-      "说明": "数值实验建议补一个导出（非必做）（未提供导出）",
-      "建议": "用 Blob + URL.createObjectURL 生成 CSV，与表格共用同一份数据",
-      "check_id": "G2-08",
-      "status": "review",
-      "expected": "数值型实验提供「导出 CSV」",
-      "actual": "未提供导出",
-      "evidence": ""
-    },
-    {
       "维度": "学科判据·J6",
       "检查项": "J6 强制要素齐备",
       "级别": "major",
-      "说明": "缺少场景注册表就无法确定「该有哪些器材」，此项交教师确认（场景未注册，仅命中通用标注 1 项（单位））",
+      "说明": "缺少场景注册表就无法确定「该有哪些器材」，此项交教师确认（场景未注册，仅命中通用标注 0 项（无））",
       "建议": "在 registry.SCENES 里登记该场景及 required 清单，或先在知识库完成场景审核",
       "check_id": "J6-01",
       "status": "review",
       "expected": "按已审核场景注册表核对器材/标注/图例",
-      "actual": "场景未注册，仅命中通用标注 1 项（单位）",
+      "actual": "场景未注册，仅命中通用标注 0 项（无）",
       "evidence": ""
     },
     {
       "维度": "教学审核",
       "检查项": "实验性质标注",
       "级别": "一般",
-      "说明": "性质已写明，课标地位仍需教研确认（已标注「课标必做」）",
+      "说明": "性质已写明，课标地位仍需教研确认（已标注「教学演示」）",
       "建议": "",
       "check_id": "G5-04",
       "status": "review",
       "expected": "明确标注实验性质与来源（课标必做 / 常规实验 / 教学演示）",
-      "actual": "已标注「课标必做」",
+      "actual": "已标注「教学演示」",
       "evidence": ""
     },
     {
@@ -952,7 +1001,31 @@
       "evidence": ""
     }
   ],
-  "修改意见": "上一版质检未通过，请逐条修改（共 2 项）：\n1. [学科判据/J1-01] J1 代入式可复算：代入式的算术结果与显示值不符，学生会照着一个错数学习。应为：按公式独立重算后与显示值一致；实际：「2.00 g/cm³ × 10 N/kg × 100 cm³ = 2.00」显示 2，独立重算应为 2000（共 1 组不一致）。修改建议：把核心公式写成带数值的代入式：F浮 = ρ液 g V排 = 1000 kg/m³ × 10 N/kg × 0.0002 m³ = 2.00 N（g 取 10 N/kg，体积先换算成 m³；不要用 1.0×10³ 这类科学计数法写代入式）\n2. [学科判据/J1-02] J1 极值下仍自洽：参数变化后读数没有跟着重算，常见原因是只在初始化时算了一次。应为：参数取端点时代入式仍成立；实际：极值处 1 组不一致，例如「2.00 g/cm³ × 10 N/kg × 100 cm³ = 2.00」显示 2，应为 2000。修改建议：每次参数变化都走同一个 render()，读数、画布、代入式同源",
+  "修改意见": "上一版质检未通过，请逐条修改（共 5 项）：\n1. [结构与安全/G1-07] 引擎与场景白名单：不允许模型自由创造引擎名并执行。应为：引擎取自 25 类白名单，场景与已审核注册表对应；实际：场景「physics-buoyancy」未在 registry.SCENES 注册。修改建议：在 registry.ENGINES/SCENES 中登记该引擎与场景，并补充 required 与 facts 绑定\n2. [资源完整性/G2-07] 具备重置功能：重置没回到同一初始状态，两轮实验的数据不可比。应为：点重置后与首屏状态完全一致；实际：重置后状态与首屏不一致（机读数据差异=True，文本差异≈4 字）。修改建议：reset 里逐个恢复每个参数与状态变量，再调用 render()，不要只清记录表\n3. [学科判据/J8-01] J8 答案表比对：页面出现与教材事实相反的表述，属于科学性错误。应为：页面表述与已审核事实表一致；实际：[PHY-F-004] 出现错误表述「漂浮时浮力小于重力」（事实：F浮 = ρ液 g V排。浸没时 V排 等于物体体积；漂浮时 F浮 = G物。浮力大小与液体密度和排开液体体积有关。）。修改建议：对照 facts.json 的『禁止出现』逐条改写；不确定的现象宁可不写，也不要编造\n4. [学科判据/J3-16] 浮力与浮沉独立复算：页面求解结果及读数核对。应为：初始状态和真实控件变更后的结果、可见读数均与 Python 独立复算一致；实际：preset:partial 合法输入仍显示求解错误；preset:partial 缺少求解结果；preset:double_displacement 合法输入仍显示求解错误；preset:double_displacement 缺少求解结果；preset:double_volume 合法输入仍显示求解错误；preset:double_volume 缺少求解结果；preset:denser_liquid 合法输入仍显示求解错误；preset:denser_liquid 缺少求解结果；preset:slack 合法输入仍显示求解错误；preset:slack 缺少求解结果。修改建议：\n5. [浏览器测试/G4-32] 求解器页面变形测试：页面变形状态或学科关系未通过。应为：改变实际页面输入后，求解请求/结果随之更新，并可对变形状态独立复算；实际：缺少有效页面变形状态：浮力与浮沉（partial 未通过真实控件到达验收输入；double_displacement 未通过真实控件到达验收输入；double_volume 未通过真实控件到达验收输入）。修改建议：在浏览器实际改变求解控件；确保请求随控件更新、重算结果更新，并由独立参考实现复核变形状态",
   "动态验证": "已执行",
+  "变形测试": {
+    "checked": false,
+    "required": false,
+    "ok": true,
+    "api": "PHYS.solveBuoyancy",
+    "rows": [],
+    "pass": 0,
+    "fail": 0,
+    "skip": 0,
+    "kinds": {},
+    "coverage": {
+      "linearity": 0,
+      "inverse": 0,
+      "invariance": 0,
+      "conservation": 0,
+      "boundary": 0,
+      "formula": 0,
+      "readout": 0
+    },
+    "lesson_states": 14,
+    "chem_kinds": [],
+    "plan_id": "",
+    "coverage_note": "页面级关系 0 条（通过 0 / 失败 0 / 跳过 0）；课程模型采样 14 个状态；化学变形 0 类"
+  },
   "独立性说明": "J1–J8 由本文件独立重算，页面自报的 __DATA__.checks 只记为 review，不作为通过依据；J8 依赖 facts.json 中已通过教研复核的条目。"
 }

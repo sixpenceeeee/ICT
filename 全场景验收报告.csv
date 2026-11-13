@@ -1,0 +1,54 @@
+﻿页面,结论,总分,严重,发布状态,失败项,耗时秒
+化学-chemistry-redox-electron-bala,不通过,65.0,3,禁止发布,G2-05 关键控件数量；G2-07 具备重置功能；G2-09 首屏数据完整；J3-12 氧化还原配平与电子守恒；G4-01 页面可以打开,2.1
+化学-chemistry-galvanic,不通过,69.4,2,禁止发布,G1-07 引擎与场景白名单；J8-01 J8 答案表比对；G4-13 电路仿真与独立求解器对拍,5.7
+化学-chemistry-change-type,不通过,70.8,1,禁止发布,G1-07 引擎与场景白名单；G2-09 首屏数据完整；J3-11 沉淀反应与质量定量独立复算,5.7
+化学-chemistry-dilution,不通过,72.2,1,禁止发布,G1-07 引擎与场景白名单；J3-08 溶液混合换算与反应计量独立复算,5.9
+化学-chemistry-reaction-amounts,不通过,72.2,1,禁止发布,G1-07 引擎与场景白名单；J3-07 限量试剂与反应计量独立复算,5.9
+化学-chemistry-metal-activity,不通过,80.1,1,禁止发布,G1-07 引擎与场景白名单；J3-06 化学方程式独立配平；J6-01 J6 强制要素齐备,5.8
+物理-physics-reflection,不通过,86.5,1,禁止发布,G1-07 引擎与场景白名单；J8-01 J8 答案表比对,5.2
+化学-chemistry-crystal,不通过,97.2,1,禁止发布,G1-07 引擎与场景白名单,5.4
+化学-chemistry-isomer,不通过,97.2,1,禁止发布,G1-07 引擎与场景白名单,5.1
+化学-chemistry-mass-conservation,不通过,97.2,1,禁止发布,G1-07 引擎与场景白名单,5.9
+化学-chemistry-rate-equilibrium,不通过,97.2,1,禁止发布,G1-07 引擎与场景白名单,6.1
+化学-chemistry-solubility-curve,不通过,97.2,1,禁止发布,G1-07 引擎与场景白名单,6.0
+化学-chemistry-solubility-ksp,通过,100.0,0,待教师审核,,6.6
+数学-math-amgm,通过,100.0,0,待教师审核,,6.8
+数学-math-binomial,通过,100.0,0,待教师审核,,7.0
+数学-math-cavalieri,通过,100.0,0,待教师审核,,7.6
+数学-math-circle,通过,100.0,0,待教师审核,,6.7
+数学-math-cone-net-unfolding,通过,100.0,0,待教师审核,,5.8
+数学-math-cone-section,通过,100.0,0,待教师审核,,7.5
+数学-math-constructions,通过,100.0,0,待教师审核,,6.6
+数学-math-cube-net-folding,通过,100.0,0,待教师审核,,5.9
+数学-math-cuboid-net-folding,通过,100.0,0,待教师审核,,6.8
+数学-math-cuboid-section-3d,通过,100.0,0,待教师审核,,8.1
+数学-math-cylinder-net-unfolding,通过,100.0,0,待教师审核,,6.2
+数学-math-cylinder-section,通过,100.0,0,待教师审核,,8.5
+数学-math-derivative,通过,100.0,0,待教师审核,,8.2
+数学-math-dotProduct,通过,100.0,0,待教师审核,,8.2
+数学-math-ellipse,通过,100.0,0,待教师审核,,7.1
+数学-math-expLog,通过,100.0,0,待教师审核,,7.2
+数学-math-fractions,通过,100.0,0,待教师审核,,8.5
+数学-math-functionTransform,通过,100.0,0,待教师审核,,8.8
+数学-math-orthographic,通过,100.0,0,待教师审核,,8.4
+数学-math-polygonArea,通过,100.0,0,待教师审核,,7.5
+数学-math-reciprocal,通过,100.0,0,待教师审核,,6.6
+数学-math-regression,通过,100.0,0,待教师审核,,8.2
+数学-math-sampling,通过,100.0,0,待教师审核,,8.2
+数学-math-sequences,通过,100.0,0,待教师审核,,7.6
+数学-math-similarTriangles,通过,100.0,0,待教师审核,,7.4
+数学-math-solid-volume,通过,100.0,0,待教师审核,,8.5
+数学-math-spatial-metrics,通过,100.0,0,待教师审核,,10.9
+数学-math-sphere-section,通过,100.0,0,待教师审核,,7.0
+数学-math-sphereContact,通过,100.0,0,待教师审核,,7.2
+数学-math-square-pyramid-section-3,通过,100.0,0,待教师审核,,7.1
+数学-math-surfacePath,通过,100.0,0,待教师审核,,7.0
+数学-math-travel,通过,100.0,0,待教师审核,,7.5
+数学-math-triangular-prism-section,通过,100.0,0,待教师审核,,7.6
+物理-physics-horizontalForce,通过,100.0,0,待教师审核,,9.0
+物理-physics-mechanicalEnergy,通过,100.0,0,待教师审核,,8.7
+物理-physics-planeMirror,通过,100.0,0,待教师审核,,8.7
+物理-physics-pulleySystem,通过,100.0,0,待教师审核,,9.1
+物理-physics-refraction,通过,100.0,0,待教师审核,,7.5
+物理-physics-wavePropagation,通过,100.0,0,待教师审核,,8.3
+物理-physics-workPower,通过,100.0,0,待教师审核,,8.3

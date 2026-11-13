@@ -1,0 +1,32 @@
+{
+  "output": {
+    "学科": "化学",
+    "年级": "初中九年级",
+    "实验名称": "锌与盐酸制取氢气",
+    "实验主题": "锌与稀盐酸制取氢气并用排水法收集",
+    "学习目标": [
+      "根据化学计量关系计算氢气的生成量",
+      "理解排水集气时需要扣除水蒸气压"
+    ],
+    "reactants": [
+      {"formula": "Zn", "phase": "s"},
+      {"formula": "HCl", "phase": "aq"}
+    ],
+    "products": [
+      {"formula": "ZnCl2", "phase": "aq"},
+      {"formula": "H2", "phase": "g"}
+    ],
+    "initial_amounts_mol": [0.020, 0.050],
+    "progress": 1.0,
+    "gas_formula": "H2",
+    "temperature_c": 25,
+    "total_pressure_kpa": 101.325,
+    "collection_method": "over_water",
+    "交互要求": [
+      "调节锌和盐酸的物质的量、反应进度、温度、总压强和集气方式",
+      "显示方程式、限量试剂、氢气体积和水蒸气压修正",
+      "提供记录当前数据和重置按钮"
+    ]
+  },
+  "input": "生成一个锌与盐酸制取氢气并排水集气的教学页面"
+}

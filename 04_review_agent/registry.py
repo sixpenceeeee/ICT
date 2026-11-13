@@ -137,6 +137,82 @@ SCENES = {
         "name": "凸透镜成像规律", "subject": "物理", "engine": "ray_optics",
         "required": ["凸透镜", "光屏", "光具座"], "facts": ["PHY-F-005"],
     },
+    "plane_mirror": {
+        "name": "平面镜成像", "subject": "物理", "engine": "ray_optics",
+        "required": ["平面镜", "观察者", "反射光线"], "facts": ["PHY-F-003"],
+    },
+    "wave_propagation": {
+        "name": "波的传播与声速", "subject": "物理", "engine": "physics_general",
+        "required": ["声源", "波前", "探测器"], "facts": [],
+    },
+    "pulley_system": {
+        "name": "滑轮组", "subject": "物理", "engine": "mechanics",
+        "required": ["绳路", "定滑轮", "动滑轮", "载荷"], "facts": [],
+    },
+    "physics-density": {
+        "name": "密度测量", "subject": "物理", "engine": "measurement",
+        "required": ["天平", "砝码", "量筒"], "facts": [],
+    },
+    "physics-buoyancy": {
+        "name": "浮力与浮沉", "subject": "物理", "engine": "measurement",
+        "required": ["物块", "液面", "测力计"], "facts": ["PHY-F-004"],
+    },
+    "physics-lever": {
+        "name": "杠杆平衡", "subject": "物理", "engine": "mechanics",
+        "required": ["杠杆", "支点", "力臂"], "facts": [],
+    },
+    "physics-pressure": {
+        "name": "液体压强", "subject": "物理", "engine": "physics_general",
+        "required": ["液体", "深度", "压强"], "facts": [],
+    },
+    "physics-heat": {
+        "name": "比热容", "subject": "物理", "engine": "thermodynamics",
+        "required": ["温度", "热量", "比热容"], "facts": [],
+    },
+    "physics-motion": {
+        "name": "匀变速直线运动", "subject": "物理", "engine": "physics_general",
+        "required": ["速度", "加速度", "位移"], "facts": [],
+    },
+    "physics-projectile": {
+        "name": "平抛运动", "subject": "物理", "engine": "mechanics",
+        "required": ["平抛", "初速度", "高度"], "facts": [],
+    },
+    "physics-refraction": {
+        "name": "折射与全反射", "subject": "物理", "engine": "ray_optics",
+        "required": ["折射", "入射角", "全反射"], "facts": [],
+    },
+    "physics-horizontalForce": {
+        "name": "一维受力与摩擦", "subject": "物理", "engine": "mechanics",
+        "required": ["摩擦力", "物块", "外力"], "facts": [],
+    },
+    "physics-workPower": {
+        "name": "功与功率", "subject": "物理", "engine": "mechanics",
+        "required": ["功", "功率", "位移"], "facts": [],
+    },
+    "physics-mechanicalEnergy": {
+        "name": "机械能变化与守恒", "subject": "物理", "engine": "mechanics",
+        "required": ["机械能", "动能", "势能"], "facts": [],
+    },
+    "physics-inclinedPlane": {
+        "name": "斜面", "subject": "物理", "engine": "mechanics",
+        "required": ["斜面", "拉力", "效率"], "facts": [],
+    },
+    "physics-planeMirror": {
+        "name": "平面镜成像", "subject": "物理", "engine": "ray_optics",
+        "required": ["平面镜", "入射角", "反射角"], "facts": ["PHY-F-003"],
+    },
+    "physics-wavePropagation": {
+        "name": "波的传播与声速", "subject": "物理", "engine": "physics_general",
+        "required": ["声源", "波前", "探测器"], "facts": [],
+    },
+    "physics-pulleySystem": {
+        "name": "滑轮组", "subject": "物理", "engine": "mechanics",
+        "required": ["定滑轮", "动滑轮", "绳路"], "facts": [],
+    },
+    "physics-thin-lens": {
+        "name": "凸透镜成像", "subject": "物理", "engine": "ray_optics",
+        "required": ["凸透镜", "光屏", "光具座"], "facts": ["PHY-F-005"],
+    },
     "fe_cuso4": {
         "name": "铁与硫酸铜溶液的置换反应", "subject": "化学", "engine": "virtual_reaction",
         "required": ["烧杯", "铁", "硫酸铜"], "facts": ["CHE-F-001"],
@@ -144,6 +220,58 @@ SCENES = {
     "cu_hcl": {
         "name": "铜与稀盐酸", "subject": "化学", "engine": "virtual_reaction",
         "required": ["试管", "铜", "稀盐酸"], "facts": ["CHE-F-002"],
+    },
+    "chemistry-ph-indicator": {
+        "name": "酸碱指示剂与 pH", "subject": "化学", "engine": "lab_instrument",
+        "required": ["石蕊", "酚酞", "pH 试纸"], "facts": ["CHE-F-003"],
+    },
+    "chemistry-redox-electron-balance": {
+        "name": "氧化还原电子守恒", "subject": "化学", "engine": "virtual_reaction",
+        "required": ["氧化", "电子", "离子方程式"], "facts": [],
+    },
+    "chemistry-dilution": {
+        "name": "溶液稀释", "subject": "化学", "engine": "lab_instrument",
+        "required": ["溶液", "浓度", "稀释"], "facts": [],
+    },
+    "chemistry-mass-conservation": {
+        "name": "质量守恒定律", "subject": "化学", "engine": "lab_instrument",
+        "required": ["质量守恒", "逸出气体", "碳酸钙"], "facts": [],
+    },
+    "chemistry-reaction-amounts": {
+        "name": "化学计量与气体摩尔体积", "subject": "化学", "engine": "chemistry_chart",
+        "required": ["物质的量", "气体", "方程式"], "facts": [],
+    },
+    "chemistry-solubility-curve": {
+        "name": "溶解度曲线", "subject": "化学", "engine": "chemistry_chart",
+        "required": ["溶解度", "温度", "曲线"], "facts": [],
+    },
+    "chemistry-rate-equilibrium": {
+        "name": "反应速率与平衡", "subject": "化学", "engine": "chemistry_chart",
+        "required": ["速率", "平衡", "浓度"], "facts": [],
+    },
+    "chemistry-metal-activity": {
+        "name": "金属活动性", "subject": "化学", "engine": "virtual_reaction",
+        "required": ["金属", "活动性", "盐溶液"], "facts": [],
+    },
+    "chemistry-change-type": {
+        "name": "物质变化类型", "subject": "化学", "engine": "virtual_reaction",
+        "required": ["物理变化", "化学变化", "新物质"], "facts": [],
+    },
+    "chemistry-galvanic": {
+        "name": "原电池", "subject": "化学", "engine": "virtual_reaction",
+        "required": ["电极", "电子", "原电池"], "facts": [],
+    },
+    "chemistry-isomer": {
+        "name": "同分异构体", "subject": "化学", "engine": "molecular_model",
+        "required": ["同分异构体", "分子式", "结构"], "facts": [],
+    },
+    "chemistry-crystal": {
+        "name": "晶体结构", "subject": "化学", "engine": "molecular_model",
+        "required": ["晶胞", "配位", "粒子"], "facts": [],
+    },
+    "physics-reflection": {
+        "name": "光的反射定律", "subject": "物理", "engine": "ray_optics",
+        "required": ["入射光线", "反射光线", "法线"], "facts": [],
     },
     "micro_cell": {
         "name": "显微镜观察植物细胞", "subject": "生物", "engine": "microscope_cell",
