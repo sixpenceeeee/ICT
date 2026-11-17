@@ -104,6 +104,7 @@ from facts_store import (check_page_facts, load_facts as load_registry_facts,
                          load_scene_fact_map, load_sources)  # noqa: E402
 from teaching_contract import compile_contract, vessel_geometry, GRAVITY, WATER_DENSITY  # noqa: E402
 import teaching_evolution  # noqa: E402
+import optics_boundary  # noqa: E402
 
 PHYSICS_MODELS = generator_scene_registry.PHYSICS_MODELS
 MATH_MODELS = generator_scene_registry.MATH_MODELS
@@ -2272,7 +2273,57 @@ def teaching_checks(contract, points, br, failed_cases, verified_points):
     )]
 
 
-def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, verbose=True, *, probe_ml=()):
+def interaction_boundaries(api):
+    """Reuse the scientific model's declared cases as anchors for browser sampling."""
+    lesson = LESSON_SOLVERS.get(api)
+    model = PRESET_LESSON_MODELS.get(lesson[0], {}) if lesson else {}
+    anchors = {}
+    for case in model.get("cases", {}).values():
+        for field, value in case.items():
+            if type(value) in (float, int):
+                anchors.setdefault(field, []).append(value)
+    return anchors
+
+
+def assess_interactions(trace, lesson):
+    samples = trace.get("samples", [])
+    for sample in samples:
+        observed = sample.get("observed")
+        if not lesson or not observed:
+            continue
+        _, _, _, _, solve, fields = lesson
+        request = observed["request"]
+        field = sample.get("field")
+        if not isinstance(request, dict) or field not in request or sample["type"] == "checkbox":
+            # Existing solver gates report pages missing their published interface.
+            continue
+        value = sample["value"]
+        if sample["type"] in ("number", "range"):
+            value = float(value) * sample["scale"]
+        if not lesson_value_matches(value, request[field]):
+            sample["errors"].append("控件值未传入学科求解请求")
+            continue
+        try:
+            expected = solve(request)
+        except ValueError:
+            # Some reachable inputs (e.g. a = 0) are deliberately rejected.
+            if not observed["error"]:
+                sample["errors"].append("无效学科参数未显示拦截提示")
+            continue
+        if observed["error"]:
+            sample["errors"].append("合法学科输入触发求解错误")
+        for field in fields:
+            if not lesson_value_matches(expected[field], lesson_result_field(observed, field)):
+                sample["errors"].append(f"学科求解 {field} 与独立复算不符")
+    return samples
+
+
+def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, verbose=True, *,
+               probe_ml=(), optics_mode="active", interaction_mode="active"):
+    if interaction_mode not in {"baseline", "active", "deep"}:
+        raise ValueError("无效的交互边界采样模式。")
+    if optics_mode not in {"baseline", "active", "deep"}:
+        raise ValueError("无效的光学边界采样模式。")
     with open(html_path, "r", encoding="utf-8") as f:
         html = f.read()
     low = html.lower()
@@ -2326,8 +2377,29 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
         memory["points"] = sorted(set(memory["points"]) | {value / maximum for value in probe_ml})
     browser_plan = ({"teaching": dict(contract, points=memory["points"])}
                     if contract else None)
-    if contract:
-        browser_plan["recordClicks"] = 3 if memory["status"] == "new" else 5
+    scene_key = preliminary_api or f"{subject}:{title}"
+    record_contract = {"component": "append-record-row", "scene": scene_key}
+    record_memory = teaching_evolution.plan(record_contract) if use_browser else None
+    if record_memory is not None:
+        browser_plan = dict(browser_plan or {}, recordClicks=3 if record_memory["status"] == "new" else 5)
+    interaction_scope = teaching_evolution.contract_id({"rule": "interaction-v1", "scene": scene_key})
+    interaction_memory = None
+    interaction_lesson = LESSON_SOLVERS.get(preliminary_api)
+    if use_browser and interaction_mode != "baseline":
+        interaction_memory = teaching_evolution.interaction_memory(interaction_scope)
+        browser_plan = dict(browser_plan or {}, interactions={
+            "mode": interaction_mode, "cases": interaction_memory["cases"],
+            "prefix": interaction_lesson[1] if interaction_lesson else None,
+            "boundaries": interaction_boundaries(preliminary_api)})
+    optics_memory = None
+    optics_page = bool(re.search(r"""<input\b[^>]*\bdata-optics-control=["']u["']""", visible, re.I))
+    thin_lens_page = preliminary_api == "PHYS.solveThinLens" and bool(
+        re.search(r"""<input\b[^>]*\bdata-solver-input=["']u["']""", visible, re.I))
+    if use_browser and (optics_page or thin_lens_page):
+        optics_memory = {"cases": []} if optics_mode == "baseline" else teaching_evolution.optics_boundary_memory()
+        browser_plan = dict(browser_plan or {}, opticsBoundaries={
+            "mode": optics_mode, "cases": optics_memory["cases"],
+            "interface": "optics" if optics_page else "thin-lens"})
     br, reason = (None, "未启用")
     if use_browser:
         br, reason = dynamic_checks(html_path, browser_plan)
@@ -2530,6 +2602,8 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
         subject = scene.get("subject", "")
 
     expected_solver_api = expected_solver_api_for_page(content, subject, cfg, scene, title)
+    if optics_page:
+        expected_solver_api = "OPTICS.solve"
     if br is not None:
         br["solverMetamorphicCheck"] = verify_solver_page_metamorphic(br, expected_solver_api)
 
@@ -2582,6 +2656,23 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
     checks += gate3_subject(ctx, subject)
     checks += gate3_facts(facts_result)
     checks += lesson_solver_checks(br, expected_solver_api)
+    optics_report = None
+    if optics_memory is not None and br is not None:
+        optics_report, optics_failed, optics_verified = optics_boundary.assess(br.get("opticsBoundaries") or {})
+        rows = optics_report["采样"]
+        errors = [f'u={row["u"]:g} cm：' + "、".join(row["errors"]) for row in rows if row["errors"]]
+        missing = optics_report["未覆盖"]
+        missing_required = any(point["source"] != "迁移" and point["label"] != "原有检查点" for point in missing)
+        optics_status = "fail" if errors or not rows else "review" if missing_required or optics_memory.get("storage_error") else "pass"
+        actual = "；".join(errors[:8]) if errors else f"已测 {len(rows)} 点，未覆盖 {len(missing)} 点"
+        if not rows:
+            actual = "缺少凸透镜页面的有效控件或求解快照"
+        if optics_memory.get("storage_error"):
+            actual += "；历史反例读取失败"
+        checks.append(mk("G3", optics_boundary.RULE, "凸透镜焦距边界复算", optics_status,
+                         "真实控件输入、成像性质和屏幕读数与独立复算一致",
+                         actual, "学科边界主动采样及历史反例重放",
+                         severity=CRITICAL, weight=3, judge="J3"))
     if verbose:
         print("[4/5] 第4关 浏览器测试")
     checks += gate4_browser(br, reason, text)
@@ -2593,6 +2684,18 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
     contract_checks = (teaching_checks(contract, memory["points"], br, failed_cases, verified_points)
                        if contract else [])
     checks += contract_checks
+    interaction_trace = (br or {}).get("interactions")
+    interaction_samples = assess_interactions(interaction_trace, interaction_lesson) if interaction_trace else []
+    if interaction_trace is not None:
+        interaction_errors = [f'{row["name"]}={row["value"]}：' + "、".join(row["errors"])
+                              for row in interaction_samples if row["errors"]]
+        incomplete = interaction_trace.get("error") or interaction_memory.get("storage_error")
+        status = "fail" if interaction_errors else "review" if incomplete else "pass" if interaction_samples else "skip"
+        actual = "；".join(interaction_errors[:8]) if interaction_errors else (
+            incomplete or (f"实测 {len(interaction_samples)} 个输入状态" if interaction_samples else "无符合条件的可见实验控件"))
+        checks.append(mk("G4", "G4-EVOLUTION", "通用控件边界和学科回归", status,
+                         "操作合法输入无脚本异常，已注册的学科结果与独立求解一致",
+                         actual, "跨学科浏览器采样与历史反例复测", severity=CRITICAL, weight=2))
     record_trace = ((br or {}).get("records") or {}).get("regression")
     record_ok = bool(record_trace) and record_trace.get("deltas") == [1] * ((browser_plan or {}).get("recordClicks", 0))
     if record_trace is not None:
@@ -2668,13 +2771,28 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
             verdict == "通过" and bool(contract_checks),
             failed_cases=failed_cases, verified_points=verified_points)
             if br is not None else memory)
+    if optics_report is not None:
+        optics_report["模式"] = optics_mode
+        optics_report["记忆"] = (teaching_evolution.observe_optics_boundaries(
+            optics_memory, html, optics_report["焦距"], optics_failed, optics_verified,
+            optics_status == "pass" and not br.get("errors"))
+            if optics_mode != "baseline" and not br.get("errors") else optics_memory)
+        report["凸透镜边界回归"] = optics_report
+    if interaction_memory is not None:
+        report["实验自进化"] = {
+            "场景": scene_key, "模式": interaction_mode, "学科求解接口": interaction_lesson[0] if interaction_lesson else None,
+            "浏览器": interaction_trace if interaction_trace is not None else {
+                "error": reason or (br or {}).get("fatal") or "浏览器未返回补测证据"},
+            "记忆": teaching_evolution.observe_interactions(
+                interaction_scope, interaction_memory, html, interaction_samples,
+                can_confirm=bool(br and br.get("ok") and not br.get("errors")))
+                if interaction_samples else interaction_memory,
+        }
     if record_trace is not None:
-        record_contract = {"component": "append-record-row", "scene": preliminary_api}
-        record_memory = teaching_evolution.plan(record_contract)
         report["通用组件回归"] = dict(teaching_evolution.observe(
             record_contract, record_memory, html, [] if record_ok else ["G4-42"],
             record_ok and verdict == "通过"), component="逐次记录追加",
-            scene=preliminary_api, clicks=(browser_plan or {}).get("recordClicks", 0),
+            scene=scene_key, clicks=(browser_plan or {}).get("recordClicks", 0),
             deltas=record_trace.get("deltas", []))
     return report
 
@@ -2703,7 +2821,8 @@ def dynamic_checks(html_path, plan=None):
         command = [node, CHECK_JS, html_path] + ([plan_path] if plan_path else [])
         try:
             proc = subprocess.run(command, capture_output=True, text=True, encoding="utf-8",
-                                  timeout=240, env=env)
+                                  timeout=240, env=env,
+                                  creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
         except subprocess.TimeoutExpired:
             return None, "浏览器检查超时"
     finally:
@@ -2767,6 +2886,10 @@ def main():
     parser.add_argument("--facts", default=FACTS_PATH, help="事实表路径（默认 facts.json）")
     parser.add_argument("--quiet", action="store_true", help="只输出修改意见（给生成 Agent 用）")
     parser.add_argument("--no-browser", action="store_true", help="跳过第4关（离线/调试用）")
+    parser.add_argument("--optics-boundaries", choices=("active", "deep"), default="active",
+                        help="凸透镜焦距边界复算，deep 补测两侧第二个刻度")
+    parser.add_argument("--interaction-probes", choices=("active", "deep"), default="active",
+                        help="通用控件边界补测，deep 同时扩大区间内部采样")
     args = parser.parse_args()
 
     html_path = args.html
@@ -2777,7 +2900,8 @@ def main():
         html_path = max(files, key=os.path.getmtime)
 
     report = run_review(html_path, args.req, args.facts,
-                        use_browser=not args.no_browser, verbose=not args.quiet)
+                        use_browser=not args.no_browser, verbose=not args.quiet,
+                        optics_mode=args.optics_boundaries, interaction_mode=args.interaction_probes)
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     name = os.path.splitext(os.path.basename(html_path))[0]

@@ -478,7 +478,7 @@ UI_GUARD_JS = r'''(function () {
       if (!wrap) {
         wrap = document.createElement('span');
         wrap.className = 'exp-control-pair';
-        parent.insertBefore(wrap, number || range);
+        parent.insertBefore(wrap, number.parentNode === parent ? number : range);
       }
       wrap.appendChild(number);
       wrap.appendChild(range);
@@ -500,7 +500,8 @@ UI_GUARD_JS = r'''(function () {
       pair(parent, number, range);
     });
     ranges.forEach(function (range) {
-      if (range.getAttribute('data-solver-range-for') || range.getAttribute('data-pf-generated-range')) return;
+      if (range.hasAttribute('data-optics-control') || range.getAttribute('data-solver-range-for')
+          || range.getAttribute('data-pf-generated-range')) return;
       var parent = range.parentElement;
       if (!parent || parent.querySelector('select')) return;
       var base = (range.id || '数值').replace(/-(range|slider)$/, '');
