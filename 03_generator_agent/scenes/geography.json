@@ -1,0 +1,337 @@
+{
+  "geography-coordinate": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "经纬网|经纬度|纬线|经线|地理坐标|半球",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "经纬网",
+      "定位点",
+      "经纬度读数",
+      "半球标签"
+    ],
+    "visual_type": "map",
+    "layout": "可缩放经纬网 + 定位点 + 坐标读数 + 南北/东西半球结果。",
+    "controls": "纬度、经度和网格密度同步更新点位和读数，明确方向或正负号约定。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-coordinate",
+      "layer": "rule",
+      "contract_id": "rule.geography-coordinate.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-scale-distance": {
+    "subject": "地理",
+    "mode": "计算型",
+    "solver": "solveScaleDistance",
+    "solver_api": "GEOSOLVER.solveScaleDistance",
+    "patterns": "比例尺|图上距离|实际距离|线段比例尺|地图测距",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "地图底图",
+      "测距线",
+      "比例尺",
+      "距离结果"
+    ],
+    "visual_type": "diagram",
+    "layout": "地图底图 + 可拖动测距线 + 数字/线段比例尺 + 单位换算结果。",
+    "controls": "比例尺、图上距离和单位切换共同驱动实际距离；结果区显示换算过程。",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "geography-scale-distance",
+      "layer": "numeric",
+      "contract_id": "numeric.geography-scale-distance.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    }
+  },
+  "geography-map-orientation": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "地图方向|指向标|图例|方位|地图阅读|图层",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "指向标",
+      "图例",
+      "参照点",
+      "方向箭头"
+    ],
+    "visual_type": "map",
+    "layout": "可旋转地图 + 指向标 + 图例面板 + 起终点方向结果。",
+    "controls": "地图旋转后方向角随北向更新；图层开关只影响对应图例和对象。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-map-orientation",
+      "layer": "rule",
+      "contract_id": "rule.geography-map-orientation.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-plate-earthquake": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "板块运动|地震|火山|碰撞|张裂|俯冲|板块边界",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "板块边界",
+      "运动箭头",
+      "边界类型",
+      "位移结果"
+    ],
+    "visual_type": "diagram",
+    "layout": "板块拼图 + 相对运动箭头 + 边界类型切换 + 位移/地貌示意。",
+    "controls": "速度、方向和时间只影响线性教学模型，不生成地震预测结论。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-plate-earthquake",
+      "layer": "rule",
+      "contract_id": "rule.geography-plate-earthquake.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-water-cycle": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "水循环|蒸发|降水|径流|下渗|水汽输送|水量平衡",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "水循环箭头",
+      "阶段标签",
+      "降水量",
+      "径流/储量"
+    ],
+    "visual_type": "diagram",
+    "layout": "海陆水循环过程图 + 阶段动画 + 水量平衡结果卡。",
+    "controls": "降水、蒸散、径流和下渗共享同一水量状态，显示边界与单位。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-water-cycle",
+      "layer": "rule",
+      "contract_id": "rule.geography-water-cycle.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-river-basin": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "河流地貌|流域|分水岭|上游|中游|下游|河流比降",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "河网",
+      "流域边界",
+      "分水岭",
+      "剖面/比降"
+    ],
+    "visual_type": "map",
+    "layout": "等高线/河网地图 + 流域边界 + 河流剖面 + 比降结果。",
+    "controls": "河段端点、高程和长度驱动同一剖面与结果；不把比降当作流速。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-river-basin",
+      "layer": "rule",
+      "contract_id": "rule.geography-river-basin.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-climate-reading": {
+    "subject": "地理",
+    "mode": "计算型",
+    "solver": "solveClimate",
+    "solver_api": "GEOSOLVER.solveClimate",
+    "patterns": "世界气候|气候判读|气温曲线|降水柱状图|最冷月|年较差|雨热同期",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "气温曲线",
+      "降水柱状图",
+      "月份",
+      "年较差/年降水量"
+    ],
+    "visual_type": "graph",
+    "layout": "气温曲线与降水柱状图双轴展示 + 判读步骤 + 统计结果卡。",
+    "controls": "地点或月份数据切换后同步更新图表、统计量和气候解释。",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "geography-climate-reading",
+      "layer": "numeric",
+      "contract_id": "numeric.geography-climate-reading.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    }
+  },
+  "geography-population-resources": {
+    "subject": "地理",
+    "mode": "计算型",
+    "solver": "solvePopulationDensity",
+    "solver_api": "GEOSOLVER.solvePopulationDensity",
+    "patterns": "人口密度|人口增长率|资源统计|人地关系|承载力|人口分布",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "分区地图",
+      "人口/面积",
+      "统计图",
+      "单位和年份"
+    ],
+    "visual_type": "diagram",
+    "layout": "分区地图 + 柱状/折线统计图 + 人口密度结果卡；不做价值判断。",
+    "controls": "人口、面积和年份控件同步更新密度与增长率，显示单位和时间窗口。",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "geography-population-resources",
+      "layer": "numeric",
+      "contract_id": "numeric.geography-population-resources.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    }
+  }
+}

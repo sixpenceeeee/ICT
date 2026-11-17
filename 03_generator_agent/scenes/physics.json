@@ -1,0 +1,238 @@
+{
+  "physics-optics-3d": {
+    "subject": "物理",
+    "patterns": "凸透镜|透镜成像|光具座|物距|像距|放大率",
+    "components": ["experiment_stage", "parameter_controls", "result_cards", "records_table", "csv_export"],
+    "required": ["3D光具座", "像距", "放大率", "成像性质"],
+    "visual_type": "apparatus",
+    "mode": "计算型",
+    "api": "OPTICS3D.mount",
+    "solver_api": "OPTICS.solve",
+    "component_engine": "optics3d",
+    "component_api": "OPTICS3D.mount",
+    "solver_layer": "law"
+  },
+  "physics-thin-lens": {
+    "subject": "物理",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "光具座",
+      "物距",
+      "像距",
+      "成像状态"
+    ],
+    "visual_type": "apparatus",
+    "api": "PHYS.optics",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "physics-thin-lens",
+      "layer": "numeric",
+      "contract_id": "numeric.physics-thin-lens.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "PHYS.solveThinLens"
+  },
+  "physics-optics-bench": {
+    "subject": "物理",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "光具座",
+      "光路",
+      "读数"
+    ],
+    "visual_type": "apparatus",
+    "solver_layer": "law",
+    "law_contract": {
+      "scene_id": "physics-optics-bench",
+      "layer": "law",
+      "contract_id": "physics.optics.refraction.v1",
+      "equations": [
+        "theta_i = theta_r",
+        "n1*sin(theta1) = n2*sin(theta2)"
+      ],
+      "constraints": [
+        "0 <= theta_i < 90",
+        "n1 > 0",
+        "n2 > 0",
+        "sin(theta2) <= 1 or total_internal_reflection"
+      ],
+      "evidence": [
+        "reflection_angle_deg",
+        "refraction_angle_deg",
+        "snell_residual",
+        "total_internal_reflection"
+      ],
+      "tolerance": {
+        "angle_deg": 1e-09,
+        "residual": 1e-10
+      },
+      "oracle": "solve_optics",
+      "reference_inputs": {}
+    }
+  },
+  "physics-circuit-lab": {
+    "subject": "物理",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "电路图",
+      "电压",
+      "电流",
+      "电阻"
+    ],
+    "visual_type": "apparatus",
+    "api": "CIRCUIT_PAGE.mount",
+    "component_engine": "circuit_page",
+    "component_api": "CIRCUIT_PAGE.mount",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "physics-circuit-lab",
+      "layer": "numeric",
+      "contract_id": "numeric.physics-circuit-lab.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "CIRCUIT.solve"
+  },
+  "physics-planeMirror": {
+    "subject": "物理",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "平面镜",
+      "入射角",
+      "反射角",
+      "光路"
+    ],
+    "visual_type": "apparatus",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "physics-planeMirror",
+      "layer": "numeric",
+      "contract_id": "numeric.physics-planeMirror.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "PHYS.solvePlaneMirror"
+  },
+  "physics-wavePropagation": {
+    "subject": "物理",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "波形",
+      "频率",
+      "波长",
+      "波速"
+    ],
+    "visual_type": "graph",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "physics-wavePropagation",
+      "layer": "numeric",
+      "contract_id": "numeric.physics-wavePropagation.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "PHYS.solveWavePropagation"
+  },
+  "physics-pulleySystem": {
+    "subject": "物理",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "滑轮组绳路",
+      "承重绳段数",
+      "拉力",
+      "机械效率"
+    ],
+    "visual_type": "apparatus",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "physics-pulleySystem",
+      "layer": "numeric",
+      "contract_id": "numeric.physics-pulleySystem.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "PHYS.solvePulleySystem"
+  }
+}

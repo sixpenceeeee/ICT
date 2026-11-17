@@ -1,21 +1,69 @@
 {
   "实验主题": "凸透镜成像",
   "生成信息": {
-    "来源": "大模型",
-    "模型": "deepseek-chat",
-    "是否修复过": true,
+    "来源": "统一场景配置与组件渲染",
+    "模型": "未调用（配置、组件与确定性求解器）",
+    "是否修复过": false,
     "续写次数": 0,
     "问题": [],
+    "模型输出问题": [],
+    "生成契约通过": true,
+    "生成尝试": [
+      {
+        "来源": "统一场景渲染",
+        "问题数": 0,
+        "问题": []
+      }
+    ],
     "外壳校验": [],
     "页面骨架": {
-      "id": "physics-optics-bench",
+      "id": "physics-optics-3d",
       "画布类型": "apparatus",
-      "场景库API": "PHYS.optics"
+      "场景库API": "OPTICS3D.mount",
+      "学科求解器": "OPTICS.solve"
     },
-    "耗时秒": 34.51
+    "场景配置": {
+      "scene_id": "physics-optics-3d",
+      "学科": "物理",
+      "求解器": "",
+      "组件": [
+        "experiment_stage",
+        "parameter_controls",
+        "result_cards",
+        "records_table",
+        "csv_export"
+      ],
+      "必需元素": [
+        "3D光具座",
+        "像距",
+        "放大率",
+        "成像性质"
+      ],
+      "绘图类型": "apparatus",
+      "模式": "计算型"
+    },
+    "求解器分层": {
+      "scene_id": "physics-optics-3d",
+      "layer": "rule",
+      "contract_id": "rule.physics-optics-3d.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    },
+    "耗时秒": 0.0
   },
-  "字符数": 82867,
-  "内容字符数": 8041,
+  "字符数": 1343675,
+  "内容字符数": 3794,
   "文件": "教学资源_凸透镜成像.html",
-  "压缩包": "教学资源_凸透镜成像.zip"
+  "压缩包": "凸透镜成像.zip"
 }

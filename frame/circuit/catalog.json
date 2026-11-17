@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "title": "初中直流电路实物器材库 · 第一阶段",
+  "capabilities": {
+    "fixed_experiments": true,
+    "live_parameter_changes": true,
+    "switching": true,
+    "free_wiring": false,
+    "analysis": "线性稳态直流；一个理想直流电源；电阻、完整滑动变阻器轨道、理想仪表与开关"
+  },
+  "components": [
+    {
+      "type": "power_supply",
+      "name": "直流电源",
+      "ports": ["positive", "negative"],
+      "parameters": { "voltage": { "unit": "V", "default": 6, "minimum": 0, "maximum": 12 } },
+      "source": "本项目自绘教学器材，理想直流电压源模型；非 CircuitJS 素材"
+    },
+    {
+      "type": "ammeter",
+      "name": "电流表",
+      "ports": ["positive", "negative"],
+      "parameters": { "range": { "unit": "A", "default": 0.6, "exclusiveMinimum": 0, "suggested": [0.6, 3] } },
+      "source": "本项目自绘教学器材，零内阻理想电流表；以 MNA 的零电压源测支路电流"
+    },
+    {
+      "type": "voltmeter",
+      "name": "电压表",
+      "ports": ["positive", "negative"],
+      "parameters": { "range": { "unit": "V", "default": 15, "exclusiveMinimum": 0, "suggested": [3, 15] } },
+      "source": "本项目自绘教学器材，无限内阻理想电压表；只读端点电势差，不加载支路"
+    },
+    {
+      "type": "resistor",
+      "name": "定值电阻",
+      "ports": ["a", "b"],
+      "parameters": { "resistance": { "unit": "Ω", "default": 10, "exclusiveMinimum": 0 } },
+      "source": "本项目自绘教学器材，线性欧姆电阻模型"
+    },
+    {
+      "type": "rheostat",
+      "name": "滑动变阻器",
+      "ports": ["a", "slider", "b"],
+      "parameters": {
+        "maxResistance": { "unit": "Ω", "default": 50, "exclusiveMinimum": 0 },
+        "position": { "unit": "比例", "default": 0.2, "minimum": 0, "maximum": 1 }
+      },
+      "model": "a→slider 为 maxResistance×position；slider→b 为剩余轨道。固定实验只接 a 与 slider，b 可以不接。",
+      "source": "本项目自绘教学器材，三端分段电阻模型；滑片端点通过零电压支路求解"
+    },
+    {
+      "type": "switch",
+      "name": "单刀开关",
+      "ports": ["a", "b"],
+      "parameters": { "closed": { "type": "boolean", "default": true } },
+      "source": "本项目自绘教学器材，闭合时合并节点，断开时无限电阻"
+    }
+  ],
+  "recipes": [
+    { "id": "ohm", "name": "欧姆定律", "apparatus": ["V1", "A1", "M1", "R1", "S1"], "measurement": "A1 测回路电流，M1 测 R1 两端电压" },
+    { "id": "resistance", "name": "伏安法测电阻", "apparatus": ["V1", "A1", "M1", "R1", "S1", "RH1"], "measurement": "RH1 串联调流；M1 测 R1，闭合时 R1=U/I" },
+    { "id": "series", "name": "串联电路", "apparatus": ["V1", "A1", "M1", "R1", "S1", "R2"], "measurement": "A1 测总电流，M1 测 R1；R2 分压由同一求解结果给出" },
+    { "id": "parallel", "name": "并联电路", "apparatus": ["V1", "A1", "M1", "R1", "S1", "R2"], "defaults": { "ammeterRange": 3 }, "measurement": "A1 测干路总电流，默认 3 A 量程；M1 测 R1（也等于并联支路电压）" }
+  ],
+  "provenance": {
+    "apparatus": "本项目 SVG 教具；电池金属渐变适配本地 scenery-phet/BatteryNode，导线曲线适配 WireNode，保留 MIT 许可。指针表盘、电源面板、电阻、滑变与开关为项目新增；没有嵌入完整 PhET 电路包。",
+    "solver": "电阻/电压源 MNA 盖章和部分主元消元改编自 code/eduforge/tools/labkit/circuit/core.mjs；本项目增加端口、并查集、理想仪表、变阻器、拓扑校验与固定实验。",
+    "historical_reference": "source/library/circuit-lab-evidence.json 是 2026-10-19 CircuitJS1 历史交叉验证证据；本模块未在当前轮调用 CircuitJS1，当前验证见 core.test.js。",
+    "runtime": "纯浏览器 JavaScript；不加载 CircuitJS、npm 包或远程引擎。"
+  }
+}

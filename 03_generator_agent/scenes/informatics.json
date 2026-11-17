@@ -1,0 +1,337 @@
+{
+  "informatics-binary-representation": {
+    "subject": "信息科技",
+    "mode": "计算型",
+    "solver": "solveBinary",
+    "solver_api": "CSSOLVER.solveBinary",
+    "patterns": "信息表示|二进制|位|字节|进制转换|编码",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "位权方格",
+      "位串",
+      "进制结果",
+      "字节说明"
+    ],
+    "visual_type": "process",
+    "layout": "位权方格 + 二进制/十进制互转 + 位/字节结果卡。",
+    "controls": "位串长度、位值和进制切换必须同步更新位权与结果。",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "informatics-binary-representation",
+      "layer": "numeric",
+      "contract_id": "numeric.informatics-binary-representation.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-flow-control": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "流程图|分支|循环|条件|算法步骤|伪代码",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "流程节点",
+      "当前状态",
+      "执行次数",
+      "输出"
+    ],
+    "visual_type": "process",
+    "layout": "流程图节点 + 单步/播放/暂停/重置 + 变量与输出面板。",
+    "controls": "每次状态变化都必须沿参考流程移动，并支持回退或重置。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-flow-control",
+      "layer": "rule",
+      "contract_id": "rule.informatics-flow-control.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-list-array": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "列表|数组|索引|遍历|插入|删除|越界",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "元素卡片",
+      "索引标尺",
+      "操作结果",
+      "越界提示"
+    ],
+    "visual_type": "process",
+    "layout": "列表卡片 + 索引标尺 + 插入/删除/查找过程 + 长度结果。",
+    "controls": "明确索引从 0 或 1 开始；越界必须显示错误状态而不是伪造值。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-list-array",
+      "layer": "rule",
+      "contract_id": "rule.informatics-list-array.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-variables-sequence": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "变量|赋值|顺序结构|表达式|状态|调试",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "代码/伪代码",
+      "当前行",
+      "变量表",
+      "输出"
+    ],
+    "visual_type": "process",
+    "layout": "语句列表 + 当前行高亮 + 变量表 + 执行前后状态对比。",
+    "controls": "初始值、语句顺序和单步执行驱动同一变量状态，提供重置。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-variables-sequence",
+      "layer": "rule",
+      "contract_id": "rule.informatics-variables-sequence.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-network-transfer": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "网络数据传输|数据包|协议|延迟|带宽|吞吐量|路由",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "网络节点",
+      "数据包",
+      "路由",
+      "延迟/吞吐量"
+    ],
+    "visual_type": "network",
+    "layout": "节点拓扑 + 数据包动画 + 路由高亮 + 延迟/丢包统计。",
+    "controls": "链路带宽、延迟和丢包率只作用于虚拟拓扑，不连接外部网络。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-network-transfer",
+      "layer": "rule",
+      "contract_id": "rule.informatics-network-transfer.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-security-password": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "信息安全|密码|认证|隐私|钓鱼|多因素认证|最小权限",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "虚构口令",
+      "强度提示",
+      "认证流程",
+      "安全边界"
+    ],
+    "visual_type": "process",
+    "layout": "虚构密码强度示意 + 多因素认证流程 + 风险提示卡；禁止输入真实凭据。",
+    "controls": "长度、字符集和认证方式只影响教学提示，不进行真实破解。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-security-password",
+      "layer": "rule",
+      "contract_id": "rule.informatics-security-password.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-data-visualization": {
+    "subject": "信息科技",
+    "mode": "计算型",
+    "solver": "solveStatistics",
+    "solver_api": "CSSOLVER.solveStatistics",
+    "patterns": "数据可视化|数据表|柱状图|折线图|平均数|中位数|异常值",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "数据表",
+      "图表",
+      "平均数/中位数",
+      "坐标单位"
+    ],
+    "visual_type": "graph",
+    "layout": "数据表 + 柱状/折线/散点图切换 + 统计量与异常值提示。",
+    "controls": "图表类型、坐标范围和数据集切换必须与表格和统计结果同步。",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "informatics-data-visualization",
+      "layer": "numeric",
+      "contract_id": "numeric.informatics-data-visualization.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-sensor-control": {
+    "subject": "信息科技",
+    "mode": "计算型",
+    "solver": "solveSensor",
+    "solver_api": "CSSOLVER.solveSensor",
+    "patterns": "传感器|机器人控制|阈值|反馈|采样|执行器|智能系统",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "传感器读数",
+      "阈值",
+      "执行器状态",
+      "反馈曲线"
+    ],
+    "visual_type": "process",
+    "layout": "虚拟环境 + 传感器读数 + 阈值控制 + 执行器状态与反馈曲线。",
+    "controls": "采样周期、阈值和噪声驱动虚拟设备，不连接真实硬件。",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "informatics-sensor-control",
+      "layer": "numeric",
+      "contract_id": "numeric.informatics-sensor-control.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    }
+  }
+}

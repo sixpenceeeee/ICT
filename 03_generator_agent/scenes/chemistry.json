@@ -1,0 +1,390 @@
+{
+  "chemistry-solubility-ksp": {
+    "subject": "化学",
+    "solver": "solveSolubilityEquilibrium",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "particle_diagram",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "化学方程式",
+      "离子电荷",
+      "Q 值",
+      "溶液状态",
+      "粒子示意图"
+    ],
+    "visual_type": "particle",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "chemistry-solubility-ksp",
+      "layer": "numeric",
+      "contract_id": "numeric.chemistry-solubility-ksp.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "CHEMSOLVER.solveSolubilityEquilibrium"
+  },
+  "chemistry-redox-electron-balance": {
+    "subject": "化学",
+    "solver": "solveRedox",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "氧化数变化",
+      "电子守恒",
+      "带电荷离子方程式"
+    ],
+    "visual_type": "diagram",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "chemistry-redox-electron-balance",
+      "layer": "numeric",
+      "contract_id": "numeric.chemistry-redox-electron-balance.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "CHEMSOLVER.solveRedox"
+  },
+  "chemistry-precipitation-quantitative": {
+    "subject": "化学",
+    "solver": "solvePrecipitation",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "沉淀化学式",
+      "限量试剂",
+      "净离子方程式",
+      "沉淀质量"
+    ],
+    "visual_type": "apparatus",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "chemistry-precipitation-quantitative",
+      "layer": "numeric",
+      "contract_id": "numeric.chemistry-precipitation-quantitative.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "CHEMSOLVER.solvePrecipitation"
+  },
+  "chemistry-solution-mixing-stoichiometry": {
+    "subject": "化学",
+    "solver": "solveSolutionMixing",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "浓度",
+      "体积",
+      "限量试剂",
+      "守恒"
+    ],
+    "visual_type": "apparatus",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "chemistry-solution-mixing-stoichiometry",
+      "layer": "numeric",
+      "contract_id": "numeric.chemistry-solution-mixing-stoichiometry.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "CHEMSOLVER.solveSolutionMixing"
+  },
+  "chemistry-stoichiometry-limiting-reagent": {
+    "subject": "化学",
+    "solver": "solveStoichiometry",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "限量试剂",
+      "过量试剂",
+      "反应进度",
+      "元素守恒"
+    ],
+    "visual_type": "apparatus",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "chemistry-stoichiometry-limiting-reagent",
+      "layer": "numeric",
+      "contract_id": "numeric.chemistry-stoichiometry-limiting-reagent.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "CHEMSOLVER.solveStoichiometry"
+  },
+  "chemistry-equation-balance": {
+    "subject": "化学",
+    "solver": "balanceEquation",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "化学方程式",
+      "原子守恒",
+      "电荷守恒"
+    ],
+    "visual_type": "diagram",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "chemistry-equation-balance",
+      "layer": "numeric",
+      "contract_id": "numeric.chemistry-equation-balance.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "CHEMSOLVER.balanceEquation"
+  },
+  "chemistry-acid-base-titration": {
+    "subject": "化学",
+    "solver": "solveAcidBaseTitration",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "滴定装置",
+      "pH",
+      "当量点",
+      "中和方程式"
+    ],
+    "visual_type": "apparatus",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "chemistry-acid-base-titration",
+      "layer": "numeric",
+      "contract_id": "numeric.chemistry-acid-base-titration.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "CHEMSOLVER.solveAcidBaseTitration"
+  },
+  "chemistry-gas-collection": {
+    "subject": "化学",
+    "solver": "solveGasCollection",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "气体制取装置",
+      "限量试剂",
+      "目标气体体积",
+      "水蒸气压修正"
+    ],
+    "visual_type": "apparatus",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "chemistry-gas-collection",
+      "layer": "numeric",
+      "contract_id": "numeric.chemistry-gas-collection.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "CHEMSOLVER.solveGasCollection"
+  },
+  "chemistry-reaction-compare": {
+    "subject": "化学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "反应前后对比",
+      "反应现象",
+      "守恒"
+    ],
+    "visual_type": "apparatus",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "chemistry-reaction-compare",
+      "layer": "numeric",
+      "contract_id": "numeric.chemistry-reaction-compare.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "CHEMSOLVER.solveStoichiometry"
+  },
+  "chemistry-separation-stages": {
+    "subject": "化学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "分离装置",
+      "操作步骤",
+      "分离结果"
+    ],
+    "visual_type": "apparatus",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "chemistry-separation-stages",
+      "layer": "rule",
+      "contract_id": "rule.chemistry-separation-stages.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "chemistry-molecular-model": {
+    "subject": "化学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "particle_diagram",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "分子结构",
+      "粒子示意图",
+      "组成关系"
+    ],
+    "visual_type": "particle",
+    "solver_layer": "law",
+    "law_contract": {
+      "scene_id": "chemistry-molecular-model",
+      "layer": "law",
+      "contract_id": "chemistry.valence_model.v1",
+      "equations": [
+        "sum(bond_order around atom) <= allowed_valence"
+      ],
+      "constraints": [
+        "all bond endpoints exist",
+        "atom count equals formula count"
+      ],
+      "evidence": [
+        "atoms",
+        "bonds",
+        "valence_checks"
+      ],
+      "tolerance": {},
+      "oracle": "solve_molecular_valence",
+      "reference_inputs": {}
+    }
+  }
+}

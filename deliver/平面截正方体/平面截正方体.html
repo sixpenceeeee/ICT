@@ -857,5 +857,5 @@
   window.__TYPO__ = { min: MIN, sweep: sweep };
 })();
   </script>
-</body>
+<script id="pf-minimal-button-policy">(function(){function apply(){Array.prototype.forEach.call(document.querySelectorAll("button"),function(button){var label=(button.textContent||"").replace(/\s+/g,"").trim();var id=(button.id||"").toLowerCase();var keep=label.indexOf("记录")===0||label.indexOf("重置")===0||label.indexOf("复位")===0||id.indexOf("reset")>=0||id.indexOf("record")>=0;button.hidden=!keep;button.style.display=keep?"":"none";if(!keep)button.setAttribute("aria-hidden","true");});}apply();if(window.MutationObserver){new MutationObserver(apply).observe(document.body,{subtree:true,childList:true,characterData:true});}})();</script></body>
 </html>

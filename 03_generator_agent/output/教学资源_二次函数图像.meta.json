@@ -1,16 +1,69 @@
 {
   "实验主题": "二次函数图像",
   "生成信息": {
-    "来源": "大模型",
-    "模型": "deepseek-chat",
-    "是否修复过": true,
+    "来源": "统一场景配置与组件渲染",
+    "模型": "未调用（配置、组件与确定性求解器）",
+    "是否修复过": false,
     "续写次数": 0,
     "问题": [],
+    "模型输出问题": [],
+    "生成契约通过": true,
+    "生成尝试": [
+      {
+        "来源": "统一场景渲染",
+        "问题数": 0,
+        "问题": []
+      }
+    ],
     "外壳校验": [],
-    "耗时秒": 33.96
+    "页面骨架": {
+      "id": "math-quadratic",
+      "画布类型": "graph",
+      "场景库API": "MATH.funcPlot",
+      "学科求解器": "MATH.solveQuadratic"
+    },
+    "场景配置": {
+      "scene_id": "math-quadratic",
+      "学科": "数学",
+      "求解器": "",
+      "组件": [
+        "experiment_stage",
+        "parameter_controls",
+        "result_cards",
+        "comparison_panel",
+        "records_table",
+        "csv_export"
+      ],
+      "必需元素": [
+        "二次函数图像",
+        "对称轴",
+        "判别式"
+      ],
+      "绘图类型": "graph",
+      "模式": "展示型"
+    },
+    "求解器分层": {
+      "scene_id": "math-quadratic",
+      "layer": "rule",
+      "contract_id": "rule.math-quadratic.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    },
+    "耗时秒": 0.01
   },
-  "字符数": 92301,
-  "内容字符数": 8640,
+  "字符数": 218208,
+  "内容字符数": 3917,
   "文件": "教学资源_二次函数图像.html",
-  "压缩包": "教学资源_二次函数图像.zip"
+  "压缩包": "二次函数图像.zip"
 }

@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1640" viewBox="0 0 1600 1640" role="img" aria-labelledby="title desc">
+  <title id="title">教学 HTML 生成系统：加入变形测试后的执行流程</title>
+  <desc id="desc">展示需求理解、知识检索、实验模型、学科求解器、场景库、页面生成、HTML 页面、质量审查中的浏览器变形测试，以及失败返修和通过交付。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L11,6 L1,11 Z" fill="#74879a"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L11,6 L1,11 Z" fill="#3c83c9"/>
+    </marker>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#284f73" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", "PingFang SC", sans-serif; fill: #243b53; }
+      .title { font-size: 34px; font-weight: 700; fill: #173b5d; }
+      .subtitle { font-size: 17px; fill: #668098; }
+      .node { fill: #e8f3fd; stroke: #c9d9e8; stroke-width: 2; }
+      .nodeTitle { font-size: 23px; font-weight: 700; fill: #155b9d; text-anchor: middle; }
+      .nodeSub { font-size: 15px; fill: #56748e; text-anchor: middle; }
+      .flow { fill: none; stroke: #8292a1; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow); }
+      .dashed { stroke-dasharray: 7 7; }
+      .tag { fill: #f6fbff; stroke: #c9d9e8; stroke-width: 1.5; }
+      .tagText { font-size: 16px; font-weight: 600; fill: #286ba9; text-anchor: middle; }
+      .panel { fill: #f7fbff; stroke: #cbdceb; stroke-width: 2; }
+      .panelTitle { font-size: 25px; font-weight: 700; fill: #155b9d; }
+      .stepCard { fill: #fff; stroke: #d2e0ec; stroke-width: 1.6; }
+      .stepNum { fill: #438bd0; }
+      .stepNumText { fill: #fff; font-size: 17px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+      .stepTitle { font-size: 19px; font-weight: 700; fill: #215d91; }
+      .stepText { font-size: 15px; fill: #526b81; }
+      .feedback { fill: none; stroke: #d18a37; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrowBlue); }
+      .feedbackTag { fill: #fff8ec; stroke: #edcf9d; stroke-width: 1.5; }
+      .feedbackText { font-size: 15px; font-weight: 600; fill: #a96518; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1640" fill="#ffffff"/>
+  <text class="title" x="800" y="54" text-anchor="middle">教学 HTML 生成与质量验证流程</text>
+  <text class="subtitle" x="800" y="84" text-anchor="middle">变形测试放在质量审查 Agent 的浏览器交互测试阶段</text>
+
+  <!-- Main generation pipeline -->
+  <g filter="url(#shadow)">
+    <rect class="node" x="590" y="112" width="420" height="92" rx="25"/>
+    <text class="nodeTitle" x="800" y="168">需求理解 Agent</text>
+
+    <rect class="node" x="590" y="258" width="420" height="92" rx="25"/>
+    <text class="nodeTitle" x="800" y="314">知识检索 Agent</text>
+
+    <rect class="node" x="205" y="430" width="355" height="112" rx="25"/>
+    <text class="nodeTitle" x="382" y="478">实验模型</text>
+    <text class="nodeSub" x="382" y="510">实验状态、变量、约束与预期现象</text>
+
+    <rect class="node" x="690" y="430" width="355" height="112" rx="25"/>
+    <text class="nodeTitle" x="867" y="478">学科求解器</text>
+    <text class="nodeSub" x="867" y="510">独立计算结果与学科规律校验</text>
+
+    <rect class="node" x="1230" y="430" width="260" height="112" rx="25"/>
+    <text class="nodeTitle" x="1360" y="478">场景库</text>
+    <text class="nodeSub" x="1360" y="510">复用实验图示与交互骨架</text>
+
+    <rect class="node" x="540" y="620" width="520" height="108" rx="25"/>
+    <text class="nodeTitle" x="800" y="667">页面生成 Agent</text>
+    <text class="nodeSub" x="800" y="699">结合实验模型、求解结果与场景库生成页面</text>
+
+    <rect class="node" x="590" y="790" width="420" height="90" rx="25"/>
+    <text class="nodeTitle" x="800" y="845">生成 HTML 页面</text>
+  </g>
+
+  <!-- Generation arrows -->
+  <path class="flow" d="M800 204 V258"/>
+  <path class="flow" d="M700 350 V385 H382 V430"/>
+  <path class="flow" d="M800 350 V390 H867 V430"/>
+  <path class="flow" d="M382 542 V580 H700 V620"/>
+  <path class="flow" d="M867 542 V620"/>
+  <path class="flow dashed" d="M1230 486 H1150 V574 H985 V620"/>
+  <rect class="tag" x="1040" y="550" width="205" height="34" rx="17"/>
+  <text class="tagText" x="1142" y="573">页面绘图时调用场景</text>
+  <path class="flow" d="M800 728 V790"/>
+
+  <!-- Independent oracle path from solver to review -->
+  <path class="flow dashed" d="M1045 486 H1080 V600 H1535 V1018 H1320"/>
+  <rect class="tag" x="1330" y="727" width="205" height="38" rx="19"/>
+  <text class="tagText" x="1432" y="752">独立计算参考结果</text>
+
+  <!-- Quality review and browser metamorphic testing -->
+  <g filter="url(#shadow)">
+    <rect class="panel" x="180" y="970" width="1140" height="390" rx="28"/>
+    <text class="panelTitle" x="225" y="1022">质量审查 Agent</text>
+    <rect class="tag" x="1005" y="988" width="270" height="40" rx="20"/>
+    <text class="tagText" x="1140" y="1014">浏览器交互测试阶段</text>
+
+    <rect class="stepCard" x="220" y="1060" width="330" height="235" rx="20"/>
+    <circle class="stepNum" cx="258" cy="1100" r="20"/>
+    <text class="stepNumText" x="258" y="1100">1</text>
+    <text class="stepTitle" x="290" y="1107">基准运行</text>
+    <text class="stepText" x="250" y="1150">
+      <tspan x="250" dy="0">在真实浏览器打开生成页面</tspan>
+      <tspan x="250" dy="28">记录初始控件、图示和读数</tspan>
+      <tspan x="250" dy="28">与求解器独立参考结果对拍</tspan>
+    </text>
+
+    <rect class="stepCard" x="585" y="1060" width="330" height="235" rx="20"/>
+    <circle class="stepNum" cx="623" cy="1100" r="20"/>
+    <text class="stepNumText" x="623" y="1100">2</text>
+    <text class="stepTitle" x="655" y="1107">变形输入</text>
+    <text class="stepText" x="615" y="1150">
+      <tspan x="615" dy="0">实际操作页面控件并改变输入</tspan>
+      <tspan x="615" dy="28">例如：等价单位、参数缩放、</tspan>
+      <tspan x="615" dy="28">临界值附近的输入变化</tspan>
+    </text>
+
+    <rect class="stepCard" x="950" y="1060" width="330" height="235" rx="20"/>
+    <circle class="stepNum" cx="988" cy="1100" r="20"/>
+    <text class="stepNumText" x="988" y="1100">3</text>
+    <text class="stepTitle" x="1020" y="1107">核验变化关系</text>
+    <text class="stepText" x="980" y="1150">
+      <tspan x="980" dy="0">核对结果是否符合预期规律</tspan>
+      <tspan x="980" dy="28">并检查控件、图示、读数同步</tspan>
+      <tspan x="980" dy="28">发现错误时保存具体反例</tspan>
+    </text>
+
+    <text class="subtitle" x="750" y="1330" text-anchor="middle">变形测试验证“输入改变后，页面是否按规律正确响应”</text>
+  </g>
+
+  <!-- HTML to quality review -->
+  <path class="flow" d="M800 880 V970"/>
+
+  <!-- Result branches -->
+  <path class="flow" d="M750 1360 V1430"/>
+  <rect class="tag" x="690" y="1381" width="120" height="38" rx="19"/>
+  <text class="tagText" x="750" y="1406">通过</text>
+  <g filter="url(#shadow)">
+    <rect class="node" x="590" y="1450" width="320" height="100" rx="25"/>
+    <text class="nodeTitle" x="750" y="1510">交付页面</text>
+  </g>
+
+  <!-- Failed review feedback loop -->
+  <path class="feedback" d="M1320 1165 H1515 V574 H1090 V674 H1060"/>
+  <rect class="feedbackTag" x="1328" y="830" width="245" height="88" rx="18"/>
+  <text class="feedbackText" x="1450" y="864">
+    <tspan x="1450" dy="0">不通过：返回具体错误</tspan>
+    <tspan x="1450" dy="25">和触发问题的输入反例</tspan>
+    <tspan x="1450" dy="25">交给页面生成 Agent 修复</tspan>
+  </text>
+
+  <text class="subtitle" x="800" y="1605" text-anchor="middle">求解器测试验证数学逻辑；浏览器变形测试验证生成页面是否正确接入并展示结果。</text>
+</svg>

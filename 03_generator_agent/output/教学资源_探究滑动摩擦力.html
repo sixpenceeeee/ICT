@@ -14,8 +14,7 @@
 /* 页面自带样式 */
 #cv{display:block;width:100%;height:100%}
   </style>
-  <!-- 平台阅读规范：必须排在页面自带样式之后，才能盖住它们
-       正文纯黑 / 最小字号 26px / 实验名称只在页眉出现一次 -->
+      <!-- 平台阅读规范：正文纯黑 / 最小字号 12px / 名称只在页眉 -->
   <style>
 /* =====================================================================
  *  normal.css —— 平台阅读规范（后置强制层）
@@ -27,13 +26,63 @@
  *
  *  三条规范：
  *    1. 正文文字一律纯黑 #000（不再跟随蓝色主题色）
- *    2. 最小字号 26px（= 原始 13px × 2；配合 typo.js 兜住页面自带的 9~12px 小字）
+ *    2. 最小字号 12px（在统一质感基础上再收小一档）
  *    3. 实验名称只在页眉出现一次，① 区不再重复
  * ===================================================================== */
 
 :root {
-  --pf-fs-min: 26px;      /* 全站最小字号（= 原始 13px × 2），改这里就够 */
+  --pf-fs-min: 12px;      /* 全站最小字号，改这里就够 */
+  --pf-font: "Times New Roman", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
   --pf-body-ink: #000;    /* 正文文字色 */
+}
+
+/* 全场景统一字体：西文优先 Times New Roman，中文使用系统中文回退字体。 */
+.pf-hosted,
+.pf-hosted * {
+  font-family: var(--pf-font) !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 0. 移动端边界约束
+ *     长标签、表格和页面自带的固定宽度不能把整页撑出视口。
+ *     表格仍允许在自己的容器内横向滚动，页面本身不横向滚动。
+ * ------------------------------------------------------------------- */
+html.pf-hosted,
+html.pf-hosted body,
+.pf-hosted .pf-main,
+.pf-hosted .pf-content,
+.pf-hosted .exp-wrap,
+.pf-hosted .exp-grid,
+.pf-hosted .exp-info,
+.pf-hosted .exp-card {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+html.pf-hosted,
+html.pf-hosted body {
+  overflow-x: hidden;
+}
+
+.pf-hosted .exp-wrap,
+.pf-hosted .exp-grid > *,
+.pf-hosted .exp-info > * {
+  overflow-wrap: anywhere;
+}
+
+.pf-hosted .exp-wrap .exp-table-wrap {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.pf-hosted .exp-wrap .exp-tag {
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* ---------------------------------------------------------------------
@@ -74,6 +123,20 @@
   color: var(--pf-body-ink) !important;
 }
 
+/* 公共化学组件中的说明标题也属于正文，统一为黑色。 */
+.pf-hosted .exp-wrap h3,
+.pf-hosted .exp-wrap .titration-scene-caption,
+.pf-hosted .exp-wrap .titration-chart-summary,
+.pf-hosted .exp-wrap .titration-unit-caption,
+.pf-hosted .exp-wrap .ksp-scene-caption,
+.pf-hosted .exp-wrap .gas-caption,
+.pf-hosted .exp-wrap .precip-caption,
+.pf-hosted .exp-wrap .redox-caption,
+.pf-hosted .exp-wrap .stoich-caption,
+.pf-hosted .exp-wrap .mix-caption {
+  color: var(--pf-body-ink) !important;
+}
+
 /* 代入式里的高亮结论（<em>）保留橙色，是「看这里」而不是正文 */
 .pf-hosted .exp-wrap .exp-formula em {
   color: #b5561b !important;
@@ -86,7 +149,7 @@
 }
 
 /* ---------------------------------------------------------------------
- * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一抬到 26px+
+ * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一收敛到 12px+
  *    （页面自己写死的更小字号由 typo.js 在运行时兜底）
  * ------------------------------------------------------------------- */
 .pf-hosted .exp-wrap .exp-tag,
@@ -109,27 +172,27 @@
 .pf-hosted .exp-wrap .exp-note,
 .pf-hosted .exp-wrap .exp-alert,
 .pf-hosted .exp-wrap .exp-table {
-  font-size: 27px;
+  font-size: 12.5px;
 }
 
-/* 正文（学习目标 / 教学说明）用 28px，比辅助文字再大一档 */
+/* 正文（学习目标 / 教学说明）用 14px，比辅助文字再大一档 */
 .pf-hosted .exp-wrap .exp-goals,
 .pf-hosted .exp-wrap .exp-goals li,
 .pf-hosted .exp-wrap .exp-body,
 .pf-hosted .exp-wrap .exp-body p,
 .pf-hosted .exp-wrap .exp-body li {
-  font-size: 28px;
+  font-size: 13px;
 }
 
 /* 标题档：六区域标题 / 教学说明折叠头 */
 .pf-hosted .exp-wrap .exp-card > h2,
 .pf-hosted .exp-wrap .exp-teach summary {
-  font-size: 29px;
+  font-size: 15px;
 }
 
 /* 读数数值：全站最大的字，读数一眼能看清 */
 .pf-hosted .exp-wrap .exp-read .v {
-  font-size: 38px;
+  font-size: 23px;
 }
 
 /* ---------------------------------------------------------------------
@@ -142,15 +205,13 @@
 }
 
 /* ---------------------------------------------------------------------
- * 2b. 字号放大后的版式补偿
- *     字大一倍，原来的格子宽度就不够了：读数卡按两列铺、允许换行，
- *     表格窄了横向滚动。这几条只为「不挤、不裁」，不改字号。
+ * 2b. 紧凑版式：与参考页的白卡片、轻阴影、两栏实验布局保持一致。
  * ------------------------------------------------------------------- */
 .pf-hosted .exp-wrap .exp-reads { gap: 12px; }
 
 .pf-hosted .exp-wrap .exp-read {
   box-sizing: border-box;   /* 不加这句，百分比基准只算内容区，加上内边距就放不下 */
-  flex: 1 1 calc(50% - 7px);   /* 默认两列：窄屏、单列时也不会把字挤到折行 */
+  flex: 1 1 calc(25% - 9px);
   min-width: 0;
 }
 
@@ -175,8 +236,48 @@
 .pf-hosted .exp-info > *:first-child {
   margin-top: 0;
 }
+
+/* ---------------------------------------------------------------------
+ * 4. 参考页密度覆盖：保留平台结构，收回旧版 2× 字号后的留白。
+ * ------------------------------------------------------------------- */
+.pf-hosted .pf-header {
+  height: 68px;
+  padding: 0 18px;
+  gap: 10px;
+}
+.pf-hosted .pf-logo { width: 34px; height: 34px; border-radius: 9px; }
+.pf-hosted .pf-logo img { width: 28px; height: 28px; }
+.pf-hosted .pf-title { font-size: 21px; }
+.pf-hosted .pf-side { width: 72px; padding-top: 86px; gap: 10px; }
+.pf-hosted .pf-side a, .pf-hosted .pf-side label { width: 38px; height: 38px; border-radius: 10px; }
+.pf-hosted .pf-side a .ico, .pf-hosted .pf-side label .ico { font-size: 22px; }
+.pf-hosted .pf-dialog-icon { font-size: 29px; }
+.pf-hosted .pf-dialog h2 { font-size: 37px; }
+.pf-hosted .pf-dialog p { font-size: 27px; }
+.pf-hosted .pf-content { padding: 18px 20px; }
+.pf-hosted .exp-wrap { gap: 16px; }
+.pf-hosted .exp-info,
+.pf-hosted .exp-card { border-radius: 12px; }
+.pf-hosted .exp-info { padding: 14px 18px; gap: 8px 18px; }
+.pf-hosted .exp-card { padding: 14px 16px 18px; box-shadow: 0 4px 14px rgba(26,64,100,.05); }
+.pf-hosted .exp-card > h2,
+.pf-hosted .exp-teach summary { font-size: 15px; margin-bottom: 12px; padding-left: 10px; border-left-width: 3px; }
+.pf-hosted .exp-card > h2 .exp-hint { font-size: 12px; }
+.pf-hosted .exp-canvas-box { min-height: 360px; border-radius: 9px; }
+.pf-hosted .exp-stage .exp-canvas-box {
+  flex: 1 1 auto;
+  aspect-ratio: auto;
+  min-height: 420px;
+}
+.pf-hosted .exp-read .v { font-size: 23px; }
+.pf-hosted .pf-footer { padding: 14px 18px; font-size: 12px; }
+
+@media (max-width: 1100px) {
+  .pf-hosted .exp-read { flex-basis: calc(50% - 7px); }
+  .pf-hosted .exp-stage .exp-canvas-box { min-height: 340px; }
+}
   </style>
-</head>
+<style id="pf-button-policy">button[id^="preset-"],button[id^="math-preset-"],#set-baseline,#btn-export,#math-csv{display:none!important}</style></head>
 <body>
   <header class="pf-header">
     <span class="pf-logo"><img src="logo.png" alt="平台标志"></span>
@@ -2297,7 +2398,7 @@ window.addEventListener('resize',draw);
 render();
   </script>
 
-  <!-- 字号兜底：页面自己写的小字号（9~12px）统一抬到 26px 以上 -->
+      <!-- 字号兜底：页面自己写的小字号统一抬到 12px 以上 -->
   <script>
 /* =====================================================================
  *  typo.js —— 运行时字号 / 字色兜底
@@ -2305,9 +2406,9 @@ render();
  *  normal.css 只能约束「我们已知的类名」。模型每页都会临时写一些自己的
  *  小字号（11px 的图注、10px 的脚注）和自己挑的颜色（深蓝、灰蓝），
  *  这些只能在上线后量出来再改。这个脚本做三件事：
- *    1. 页面加载完，扫一遍正文区，把小于 26px 的文字抬到 26px（原始规范 13px × 2）
+ *    1. 页面加载完，扫一遍正文区，把小于 12px 的文字抬到 12px
  *    2. 把「浅色底上的彩色文字」改成纯黑（深色底上的白字不动）
- *    3. 读数数值太长放不下一行时自动降档（38→35→32…直到装得下，不低于 26px）
+ *    3. 读数数值太长放不下一行时自动降档（23→21→19…直到装得下，不低于 12px）
  *    4. 页面动态改读数后再扫一遍
  *
  *  只碰「自己直接含文字」的元素，不碰容器，避免影响布局层级；
@@ -2316,7 +2417,7 @@ render();
 (function () {
   'use strict';
 
-  var MIN = 26;                       // 与 normal.css 的 --pf-fs-min 保持一致
+  var MIN = 12;                       // 与 normal.css 的 --pf-fs-min 保持一致
   var ROOTS = ['.pf-main', '.pf-footer'];
   var COLOR_ROOT = '.pf-main';        // 只规范正文区，页脚保持浅灰
   var TEXTY = 'p,li,td,th,dt,dd,div,span,label,a,summary,h1,h2,h3,h4,h5,h6,' +
@@ -2413,10 +2514,10 @@ render();
     for (var i = 0; i < list.length; i++) {
       var el = list[i];
       if (inCanvas(el)) continue;
-      var size = 38, guard = 0;                 // 数值档：38px（原始 19px × 2）
+      var size = 23, guard = 0;                 // 数值档：23px
       el.style.setProperty('font-size', size + 'px', 'important');
-      while (lineCount(el) > 1 && size - 3 >= MIN && guard < 6) {
-        size -= 3;                              // 数字放得下就用 38，文字太长就一档档降到装得下
+      while (lineCount(el) > 1 && size - 2 >= MIN && guard < 6) {
+        size -= 2;                              // 数字放得下就用 24，文字太长就一档档降到装得下
         el.style.setProperty('font-size', size + 'px', 'important');
         guard++; n++;
       }
@@ -2489,5 +2590,5 @@ render();
   window.__TYPO__ = { min: MIN, sweep: sweep };
 })();
   </script>
-</body>
+<script id="pf-minimal-button-policy">(function(){function apply(){Array.prototype.forEach.call(document.querySelectorAll("button"),function(button){var label=(button.textContent||"").replace(/\s+/g,"").trim();var id=(button.id||"").toLowerCase();var keep=label.indexOf("记录")===0||label.indexOf("重置")===0||label.indexOf("复位")===0||id.indexOf("reset")>=0||id.indexOf("record")>=0;button.hidden=!keep;button.style.display=keep?"":"none";if(!keep)button.setAttribute("aria-hidden","true");});}apply();if(window.MutationObserver){new MutationObserver(apply).observe(document.body,{subtree:true,childList:true,characterData:true});}})();</script></body>
 </html>

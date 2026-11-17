@@ -1,0 +1,292 @@
+{
+  "linearSystem": {
+    "api": "solveLinearSystem", "prefix": "MATH_LINEAR_SYSTEM", "check": "J3-30",
+    "title": "一次函数与二元一次方程组", "patterns": "二元一次方程组|两[条个]直线.*交点|一次函数",
+    "visual": "graph", "draw": "MATH.linearSystem",
+    "layout": "用 MATH.linearSystem(cv,cfg,result) 绘制两条直线和唯一交点。以 result.x !== null 判断是否有唯一交点，直接显示 result.status。平行对应无解，重合对应无穷多解。首屏显示可复算代入式，例如 x = 3 ÷ 3 = 1，输入变化后更新代入式。",
+    "assumptions": "使用两条斜截式直线 y=k₁x+b₁、y=k₂x+b₂。允许水平线。系数须为 0 或绝对值在 1e-9 到 1e6 内的有限数。cfg 就是求解请求。",
+    "inputs": {"k1":"第一条直线斜率", "b1":"第一条直线截距", "k2":"第二条直线斜率", "b2":"第二条直线截距"},
+    "fields": {"status":"唯一交点、平行或重合", "x":"交点横坐标", "y":"交点纵坐标"},
+    "cases": {
+      "unique":{"k1":2,"b1":1,"k2":-1,"b2":4},
+      "swapped":{"k1":-1,"b1":4,"k2":2,"b2":1},
+      "parallel":{"k1":2,"b1":1,"k2":2,"b2":4},
+      "coincident":{"k1":2,"b1":1,"k2":2,"b2":1},
+      "horizontal":{"k1":0,"b1":0,"k2":2,"b2":4}
+    },
+    "relations": [
+      ["unique","status","唯一交点"],
+      ["swapped","x","unique","x",1],
+      ["swapped","y","unique","y",1],
+      ["parallel","status","平行"],
+      ["parallel","x",null],
+      ["coincident","status","重合"],
+      ["coincident","y",null],
+      ["horizontal","y",0]
+    ]
+  },
+  "rightTriangle": {
+    "api":"solveRightTriangle", "prefix":"MATH_RIGHT_TRIANGLE", "check":"J3-31",
+    "title":"直角三角形（勾股定理与锐角三角比）", "patterns":"直角三角形|勾股定理|锐角三角",
+    "visual":"geometry", "draw":"MATH.rightTriangle",
+    "layout":"标出角 A、直角与两条直角边，角 A 位于邻边和斜边的公共端点。",
+    "assumptions":"由两条直角边求斜边、角 A（度）、三角比和面积。边长在 1e-9 到 1e6 内。",
+    "inputs":{"opposite":"对边","adjacent":"邻边"},
+    "fields":{"hypotenuse":"斜边","angle_deg":"角 A（度）","sine":"正弦","cosine":"余弦","tangent":"正切","area":"面积"},
+    "cases":{"base":{"opposite":3,"adjacent":4},"double":{"opposite":6,"adjacent":8},"swap":{"opposite":4,"adjacent":3},"equal":{"opposite":5,"adjacent":5}},
+    "relations":[["double","hypotenuse","base","hypotenuse",2],["double","area","base","area",4],["double","angle_deg","base","angle_deg",1],["swap","sine","base","cosine",1],["equal","angle_deg",45],["equal","tangent",1]]
+  },
+  "descriptiveStats": {
+    "api":"solveDescriptiveStats", "prefix":"MATH_DESCRIPTIVE_STATS", "check":"J3-32",
+    "title":"均值与方差", "patterns":"平均数与方差|均值与方差|平均数|总体方差|数据的波动",
+    "visual":"graph", "draw":"MATH.descriptiveStats",
+    "layout":"用五个可编辑观测值绘图，标出均值水平线。",
+    "assumptions":"五个等权观测值，方差采用分母 n 的总体方差。参数须为 0 或绝对值在 1e-9 到 1e6 内。",
+    "inputs":{"x1":"观测值 1","x2":"观测值 2","x3":"观测值 3","x4":"观测值 4","x5":"观测值 5"},
+    "fields":{"mean":"均值","variance":"总体方差"},
+    "cases":{"base":{"x1":1,"x2":2,"x3":3,"x4":4,"x5":5},"permute":{"x1":5,"x2":4,"x3":3,"x4":2,"x5":1},"double":{"x1":2,"x2":4,"x3":6,"x4":8,"x5":10},"translate":{"x1":-2,"x2":-1,"x3":0,"x4":1,"x5":2},"constant":{"x1":3,"x2":3,"x3":3,"x4":3,"x5":3}},
+    "relations":[["permute","mean","base","mean",1],["permute","variance","base","variance",1],["double","mean","base","mean",2],["double","variance","base","variance",4],["translate","mean",0],["translate","variance","base","variance",1],["constant","variance",0]]
+  },
+  "sequences": {
+    "api":"solveSequences", "prefix":"MATH_SEQUENCES", "check":"J3-33",
+    "title":"等差与等比数列", "patterns":"等差数列|等比数列|等差与等比数列",
+    "visual":"graph", "draw":"MATH.sequences",
+    "layout":"显示两组数列的离散点、第 n 项和前 n 项和。",
+    "assumptions":"两组数列共用首项和项数。项数须为 1–20 的整数，公比绝对值至多为 5，首项和公差须为 0 或绝对值在 1e-9 到 1e6 内。",
+    "inputs":{"first":"首项","difference":"公差","ratio":"公比","count":"项数，整数"},
+    "fields":{"arithmetic_term":"等差第 n 项","arithmetic_sum":"等差前 n 项和","geometric_term":"等比第 n 项","geometric_sum":"等比前 n 项和"},
+    "cases":{"base":{"first":2,"difference":3,"ratio":2,"count":4},"double":{"first":4,"difference":6,"ratio":2,"count":4},"constant":{"first":2,"difference":0,"ratio":1,"count":5},"alternating":{"first":2,"difference":0,"ratio":-1,"count":6},"singleton":{"first":3,"difference":-2,"ratio":0,"count":1}},
+    "relations":[["double","arithmetic_sum","base","arithmetic_sum",2],["double","geometric_sum","base","geometric_sum",2],["constant","geometric_sum","constant","arithmetic_sum",1],["alternating","geometric_sum",0],["singleton","arithmetic_sum","singleton","geometric_sum",1],["singleton","geometric_sum",3]]
+  },
+  "reciprocal": {
+    "api":"solveReciprocal", "prefix":"MATH_RECIPROCAL", "check":"J3-34",
+    "title":"反比例函数", "patterns":"反比例函数",
+    "visual":"graph", "draw":"MATH.reciprocal",
+    "layout":"分段绘制双曲线，突出取样点与坐标轴围成的矩形。",
+    "assumptions":"使用 y=k/x。k、x 的绝对值均在 1e-9 到 1e6 内。",
+    "inputs":{"k":"比例系数","x":"取样横坐标"},
+    "fields":{"y":"纵坐标","product":"有符号乘积 xy","quadrants":"图像所在象限"},
+    "cases":{"base":{"k":6,"x":2},"double_x":{"k":6,"x":4},"reflect_x":{"k":6,"x":-2},"negative":{"k":-6,"x":2}},
+    "relations":[["double_x","y","base","y",0.5],["double_x","product","base","product",1],["reflect_x","y","base","y",-1],["negative","quadrants","第二、四象限"]]
+  },
+  "sinusoid": {
+    "api":"solveSinusoid", "prefix":"MATH_SINUSOID", "check":"J3-35",
+    "title":"三角函数图像（正弦波）", "patterns":"三角函数图像|正弦函数|余弦函数|正弦波",
+    "visual":"graph", "draw":"MATH.sinusoid",
+    "layout":"绘制取样点附近两个周期的波形，并标记取样点。",
+    "assumptions":"使用 y=A sin(ωx+φ)，角度均用弧度，余弦可通过相位表达。A、ω 非零；数值须为 0 或绝对值在 1e-9 到 1e6 内。",
+    "inputs":{"amplitude":"振幅系数 A","omega":"角频率 ω","phase":"初相 φ（弧度）","x":"取样横坐标"},
+    "fields":{"y":"函数值","period":"周期","magnitude":"振幅","minimum":"最小值","maximum":"最大值","shift":"水平相移"},
+    "cases":{"base":{"amplitude":2,"omega":1,"phase":0,"x":1},"double_amplitude":{"amplitude":4,"omega":1,"phase":0,"x":1},"double_frequency":{"amplitude":2,"omega":2,"phase":0,"x":0.5},"phase":{"amplitude":2,"omega":1,"phase":1,"x":0},"reflect":{"amplitude":-2,"omega":1,"phase":0,"x":1}},
+    "relations":[["double_amplitude","y","base","y",2],["double_frequency","period","base","period",0.5],["double_frequency","y","base","y",1],["phase","y","base","y",1],["reflect","y","base","y",-1]]
+  },
+  "expLog": {
+    "api":"solveExpLog", "prefix":"MATH_EXP_LOG", "check":"J3-36",
+    "title":"指数与对数函数", "patterns":"指数与对数函数|指数函数|对数函数",
+    "visual":"graph", "draw":"MATH.expLog",
+    "layout":"绘制互为反函数的指数曲线与对数曲线，标出 y=x 和对称点。",
+    "assumptions":"使用同一底数 a，范围 0.1–10 且 a≠1；取样数 x 范围 1e-9–10。页面分别显示 a^x、logₐx 和 logₐ(a^x)。",
+    "inputs":{"base":"底数 a","x":"取样数 x"},
+    "fields":{"exponential":"指数值","logarithm":"对数值","inverse":"反函数复合值","trend":"递增或递减"},
+    "cases":{"base":{"base":2,"x":2},"reciprocal":{"base":0.5,"x":2},"unity":{"base":2,"x":1},"double_x":{"base":2,"x":4}},
+    "relations":[["base","inverse",2],["reciprocal","logarithm","base","logarithm",-1],["reciprocal","trend","递减"],["unity","logarithm",0],["double_x","exponential",16]]
+  },
+  "functionTransform": {
+    "api":"solveFunctionTransform", "prefix":"MATH_FUNCTION_TRANSFORM", "check":"J3-37",
+    "title":"函数图像变换", "patterns":"函数图像.{0,3}变换|函数图像.{0,3}平移|函数图像.{0,3}伸缩",
+    "visual":"graph", "draw":"MATH.functionTransform",
+    "layout":"叠画原函数和变换后的函数，标出新顶点和取样点。",
+    "assumptions":"使用 y=a·f(x−h)+k。f 为平方函数 quadratic 或绝对值函数 absolute，a 非零。数值须为 0 或绝对值在 1e-9 到 1e6 内。",
+    "inputs":{"family":"函数族，select，quadratic 或 absolute","a":"纵向伸缩与反射系数","h":"水平平移","k":"垂直平移","x":"取样横坐标"},
+    "fields":{"y":"函数值","vertex_x":"顶点横坐标","vertex_y":"顶点纵坐标","orientation":"开口方向"},
+    "cases":{"base":{"family":"quadratic","a":2,"h":0,"k":0,"x":2},"translate":{"family":"quadratic","a":2,"h":3,"k":0,"x":5},"vertical":{"family":"quadratic","a":2,"h":3,"k":1,"x":5},"reflect":{"family":"quadratic","a":-2,"h":0,"k":0,"x":2},"absolute":{"family":"absolute","a":2,"h":0,"k":0,"x":2}},
+    "relations":[["translate","y","base","y",1],["translate","vertex_x",3],["vertical","y",9],["vertical","vertex_y",1],["reflect","y","base","y",-1],["absolute","y",4]]
+  },
+  "derivative": {
+    "api":"solveDerivative", "prefix":"MATH_DERIVATIVE", "check":"J3-38",
+    "title":"导数与切线", "patterns":"导数|切线斜率",
+    "visual":"graph", "draw":"MATH.derivative",
+    "layout":"叠画曲线与切线，标出切点并显示斜率。",
+    "assumptions":"使用 f(x)=ax²+bx+c，允许 a=0。数值须为 0 或绝对值在 1e-9 到 1e6 内。",
+    "inputs":{"a":"二次项系数","b":"一次项系数","c":"常数项","x":"切点横坐标"},
+    "fields":{"y":"切点纵坐标","slope":"切线斜率","intercept":"切线纵截距","direction":"切线方向"},
+    "cases":{"base":{"a":1,"b":0,"c":0,"x":2},"vertical":{"a":1,"b":0,"c":3,"x":2},"reflection":{"a":1,"b":0,"c":0,"x":-2},"stationary":{"a":1,"b":0,"c":0,"x":0},"linear":{"a":0,"b":3,"c":-2,"x":1}},
+    "relations":[["vertical","slope","base","slope",1],["vertical","intercept",-1],["reflection","slope","base","slope",-1],["reflection","y","base","y",1],["stationary","direction","水平"],["linear","slope",3]]
+  },
+  "similarTriangles": {
+    "api":"solveSimilarTriangles", "prefix":"MATH_SIMILAR_TRIANGLES", "check":"J3-39",
+    "title":"相似三角形", "patterns":"相似三角形|三角形相似",
+    "visual":"geometry", "draw":"MATH.similarTriangles",
+    "layout":"同一比例尺下绘制原三角形和相似三角形，展示边、周长、面积比。",
+    "assumptions":"输入满足严格三角不等式的三边与正相似比。所有参数在 1e-9 到 1e6 内。",
+    "inputs":{"a":"边 a","b":"边 b","c":"边 c","scale":"相似比"},
+    "fields":{"a2":"对应边 a′","b2":"对应边 b′","c2":"对应边 c′","perimeter":"新周长","area":"新面积","perimeter_ratio":"周长比","area_ratio":"面积比"},
+    "cases":{"base":{"a":3,"b":4,"c":5,"scale":1},"double":{"a":3,"b":4,"c":5,"scale":2},"half":{"a":3,"b":4,"c":5,"scale":0.5},"permutation":{"a":5,"b":3,"c":4,"scale":1}},
+    "relations":[["double","perimeter","base","perimeter",2],["double","area","base","area",4],["half","area","base","area",0.25],["permutation","area","base","area",1]]
+  },
+  "circle": {
+    "api":"solveCircle", "prefix":"MATH_CIRCLE", "check":"J3-40",
+    "title":"圆的度量、弦与圆周角", "patterns":"(?<!椭)圆的周长|(?<!椭)圆的面积|垂径定理|圆周角|圆心角",
+    "visual":"geometry", "draw":"MATH.circleMeasures",
+    "layout":"画圆、弦、垂径、劣弧对应的圆心角，以及顶点在弦另一侧的圆周角。",
+    "assumptions":"半径为正，圆心到弦的距离非负且严格小于半径。圆周角取截同一劣弧的角（直径时为 90°）。",
+    "inputs":{"radius":"半径","offset":"圆心到弦的距离"},
+    "fields":{"circumference":"周长","area":"面积","half_chord":"半弦长","chord":"弦长","central_angle":"圆心角（度）","inscribed_angle":"圆周角（度）"},
+    "cases":{"base":{"radius":5,"offset":3},"double":{"radius":10,"offset":6},"diameter":{"radius":5,"offset":0},"near":{"radius":5,"offset":4.9}},
+    "relations":[["double","circumference","base","circumference",2],["double","area","base","area",4],["double","inscribed_angle","base","inscribed_angle",1],["base","central_angle","base","inscribed_angle",2],["diameter","inscribed_angle",90]]
+  },
+  "polygonArea": {
+    "api":"solvePolygonArea", "prefix":"MATH_POLYGON_AREA", "check":"J3-41",
+    "title":"多边形面积与割补", "patterns":"多边形面积|梯形面积|平行四边形面积|三角形面积|割补",
+    "visual":"geometry", "draw":"MATH.polygonArea",
+    "layout":"画出原图与等面积矩形，显示两条底边的平均值和高。",
+    "assumptions":"首版统一处理三角形、梯形与平行四边形，下底和高为正，上底可为零。图中用右侧水平错位绘制。",
+    "inputs":{"bottom":"下底","top":"上底","height":"高"},
+    "fields":{"area":"面积","equivalent_base":"等积矩形底边","shape":"图形类型"},
+    "cases":{"base":{"bottom":8,"top":4,"height":3},"swap":{"bottom":4,"top":8,"height":3},"double":{"bottom":16,"top":8,"height":6},"triangle":{"bottom":8,"top":0,"height":3},"parallelogram":{"bottom":8,"top":8,"height":3}},
+    "relations":[["swap","area","base","area",1],["double","area","base","area",4],["triangle","shape","三角形"],["triangle","area",12],["parallelogram","shape","平行四边形"]]
+  },
+  "constructions": {
+    "api":"solveConstructions", "prefix":"MATH_CONSTRUCTIONS", "check":"J3-42",
+    "title":"尺规作图（垂直平分线与角平分线）", "patterns":"尺规作图|垂直平分线|角平分线",
+    "visual":"geometry", "draw":"MATH.constructions",
+    "layout":"并列绘制两类作图，展示等半径辅助弧、交点与平分线。",
+    "assumptions":"线段从 (0,0) 到 (length,0)，角的第一条边水平向右。输入线段长度正数与 0° 到 180° 之间的夹角。",
+    "inputs":{"length":"线段长度","angle":"夹角（度）"},
+    "fields":{"midpoint":"中点横坐标","perpendicular":"夹角（度）","bisector":"角平分后角度（度）"},
+    "cases":{"base":{"length":6,"angle":40},"double":{"length":12,"angle":80},"right":{"length":4,"angle":90},"obtuse":{"length":6,"angle":150}},
+    "relations":[["double","midpoint","base","midpoint",2],["double","bisector","base","bisector",2],["right","perpendicular",90],["obtuse","bisector",75]]
+  },
+  "ellipse": {
+    "api":"solveEllipse", "prefix":"MATH_ELLIPSE", "check":"J3-43",
+    "title":"椭圆与离心率", "patterns":"椭圆|离心率",
+    "visual":"geometry", "draw":"MATH.ellipseMeasures",
+    "layout":"绘制椭圆、长短轴和焦点，连接椭圆上一点与两焦点。",
+    "assumptions":"标准轴对齐椭圆，长轴水平，半轴满足 0 < b ≤ a，允许圆形特例。",
+    "inputs":{"a":"长半轴","b":"短半轴"},
+    "fields":{"focus":"半焦距","eccentricity":"离心率","distance_sum":"焦距和","area":"面积"},
+    "cases":{"base":{"a":5,"b":3},"double":{"a":10,"b":6},"circle":{"a":5,"b":5},"thin":{"a":5,"b":1}},
+    "relations":[["double","focus","base","focus",2],["double","eccentricity","base","eccentricity",1],["double","area","base","area",4],["circle","eccentricity",0],["thin","distance_sum","base","distance_sum",1]]
+  },
+  "sampling": {
+    "api":"solveSampling", "prefix":"MATH_SAMPLING", "check":"J3-44",
+    "title":"有限抽样与树状图概率", "patterns":"树状图|有限抽样|摸球|可能性与概率",
+    "visual":"graph", "draw":"MATH.sampling",
+    "layout":"显示首次抽取的两条树枝和完整命中次数的理论分布。",
+    "assumptions":"两类球合计 1–100 个，抽 1–8 次，命中数为 0 到抽取次数；不放回时抽取次数不得大于总球数。",
+    "inputs":{"good":"目标球数，整数","bad":"其他球数，整数","draws":"抽取次数，整数","hits":"恰好命中次数，整数","mode":"with 放回或 without 不放回，select"},
+    "fields":{"probability":"恰好命中的概率","expected":"期望命中次数"},
+    "cases":{"base":{"good":3,"bad":3,"draws":2,"hits":2,"mode":"without"},"replacement":{"good":3,"bad":3,"draws":2,"hits":2,"mode":"with"},"double_counts":{"good":6,"bad":6,"draws":2,"hits":2,"mode":"with"},"zero":{"good":0,"bad":6,"draws":1,"hits":0,"mode":"without"},"impossible":{"good":1,"bad":4,"draws":2,"hits":2,"mode":"without"}},
+    "relations":[["base","probability",0.2],["replacement","probability",0.25],["double_counts","probability","replacement","probability",1],["zero","probability",1],["impossible","probability",0]]
+  },
+  "binomial": {
+    "api":"solveBinomial", "prefix":"MATH_BINOMIAL", "check":"J3-45",
+    "title":"二项分布", "patterns":"二项分布|伯努利试验",
+    "visual":"graph", "draw":"MATH.binomial",
+    "layout":"画命中次数的分布，突出选定次数的概率。",
+    "assumptions":"独立同分布试验。n 为 1–50 的整数，k 为 0 到 n 的整数，p 在 [0,1] 内。",
+    "inputs":{"trials":"试验次数 n","hits":"命中次数 k","p":"单次成功概率"},
+    "fields":{"probability":"恰好 k 次成功的概率","mean":"期望","variance":"方差"},
+    "cases":{"base":{"trials":5,"hits":1,"p":0.25},"complement":{"trials":5,"hits":4,"p":0.75},"zero":{"trials":3,"hits":0,"p":0},"one":{"trials":3,"hits":3,"p":1}},
+    "relations":[["complement","probability","base","probability",1],["complement","variance","base","variance",1],["zero","probability",1],["zero","variance",0],["one","mean",3]]
+  },
+  "regression": {
+    "api":"solveRegression", "prefix":"MATH_REGRESSION", "check":"J3-46",
+    "title":"一元线性回归", "patterns":"线性回归|最小二乘|回归直线",
+    "visual":"graph", "draw":"MATH.regression",
+    "layout":"绘制散点、带截距的最小二乘直线和每个残差。",
+    "assumptions":"三对等权数值，横坐标不能全部相同。",
+    "inputs":{"x1":"横坐标 1","x2":"横坐标 2","x3":"横坐标 3","y1":"纵坐标 1","y2":"纵坐标 2","y3":"纵坐标 3"},
+    "fields":{"slope":"斜率","intercept":"截距"},
+    "cases":{"base":{"x1":1,"x2":2,"x3":3,"y1":2,"y2":5,"y3":6},"permute":{"x1":3,"x2":1,"x3":2,"y1":6,"y2":2,"y3":5},"shift":{"x1":1,"x2":2,"x3":3,"y1":5,"y2":8,"y3":9},"scale":{"x1":2,"x2":4,"x3":6,"y1":2,"y2":5,"y3":6}},
+    "relations":[["permute","slope","base","slope",1],["permute","intercept","base","intercept",1],["shift","slope","base","slope",1],["scale","slope","base","slope",0.5]]
+  },
+  "dotProduct": {
+    "api":"solveDotProduct", "prefix":"MATH_DOT_PRODUCT", "check":"J3-47",
+    "title":"平面向量数量积", "patterns":"平面向量|二维向量",
+    "visual":"geometry", "draw":"MATH.dotProduct",
+    "layout":"用同一坐标原点绘制两个向量及端点，显示数量积和夹角。",
+    "assumptions":"二维笛卡尔坐标。含零向量时数量积为 0，夹角显示 —。",
+    "inputs":{"ax":"向量 a 的横分量","ay":"向量 a 的纵分量","bx":"向量 b 的横分量","by":"向量 b 的纵分量"},
+    "fields":{"dot":"数量积","angle":"夹角（度）","state":"相对方向"},
+    "cases":{"base":{"ax":2,"ay":1,"bx":1,"by":3},"swap":{"ax":1,"ay":3,"bx":2,"by":1},"double":{"ax":4,"ay":2,"bx":1,"by":3},"orthogonal":{"ax":2,"ay":1,"bx":-1,"by":2},"zero":{"ax":0,"ay":0,"bx":1,"by":3}},
+    "relations":[["swap","dot","base","dot",1],["swap","angle","base","angle",1],["double","dot","base","dot",2],["orthogonal","dot",0],["orthogonal","angle",90],["zero","angle",null]]
+  },
+  "fractions": {
+    "api":"solveFractions", "prefix":"MATH_FRACTIONS", "check":"J3-48",
+    "title":"分数加减", "patterns":"分数.{0,5}加减|分数的意义|分数加法|分数减法|通分",
+    "visual":"graph", "draw":"MATH.fractions",
+    "layout":"显示通分式、约分后的结果，以及三个量在同一数轴尺度下的位置。",
+    "assumptions":"分子分母为绝对值至多 1e6 的整数，分母为正。返回最小公分母及约分后的精确分数。",
+    "inputs":{"n1":"第一个分子","d1":"第一个分母","n2":"第二个分子","d2":"第二个分母","mode":"add 加法或 subtract 减法，select"},
+    "fields":{"common":"最小公分母","left":"第一个通分分子","right":"第二个通分分子","numerator":"约分后分子","denominator":"约分后分母"},
+    "cases":{"base":{"n1":1,"d1":2,"n2":1,"d2":3,"mode":"add"},"equivalent":{"n1":2,"d1":4,"n2":2,"d2":6,"mode":"add"},"negative":{"n1":1,"d1":3,"n2":1,"d2":2,"mode":"subtract"},"zero":{"n1":1,"d1":2,"n2":2,"d2":4,"mode":"subtract"}},
+    "relations":[["equivalent","numerator","base","numerator",1],["equivalent","denominator","base","denominator",1],["negative","numerator",-1],["zero","numerator",0],["zero","denominator",1]]
+  },
+  "amgm": {
+    "api":"solveAmgm", "prefix":"MATH_AMGM", "check":"J3-49",
+    "title":"基本不等式", "patterns":"基本不等式|几何平均|均值不等式",
+    "visual":"geometry", "draw":"MATH.amgm",
+    "layout":"用半圆半径表示算术平均，用分点到半圆的垂线表示几何平均。",
+    "assumptions":"两数非负，零允许作为边界；两数相等时取等。",
+    "inputs":{"a":"第一个数","b":"第二个数"},
+    "fields":{"arithmetic":"算术平均","geometric":"几何平均","gap":"两者之差","state":"取等状态"},
+    "cases":{"base":{"a":2,"b":8},"swap":{"a":8,"b":2},"double":{"a":4,"b":16},"equal":{"a":5,"b":5},"zero":{"a":0,"b":8}},
+    "relations":[["swap","gap","base","gap",1],["double","geometric","base","geometric",2],["double","gap","base","gap",2],["equal","gap",0],["equal","state","取等"],["zero","geometric",0]]
+  },
+  "orthographic": {
+    "api":"solveOrthographic", "prefix":"MATH_ORTHOGRAPHIC", "check":"J3-50",
+    "title":"三视图投影", "patterns":"三视图|正投影|主视图",
+    "visual":"geometry", "draw":"MATH.orthographic",
+    "layout":"并列显示台阶体的主视图、左视图、俯视图，标出同一比例尺下的轮廓。",
+    "assumptions":"由长方体底座和靠左、同深度的长方体台阶组成。底座宽深高为 1–12 的整数，台阶宽为 1–底座宽的整数，高可为 0–12。",
+    "inputs":{"width":"底座宽","depth":"底座深","height":"底座高","step_width":"上层台阶宽","rise":"上层台阶高"},
+    "fields":{"front":"主视投影面积","side":"左视投影面积","top":"俯视投影面积","volume":"台阶体体积"},
+    "cases":{"base":{"width":4,"depth":3,"height":2,"step_width":2,"rise":1},"double":{"width":8,"depth":6,"height":4,"step_width":4,"rise":2},"no_step":{"width":4,"depth":3,"height":2,"step_width":1,"rise":0},"full_step":{"width":4,"depth":3,"height":2,"step_width":4,"rise":2}},
+    "relations":[["double","front","base","front",4],["double","side","base","side",4],["double","top","base","top",4],["double","volume","base","volume",8],["no_step","front",8],["full_step","front",16]]
+  },
+  "sphereContact": {
+    "api":"solveSphereContact", "prefix":"MATH_SPHERE_CONTACT", "check":"J3-51",
+    "title":"球与长方体的切接", "patterns":"球(?:与|和)(?:长方体|正方体|多面体).{0,5}(?:切接|相切|内切|外接)|(?:长方体|正方体|多面体)(?:与|和)球.{0,5}(?:切接|相切)|内切球|外接球|最大内含球",
+    "visual":"geometry", "draw":"MATH.sphereContact",
+    "layout":"画长方体的两种中心剖面示意，分别标出最大内含球和过八个顶点的外接球。",
+    "assumptions":"首版针对长方体。最大内含球取长方体中心，半径为最短边的一半；外接球半径为体对角线的一半。只有正方体的内含球与六个面都相切。",
+    "inputs":{"a":"长","b":"宽","c":"高"},
+    "fields":{"inside_radius":"最大内含球半径","outside_radius":"外接球半径","contact_faces":"内含球切面数"},
+    "cases":{"base":{"a":2,"b":3,"c":6},"permute":{"a":6,"b":2,"c":3},"double":{"a":4,"b":6,"c":12},"cube":{"a":2,"b":2,"c":2},"two_minima":{"a":2,"b":2,"c":6}},
+    "relations":[["permute","outside_radius","base","outside_radius",1],["double","inside_radius","base","inside_radius",2],["double","outside_radius","base","outside_radius",2],["cube","contact_faces",6],["two_minima","contact_faces",4]]
+  },
+  "surfacePath": {
+    "api":"solveSurfacePath", "prefix":"MATH_SURFACE_PATH", "check":"J3-52",
+    "title":"立体表面最短路径", "patterns":"表面最短路径|立体.{0,12}最短路径|长方体.{0,10}最短",
+    "visual":"geometry", "draw":"MATH.surfacePath",
+    "layout":"并列展示三种相邻面展开方式和对角线，突出最短路线。",
+    "assumptions":"首版只求长方体一对对顶点之间沿表面的最短距离，比较三组相邻面展开所得的矩形对角线。",
+    "inputs":{"a":"长","b":"宽","c":"高"},
+    "fields":{"ab":"沿 a+b 方向展开的距离","ac":"沿 a+c 方向展开的距离","bc":"沿 b+c 方向展开的距离","shortest":"最短距离"},
+    "cases":{"base":{"a":2,"b":3,"c":6},"permute":{"a":6,"b":3,"c":2},"double":{"a":4,"b":6,"c":12},"cube":{"a":3,"b":3,"c":3}},
+    "relations":[["permute","shortest","base","shortest",1],["permute","bc","base","ab",1],["double","shortest","base","shortest",2],["cube","ab","cube","bc",1],["cube","ac","cube","ab",1]]
+  },
+  "cavalieri": {
+    "api":"solveCavalieri", "prefix":"MATH_CAVALIERI", "check":"J3-53",
+    "title":"祖暅原理与等积变换", "patterns":"祖暅|祖冲之.{0,8}原理|等积变换|斜棱柱",
+    "visual":"geometry", "draw":"MATH.cavalieri",
+    "layout":"画同底同高的直棱柱、水平剪切后的斜棱柱及同高度截面。",
+    "assumptions":"首版比较底面为矩形的直棱柱和水平剪切后的斜棱柱。剪切绝对值不超过底宽三倍，各水平截面全等。",
+    "inputs":{"width":"底宽","depth":"底深","height":"垂直高度","shear":"顶部水平位移"},
+    "fields":{"section":"水平截面积","straight":"直棱柱体积","slanted":"斜棱柱体积"},
+    "cases":{"base":{"width":4,"depth":3,"height":5,"shear":0},"sheared":{"width":4,"depth":3,"height":5,"shear":3},"reversed":{"width":4,"depth":3,"height":5,"shear":-3},"double":{"width":8,"depth":6,"height":10,"shear":6}},
+    "relations":[["sheared","slanted","base","straight",1],["reversed","section","base","section",1],["double","section","base","section",4],["double","slanted","base","slanted",8]]
+  },
+  "travel": {
+    "api":"solveTravel", "prefix":"MATH_TRAVEL", "check":"J3-54",
+    "title":"行程问题（相遇与追及）", "patterns":"行程问题|相遇与追及|追及问题|相遇问题|同向追及|相向而行",
+    "visual":"graph", "draw":"MATH.travel",
+    "layout":"画两条位置–时间直线，有相遇时标记交点。",
+    "assumptions":"两物体在同一直线从位置 0 和 gap 同时出发并保持带符号的速度。距离、时间、速度采用相容单位。",
+    "inputs":{"gap":"初始间距，非负","v1":"第一物体速度，带符号","v2":"第二物体速度，带符号"},
+    "fields":{"closing":"接近速度","time":"首次相遇时间","position":"相遇位置","state":"相遇类型"},
+    "cases":{"base":{"gap":12,"v1":4,"v2":-2},"double_gap":{"gap":24,"v1":4,"v2":-2},"catch":{"gap":12,"v1":5,"v2":2},"same_speed":{"gap":12,"v1":2,"v2":2},"apart":{"gap":12,"v1":-2,"v2":2},"same_start":{"gap":0,"v1":2,"v2":2}},
+    "relations":[["double_gap","time","base","time",2],["base","state","相向而行"],["catch","state","同向追及"],["same_speed","time",null],["apart","time",null],["same_start","time",0]]
+  }
+}

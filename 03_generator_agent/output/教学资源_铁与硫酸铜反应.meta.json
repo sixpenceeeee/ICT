@@ -1,16 +1,69 @@
 {
   "实验主题": "铁与硫酸铜反应",
   "生成信息": {
-    "来源": "大模型",
-    "模型": "deepseek-chat",
-    "是否修复过": true,
+    "来源": "统一场景配置与组件渲染",
+    "模型": "未调用（配置、组件与确定性求解器）",
+    "是否修复过": false,
     "续写次数": 0,
     "问题": [],
+    "模型输出问题": [],
+    "生成契约通过": true,
+    "生成尝试": [
+      {
+        "来源": "统一场景渲染",
+        "问题数": 0,
+        "问题": []
+      }
+    ],
     "外壳校验": [],
-    "耗时秒": 30.61
+    "页面骨架": {
+      "id": "chemistry-reaction-compare",
+      "画布类型": "apparatus",
+      "场景库API": "CHEM.scene",
+      "学科求解器": "CHEMSOLVER.solveStoichiometry"
+    },
+    "场景配置": {
+      "scene_id": "chemistry-reaction-compare",
+      "学科": "化学",
+      "求解器": "",
+      "组件": [
+        "experiment_stage",
+        "parameter_controls",
+        "result_cards",
+        "comparison_panel",
+        "records_table",
+        "csv_export"
+      ],
+      "必需元素": [
+        "反应前后对比",
+        "反应现象",
+        "守恒"
+      ],
+      "绘图类型": "apparatus",
+      "模式": "展示型"
+    },
+    "求解器分层": {
+      "scene_id": "chemistry-reaction-compare",
+      "layer": "rule",
+      "contract_id": "rule.chemistry-reaction-compare.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    },
+    "耗时秒": 0.0
   },
-  "字符数": 53579,
-  "内容字符数": 7523,
+  "字符数": 160563,
+  "内容字符数": 8176,
   "文件": "教学资源_铁与硫酸铜反应.html",
-  "压缩包": "教学资源_铁与硫酸铜反应.zip"
+  "压缩包": "铁与硫酸铜反应.zip"
 }

@@ -1,16 +1,75 @@
 {
   "实验主题": "探究浮力大小",
   "生成信息": {
-    "来源": "大模型",
-    "模型": "deepseek-chat",
-    "是否修复过": true,
+    "来源": "统一场景配置与组件渲染",
+    "模型": "未调用（配置、组件与确定性求解器）",
+    "是否修复过": false,
     "续写次数": 0,
     "问题": [],
+    "模型输出问题": [],
+    "生成契约通过": true,
+    "生成尝试": [
+      {
+        "来源": "统一场景渲染",
+        "问题数": 0,
+        "问题": []
+      }
+    ],
     "外壳校验": [],
-    "耗时秒": 36.93
+    "页面骨架": {
+      "id": "physics-buoyancy",
+      "画布类型": "apparatus",
+      "场景库API": "PHYS.floating",
+      "学科求解器": "PHYS.solveBuoyancy"
+    },
+    "场景配置": {
+      "scene_id": "physics-buoyancy",
+      "学科": "物理",
+      "求解器": "PHYS.solveBuoyancy",
+      "组件": [
+        "experiment_stage",
+        "parameter_controls",
+        "result_cards",
+        "records_table"
+      ],
+      "必需元素": [],
+      "绘图类型": "apparatus",
+      "模式": "计算型"
+    },
+    "求解器分层": {
+      "scene_id": "physics-buoyancy",
+      "layer": "law",
+      "contract_id": "law.physics-buoyancy.v1",
+      "equations": [
+        "F_b = rho * g * V_displaced",
+        "G = rho_object * g * V"
+      ],
+      "constraints": [
+        "输入满足定义域",
+        "守恒/几何/函数关系成立",
+        "结果字段可由方程复算"
+      ],
+      "evidence": [
+        "solver_output",
+        "checks.ok",
+        "reference_recomputed"
+      ],
+      "tolerance": {
+        "residual": 1e-09
+      },
+      "oracle": "solve_reference",
+      "reference_inputs": {
+        "fraction": 0.5,
+        "object_density": 500,
+        "liquid_density": 1000,
+        "volume": 1,
+        "mode": "free"
+      }
+    },
+    "耗时秒": 0.01
   },
-  "字符数": 82941,
-  "内容字符数": 8065,
+  "字符数": 149617,
+  "内容字符数": 12657,
   "文件": "教学资源_探究浮力大小.html",
-  "压缩包": "教学资源_探究浮力大小.zip"
+  "压缩包": "探究浮力大小.zip"
 }

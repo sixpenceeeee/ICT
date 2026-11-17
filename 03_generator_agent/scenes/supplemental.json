@@ -1,0 +1,1282 @@
+{
+  "geography-orbit": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "地球公转|四季成因|黄赤交角|昼夜长短",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "太阳",
+      "地球轨道",
+      "黄赤交角",
+      "昼夜长短"
+    ],
+    "visual_type": "diagram",
+    "layout": "太阳—地球轨道图 + 日期滑块 + 光照和昼夜长短结果。",
+    "controls": "日期、纬度和倾角同步更新光照与昼夜结果。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-orbit",
+      "layer": "rule",
+      "contract_id": "rule.geography-orbit.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-solar-altitude": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "正午太阳高度|太阳高度角|太阳直射点|影长",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "太阳高度角",
+      "纬度",
+      "直射点",
+      "影长"
+    ],
+    "visual_type": "diagram",
+    "layout": "地球剖面 + 太阳光线 + 正午太阳高度角和影长结果。",
+    "controls": "纬度、日期和直射点同步更新角度与影长示意。",
+    "solver_layer": "law",
+    "law_contract": {
+      "scene_id": "geography-solar-altitude",
+      "layer": "law",
+      "contract_id": "geography.solar_altitude.v1",
+      "equations": [
+        "H = 90 - abs(latitude - declination)"
+      ],
+      "constraints": [
+        "-90 <= latitude <= 90",
+        "-23.44 <= declination <= 23.44",
+        "0 <= H <= 90"
+      ],
+      "evidence": [
+        "altitude_deg",
+        "latitude_deg",
+        "declination_deg"
+      ],
+      "tolerance": {},
+      "oracle": "solve_solar_altitude",
+      "reference_inputs": {}
+    }
+  },
+  "geography-sea-land-breeze": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "海陆风|海风|陆风|热力差异",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "海洋",
+      "陆地",
+      "气压",
+      "风向"
+    ],
+    "visual_type": "diagram",
+    "layout": "海陆剖面 + 日夜切换 + 温度、气压和风向箭头。",
+    "controls": "时间、海陆温差和风向必须来自同一热力差异状态。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-sea-land-breeze",
+      "layer": "rule",
+      "contract_id": "rule.geography-sea-land-breeze.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-bubble-sort": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "冒泡排序|交换排序|相邻元素|排序",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "数组",
+      "比较指针",
+      "交换动作",
+      "比较次数"
+    ],
+    "visual_type": "process",
+    "layout": "数组卡片 + 相邻比较高亮 + 交换动画 + 次数统计。",
+    "controls": "数组、升/降序和单步模式驱动参考算法状态。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-bubble-sort",
+      "layer": "rule",
+      "contract_id": "rule.informatics-bubble-sort.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-binary-search": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "二分查找|有序数组|查找区间|中点",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "有序数组",
+      "左边界",
+      "右边界",
+      "中点"
+    ],
+    "visual_type": "process",
+    "layout": "有序数组 + 当前查找区间 + 中点高亮 + 比较次数。",
+    "controls": "目标值和数组长度驱动区间收缩；无序输入要提示前置条件。",
+    "solver_layer": "law",
+    "law_contract": {
+      "scene_id": "informatics-binary-search",
+      "layer": "law",
+      "contract_id": "informatics.binary_search.v1",
+      "equations": [
+        "mid = floor((left + right) / 2)"
+      ],
+      "constraints": [
+        "array is sorted",
+        "new interval contains target when not found",
+        "interval length decreases"
+      ],
+      "evidence": [
+        "left",
+        "right",
+        "mid",
+        "interval_size"
+      ],
+      "tolerance": {},
+      "oracle": "solve_binary_search",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-hanoi": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "汉诺塔|递归调用|递归栈|移动次数",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "三根柱",
+      "盘片",
+      "递归栈",
+      "移动次数"
+    ],
+    "visual_type": "process",
+    "layout": "三柱盘片动画 + 递归调用栈 + 步数结果。",
+    "controls": "盘片数量和单步/播放驱动受限规模的递归演示。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-hanoi",
+      "layer": "rule",
+      "contract_id": "rule.informatics-hanoi.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-image-size": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "图像文件大小|像素|分辨率|位深|颜色通道",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "像素网格",
+      "分辨率",
+      "位深",
+      "文件大小"
+    ],
+    "visual_type": "diagram",
+    "layout": "像素网格 + 分辨率/位深控件 + 位/字节/MB 结果卡。",
+    "controls": "宽高、位深和通道数同步更新未压缩大小，压缩结果需注明依赖内容。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-image-size",
+      "layer": "rule",
+      "contract_id": "rule.informatics-image-size.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-enzyme": {
+    "subject": "生物",
+    "mode": "计算型",
+    "solver": "solveEnzyme",
+    "solver_api": "BIOSOLVER.solveEnzyme",
+    "patterns": "酶|活化能|底物浓度|酶活性|催化",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "速率曲线",
+      "变量控件",
+      "对照组",
+      "模型边界"
+    ],
+    "visual_type": "diagram",
+    "layout": "酶促反应速率曲线 + 温度/pH/底物参数 + 对照结果。",
+    "controls": "一次只改变一个变量，并显示模型假设。",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "biology-enzyme",
+      "layer": "numeric",
+      "contract_id": "numeric.biology-enzyme.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    }
+  },
+  "biology-cell-energy": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "细胞呼吸|光合作用|ATP|净光合|真光合|呼吸速率",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "光合曲线",
+      "呼吸曲线",
+      "ATP/能量",
+      "补偿点"
+    ],
+    "visual_type": "chart",
+    "layout": "光合/呼吸双曲线 + 净光合结果 + 光补偿点标记。",
+    "controls": "光照、二氧化碳和温度驱动同一速率模型。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-cell-energy",
+      "layer": "rule",
+      "contract_id": "rule.biology-cell-energy.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-cell-division": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "有丝分裂|减数分裂|染色体|染色单体|配子",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "分裂阶段",
+      "染色体",
+      "倍性",
+      "阶段顺序"
+    ],
+    "visual_type": "process",
+    "layout": "有丝/减数分裂阶段对照 + 染色体数量追踪。",
+    "controls": "阶段切换与倍性结果必须同步。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-cell-division",
+      "layer": "rule",
+      "contract_id": "rule.biology-cell-division.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-gene-expression": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "基因表达|转录|翻译|mRNA|密码子|中心法则",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "DNA序列",
+      "mRNA",
+      "密码子",
+      "氨基酸"
+    ],
+    "visual_type": "process",
+    "layout": "DNA→mRNA→氨基酸的步进翻译 + 碱基高亮。",
+    "controls": "序列、方向和突变位置驱动同一阅读框。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-gene-expression",
+      "layer": "rule",
+      "contract_id": "rule.biology-gene-expression.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-population-succession": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "种群增长|J型|S型|环境容纳量|群落演替",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "增长曲线",
+      "环境容纳量",
+      "出生/死亡率",
+      "演替阶段"
+    ],
+    "visual_type": "chart",
+    "layout": "J/S 型曲线 + 参数面板 + 演替阶段卡。",
+    "controls": "初始数量、出生率、死亡率和容纳量驱动曲线。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-population-succession",
+      "layer": "rule",
+      "contract_id": "rule.biology-population-succession.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-ecosystem-energy": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "生态系统能量|物质循环|碳循环|营养级|生态系统稳定性",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "能量金字塔",
+      "碳循环",
+      "营养级",
+      "分解者"
+    ],
+    "visual_type": "diagram",
+    "layout": "能量金字塔 + 碳循环箭头 + 扰动前后对比。",
+    "controls": "营养级、生产者能量和分解速率共享同一模型状态。",
+    "solver_layer": "law",
+    "law_contract": {
+      "scene_id": "biology-ecosystem-energy",
+      "layer": "law",
+      "contract_id": "biology.energy_flow.v1",
+      "equations": [
+        "E[n] = E[0] * transfer_efficiency ** n"
+      ],
+      "constraints": [
+        "0 < transfer_efficiency <= 1",
+        "E[n+1] <= E[n]",
+        "producer_energy > 0"
+      ],
+      "evidence": [
+        "energies",
+        "transfer_efficiency",
+        "energy_decreases"
+      ],
+      "tolerance": {},
+      "oracle": "solve_ecosystem_energy",
+      "reference_inputs": {}
+    }
+  },
+  "biology-homeostasis": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "稳态|负反馈|神经调节|体液调节|免疫调节",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "反馈环",
+      "目标范围",
+      "扰动",
+      "恢复曲线"
+    ],
+    "visual_type": "process",
+    "layout": "变量曲线 + 反馈节点 + 扰动/恢复过程。",
+    "controls": "扰动、反馈强度和延迟只用于生理机制示意。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-homeostasis",
+      "layer": "rule",
+      "contract_id": "rule.biology-homeostasis.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-biotech": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "发酵|微生物|无氧呼吸|培养条件|生物技术",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "发酵容器示意",
+      "底物",
+      "产物曲线",
+      "污染提示"
+    ],
+    "visual_type": "chart",
+    "layout": "发酵条件控件 + 底物/产物曲线 + 模型边界提示。",
+    "controls": "不提供真实培养配方，只显示条件变化的教学趋势。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-biotech",
+      "layer": "rule",
+      "contract_id": "rule.biology-biotech.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-atmosphere-circulation": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "大气环流|气压带|风带|季风|三圈环流",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "气压带",
+      "风带",
+      "季节",
+      "风向"
+    ],
+    "visual_type": "diagram",
+    "layout": "地球剖面 + 三圈环流 + 季节移动 + 风向箭头。",
+    "controls": "纬度、季节和半球切换同步更新环流。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-atmosphere-circulation",
+      "layer": "rule",
+      "contract_id": "rule.geography-atmosphere-circulation.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-ocean-current": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "洋流|暖流|寒流|海气相互作用|厄尔尼诺",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "洋流箭头",
+      "海温色阶",
+      "沿岸气候",
+      "时间尺度"
+    ],
+    "visual_type": "map",
+    "layout": "海洋地图 + 洋流/海温图层 + 沿岸气候对照。",
+    "controls": "洋流方向、海温差和季节更新同一地图状态。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-ocean-current",
+      "layer": "rule",
+      "contract_id": "rule.geography-ocean-current.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-urbanization": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "城市化|城市空间结构|功能区|交通|土地利用",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "城市地图",
+      "功能区",
+      "交通线",
+      "城市化率"
+    ],
+    "visual_type": "map",
+    "layout": "城市功能区地图 + 交通可达性 + 城市化率和压力结果。",
+    "controls": "人口、交通和土地利用控件同步更新示意。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-urbanization",
+      "layer": "rule",
+      "contract_id": "rule.geography-urbanization.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-agriculture-location": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "农业区位|地域类型|自然条件|市场|商品农业",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "自然条件图层",
+      "市场/交通",
+      "权重",
+      "适宜性"
+    ],
+    "visual_type": "map",
+    "layout": "农业区位多图层 + 权重控件 + 适宜性结果。",
+    "controls": "指标、权重和图层切换需显示假设。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-agriculture-location",
+      "layer": "rule",
+      "contract_id": "rule.geography-agriculture-location.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-industry-location": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "工业区位|产业布局|原料|能源|市场|环境约束",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "产业点位",
+      "运输成本",
+      "市场",
+      "环境约束"
+    ],
+    "visual_type": "map",
+    "layout": "产业区位图层 + 成本分项 + 环境约束提示。",
+    "controls": "原料、市场、交通和环境指标驱动比较卡。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-industry-location",
+      "layer": "rule",
+      "contract_id": "rule.geography-industry-location.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-regional-capacity": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "区域发展|资源环境承载力|可持续发展|生态足迹",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "区域指标",
+      "资源",
+      "环境容量",
+      "情景结果"
+    ],
+    "visual_type": "map",
+    "layout": "区域指标图层 + 发展情景切换 + 经济/生态权衡卡。",
+    "controls": "情景、技术和资源输入只改变教学模型。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-regional-capacity",
+      "layer": "rule",
+      "contract_id": "rule.geography-regional-capacity.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-gis": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "地理信息技术|GIS|遥感|全球导航卫星系统|图层叠加|缓冲区",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "图层",
+      "坐标",
+      "缓冲区",
+      "叠加结果"
+    ],
+    "visual_type": "map",
+    "layout": "多图层地图 + 缓冲区/叠加分析 + 图例和数据来源。",
+    "controls": "图层、坐标、缓冲距离和阈值驱动同一地图结果。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-gis",
+      "layer": "rule",
+      "contract_id": "rule.geography-gis.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "geography-disaster-risk": {
+    "subject": "地理",
+    "mode": "展示型",
+    "patterns": "自然灾害|风险|暴雨|滑坡|地震|防灾减灾|脆弱性",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "危险性",
+      "暴露度",
+      "脆弱性",
+      "措施前后对比"
+    ],
+    "visual_type": "map",
+    "layout": "风险三要素图层 + 措施前后对照 + 非实时提示。",
+    "controls": "危险性、暴露度和脆弱性必须分别可见。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "geography-disaster-risk",
+      "layer": "rule",
+      "contract_id": "rule.geography-disaster-risk.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-complexity": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "算法复杂度|递归|时间复杂度|空间复杂度|输入规模",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "算法流程",
+      "递归栈",
+      "输入规模",
+      "操作次数曲线"
+    ],
+    "visual_type": "process",
+    "layout": "算法执行 + 递归栈 + 操作次数曲线和复杂度说明。",
+    "controls": "只允许运行受限规模的教学示例。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-complexity",
+      "layer": "rule",
+      "contract_id": "rule.informatics-complexity.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-graph-structure": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "树|图数据结构|节点|边|遍历|连通性|最短路径",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "节点",
+      "边",
+      "遍历状态",
+      "路径结果"
+    ],
+    "visual_type": "network",
+    "layout": "节点/边编辑 + BFS/DFS 单步 + 度数和路径结果。",
+    "controls": "方向、权重和遍历算法驱动同一图状态。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-graph-structure",
+      "layer": "rule",
+      "contract_id": "rule.informatics-graph-structure.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-database": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "数据库|关系|主键|查询|筛选|连接|聚合",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "示例表",
+      "字段",
+      "查询条件",
+      "结果表"
+    ],
+    "visual_type": "table",
+    "layout": "两张虚构数据表 + 查询条件 + 结果表和行数统计。",
+    "controls": "筛选、连接、排序和聚合只作用于示例数据。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-database",
+      "layer": "rule",
+      "contract_id": "rule.informatics-database.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-functions-modules": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "函数抽象|模块化|参数|返回值|作用域|单元测试",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "函数接口",
+      "参数",
+      "返回值",
+      "测试用例"
+    ],
+    "visual_type": "process",
+    "layout": "函数调用栈 + 参数/返回值 + 测试结果。",
+    "controls": "仅运行白名单函数，提供边界用例和重置。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-functions-modules",
+      "layer": "rule",
+      "contract_id": "rule.informatics-functions-modules.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-web-protocol": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "网络协议|HTTP|请求|响应|状态码|客户端|服务器",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "请求",
+      "响应",
+      "状态码",
+      "时序图"
+    ],
+    "visual_type": "process",
+    "layout": "请求/响应时序图 + 状态码解释 + 错误分支。",
+    "controls": "全部为离线模拟，不发起真实网络请求。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-web-protocol",
+      "layer": "rule",
+      "contract_id": "rule.informatics-web-protocol.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-ai-classification": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "人工智能|机器学习|分类模型|训练集|测试集|准确率|偏差",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "特征散点图",
+      "训练/测试集",
+      "分类边界",
+      "混淆矩阵"
+    ],
+    "visual_type": "chart",
+    "layout": "二维特征散点 + 分类边界 + 测试结果和混淆矩阵。",
+    "controls": "只使用虚构样本，明确不能用于真实人员决策。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-ai-classification",
+      "layer": "rule",
+      "contract_id": "rule.informatics-ai-classification.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-cryptography": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "密码学|哈希|对称加密|公钥|数字签名|完整性",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "明文/密文",
+      "哈希",
+      "密钥角色",
+      "验证结果"
+    ],
+    "visual_type": "process",
+    "layout": "虚构文本加密/哈希/签名流程 + 篡改验证结果。",
+    "controls": "不展示真实密钥，不连接认证服务。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-cryptography",
+      "layer": "rule",
+      "contract_id": "rule.informatics-cryptography.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "informatics-system-project": {
+    "subject": "信息科技",
+    "mode": "展示型",
+    "patterns": "信息系统建模|需求分析|数据流|原型|测试|迭代|项目流程",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "需求卡",
+      "数据流",
+      "原型状态",
+      "测试用例"
+    ],
+    "visual_type": "process",
+    "layout": "需求→设计→实现→测试→迭代流程 + 数据流和缺陷统计。",
+    "controls": "需求变更需同步影响数据流和测试用例。",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "informatics-system-project",
+      "layer": "rule",
+      "contract_id": "rule.informatics-system-project.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  }
+}

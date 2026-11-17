@@ -1,0 +1,539 @@
+{
+  "math-square-pyramid-section-3d": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "截面图示",
+      "截面面积",
+      "几何约束"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-square-pyramid-section-3d",
+      "layer": "numeric",
+      "contract_id": "numeric.math-square-pyramid-section-3d.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveSquarePyramidCut"
+  },
+  "math-triangular-prism-section-3d": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "截面图示",
+      "截面面积"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-triangular-prism-section-3d",
+      "layer": "numeric",
+      "contract_id": "numeric.math-triangular-prism-section-3d.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveTriangularPrismCut"
+  },
+  "math-cuboid-section-3d": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "截面图示",
+      "截面面积"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-cuboid-section-3d",
+      "layer": "numeric",
+      "contract_id": "numeric.math-cuboid-section-3d.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveCuboidCut"
+  },
+  "math-solid-volume": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "总体积",
+      "分割体积",
+      "守恒关系"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-solid-volume",
+      "layer": "numeric",
+      "contract_id": "numeric.math-solid-volume.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveSolidVolume"
+  },
+  "math-spatial-metrics": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "空间几何图示",
+      "距离或角度",
+      "计算公式"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-spatial-metrics",
+      "layer": "numeric",
+      "contract_id": "numeric.math-spatial-metrics.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveSpatialMetrics"
+  },
+  "math-sphere-section": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "球体截面",
+      "截面半径",
+      "截面面积"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-sphere-section",
+      "layer": "numeric",
+      "contract_id": "numeric.math-sphere-section.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveSphereCut"
+  },
+  "math-cone-net-unfolding": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "圆锥展开图",
+      "弧长",
+      "面积守恒"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-cone-net-unfolding",
+      "layer": "numeric",
+      "contract_id": "numeric.math-cone-net-unfolding.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveConeNet"
+  },
+  "math-cone-section": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "圆锥截面",
+      "截面面积"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-cone-section",
+      "layer": "numeric",
+      "contract_id": "numeric.math-cone-section.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveConeCut"
+  },
+  "math-cylinder-net-unfolding": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "圆柱展开图",
+      "侧面积",
+      "表面积"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-cylinder-net-unfolding",
+      "layer": "numeric",
+      "contract_id": "numeric.math-cylinder-net-unfolding.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveCylinderNet"
+  },
+  "math-cylinder-section": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "圆柱截面",
+      "截面面积"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-cylinder-section",
+      "layer": "numeric",
+      "contract_id": "numeric.math-cylinder-section.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveCylinderCut"
+  },
+  "math-cube-cut-3d": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "正方体截面",
+      "截面形状",
+      "几何约束"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-cube-cut-3d",
+      "layer": "numeric",
+      "contract_id": "numeric.math-cube-cut-3d.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveCubeCut"
+  },
+  "math-quadratic": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "二次函数图像",
+      "对称轴",
+      "判别式"
+    ],
+    "visual_type": "graph",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-quadratic",
+      "layer": "numeric",
+      "contract_id": "numeric.math-quadratic.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveQuadratic"
+  },
+  "math-function-exploration": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "函数图像",
+      "参数变化",
+      "函数值"
+    ],
+    "visual_type": "graph",
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "math-function-exploration",
+      "layer": "rule",
+      "contract_id": "rule.math-function-exploration.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "math-cuboid-net-folding": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "长方体展开图",
+      "面",
+      "折叠关系"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-cuboid-net-folding",
+      "layer": "numeric",
+      "contract_id": "numeric.math-cuboid-net-folding.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveCuboidNet"
+  },
+  "math-cube-net-folding": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "正方体展开图",
+      "面",
+      "折叠关系"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "math-cube-net-folding",
+      "layer": "numeric",
+      "contract_id": "numeric.math-cube-net-folding.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    },
+    "solver_api": "MATH.solveCubeNet"
+  },
+  "math-spatial-geometry": {
+    "subject": "数学",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "空间几何图示",
+      "距离或角度",
+      "公式"
+    ],
+    "visual_type": "geometry",
+    "solver_layer": "law",
+    "law_contract": {
+      "scene_id": "math-spatial-geometry",
+      "layer": "law",
+      "contract_id": "math.geometry_constraints.v1",
+      "equations": [
+        "distance^2 = dx^2 + dy^2",
+        "angle sum constraints"
+      ],
+      "constraints": [
+        "units consistent",
+        "points satisfy declared relations"
+      ],
+      "evidence": [
+        "points",
+        "distances",
+        "angles"
+      ],
+      "tolerance": {},
+      "oracle": "solve_geometry_constraints",
+      "reference_inputs": {}
+    }
+  }
+}

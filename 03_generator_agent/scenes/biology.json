@@ -1,0 +1,471 @@
+{
+  "biology-digestion": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "消化|营养|淀粉|蛋白质|脂肪|小肠",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "消化道流程",
+      "营养物质",
+      "吸收部位",
+      "能量说明"
+    ],
+    "visual_type": "diagram",
+    "layout": "消化道流程与营养物质去向图 + 营养成分参数 + 结果卡；不绘制真实器官解剖细节。",
+    "controls": "食物类型、质量和消化阶段驱动同一状态；显示教学近似能量时必须注明假设。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-digestion",
+      "layer": "rule",
+      "contract_id": "rule.biology-digestion.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-respiration": {
+    "subject": "生物",
+    "mode": "计算型",
+    "solver": "solveRespiration",
+    "solver_api": "BIOSOLVER.solveRespiration",
+    "patterns": "呼吸|肺泡|气体交换|肺通气量|氧气|二氧化碳",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "肺泡示意",
+      "吸气呼气",
+      "气体方向",
+      "通气量"
+    ],
+    "visual_type": "diagram",
+    "layout": "胸廓/肺泡示意 + 吸呼气阶段 + 气体交换箭头 + 通气量结果。",
+    "controls": "潮气量、呼吸频率和阶段控件必须同步刷新图示和读数。",
+    "api": null,
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "biology-respiration",
+      "layer": "numeric",
+      "contract_id": "numeric.biology-respiration.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    }
+  },
+  "biology-circulation": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "血液循环|心脏|动脉|静脉|毛细血管|心输出量",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "心脏四腔",
+      "循环箭头",
+      "肺循环",
+      "体循环"
+    ],
+    "visual_type": "diagram",
+    "layout": "心脏四腔与血管网络 + 流向箭头 + 肺循环/体循环切换 + 结果卡。",
+    "controls": "心率、每搏量仅用于教学模型；所有读数来自同一状态。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-circulation",
+      "layer": "rule",
+      "contract_id": "rule.biology-circulation.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-ecosystem-foodweb": {
+    "subject": "生物",
+    "mode": "计算型",
+    "solver": "solveFoodWeb",
+    "solver_api": "BIOSOLVER.solveFoodWeb",
+    "patterns": "生态系统|食物链|食物网|生产者|消费者|分解者|能量流动",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "生物卡片",
+      "能量箭头",
+      "营养级",
+      "分解者"
+    ],
+    "visual_type": "diagram",
+    "layout": "食物链/食物网节点图 + 营养级高亮 + 能量方向 + 物种变化结果。",
+    "controls": "删除或添加物种后重新计算关联展示；10%仅作为近似常数。",
+    "api": null,
+    "solver_layer": "numeric",
+    "law_contract": {
+      "scene_id": "biology-ecosystem-foodweb",
+      "layer": "numeric",
+      "contract_id": "numeric.biology-ecosystem-foodweb.v1",
+      "equations": [],
+      "constraints": [
+        "solver checks.ok is true"
+      ],
+      "evidence": [
+        "checks.ok"
+      ],
+      "tolerance": {},
+      "oracle": "reference_solver",
+      "reference_inputs": {}
+    }
+  },
+  "biology-infectious-immunity": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "传染病|病原体|传播途径|易感人群|免疫|疫苗|防控",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "传播网络",
+      "病例统计",
+      "防控措施",
+      "模型边界"
+    ],
+    "visual_type": "process",
+    "layout": "节点传播网络 + 时间轴 + 感染统计曲线 + 防控措施对照。",
+    "controls": "接触率、隔离比例、免疫比例只驱动虚拟节点状态，明确不用于现实疫情预测。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-infectious-immunity",
+      "layer": "rule",
+      "contract_id": "rule.biology-infectious-immunity.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-transpiration": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "蒸腾|气孔|导管|水分运输|失水|保卫细胞",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "叶片",
+      "气孔",
+      "导管",
+      "失水曲线"
+    ],
+    "visual_type": "diagram",
+    "layout": "叶片气孔和导管示意 + 环境条件控件 + 失水曲线。",
+    "controls": "光照、温度、湿度、风速和时间必须影响同一教学模型的趋势显示。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-transpiration",
+      "layer": "rule",
+      "contract_id": "rule.biology-transpiration.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-classification-key": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "生物分类|检索表|二歧检索|界门纲目科属种|物种特征",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "生物卡片",
+      "二歧检索树",
+      "当前路径",
+      "分类结果"
+    ],
+    "visual_type": "process",
+    "layout": "生物特征卡片 + 二歧检索树 + 当前路径和候选集合。",
+    "controls": "每次选择必须缩小或保持候选集合，并支持重置路径。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-classification-key",
+      "layer": "rule",
+      "contract_id": "rule.biology-classification-key.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-biodiversity": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "生物多样性|物种丰富度|栖息地|保护区|濒危|外来物种",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "样地地图",
+      "物种列表",
+      "丰富度统计",
+      "保护措施"
+    ],
+    "visual_type": "diagram",
+    "layout": "样地地图 + 物种分布 + 干扰/保护措施对照 + 多样性结果卡。",
+    "controls": "样地面积、物种列表和干扰强度驱动展示；结论必须注明模型边界。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-biodiversity",
+      "layer": "rule",
+      "contract_id": "rule.biology-biodiversity.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-mendel": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "孟德尔|杂交|性状分离|基因型|表现型|棋盘格",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "亲本基因型",
+      "棋盘格",
+      "子代比例",
+      "理论比例"
+    ],
+    "visual_type": "diagram",
+    "layout": "亲本组合选择 + 配子/棋盘格 + 基因型与表现型比例结果。",
+    "controls": "亲本组合和样本量驱动同一棋盘格与统计面板；明确理论比例边界。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-mendel",
+      "layer": "rule",
+      "contract_id": "rule.biology-mendel.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-cell-structure": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "细胞结构|植物细胞|动物细胞|细胞壁|叶绿体|液泡",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "植物细胞图",
+      "动物细胞图",
+      "结构标签",
+      "功能说明"
+    ],
+    "visual_type": "diagram",
+    "layout": "植物/动物细胞并排结构图 + 点选高亮 + 异同统计。",
+    "controls": "细胞类型和结构筛选同步更新高亮、功能说明与清单。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-cell-structure",
+      "layer": "rule",
+      "contract_id": "rule.biology-cell-structure.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  },
+  "biology-seed-germination": {
+    "subject": "生物",
+    "mode": "展示型",
+    "patterns": "种子萌发|水分|温度|空气|萌发率|对照实验",
+    "components": [
+      "experiment_stage",
+      "parameter_controls",
+      "result_cards",
+      "comparison_panel",
+      "records_table",
+      "csv_export"
+    ],
+    "required": [
+      "种子阶段",
+      "对照组",
+      "萌发率",
+      "变量说明"
+    ],
+    "visual_type": "process",
+    "layout": "种子萌发阶段 + 单一变量对照 + 萌发率曲线与结论卡。",
+    "controls": "水分、温度和空气条件只能改变对应变量，显示对照组和模型边界。",
+    "api": null,
+    "solver_api": null,
+    "solver_layer": "rule",
+    "law_contract": {
+      "scene_id": "biology-seed-germination",
+      "layer": "rule",
+      "contract_id": "rule.biology-seed-germination.v1",
+      "equations": [],
+      "constraints": [
+        "state is in allowed set",
+        "required objects exist",
+        "semantic invariants hold"
+      ],
+      "evidence": [
+        "checks.ok",
+        "semantic_invariants_valid"
+      ],
+      "tolerance": {},
+      "oracle": "rule_state_oracle",
+      "reference_inputs": {}
+    }
+  }
+}

@@ -1,15 +1,36 @@
 {
   "文件": "教学资源_铁与硫酸铜反应.html",
-  "审查时间": "2026-11-03 21:06:33",
+  "审查时间": "2026-11-17 00:40:37",
   "实验ID": "未登记（应由知识库 experiment_id 提供）",
   "学科": "化学",
-  "主题": "金属活动性",
+  "主题": "铁与硫酸铜",
   "引擎": "未声明",
   "场景": "未登记",
-  "总分": 98.6,
+  "总分": 75.0,
   "结论": "不通过",
   "发布状态": "禁止发布",
-  "严重问题数": 1,
+  "publish_allowed": false,
+  "事实验收": {
+    "scene_id": "",
+    "requested_scene_id": "",
+    "fact_ids": [],
+    "facts_pass": false,
+    "facts_missing": true,
+    "source_missing": false,
+    "forbidden_term_found": false,
+    "safety_missing": true,
+    "teacher_review_pending": false,
+    "publish_allowed": false,
+    "coverage_status": "待补事实",
+    "missing_topics": [
+      "场景事实映射"
+    ],
+    "missing_terms": [],
+    "forbidden_terms": [],
+    "missing_source_refs": [],
+    "unverified_sources": []
+  },
+  "严重问题数": 2,
   "五关": [
     {
       "关": "G1",
@@ -26,10 +47,10 @@
       "关": "G2",
       "名称": "资源完整性",
       "满分": 25,
-      "得分": 23.61,
-      "通过": 13,
-      "失败": 1,
-      "待审": 2,
+      "得分": 25.0,
+      "通过": 15,
+      "失败": 0,
+      "待审": 1,
       "不适用": 0,
       "无可判项": false
     },
@@ -37,10 +58,10 @@
       "关": "G3",
       "名称": "学科判据",
       "满分": 25,
-      "得分": 25.0,
-      "通过": 1,
-      "失败": 0,
-      "待审": 1,
+      "得分": 0.0,
+      "通过": 3,
+      "失败": 2,
+      "待审": 4,
       "不适用": 2,
       "无可判项": false
     },
@@ -49,10 +70,10 @@
       "名称": "浏览器测试",
       "满分": 15,
       "得分": 15.0,
-      "通过": 9,
+      "通过": 10,
       "失败": 0,
       "待审": 0,
-      "不适用": 2,
+      "不适用": 3,
       "无可判项": false
     },
     {
@@ -68,10 +89,17 @@
     }
   ],
   "判据": {
+    "FACTS": {
+      "名称": "",
+      "pass": 3,
+      "fail": 0,
+      "review": 3,
+      "skip": 0
+    },
     "J3": {
       "名称": "计数与守恒",
       "pass": 0,
-      "fail": 0,
+      "fail": 1,
       "review": 0,
       "skip": 1
     },
@@ -91,8 +119,8 @@
     },
     "J8": {
       "名称": "答案表比对",
-      "pass": 1,
-      "fail": 0,
+      "pass": 0,
+      "fail": 1,
       "review": 0,
       "skip": 0
     }
@@ -254,14 +282,14 @@
       "gate_name": "资源完整性",
       "judge": "",
       "name": "本地资源可解析",
-      "status": "review",
-      "severity": "建议",
+      "status": "pass",
+      "severity": "一般",
       "weight": 4,
-      "expected": "下载弹窗指向的压缩包应随案例一起交付",
-      "actual": "压缩包未生成：铁与硫酸铜反应.zip",
-      "message": "页面能正常显示，但「下载本案例」会 404",
+      "expected": "所有相对路径引用的文件都在同目录",
+      "actual": "5 个本地引用全部存在",
+      "message": "资源随页面完整交付",
       "evidence": "",
-      "advice": "打包时把 zip 放到与 html 同目录，或改为指向资源目录"
+      "advice": ""
     },
     {
       "check_id": "G2-04",
@@ -303,7 +331,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "2–4 个关键参数控件",
-      "actual": "3 个滑块 + 3 个按钮",
+      "actual": "3 个滑块 + 2 个按钮",
       "message": "控件数量合适",
       "evidence": "",
       "advice": ""
@@ -378,7 +406,7 @@
       "severity": "一般",
       "weight": 5,
       "expected": "页面上每段文字的最上层都是文字本身",
-      "actual": "187 段文字实测未被 canvas/img/svg 覆盖",
+      "actual": "131 段文字实测未被 canvas/img/svg 覆盖",
       "message": "DOM 层文字均在最上层",
       "evidence": "",
       "advice": ""
@@ -404,14 +432,14 @@
       "gate_name": "资源完整性",
       "judge": "",
       "name": "画布内文字不被裁切",
-      "status": "fail",
-      "severity": "严重",
+      "status": "pass",
+      "severity": "一般",
       "weight": 3,
       "expected": "文字包围盒完整落在画布内并留 ≥8px 安全边距",
-      "actual": "4 段文字超出画布被裁切：「铁」box=81,444,18,21 画布=661,454；「硫酸铜」box=195,444,54,21 画布=661,454；「硫酸亚铁」box=385,444,72,21 画布=661,454",
-      "message": "文字出了画布边界，学生只能看到半截字",
+      "actual": "32 段文字全部在画布内",
+      "message": "无文字被裁切",
       "evidence": "",
-      "advice": "标注靠近边缘时改对齐方式或在绘制前夹取坐标；导轨末端刻度、轴名要留出安全边距"
+      "advice": ""
     },
     {
       "check_id": "G2-13",
@@ -453,10 +481,26 @@
       "severity": "一般",
       "weight": 3,
       "expected": "液量单位应明确为 mL，且画面液面不能接近空杯或越过杯口",
-      "actual": "场景记录液量 100.0 mL（液面比例 100%）",
+      "actual": "场景记录液量 69.8 mL（液面比例 70%）",
       "message": "场景液量处在可见范围内",
       "evidence": "",
       "advice": ""
+    },
+    {
+      "check_id": "J3-07",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "J3",
+      "judge_name": "计数与守恒",
+      "name": "限量试剂与反应计量独立复算",
+      "status": "fail",
+      "severity": "critical",
+      "weight": 8,
+      "expected": "Python 参考实现与页面的反应进度、限量试剂、剩余量、生成量及守恒结果一致",
+      "actual": "变形状态 4进度控件与求解请求不一致；变形状态 5进度控件与求解请求不一致；进度变形 progress-half 的页面请求不是 0.5；反应程度不等于最大反应程度乘反应进度；进度变形 progress-complete 的页面请求不是 1；反应程度不等于最大反应程度乘反应进度；完全反应时限量试剂没有恰好耗尽",
+      "message": "页面反应计量结果未通过独立复算",
+      "evidence": "变形状态 4进度控件与求解请求不一致；变形状态 5进度控件与求解请求不一致；进度变形 progress-half 的页面请求不是 0.5",
+      "advice": "用 CHEMSOLVER.solveStoichiometry 的同一结果驱动读数和演示；不要手算或缓存旧值"
     },
     {
       "check_id": "J3-01",
@@ -481,14 +525,14 @@
       "judge": "J8",
       "judge_name": "答案表比对",
       "name": "J8 答案表比对",
-      "status": "pass",
-      "severity": "major",
+      "status": "fail",
+      "severity": "critical",
       "weight": 6,
       "expected": "页面表述与已审核事实表一致",
-      "actual": "[CHE-F-001] 命中：铁、硫酸铜、置换；[CHE-F-002] 命中：铜、活动性；[CHE-F-004] 命中：守恒、方程式",
-      "message": "关键现象与结论与审核事实一致",
-      "evidence": "",
-      "advice": ""
+      "actual": "[CHE-F-002] 未出现关键现象/结论（应含其一：不反应、无明显现象、无气泡）；[CHE-F-004] 缺少必要表述「原子」",
+      "message": "页面出现与教材事实相反的表述，属于科学性错误",
+      "evidence": "[CHE-F-002] 未出现关键现象/结论（应含其一：不反应、无明显现象、无气泡）；[CHE-F-004] 缺少必要表述「原子」",
+      "advice": "对照 facts.json 的『禁止出现』逐条改写；不确定的现象宁可不写，也不要编造"
     },
     {
       "check_id": "J6-01",
@@ -523,6 +567,96 @@
       "advice": ""
     },
     {
+      "check_id": "G3-F-01",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "事实内容机器匹配",
+      "status": "review",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "场景映射存在，页面包含必须概念且未命中禁止表述",
+      "actual": "待补事实",
+      "message": "机器匹配结果仅作为事实覆盖提示，不代表教师审核通过",
+      "evidence": "{\"scene_id\": \"\", \"requested_scene_id\": \"\", \"fact_ids\": [], \"facts_pass\": false, \"facts_missing\": true, \"source_missing\": false, \"forbidden_term_found\": false, \"safety_missing\": true, \"teacher_review_pending\": false, \"publish_allowed\": false, \"coverage_status\": \"待补事实\", \"missing_topics\": [\"场景事实映射\"], \"missing_terms\": [], \"forbidden_terms\": [], \"missing_source_refs\": [], \"unverified_sources\": []}",
+      "advice": "补齐场景事实映射和页面必需概念；不要用机器匹配替代教师审核"
+    },
+    {
+      "check_id": "G3-F-02",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "禁止表述检查",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "页面不得出现事实库 must_not_include",
+      "actual": "未发现禁止表述",
+      "message": "未发现冲突表述",
+      "evidence": "",
+      "advice": "依据已审核事实改写页面表述；不确定时删除该表述"
+    },
+    {
+      "check_id": "G3-F-03",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "事实来源可追踪",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "所有 source_refs 均存在且来源已核验",
+      "actual": "缺失：无；待核验：无",
+      "message": "来源缺失或尚未完成核验，不能发布",
+      "evidence": "{\"missing\": [], \"unverified\": []}",
+      "advice": "补充来源定位信息并完成教师/教研核验；不得伪造页码或网址"
+    },
+    {
+      "check_id": "G3-F-04",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "事实安全边界",
+      "status": "review",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "页面包含事实对应的 safety_boundary",
+      "actual": "缺少安全边界",
+      "message": "虚拟模型、实验安全或适用边界仍需教师确认",
+      "evidence": "",
+      "advice": "在页面教学说明或实验声明中补充安全/模型边界"
+    },
+    {
+      "check_id": "G3-F-05",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "事实教师审核状态",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "事实 review.status 为教师审核通过",
+      "actual": "已有审核记录",
+      "message": "事实审核记录已登记",
+      "evidence": "",
+      "advice": "由教师/教研填写 reviewer、review_date 和 notes，确认后再发布"
+    },
+    {
+      "check_id": "G3-F-06",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "事实发布许可",
+      "status": "review",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "事实、来源、安全边界、教师审核和场景覆盖均满足发布条件",
+      "actual": "待事实/来源/教师审核",
+      "message": "发布许可是独立状态，不由页面可运行性推断",
+      "evidence": "",
+      "advice": "先完成事实补齐、来源核验和教师审核，再进入发布队列"
+    },
+    {
       "check_id": "G4-01",
       "gate": "G4",
       "gate_name": "浏览器测试",
@@ -532,7 +666,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "浏览器能正常加载",
-      "actual": "加载耗时 186 ms",
+      "actual": "加载耗时 443 ms",
       "message": "页面可加载",
       "evidence": "",
       "advice": ""
@@ -551,6 +685,21 @@
       "message": "脚本运行干净",
       "evidence": "",
       "advice": "常见原因：DOM 取到 null、函数名拼错、脚本早于元素执行"
+    },
+    {
+      "check_id": "G4-32",
+      "gate": "G4",
+      "gate_name": "浏览器测试",
+      "judge": "",
+      "name": "求解器页面变形测试",
+      "status": "pass",
+      "severity": "严重",
+      "weight": 5,
+      "expected": "改变实际页面输入后，求解请求/结果随之更新，并可对变形状态独立复算",
+      "actual": "浏览器输入变形已到达并更新求解器：化学反应计量",
+      "message": "页面求解器变形测试通过",
+      "evidence": "化学反应计量",
+      "advice": "在浏览器实际改变求解控件；确保请求随控件更新、重算结果更新，并由独立参考实现复核变形状态"
     },
     {
       "check_id": "G4-03",
@@ -592,7 +741,7 @@
       "severity": "一般",
       "weight": 2,
       "expected": "点击按钮后页面状态变化",
-      "actual": "3/3 个按钮有响应",
+      "actual": "2/2 个按钮有响应",
       "message": "按钮均可用",
       "evidence": "",
       "advice": "给按钮绑定事件；开关类按钮必须改变实验状态并刷新读数"
@@ -622,7 +771,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "渐变/半透明叠层/曲线/无色块堆砌",
-      "actual": "渐变 24% · 叠层 67% · 立体件 20% · 曲线 89% · 纯色块 6 处",
+      "actual": "渐变 24% · 叠层 67% · 立体件 20% · 曲线 89% · 纯色块 1 处",
       "message": "器材画面质感达到基础要求",
       "evidence": "",
       "advice": ""
@@ -636,8 +785,8 @@
       "status": "pass",
       "severity": "一般",
       "weight": 2,
-      "expected": "名字只在页眉出现一次 / 正文纯黑 / 最小字号 26px",
-      "actual": "标题 7 字「铁与硫酸铜反应」· ①区重复名称 无 · 最小字号 26px · 小于26px 0 处 · 非黑正文 0 处",
+      "expected": "名字只在页眉出现一次 / 正文纯黑 / 最小字号 12px",
+      "actual": "标题 7 字「铁与硫酸铜反应」· ①区重复名称 无 · 最小字号 12px · 小于12px 0 处 · 非黑正文 0 处",
       "message": "版式与平台规范一致",
       "evidence": "",
       "advice": ""
@@ -667,7 +816,7 @@
       "severity": "一般",
       "weight": 2,
       "expected": "点「记录」后表格追加一行",
-      "actual": "点 3 次，表格行数 1→4",
+      "actual": "点 3 次，表格行数 0→3",
       "message": "记录功能正常",
       "evidence": "",
       "advice": "记录时把当前参数与结果一起写入一行，不要只写结果"
@@ -684,8 +833,23 @@
       "expected": "桌面/窄屏无页面级横向溢出，参数控件有可读标签",
       "actual": "视口：desktop 1351/1366 正常; mobile 375/390 正常",
       "message": "横向溢出会让投影/手机上的内容被裁掉；无标签控件难以理解",
-      "evidence": "mobile={'width': 390, 'documentWidth': 375, 'stageWidth': 319, 'name': 'mobile', 'overflow': False}; unlabeled=[]",
+      "evidence": "mobile={'width': 390, 'documentWidth': 375, 'stageWidth': 335, 'name': 'mobile', 'overflow': False}; unlabeled=[]",
       "advice": "为控件补 label/aria-label；窄屏下让卡片换列、表格容器局部滚动、画布宽度不超出页面"
+    },
+    {
+      "check_id": "G4-12",
+      "gate": "G4",
+      "gate_name": "浏览器测试",
+      "judge": "",
+      "name": "旋转视角可恢复",
+      "status": "skip",
+      "severity": "一般",
+      "weight": 1,
+      "expected": "带视角恢复按钮的可旋转场景应回到初始 yaw/pitch",
+      "actual": "页面没有恢复视角类按钮",
+      "message": "本项仅适用于提供视角复位的场景",
+      "evidence": "",
+      "advice": ""
     },
     {
       "check_id": "G5-01",
@@ -741,9 +905,9 @@
       "status": "review",
       "severity": "一般",
       "weight": 0,
-      "expected": "明确标注实验性质与来源",
-      "actual": "①区未见实验性质/来源",
-      "message": "缺少性质标注，对外汇报时容易把演示说成必做实验",
+      "expected": "明确标注实验性质与来源（课标必做 / 常规实验 / 教学演示）",
+      "actual": "已标注「教学演示」",
+      "message": "性质已写明，课标地位仍需教研确认",
       "evidence": "",
       "advice": ""
     },
@@ -780,31 +944,31 @@
   ],
   "问题清单": [
     {
-      "维度": "资源完整性",
-      "检查项": "画布内文字不被裁切",
-      "级别": "严重",
-      "说明": "文字出了画布边界，学生只能看到半截字（4 段文字超出画布被裁切：「铁」box=81,444,18,21 画布=661,454；「硫酸铜」box=195,444,54,21 画布=661,454；「硫酸亚铁」box=385,444,72,21 画布=661,454）",
-      "建议": "标注靠近边缘时改对齐方式或在绘制前夹取坐标；导轨末端刻度、轴名要留出安全边距",
-      "check_id": "G2-12",
+      "维度": "学科判据·J3",
+      "检查项": "限量试剂与反应计量独立复算",
+      "级别": "critical",
+      "说明": "页面反应计量结果未通过独立复算（变形状态 4进度控件与求解请求不一致；变形状态 5进度控件与求解请求不一致；进度变形 progress-half 的页面请求不是 0.5；反应程度不等于最大反应程度乘反应进度；进度变形 progress-complete 的页面请求不是 1；反应程度不等于最大反应程度乘反应进度；完全反应时限量试剂没有恰好耗尽）",
+      "建议": "用 CHEMSOLVER.solveStoichiometry 的同一结果驱动读数和演示；不要手算或缓存旧值",
+      "check_id": "J3-07",
       "status": "fail",
-      "expected": "文字包围盒完整落在画布内并留 ≥8px 安全边距",
-      "actual": "4 段文字超出画布被裁切：「铁」box=81,444,18,21 画布=661,454；「硫酸铜」box=195,444,54,21 画布=661,454；「硫酸亚铁」box=385,444,72,21 画布=661,454",
-      "evidence": ""
+      "expected": "Python 参考实现与页面的反应进度、限量试剂、剩余量、生成量及守恒结果一致",
+      "actual": "变形状态 4进度控件与求解请求不一致；变形状态 5进度控件与求解请求不一致；进度变形 progress-half 的页面请求不是 0.5；反应程度不等于最大反应程度乘反应进度；进度变形 progress-complete 的页面请求不是 1；反应程度不等于最大反应程度乘反应进度；完全反应时限量试剂没有恰好耗尽",
+      "evidence": "变形状态 4进度控件与求解请求不一致；变形状态 5进度控件与求解请求不一致；进度变形 progress-half 的页面请求不是 0.5"
+    },
+    {
+      "维度": "学科判据·J8",
+      "检查项": "J8 答案表比对",
+      "级别": "critical",
+      "说明": "页面出现与教材事实相反的表述，属于科学性错误（[CHE-F-002] 未出现关键现象/结论（应含其一：不反应、无明显现象、无气泡）；[CHE-F-004] 缺少必要表述「原子」）",
+      "建议": "对照 facts.json 的『禁止出现』逐条改写；不确定的现象宁可不写，也不要编造",
+      "check_id": "J8-01",
+      "status": "fail",
+      "expected": "页面表述与已审核事实表一致",
+      "actual": "[CHE-F-002] 未出现关键现象/结论（应含其一：不反应、无明显现象、无气泡）；[CHE-F-004] 缺少必要表述「原子」",
+      "evidence": "[CHE-F-002] 未出现关键现象/结论（应含其一：不反应、无明显现象、无气泡）；[CHE-F-004] 缺少必要表述「原子」"
     }
   ],
   "待审清单": [
-    {
-      "维度": "资源完整性",
-      "检查项": "本地资源可解析",
-      "级别": "建议",
-      "说明": "页面能正常显示，但「下载本案例」会 404（压缩包未生成：铁与硫酸铜反应.zip）",
-      "建议": "打包时把 zip 放到与 html 同目录，或改为指向资源目录",
-      "check_id": "G2-03",
-      "status": "review",
-      "expected": "下载弹窗指向的压缩包应随案例一起交付",
-      "actual": "压缩包未生成：铁与硫酸铜反应.zip",
-      "evidence": ""
-    },
     {
       "维度": "资源完整性",
       "检查项": "CSV 导出",
@@ -830,15 +994,51 @@
       "evidence": ""
     },
     {
+      "维度": "学科判据·FACTS",
+      "检查项": "事实内容机器匹配",
+      "级别": "一般",
+      "说明": "机器匹配结果仅作为事实覆盖提示，不代表教师审核通过（待补事实）",
+      "建议": "补齐场景事实映射和页面必需概念；不要用机器匹配替代教师审核",
+      "check_id": "G3-F-01",
+      "status": "review",
+      "expected": "场景映射存在，页面包含必须概念且未命中禁止表述",
+      "actual": "待补事实",
+      "evidence": "{\"scene_id\": \"\", \"requested_scene_id\": \"\", \"fact_ids\": [], \"facts_pass\": false, \"facts_missing\": true, \"source_missing\": false, \"forbidden_term_found\": false, \"safety_missing\": true, \"teacher_review_pending\": false, \"publish_allowed\": false, \"coverage_status\": \"待补事实\", \"missing_topics\": [\"场景事实映射\"], \"missing_terms\": [], \"forbidden_terms\": [], \"missing_source_refs\": [], \"unverified_sources\": []}"
+    },
+    {
+      "维度": "学科判据·FACTS",
+      "检查项": "事实安全边界",
+      "级别": "一般",
+      "说明": "虚拟模型、实验安全或适用边界仍需教师确认（缺少安全边界）",
+      "建议": "在页面教学说明或实验声明中补充安全/模型边界",
+      "check_id": "G3-F-04",
+      "status": "review",
+      "expected": "页面包含事实对应的 safety_boundary",
+      "actual": "缺少安全边界",
+      "evidence": ""
+    },
+    {
+      "维度": "学科判据·FACTS",
+      "检查项": "事实发布许可",
+      "级别": "一般",
+      "说明": "发布许可是独立状态，不由页面可运行性推断（待事实/来源/教师审核）",
+      "建议": "先完成事实补齐、来源核验和教师审核，再进入发布队列",
+      "check_id": "G3-F-06",
+      "status": "review",
+      "expected": "事实、来源、安全边界、教师审核和场景覆盖均满足发布条件",
+      "actual": "待事实/来源/教师审核",
+      "evidence": ""
+    },
+    {
       "维度": "教学审核",
       "检查项": "实验性质标注",
       "级别": "一般",
-      "说明": "缺少性质标注，对外汇报时容易把演示说成必做实验（①区未见实验性质/来源）",
+      "说明": "性质已写明，课标地位仍需教研确认（已标注「教学演示」）",
       "建议": "",
       "check_id": "G5-04",
       "status": "review",
-      "expected": "明确标注实验性质与来源",
-      "actual": "①区未见实验性质/来源",
+      "expected": "明确标注实验性质与来源（课标必做 / 常规实验 / 教学演示）",
+      "actual": "已标注「教学演示」",
       "evidence": ""
     },
     {
@@ -854,7 +1054,7 @@
       "evidence": ""
     }
   ],
-  "修改意见": "上一版质检未通过，请逐条修改（共 1 项）：\n1. [资源完整性/G2-12] 画布内文字不被裁切：文字出了画布边界，学生只能看到半截字。应为：文字包围盒完整落在画布内并留 ≥8px 安全边距；实际：4 段文字超出画布被裁切：「铁」box=81,444,18,21 画布=661,454；「硫酸铜」box=195,444,54,21 画布=661,454；「硫酸亚铁」box=385,444,72,21 画布=661,454。修改建议：标注靠近边缘时改对齐方式或在绘制前夹取坐标；导轨末端刻度、轴名要留出安全边距",
+  "修改意见": "上一版质检未通过，请逐条修改（共 2 项）：\n1. [学科判据/J3-07] 限量试剂与反应计量独立复算：页面反应计量结果未通过独立复算。应为：Python 参考实现与页面的反应进度、限量试剂、剩余量、生成量及守恒结果一致；实际：变形状态 4进度控件与求解请求不一致；变形状态 5进度控件与求解请求不一致；进度变形 progress-half 的页面请求不是 0.5；反应程度不等于最大反应程度乘反应进度；进度变形 progress-complete 的页面请求不是 1；反应程度不等于最大反应程度乘反应进度；完全反应时限量试剂没有恰好耗尽。修改建议：用 CHEMSOLVER.solveStoichiometry 的同一结果驱动读数和演示；不要手算或缓存旧值\n2. [学科判据/J8-01] J8 答案表比对：页面出现与教材事实相反的表述，属于科学性错误。应为：页面表述与已审核事实表一致；实际：[CHE-F-002] 未出现关键现象/结论（应含其一：不反应、无明显现象、无气泡）；[CHE-F-004] 缺少必要表述「原子」。修改建议：对照 facts.json 的『禁止出现』逐条改写；不确定的现象宁可不写，也不要编造",
   "动态验证": "已执行",
-  "独立性说明": "J1–J8 由本文件独立重算，页面自报的 __DATA__.checks 只记为 review，不作为通过依据；J8 依赖 facts.json 中已通过教研复核的条目。"
+  "独立性说明": "J1–J8 由本文件独立重算，页面自报的 __DATA__.checks 只记为 review，不作为通过依据；J8 依赖 facts.json 中已通过教研复核的条目；事实来源、安全边界和教师审核状态来自 facts_registry/source_registry/scene_fact_map。"
 }

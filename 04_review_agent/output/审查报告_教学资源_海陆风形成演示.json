@@ -1,6 +1,6 @@
 {
   "文件": "教学资源_海陆风形成演示.html",
-  "审查时间": "2026-11-03 22:15:53",
+  "审查时间": "2026-11-13 19:36:37",
   "实验ID": "未登记（应由知识库 experiment_id 提供）",
   "学科": "地理",
   "主题": "地理",
@@ -9,6 +9,27 @@
   "总分": 100.0,
   "结论": "通过",
   "发布状态": "待教师审核",
+  "publish_allowed": false,
+  "事实验收": {
+    "scene_id": "",
+    "requested_scene_id": "",
+    "fact_ids": [],
+    "facts_pass": false,
+    "facts_missing": true,
+    "source_missing": false,
+    "forbidden_term_found": false,
+    "safety_missing": true,
+    "teacher_review_pending": false,
+    "publish_allowed": false,
+    "coverage_status": "待补事实",
+    "missing_topics": [
+      "场景事实映射"
+    ],
+    "missing_terms": [],
+    "forbidden_terms": [],
+    "missing_source_refs": [],
+    "unverified_sources": []
+  },
   "严重问题数": 0,
   "五关": [
     {
@@ -27,9 +48,9 @@
       "名称": "资源完整性",
       "满分": 25,
       "得分": 25.0,
-      "通过": 13,
+      "通过": 14,
       "失败": 0,
-      "待审": 2,
+      "待审": 1,
       "不适用": 1,
       "无可判项": false
     },
@@ -38,9 +59,9 @@
       "名称": "学科判据",
       "满分": 25,
       "得分": 25.0,
-      "通过": 0,
+      "通过": 3,
       "失败": 0,
-      "待审": 1,
+      "待审": 4,
       "不适用": 3,
       "无可判项": true
     },
@@ -68,6 +89,13 @@
     }
   ],
   "判据": {
+    "FACTS": {
+      "名称": "",
+      "pass": 3,
+      "fail": 0,
+      "review": 3,
+      "skip": 0
+    },
     "J2": {
       "名称": "几何复算",
       "pass": 0,
@@ -254,14 +282,14 @@
       "gate_name": "资源完整性",
       "judge": "",
       "name": "本地资源可解析",
-      "status": "review",
-      "severity": "建议",
+      "status": "pass",
+      "severity": "一般",
       "weight": 4,
-      "expected": "下载弹窗指向的压缩包应随案例一起交付",
-      "actual": "压缩包未生成：海陆风形成演示.zip",
-      "message": "页面能正常显示，但「下载本案例」会 404",
+      "expected": "所有相对路径引用的文件都在同目录",
+      "actual": "5 个本地引用全部存在",
+      "message": "资源随页面完整交付",
       "evidence": "",
-      "advice": "打包时把 zip 放到与 html 同目录，或改为指向资源目录"
+      "advice": ""
     },
     {
       "check_id": "G2-04",
@@ -378,7 +406,7 @@
       "severity": "一般",
       "weight": 5,
       "expected": "页面上每段文字的最上层都是文字本身",
-      "actual": "165 段文字实测未被 canvas/img/svg 覆盖",
+      "actual": "125 段文字实测未被 canvas/img/svg 覆盖",
       "message": "DOM 层文字均在最上层",
       "evidence": "",
       "advice": ""
@@ -393,7 +421,7 @@
       "severity": "一般",
       "weight": 4,
       "expected": "文字在最后一步绘制，不被任何后续填充覆盖",
-      "actual": "8 段画布文字均未被后续图元覆盖",
+      "actual": "4 段画布文字均未被后续图元覆盖",
       "message": "绘制顺序正确",
       "evidence": "",
       "advice": ""
@@ -408,7 +436,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "文字包围盒完整落在画布内并留 ≥8px 安全边距",
-      "actual": "8 段文字全部在画布内",
+      "actual": "4 段文字全部在画布内",
       "message": "无文字被裁切",
       "evidence": "",
       "advice": ""
@@ -423,7 +451,7 @@
       "severity": "一般",
       "weight": 4,
       "expected": "文字与面板描边、相邻标注之间留出可读间距",
-      "actual": "8 段画布文字未与卡片描边或其他文字相撞",
+      "actual": "4 段画布文字未与卡片描边或其他文字相撞",
       "message": "画布内标注留有可读间距",
       "evidence": "",
       "advice": ""
@@ -523,6 +551,96 @@
       "advice": ""
     },
     {
+      "check_id": "G3-F-01",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "事实内容机器匹配",
+      "status": "review",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "场景映射存在，页面包含必须概念且未命中禁止表述",
+      "actual": "待补事实",
+      "message": "机器匹配结果仅作为事实覆盖提示，不代表教师审核通过",
+      "evidence": "{\"scene_id\": \"\", \"requested_scene_id\": \"\", \"fact_ids\": [], \"facts_pass\": false, \"facts_missing\": true, \"source_missing\": false, \"forbidden_term_found\": false, \"safety_missing\": true, \"teacher_review_pending\": false, \"publish_allowed\": false, \"coverage_status\": \"待补事实\", \"missing_topics\": [\"场景事实映射\"], \"missing_terms\": [], \"forbidden_terms\": [], \"missing_source_refs\": [], \"unverified_sources\": []}",
+      "advice": "补齐场景事实映射和页面必需概念；不要用机器匹配替代教师审核"
+    },
+    {
+      "check_id": "G3-F-02",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "禁止表述检查",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "页面不得出现事实库 must_not_include",
+      "actual": "未发现禁止表述",
+      "message": "未发现冲突表述",
+      "evidence": "",
+      "advice": "依据已审核事实改写页面表述；不确定时删除该表述"
+    },
+    {
+      "check_id": "G3-F-03",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "事实来源可追踪",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "所有 source_refs 均存在且来源已核验",
+      "actual": "缺失：无；待核验：无",
+      "message": "来源缺失或尚未完成核验，不能发布",
+      "evidence": "{\"missing\": [], \"unverified\": []}",
+      "advice": "补充来源定位信息并完成教师/教研核验；不得伪造页码或网址"
+    },
+    {
+      "check_id": "G3-F-04",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "事实安全边界",
+      "status": "review",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "页面包含事实对应的 safety_boundary",
+      "actual": "缺少安全边界",
+      "message": "虚拟模型、实验安全或适用边界仍需教师确认",
+      "evidence": "",
+      "advice": "在页面教学说明或实验声明中补充安全/模型边界"
+    },
+    {
+      "check_id": "G3-F-05",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "事实教师审核状态",
+      "status": "pass",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "事实 review.status 为教师审核通过",
+      "actual": "已有审核记录",
+      "message": "事实审核记录已登记",
+      "evidence": "",
+      "advice": "由教师/教研填写 reviewer、review_date 和 notes，确认后再发布"
+    },
+    {
+      "check_id": "G3-F-06",
+      "gate": "G3",
+      "gate_name": "学科判据",
+      "judge": "FACTS",
+      "name": "事实发布许可",
+      "status": "review",
+      "severity": "一般",
+      "weight": 0,
+      "expected": "事实、来源、安全边界、教师审核和场景覆盖均满足发布条件",
+      "actual": "待事实/来源/教师审核",
+      "message": "发布许可是独立状态，不由页面可运行性推断",
+      "evidence": "",
+      "advice": "先完成事实补齐、来源核验和教师审核，再进入发布队列"
+    },
+    {
       "check_id": "G4-01",
       "gate": "G4",
       "gate_name": "浏览器测试",
@@ -532,7 +650,7 @@
       "severity": "一般",
       "weight": 3,
       "expected": "浏览器能正常加载",
-      "actual": "加载耗时 153 ms",
+      "actual": "加载耗时 125 ms",
       "message": "页面可加载",
       "evidence": "",
       "advice": ""
@@ -636,8 +754,8 @@
       "status": "pass",
       "severity": "一般",
       "weight": 2,
-      "expected": "名字只在页眉出现一次 / 正文纯黑 / 最小字号 26px",
-      "actual": "标题 7 字「海陆风形成演示」· ①区重复名称 无 · 最小字号 26px · 小于26px 0 处 · 非黑正文 0 处",
+      "expected": "名字只在页眉出现一次 / 正文纯黑 / 最小字号 13px",
+      "actual": "标题 7 字「海陆风形成演示」· ①区重复名称 无 · 最小字号 13px · 小于13px 0 处 · 非黑正文 0 处",
       "message": "版式与平台规范一致",
       "evidence": "",
       "advice": ""
@@ -667,7 +785,7 @@
       "severity": "一般",
       "weight": 2,
       "expected": "点「记录」后表格追加一行",
-      "actual": "点 3 次，表格行数 0→3",
+      "actual": "点 3 次，表格行数 1→4",
       "message": "记录功能正常",
       "evidence": "",
       "advice": "记录时把当前参数与结果一起写入一行，不要只写结果"
@@ -684,7 +802,7 @@
       "expected": "桌面/窄屏无页面级横向溢出，参数控件有可读标签",
       "actual": "视口：desktop 1351/1366 正常; mobile 375/390 正常",
       "message": "横向溢出会让投影/手机上的内容被裁掉；无标签控件难以理解",
-      "evidence": "mobile={'width': 390, 'documentWidth': 375, 'stageWidth': 319, 'name': 'mobile', 'overflow': False}; unlabeled=[]",
+      "evidence": "mobile={'width': 390, 'documentWidth': 375, 'stageWidth': 335, 'name': 'mobile', 'overflow': False}; unlabeled=[]",
       "advice": "为控件补 label/aria-label；窄屏下让卡片换列、表格容器局部滚动、画布宽度不超出页面"
     },
     {
@@ -712,7 +830,7 @@
       "severity": "一般",
       "weight": 2,
       "expected": "①区给出 1–2 条可观察的学习目标",
-      "actual": "已呈现（需求中 3 条）",
+      "actual": "已呈现（需求中 4 条）",
       "message": "学习目标已呈现",
       "evidence": "",
       "advice": "用「能……」开头写 1–2 条，指向可观察的行为"
@@ -797,18 +915,6 @@
   "待审清单": [
     {
       "维度": "资源完整性",
-      "检查项": "本地资源可解析",
-      "级别": "建议",
-      "说明": "页面能正常显示，但「下载本案例」会 404（压缩包未生成：海陆风形成演示.zip）",
-      "建议": "打包时把 zip 放到与 html 同目录，或改为指向资源目录",
-      "check_id": "G2-03",
-      "status": "review",
-      "expected": "下载弹窗指向的压缩包应随案例一起交付",
-      "actual": "压缩包未生成：海陆风形成演示.zip",
-      "evidence": ""
-    },
-    {
-      "维度": "资源完整性",
       "检查项": "CSV 导出",
       "级别": "建议",
       "说明": "数值实验建议补一个导出（非必做）（未提供导出）",
@@ -829,6 +935,42 @@
       "status": "review",
       "expected": "按已审核场景注册表核对器材/标注/图例",
       "actual": "场景未注册，仅命中通用标注 0 项（无）",
+      "evidence": ""
+    },
+    {
+      "维度": "学科判据·FACTS",
+      "检查项": "事实内容机器匹配",
+      "级别": "一般",
+      "说明": "机器匹配结果仅作为事实覆盖提示，不代表教师审核通过（待补事实）",
+      "建议": "补齐场景事实映射和页面必需概念；不要用机器匹配替代教师审核",
+      "check_id": "G3-F-01",
+      "status": "review",
+      "expected": "场景映射存在，页面包含必须概念且未命中禁止表述",
+      "actual": "待补事实",
+      "evidence": "{\"scene_id\": \"\", \"requested_scene_id\": \"\", \"fact_ids\": [], \"facts_pass\": false, \"facts_missing\": true, \"source_missing\": false, \"forbidden_term_found\": false, \"safety_missing\": true, \"teacher_review_pending\": false, \"publish_allowed\": false, \"coverage_status\": \"待补事实\", \"missing_topics\": [\"场景事实映射\"], \"missing_terms\": [], \"forbidden_terms\": [], \"missing_source_refs\": [], \"unverified_sources\": []}"
+    },
+    {
+      "维度": "学科判据·FACTS",
+      "检查项": "事实安全边界",
+      "级别": "一般",
+      "说明": "虚拟模型、实验安全或适用边界仍需教师确认（缺少安全边界）",
+      "建议": "在页面教学说明或实验声明中补充安全/模型边界",
+      "check_id": "G3-F-04",
+      "status": "review",
+      "expected": "页面包含事实对应的 safety_boundary",
+      "actual": "缺少安全边界",
+      "evidence": ""
+    },
+    {
+      "维度": "学科判据·FACTS",
+      "检查项": "事实发布许可",
+      "级别": "一般",
+      "说明": "发布许可是独立状态，不由页面可运行性推断（待事实/来源/教师审核）",
+      "建议": "先完成事实补齐、来源核验和教师审核，再进入发布队列",
+      "check_id": "G3-F-06",
+      "status": "review",
+      "expected": "事实、来源、安全边界、教师审核和场景覆盖均满足发布条件",
+      "actual": "待事实/来源/教师审核",
       "evidence": ""
     },
     {
@@ -870,5 +1012,5 @@
   ],
   "修改意见": "",
   "动态验证": "已执行",
-  "独立性说明": "J1–J8 由本文件独立重算，页面自报的 __DATA__.checks 只记为 review，不作为通过依据；J8 依赖 facts.json 中已通过教研复核的条目。"
+  "独立性说明": "J1–J8 由本文件独立重算，页面自报的 __DATA__.checks 只记为 review，不作为通过依据；J8 依赖 facts.json 中已通过教研复核的条目；事实来源、安全边界和教师审核状态来自 facts_registry/source_registry/scene_fact_map。"
 }

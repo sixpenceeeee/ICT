@@ -12,10 +12,10 @@
   <link rel="stylesheet" href="exp.css">
   <style>
 /* 页面自带样式 */
-.exp-reads .v b{font-variant-numeric:tabular-nums}
+#cv{display:block;width:100%;height:100%}.exp-stage>h2{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.exp-stage #btn-enlarge{white-space:nowrap;margin-left:auto}.exp-info .exp-tag.is-plain{max-width:100%;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}@media(max-width:760px){.pf-side .pf-tip{max-width:180px;white-space:normal;text-align:center}}
   </style>
   <!-- 平台阅读规范：必须排在页面自带样式之后，才能盖住它们
-       正文纯黑 / 最小字号 26px / 实验名称只在页眉出现一次 -->
+       正文纯黑 / 最小字号 13px / 实验名称只在页眉出现一次 -->
   <style>
 /* =====================================================================
  *  normal.css —— 平台阅读规范（后置强制层）
@@ -27,13 +27,63 @@
  *
  *  三条规范：
  *    1. 正文文字一律纯黑 #000（不再跟随蓝色主题色）
- *    2. 最小字号 26px（= 原始 13px × 2；配合 typo.js 兜住页面自带的 9~12px 小字）
+ *    2. 最小字号 12px（在统一质感基础上再收小一档）
  *    3. 实验名称只在页眉出现一次，① 区不再重复
  * ===================================================================== */
 
 :root {
-  --pf-fs-min: 26px;      /* 全站最小字号（= 原始 13px × 2），改这里就够 */
+  --pf-fs-min: 12px;      /* 全站最小字号，改这里就够 */
+  --pf-font: "Times New Roman", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
   --pf-body-ink: #000;    /* 正文文字色 */
+}
+
+/* 全场景统一字体：西文优先 Times New Roman，中文使用系统中文回退字体。 */
+.pf-hosted,
+.pf-hosted * {
+  font-family: var(--pf-font) !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 0. 移动端边界约束
+ *     长标签、表格和页面自带的固定宽度不能把整页撑出视口。
+ *     表格仍允许在自己的容器内横向滚动，页面本身不横向滚动。
+ * ------------------------------------------------------------------- */
+html.pf-hosted,
+html.pf-hosted body,
+.pf-hosted .pf-main,
+.pf-hosted .pf-content,
+.pf-hosted .exp-wrap,
+.pf-hosted .exp-grid,
+.pf-hosted .exp-info,
+.pf-hosted .exp-card {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+html.pf-hosted,
+html.pf-hosted body {
+  overflow-x: hidden;
+}
+
+.pf-hosted .exp-wrap,
+.pf-hosted .exp-grid > *,
+.pf-hosted .exp-info > * {
+  overflow-wrap: anywhere;
+}
+
+.pf-hosted .exp-wrap .exp-table-wrap {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.pf-hosted .exp-wrap .exp-tag {
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* ---------------------------------------------------------------------
@@ -74,6 +124,20 @@
   color: var(--pf-body-ink) !important;
 }
 
+/* 公共化学组件中的说明标题也属于正文，统一为黑色。 */
+.pf-hosted .exp-wrap h3,
+.pf-hosted .exp-wrap .titration-scene-caption,
+.pf-hosted .exp-wrap .titration-chart-summary,
+.pf-hosted .exp-wrap .titration-unit-caption,
+.pf-hosted .exp-wrap .ksp-scene-caption,
+.pf-hosted .exp-wrap .gas-caption,
+.pf-hosted .exp-wrap .precip-caption,
+.pf-hosted .exp-wrap .redox-caption,
+.pf-hosted .exp-wrap .stoich-caption,
+.pf-hosted .exp-wrap .mix-caption {
+  color: var(--pf-body-ink) !important;
+}
+
 /* 代入式里的高亮结论（<em>）保留橙色，是「看这里」而不是正文 */
 .pf-hosted .exp-wrap .exp-formula em {
   color: #b5561b !important;
@@ -86,7 +150,7 @@
 }
 
 /* ---------------------------------------------------------------------
- * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一抬到 26px+
+ * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一收敛到 12px+
  *    （页面自己写死的更小字号由 typo.js 在运行时兜底）
  * ------------------------------------------------------------------- */
 .pf-hosted .exp-wrap .exp-tag,
@@ -109,27 +173,27 @@
 .pf-hosted .exp-wrap .exp-note,
 .pf-hosted .exp-wrap .exp-alert,
 .pf-hosted .exp-wrap .exp-table {
-  font-size: 27px;
+  font-size: 12.5px;
 }
 
-/* 正文（学习目标 / 教学说明）用 28px，比辅助文字再大一档 */
+/* 正文（学习目标 / 教学说明）用 14px，比辅助文字再大一档 */
 .pf-hosted .exp-wrap .exp-goals,
 .pf-hosted .exp-wrap .exp-goals li,
 .pf-hosted .exp-wrap .exp-body,
 .pf-hosted .exp-wrap .exp-body p,
 .pf-hosted .exp-wrap .exp-body li {
-  font-size: 28px;
+  font-size: 13px;
 }
 
 /* 标题档：六区域标题 / 教学说明折叠头 */
 .pf-hosted .exp-wrap .exp-card > h2,
 .pf-hosted .exp-wrap .exp-teach summary {
-  font-size: 29px;
+  font-size: 15px;
 }
 
 /* 读数数值：全站最大的字，读数一眼能看清 */
 .pf-hosted .exp-wrap .exp-read .v {
-  font-size: 38px;
+  font-size: 23px;
 }
 
 /* ---------------------------------------------------------------------
@@ -142,15 +206,13 @@
 }
 
 /* ---------------------------------------------------------------------
- * 2b. 字号放大后的版式补偿
- *     字大一倍，原来的格子宽度就不够了：读数卡按两列铺、允许换行，
- *     表格窄了横向滚动。这几条只为「不挤、不裁」，不改字号。
+ * 2b. 紧凑版式：与参考页的白卡片、轻阴影、两栏实验布局保持一致。
  * ------------------------------------------------------------------- */
 .pf-hosted .exp-wrap .exp-reads { gap: 12px; }
 
 .pf-hosted .exp-wrap .exp-read {
   box-sizing: border-box;   /* 不加这句，百分比基准只算内容区，加上内边距就放不下 */
-  flex: 1 1 calc(50% - 7px);   /* 默认两列：窄屏、单列时也不会把字挤到折行 */
+  flex: 1 1 calc(25% - 9px);
   min-width: 0;
 }
 
@@ -175,6 +237,46 @@
 .pf-hosted .exp-info > *:first-child {
   margin-top: 0;
 }
+
+/* ---------------------------------------------------------------------
+ * 4. 参考页密度覆盖：保留平台结构，收回旧版 2× 字号后的留白。
+ * ------------------------------------------------------------------- */
+.pf-hosted .pf-header {
+  height: 68px;
+  padding: 0 18px;
+  gap: 10px;
+}
+.pf-hosted .pf-logo { width: 34px; height: 34px; border-radius: 9px; }
+.pf-hosted .pf-logo img { width: 28px; height: 28px; }
+.pf-hosted .pf-title { font-size: 21px; }
+.pf-hosted .pf-side { width: 72px; padding-top: 86px; gap: 10px; }
+.pf-hosted .pf-side a, .pf-hosted .pf-side label { width: 38px; height: 38px; border-radius: 10px; }
+.pf-hosted .pf-side a .ico, .pf-hosted .pf-side label .ico { font-size: 22px; }
+.pf-hosted .pf-dialog-icon { font-size: 29px; }
+.pf-hosted .pf-dialog h2 { font-size: 37px; }
+.pf-hosted .pf-dialog p { font-size: 27px; }
+.pf-hosted .pf-content { padding: 18px 20px; }
+.pf-hosted .exp-wrap { gap: 16px; }
+.pf-hosted .exp-info,
+.pf-hosted .exp-card { border-radius: 12px; }
+.pf-hosted .exp-info { padding: 14px 18px; gap: 8px 18px; }
+.pf-hosted .exp-card { padding: 14px 16px 18px; box-shadow: 0 4px 14px rgba(26,64,100,.05); }
+.pf-hosted .exp-card > h2,
+.pf-hosted .exp-teach summary { font-size: 15px; margin-bottom: 12px; padding-left: 10px; border-left-width: 3px; }
+.pf-hosted .exp-card > h2 .exp-hint { font-size: 12px; }
+.pf-hosted .exp-canvas-box { min-height: 360px; border-radius: 9px; }
+.pf-hosted .exp-stage .exp-canvas-box {
+  flex: 1 1 auto;
+  aspect-ratio: auto;
+  min-height: 420px;
+}
+.pf-hosted .exp-read .v { font-size: 23px; }
+.pf-hosted .pf-footer { padding: 14px 18px; font-size: 12px; }
+
+@media (max-width: 1100px) {
+  .pf-hosted .exp-read { flex-basis: calc(50% - 7px); }
+  .pf-hosted .exp-stage .exp-canvas-box { min-height: 340px; }
+}
   </style>
 </head>
 <body>
@@ -195,13 +297,7 @@
 
         <!-- ① 实验信息 -->
         <section class="exp-info" id="sec-info">
-<div class="exp-tags"><span class="exp-tag">物理</span><span class="exp-tag">初中九年级</span><span class="exp-tag is-plain">课标必做实验</span></div>
-<div class="exp-goals-title">学习目标</div>
-<ul class="exp-goals">
-<li>能调节电源电压与定值电阻，观察电流表示数变化，说出电流与电压、电阻的关系</li>
-<li>能根据多组实验数据归纳出欧姆定律表达式 I = U/R，并会由 R = U/I 复算验证</li>
-<li>能识别电源、开关、定值电阻、滑动变阻器、电流表、电压表及其连接方式（电流表串联、电压表并联）</li>
-</ul>
+<div class="exp-tags"><span class="exp-tag">物理</span><span class="exp-tag">初中九年级</span><span class="exp-tag is-plain">电路器材组件（CIRCUIT_PAGE）</span></div><div class="exp-goals-title">学习目标</div><ul class="exp-goals"><li>能识别电源、开关、电流表、电压表与正确接线</li><li>能通过调参和记录检验电路规律</li><li>调节电源电压或电阻，观察电流与电压、电阻的关系。</li></ul>
         </section>
 
         <div class="exp-grid">
@@ -209,44 +305,20 @@
           <section class="exp-card exp-stage" id="sec-stage">
             <h2>② 演示<span class="exp-hint" id="pf-stage-hint">拖动画面可旋转视角</span></h2>
             <div class="exp-canvas-box">
-<canvas id="cv" data-visual-type="apparatus"></canvas>
-<span class="exp-canvas-tip">拖动滑片改变接入电阻；开关断开时导线变灰、示数归零</span>
+<svg id="cv" data-visual-type="apparatus" role="img" aria-label="实物电路实验装置" viewBox="0 0 1000 650"></svg><div class="circuit-stage-tools"><span class="exp-canvas-tip">点击放大，可精细调参、选择量程与移动器件</span><button class="exp-btn" id="btn-enlarge" type="button">放大调整 ↗</button></div>
             </div>
           </section>
 
           <!-- ③ 参数与操作 -->
           <section class="exp-card exp-control" id="sec-control">
             <h2>③ 参数与操作</h2>
-<div class="exp-field">
-  <div class="exp-label"><label for="rg-u">电源电压 U</label><span class="exp-val"><b id="v-u">6.0</b> V</span></div>
-  <input type="range" id="rg-u" min="1" max="12" step="0.5" value="6" data-key="U">
-</div>
-<div class="exp-field">
-  <div class="exp-label"><label for="rg-r">定值电阻 R</label><span class="exp-val"><b id="v-r">10</b> Ω</span></div>
-  <input type="range" id="rg-r" min="5" max="20" step="1" value="10" data-key="R">
-</div>
-<div class="exp-field">
-  <div class="exp-label"><label for="rg-rh">滑动变阻器接入 R滑</label><span class="exp-val"><b id="v-rh">20</b> Ω</span></div>
-  <input type="range" id="rg-rh" min="0" max="50" step="1" value="20" data-key="Rh">
-</div>
-<div class="exp-btns">
-  <button class="exp-btn is-on" id="btn-sw" type="button">开关：闭合</button>
-  <button class="exp-btn is-primary" id="btn-record" type="button">记录当前数据</button>
-  <button class="exp-btn" id="btn-reset" type="button">重置</button>
-</div>
+<div id="circuit-controls" class="exp-field"></div><div class="exp-btns"><button class="exp-btn is-primary" id="btn-switch" type="button"></button><button class="exp-btn" id="btn-record" type="button">记录当前数据</button><button class="exp-btn" id="btn-reset" type="button">重置</button><button class="exp-btn" id="btn-csv" type="button">导出 CSV</button></div>
           </section>
 
           <!-- ④ 结果与反馈 -->
           <section class="exp-card exp-result" id="sec-result">
             <h2>④ 结果与反馈</h2>
-<div class="exp-reads">
-  <div class="exp-read"><span class="k">电流表示数 I</span><span class="v"><b id="r-i" data-circuit-current-for="ammeter1">0.000</b> <span class="u">A</span></span></div>
-  <div class="exp-read"><span class="k">电压表示数 U_R</span><span class="v"><b id="r-ur" data-circuit-voltage-for="r1">0.00</b> <span class="u">V</span></span></div>
-  <div class="exp-read"><span class="k">由 R = U_R / I 复算</span><span class="v"><b id="r-rx">0.0</b> <span class="u">Ω</span></span></div>
-</div>
-<div class="exp-formula" id="fml"></div>
-<p class="exp-note" id="hint">闭合开关后，I = U /(R + R滑)，U_R = I·R。</p>
-<div class="exp-alert" id="alert" hidden></div>
+<div class="exp-reads"><div class="exp-read"><span class="k">电流表</span><span class="v"><b id="read-current">—</b> <span class="u">A</span></span></div><div class="exp-read"><span class="k">电压表</span><span class="v"><b id="read-voltage">—</b> <span class="u">V</span></span></div><div class="exp-read"><span class="k" id="resistance-label">待测电阻</span><span class="v"><b id="read-resistance">—</b> <span class="u">Ω</span></span></div></div><div class="exp-formula" id="fml"></div><p class="exp-note" id="hint" aria-live="polite"></p><div class="exp-alert" id="alert" role="status" hidden></div>
           </section>
         </div>
 
@@ -254,10 +326,7 @@
         <section class="exp-card exp-record" id="sec-record">
           <h2>⑤ 实验记录<span class="exp-hint">点击「记录当前数据」逐行追加</span></h2>
           <div class="exp-table-wrap">
-<table class="exp-table">
-  <thead><tr><th>序号</th><th>U / V</th><th>R / Ω</th><th>R滑 / Ω</th><th>I / A</th><th>U_R / V</th><th>U_R/I / Ω</th></tr></thead>
-  <tbody id="rows"></tbody>
-</table>
+<table class="exp-table"><thead><tr><th>序号</th><th>电源 / V</th><th>被测电压 / V</th><th>电流 / A</th><th>U/I / Ω</th></tr></thead><tbody id="rows"></tbody></table>
           </div>
         </section>
 
@@ -265,34 +334,7 @@
         <details class="exp-card exp-teach" id="sec-teach">
           <summary>⑥ 教学说明（原理 / 易错点 / 探究问题）</summary>
           <div class="exp-body">
-<h3>原理</h3>
-<ul>
-<li>电源、开关、电流表、定值电阻、滑动变阻器串联成一条闭合回路；电压表并联在定值电阻两端。</li>
-<li>串联总电阻 R总 = R + R滑，电流 I = U /(R + R滑)，定值电阻两端电压 U_R = I·R。</li>
-<li>电压表内阻极大（本页按 10 MΩ 处理），几乎不分流；电流表内阻极小，几乎不分压，因此 I 与 U_R 可视为同一回路的真实值。</li>
-</ul>
-<h3>易错点</h3>
-<ul>
-<li>电流表必须串联、电压表必须并联，接反会短路或读数异常。</li>
-<li>闭合开关前应把滑动变阻器调到阻值最大处，起限流保护作用。</li>
-<li>滑动变阻器接线要「一上一下」；接成两下相当于定值电阻，滑片移动示数不变。</li>
-<li>读数要估读到分度值下一位，并写清单位；本页电流表量程 0.6 A，超量程需换大量程或降低电压。</li>
-</ul>
-<h3>探究问题</h3>
-<ol>
-<li>保持 R 不变，逐步增大 U，电流表示数怎样变化？U 与 I 的比值是否保持不变？</li>
-<li>保持 U 不变，逐步增大 R，电流表示数怎样变化？为什么增大 R 时 U_R 反而变大？</li>
-<li>把 R滑 从最大调到最小，U_R 与 I 分别向哪个方向变化？这与串联分压规律一致吗？</li>
-</ol>
-<h3>结论</h3>
-<p>在导体电阻不变时，通过导体的电流与导体两端电压成正比；在电压不变时，通过导体的电流与导体电阻成反比。综合即欧姆定律 I = U/R，本页中 U 指定值电阻两端电压 U_R，故 U_R = I·R，复算所得 U_R/I 恒等于设定的 R。</p>
-<h3>注意事项</h3>
-<ul>
-<li>本页为虚拟仿真，不给出真实接线与带电操作步骤；真实实验请在教师指导下断电连接、先调最大阻值再闭合开关。</li>
-<li>演示电压不超过 12 V、电流不超过电流表量程 0.6 A，超限时页面会给出提示，此时应增大 R 或 R滑、降低 U。</li>
-<li>严禁把电流表直接接在电源两极；不得用湿手或带电改接线路；不使用 220 V 市电方案。</li>
-<li>本页定值电阻按理想恒定电阻处理，未考虑温度影响；若换小灯泡，其电阻随温度升高而增大，不能取平均值当作灯丝电阻。</li>
-</ul>
+<h3>原理</h3><p>理想电阻满足 I＝U/R。改变一个变量时，应控制另一个变量保持不变。</p><h3>易错点</h3><p>电流表应串联，电压表应并联；红接线柱接高电势端。量程不足时应换用合适量程，不能把满偏刻度当成真实值。</p><h3>探究问题</h3><p>调节电源电压或电阻，观察电流与电压、电阻的关系。</p><h3>结论</h3><p>用多组测量数据检验规律，控制变量并比较计算结果。</p><h3>注意事项</h3><p>本页为线性直流虚拟仿真实验，电表采用理想模型。需要教师复核后用于教学；实物接线应先断开开关。</p>
           </div>
         </details>
 
@@ -339,448 +381,1243 @@
   </div>
 
   <script>
-/* circuit_solver.js — 页面运行时直流电阻网络求解器（改进节点电压法）
- * 支持电阻、理想电压源、理想电流源、理想开关。节点名用字符串，ground 默认为 "0"。
- * 页面应在每次状态更新时调用 CIRCUIT.solve(model)，并用返回值更新全部读数。
+/*
+ * model.js —— 轻量可执行学科模型运行时
+ *
+ * 模型负责描述“页面是什么、有哪些输入、输出和验证关系”；
+ * 学科求解器负责计算，VIS/PHYS 负责呈现。这个运行时只做三件事：
+ * 注册模型、暴露当前状态、把状态交给审查器和教学界面。
  */
-(function () {
+(function (root) {
+  'use strict';
+  var registry = Object.create(null);
+
+  function clone(value) {
+    if (value == null || typeof value !== 'object') return value;
+    if (Array.isArray(value)) return value.map(clone);
+    var out = {};
+    Object.keys(value).forEach(function (key) { out[key] = clone(value[key]); });
+    return out;
+  }
+
+  function validate(model) {
+    if (!model || typeof model !== 'object') throw new Error('学科模型必须是对象');
+    if (!model.id || !model.subject || !model.topic) throw new Error('学科模型缺少 id、subject 或 topic');
+    if (!model.inputs || !model.outputs) throw new Error('学科模型必须声明 inputs 和 outputs');
+    return model;
+  }
+
+  function define(model) {
+    validate(model);
+    var copy = clone(model);
+    copy.schema = copy.schema || 'edu-model.v1';
+    registry[copy.id] = copy;
+    return copy;
+  }
+
+  function expose(model, params, result, extra) {
+    validate(model);
+    var state = {
+      schema: 'edu-state.v1',
+      modelId: model.id,
+      subject: model.subject,
+      topic: model.topic,
+      params: clone(params || {}),
+      result: clone(result || null),
+      timestamp: new Date().toISOString()
+    };
+    if (extra && typeof extra === 'object') {
+      Object.keys(extra).forEach(function (key) { state[key] = clone(extra[key]); });
+    }
+    // 时间戳属于运行监控信息，不应混入 __DATA__ 的可复算快照；
+    // 否则同一组参数在“重置”前后会被审查器误判为不同状态。
+    root.__EDU_STATE__ = state;
+    var publicState = clone(state);
+    delete publicState.timestamp;
+    return publicState;
+  }
+
+  function get(id) { return registry[id] || null; }
+
+  function normalize(model, params) {
+    var out = clone(params || {});
+    (model.constraints || []).forEach(function (rule) {
+      if (!rule || !rule.type) return;
+      if (rule.type === 'max') {
+        var value = Number(out[rule.field]);
+        if (isFinite(value)) out[rule.field] = Math.min(value, Number(rule.value));
+      }
+      if (rule.type === 'maxBy') {
+        var current = Number(out[rule.field]);
+        var limit = Number(out[rule.by]);
+        if (isFinite(current) && isFinite(limit)) out[rule.field] = Math.min(current, limit);
+      }
+    });
+    return out;
+  }
+
+  function textOf(node) {
+    return String(node && (node.getAttribute('aria-label') || node.textContent || '') || '')
+      .replace(/\s+/g, ' ').trim();
+  }
+
+  function attrName(node, pattern) {
+    if (!node || !node.attributes) return '';
+    for (var i = 0; i < node.attributes.length; i++) {
+      var name = node.attributes[i].name;
+      if (pattern.test(name)) return name;
+    }
+    return '';
+  }
+
+  function labelFor(node) {
+    if (!node) return '';
+    var explicit = node.getAttribute('aria-label');
+    if (explicit) return explicit;
+    var field = node.closest && node.closest('.exp-field, label, .exp-read');
+    return textOf(field || node).replace(/\s+/g, ' ').slice(0, 80);
+  }
+
+  function discoverInputs() {
+    var found = [];
+    Array.prototype.forEach.call(document.querySelectorAll('input,select,textarea'), function (node) {
+      var key = node.getAttribute('data-solver-input');
+      if (!key) {
+        // 学科专用标记通常是无值布尔属性，例如
+        // data-chem-titration-acid-concentration；属性名本身就是字段名。
+        var name = attrName(node, /^data-(?:chem|math|bio|geo|cs)-/i);
+        if (name && !/range-for|slider/i.test(name)) key = node.getAttribute(name) || name.replace(/^data-/, '');
+      }
+      if (!key || node.getAttribute('data-solver-range-for')) return;
+      found.push({
+        id: key,
+        label: labelFor(node),
+        type: node.tagName.toLowerCase() === 'select' ? 'select' : (node.type || 'text'),
+        min: node.min === '' ? null : Number(node.min),
+        max: node.max === '' ? null : Number(node.max),
+        step: node.step === '' ? null : node.step,
+        defaultValue: node.value
+      });
+    });
+    return found;
+  }
+
+  function discoverOutputs() {
+    var found = [];
+    Array.prototype.forEach.call(document.querySelectorAll('[data-solver-field], .exp-read *'), function (node) {
+      var key = node.getAttribute('data-solver-field') ||
+        attrName(node, /^data-(?:chem|optics|supp|catalog)-.*(?:field|equation|state|value|mass|volume|ph)$/i);
+      if (!key) return;
+      found.push({id: key, label: labelFor(node), value: textOf(node)});
+    });
+    return found;
+  }
+
+  function inferSubject(topic) {
+    var text = (document.body && document.body.innerText || '') + ' ' + (topic || '');
+    if (/物理|力学|压强|浮力|透镜|折射|滑轮|电路/.test(text)) return 'physics';
+    if (/化学|溶液|反应|滴定|沉淀|氧化|酸碱|离子/.test(text)) return 'chemistry';
+    if (/数学|函数|几何|方程|概率|统计|体积/.test(text)) return 'mathematics';
+    if (/生物|细胞|生态|呼吸|光合/.test(text)) return 'biology';
+    if (/地理|气候|地图|人口|资源/.test(text)) return 'geography';
+    if (/信息|算法|二进制|机器人|编程/.test(text)) return 'informatics';
+    return 'general';
+  }
+
+  function discover() {
+    var titleNode = document.querySelector('.pf-page, h1, title');
+    var topic = textOf(titleNode) || document.title || '未命名教学页面';
+    var canvases = Array.prototype.map.call(document.querySelectorAll('canvas,svg'), function (node) {
+      return {id: node.id || null, type: node.getAttribute('data-visual-type') || 'diagram', label: node.getAttribute('aria-label') || ''};
+    });
+    return {
+      schema: 'edu-model.v1',
+      id: 'page.' + topic.replace(/[^\w\u4e00-\u9fff]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60),
+      subject: inferSubject(topic),
+      topic: topic,
+      inputs: discoverInputs(),
+      outputs: discoverOutputs(),
+      visual: {type: canvases.length ? canvases[0].type : 'none', canvases: canvases},
+      source: 'dom-auto-discovery'
+    };
+  }
+
+  function runtimeData() {
+    var data = root.__DATA__;
+    if (data && (data.params || data.result)) return data;
+    var requestKey = Object.keys(root).find(function (key) { return /_REQUEST__$/.test(key); });
+    var resultKey = Object.keys(root).find(function (key) { return /_RESULT__$/.test(key); });
+    if (requestKey || resultKey) return {params: requestKey ? root[requestKey] : {}, result: resultKey ? root[resultKey] : null};
+    return null;
+  }
+
+  function auto() {
+    var discovered = discover();
+    var existing = root.__EDU_MODEL__;
+    var model = existing || define(discovered);
+    if (existing) {
+      model.inputs = model.inputs || discovered.inputs;
+      model.outputs = model.outputs || discovered.outputs;
+      model.visual = model.visual || discovered.visual;
+      model.autoDiscovery = discovered;
+    }
+    root.__EDU_MODEL__ = model;
+    var data = runtimeData();
+    if (data) expose(model, data.params || {}, data.result || null, {source: 'page-data'});
+    return model;
+  }
+
+  function scheduleAuto() {
+    var run = function () { try { auto(); } catch (e) { root.__EDU_MODEL_ERROR__ = String(e && e.message || e); } };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, {once: true});
+    else setTimeout(run, 0);
+    document.addEventListener('input', function () { setTimeout(run, 0); }, false);
+    document.addEventListener('change', function () { setTimeout(run, 0); }, false);
+  }
+
+  root.EDU_MODEL = {
+    define: define,
+    expose: expose,
+    normalize: normalize,
+    discover: discover,
+    auto: auto,
+    get: get,
+    validate: validate,
+    registry: registry
+  };
+  scheduleAuto();
+})(window);
+
+/*
+ * 教学直流器材内核。MNA 电阻/理想电压源盖章与部分主元消元改编自仓库内
+ * code/eduforge/tools/labkit/circuit/core.mjs；端口图、器材模型和固定实验为本项目实现。
+ * 此文件不加载 CircuitJS，也不需要第三方运行库。
+ */
+(function (root, factory) {
+  'use strict';
+  const api = factory();
+  root.CIRCUIT = api;
+  if (typeof module === 'object' && module.exports) module.exports = api;
+})(typeof globalThis !== 'undefined' ? globalThis : window, function () {
   'use strict';
 
-  function fail(message) { throw new Error('电路求解失败：' + message); }
-  function num(c, key, fallback) {
-    var x = c[key] == null ? fallback : c[key];
-    x = Number(x);
-    if (!Number.isFinite(x)) fail('元件 ' + (c.id || '?') + ' 的 ' + key + ' 不是有限数值');
-    return x;
-  }
-  function gaussian(a, b) {
-    var n = b.length, m = a.map(function (row, i) { return row.slice().concat([b[i]]); });
-    var scale = 1;
-    for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) scale = Math.max(scale, Math.abs(a[r][c]));
-    var eps = scale * 1e-12;
-    for (var col = 0; col < n; col++) {
-      var p = col;
-      for (var rr = col + 1; rr < n; rr++) if (Math.abs(m[rr][col]) > Math.abs(m[p][col])) p = rr;
-      if (Math.abs(m[p][col]) <= eps) fail('方程奇异，可能有浮空节点、矛盾电压源或不可求解拓扑');
-      var tmp = m[col]; m[col] = m[p]; m[p] = tmp;
-      var div = m[col][col];
-      for (var j = col; j <= n; j++) m[col][j] /= div;
-      for (var i = 0; i < n; i++) {
-        if (i === col) continue;
-        var f = m[i][col];
-        if (Math.abs(f) <= eps) continue;
-        for (var k = col; k <= n; k++) m[i][k] -= f * m[col][k];
+  const PORTS = Object.freeze({
+    power_supply: ['positive', 'negative'],
+    ammeter: ['positive', 'negative'],
+    voltmeter: ['positive', 'negative'],
+    resistor: ['a', 'b'],
+    rheostat: ['a', 'slider', 'b'],
+    switch: ['a', 'b']
+  });
+  const RECIPES = ['ohm', 'resistance', 'series', 'parallel'];
+  const finite = value => typeof value === 'number' && Number.isFinite(value);
+  const positive = value => finite(value) && value > 0;
+  const normalized = value => Object.is(value, -0) ? 0 : value;
+  const blankMeasurement = () => ({ current: null, voltage: null, value: null, range: null, overrange: false });
+
+  function createExperiment(recipe, params) {
+    if (!RECIPES.includes(recipe)) {
+      const error = new Error('未知实验：' + recipe);
+      error.code = 'UNKNOWN_RECIPE';
+      throw error;
+    }
+    const p = Object.assign({ voltage: 6, resistance: 10, resistance2: 20,
+      maxResistance: 50, position: 0.2, closed: true, ammeterRange: recipe === 'parallel' ? 3 : 0.6, voltmeterRange: 15 }, params || {});
+    const components = [
+      { id: 'V1', type: 'power_supply', params: { voltage: p.voltage } },
+      { id: 'A1', type: 'ammeter', params: { range: p.ammeterRange } },
+      { id: 'M1', type: 'voltmeter', params: { range: p.voltmeterRange } },
+      { id: 'R1', type: 'resistor', params: { resistance: p.resistance } },
+      { id: 'S1', type: 'switch', params: { closed: p.closed } }
+    ];
+    const wires = [];
+    const wire = (from, to) => wires.push({ id: 'W' + (wires.length + 1), from, to });
+    wire('V1.positive', 'S1.a');
+    wire('S1.b', 'A1.positive');
+    wire('M1.positive', 'R1.a');
+    wire('M1.negative', 'R1.b');
+    if (recipe === 'resistance') {
+      components.push({ id: 'RH1', type: 'rheostat', params: { maxResistance: p.maxResistance, position: p.position } });
+      wire('A1.negative', 'RH1.a');
+      wire('RH1.slider', 'R1.a');
+      wire('R1.b', 'V1.negative');
+    } else if (recipe === 'series') {
+      components.push({ id: 'R2', type: 'resistor', params: { resistance: p.resistance2 } });
+      wire('A1.negative', 'R1.a');
+      wire('R1.b', 'R2.a');
+      wire('R2.b', 'V1.negative');
+    } else {
+      wire('A1.negative', 'R1.a');
+      wire('R1.b', 'V1.negative');
+      if (recipe === 'parallel') {
+        components.push({ id: 'R2', type: 'resistor', params: { resistance: p.resistance2 } });
+        wire('R1.a', 'R2.a');
+        wire('R1.b', 'R2.b');
       }
     }
-    return m.map(function (row) { return row[n]; });
+    return { schema_version: 1, recipe, components, wires };
   }
-  function kvlResidual(components, branches) {
-    var parent = Object.create(null), tree = Object.create(null);
-    function find(n) { parent[n] = parent[n] == null ? n : parent[n]; if (parent[n] !== n) parent[n] = find(parent[n]); return parent[n]; }
-    function add(n, item) { (tree[n] || (tree[n] = [])).push(item); }
-    function pathDrop(start, end) {
-      var queue = [start], prev = Object.create(null); prev[start] = null;
-      for (var q = 0; q < queue.length; q++) {
-        var n = queue[q]; if (n === end) break;
-        (tree[n] || []).forEach(function (edge) {
-          if (prev[edge.node] === undefined) { prev[edge.node] = { node: n, id: edge.id, sign: edge.sign }; queue.push(edge.node); }
+
+  function unionFind(items) {
+    const parents = new Map(items.map(item => [item, item]));
+    function find(item) {
+      let top = item;
+      while (parents.get(top) !== top) top = parents.get(top);
+      while (item !== top) {
+        const next = parents.get(item);
+        parents.set(item, top);
+        item = next;
+      }
+      return top;
+    }
+    return { find, union(a, b) { parents.set(find(a), find(b)); } };
+  }
+
+  function validate(config) {
+    const errors = [];
+    const add = (code, message) => errors.push({ code, message });
+    const endpoints = [];
+    const components = new Map();
+    if (!config || config.schema_version !== 1 || !Array.isArray(config.components) || !Array.isArray(config.wires)) {
+      add('INVALID_CONFIG', '需要 schema_version: 1、components 数组与 wires 数组。');
+      return { errors, endpoints, components };
+    }
+    const ids = new Set();
+    function checkId(item, label) {
+      if (!item || typeof item !== 'object' || typeof item.id !== 'string' || !/^[A-Za-z][A-Za-z0-9_-]*$/.test(item.id)) {
+        add('INVALID_ID', label + '需要由字母开头的唯一 id。');
+        return false;
+      }
+      if (ids.has(item.id)) { add('DUPLICATE_ID', '重复 id：' + item.id); return false; }
+      ids.add(item.id);
+      return true;
+    }
+    for (const component of config.components) {
+      if (!checkId(component, '器材')) continue;
+      if (!Object.hasOwn(PORTS, component.type)) { add('UNKNOWN_COMPONENT_TYPE', component.id + '：未知器材类型。'); continue; }
+      components.set(component.id, component);
+      for (const port of PORTS[component.type]) endpoints.push(component.id + '.' + port);
+      const p = component.params;
+      if (!p || typeof p !== 'object' || Array.isArray(p)) { add('INVALID_PARAMETER', component.id + '：缺少 params 对象。'); continue; }
+      let valid = true;
+      switch (component.type) {
+        case 'power_supply': valid = finite(p.voltage) && p.voltage >= 0; break;
+        case 'resistor': valid = positive(p.resistance); break;
+        case 'rheostat': valid = positive(p.maxResistance) && finite(p.position) && p.position >= 0 && p.position <= 1; break;
+        case 'switch': valid = typeof p.closed === 'boolean'; break;
+        case 'ammeter': case 'voltmeter':
+          if (!positive(p.range)) add('INVALID_RANGE', component.id + '：量程必须是大于 0 的有限数值。');
+          break;
+      }
+      if (!valid) add('INVALID_PARAMETER', component.id + '：物理参数不合法。');
+    }
+    const endpointSet = new Set(endpoints);
+    for (const wire of config.wires) {
+      if (!checkId(wire, '导线')) continue;
+      if (!endpointSet.has(wire.from) || !endpointSet.has(wire.to)) add('INVALID_ENDPOINT', wire.id + '：导线端点不存在。');
+    }
+    const sources = [...components.values()].filter(component => component.type === 'power_supply');
+    if (!sources.length) add('MISSING_SOURCE', '电路缺少直流电源。');
+    if (sources.length > 1) add('MULTIPLE_SOURCES', '第一阶段仅支持一个直流电源。');
+    return { errors, endpoints, components, source: sources[0] };
+  }
+
+  // 部分主元高斯消元，算法来自内部 MNA 内核；奇异/数值溢出显式报错。
+  function solveLinear(matrix, rhs) {
+    const n = rhs.length;
+    const rows = matrix.map((row, index) => [...row, rhs[index]]);
+    for (let col = 0; col < n; col += 1) {
+      let pivot = col;
+      for (let row = col + 1; row < n; row += 1) if (Math.abs(rows[row][col]) > Math.abs(rows[pivot][col])) pivot = row;
+      if (!Number.isFinite(rows[pivot][col]) || Math.abs(rows[pivot][col]) < 1e-14) throw new Error('SINGULAR_MATRIX');
+      [rows[col], rows[pivot]] = [rows[pivot], rows[col]];
+      const divisor = rows[col][col];
+      for (let index = col; index <= n; index += 1) rows[col][index] /= divisor;
+      for (let row = 0; row < n; row += 1) {
+        if (row === col) continue;
+        const factor = rows[row][col];
+        if (!factor) continue;
+        for (let index = col; index <= n; index += 1) rows[row][index] -= factor * rows[col][index];
+      }
+    }
+    const result = rows.map(row => row[n]);
+    if (!result.every(Number.isFinite)) throw new Error('NUMERIC_ERROR');
+    return result;
+  }
+
+  function solve(config) {
+    const checked = validate(config);
+    const measurements = Object.create(null);
+    const nodeVoltages = Object.create(null);
+    for (const [id, component] of checked.components) {
+      measurements[id] = blankMeasurement();
+      if (component.type === 'ammeter' || component.type === 'voltmeter') measurements[id].range = component.params && component.params.range;
+    }
+    for (const endpoint of checked.endpoints) nodeVoltages[endpoint] = null;
+    const result = { ok: false, status: 'error', errors: checked.errors, components: measurements,
+      totalCurrent: null, sourceVoltage: null, equivalentResistance: null, nodeVoltages };
+    const fail = (code, message) => { result.errors.push({ code, message }); return result; };
+    if (result.errors.length) return result;
+
+    const uf = unionFind(checked.endpoints);
+    for (const wire of config.wires) uf.union(wire.from, wire.to);
+    for (const component of checked.components.values()) {
+      if (component.type === 'switch' && component.params.closed) uf.union(component.id + '.a', component.id + '.b');
+    }
+    const sources = [];
+    const resistors = [];
+    const branch = (id, from, to, resistance) => {
+      if (resistance === 0) sources.push({ id, from: uf.find(from), to: uf.find(to), v: 0 });
+      else resistors.push({ id, from: uf.find(from), to: uf.find(to), r: resistance });
+    };
+    for (const component of checked.components.values()) {
+      const id = component.id;
+      const p = component.params;
+      if (component.type === 'power_supply') sources.unshift({ id, from: uf.find(id + '.positive'), to: uf.find(id + '.negative'), v: p.voltage });
+      if (component.type === 'ammeter') sources.push({ id, from: uf.find(id + '.positive'), to: uf.find(id + '.negative'), v: 0 });
+      if (component.type === 'resistor') branch(id, id + '.a', id + '.b', p.resistance);
+      if (component.type === 'rheostat') {
+        branch(id + ':a', id + '.a', id + '.slider', p.maxResistance * p.position);
+        branch(id + ':b', id + '.slider', id + '.b', p.maxResistance * (1 - p.position));
+      }
+    }
+    const supply = sources.find(source => source.id === checked.source.id);
+    const roots = [...new Set(checked.endpoints.map(endpoint => uf.find(endpoint)))];
+    const conductive = unionFind(roots);
+    for (const source of sources) if (source !== supply) conductive.union(source.from, source.to);
+    if (conductive.find(supply.from) === conductive.find(supply.to)) return fail('SOURCE_SHORT', '电源正负端经导线、闭合开关或理想电流表短接。');
+
+    // 连通性包含电阻、电源和电流表，不包含无限内阻的电压表及断开开关。
+    const connected = unionFind(roots);
+    for (const branch of [...sources, ...resistors]) connected.union(branch.from, branch.to);
+    const floating = roots.filter(node => connected.find(node) !== connected.find(supply.to));
+    if (floating.length) return fail('FLOATING_SUBCIRCUIT', '存在未参考电源负端的悬空端口/子电路：' + floating.join('、'));
+
+    const loadConnected = unionFind(roots);
+    for (const branch of [...sources.filter(source => source !== supply), ...resistors]) loadConnected.union(branch.from, branch.to);
+    const open = loadConnected.find(supply.from) !== loadConnected.find(supply.to);
+    const nodes = roots.filter(node => node !== supply.to);
+    const nodeIndices = new Map(nodes.map((node, index) => [node, index]));
+    // 完全被导线旁路的理想表支路电流不可辨识；不为其制造任意电流。
+    const activeSources = sources.filter(source => source.from !== source.to);
+    const size = nodes.length + activeSources.length;
+    const matrix = Array.from({ length: size }, () => Array(size).fill(0));
+    const rhs = Array(size).fill(0);
+    const index = node => nodeIndices.get(node);
+    for (const resistor of resistors) {
+      const a = index(resistor.from), b = index(resistor.to), g = 1 / resistor.r;
+      if (a !== undefined) matrix[a][a] += g;
+      if (b !== undefined) matrix[b][b] += g;
+      if (a !== undefined && b !== undefined) { matrix[a][b] -= g; matrix[b][a] -= g; }
+    }
+    for (const [k, source] of activeSources.entries()) {
+      const branchIndex = nodes.length + k;
+      const a = index(source.from), b = index(source.to);
+      if (a !== undefined) { matrix[a][branchIndex] += 1; matrix[branchIndex][a] += 1; }
+      if (b !== undefined) { matrix[b][branchIndex] -= 1; matrix[branchIndex][b] -= 1; }
+      rhs[branchIndex] = source.v;
+    }
+    let solution;
+    let equivalent;
+    const supplyIndex = nodes.length + activeSources.indexOf(supply);
+    try {
+      solution = solveLinear(matrix, rhs);
+      if (open) equivalent = Infinity;
+      else if (supply.v !== 0) equivalent = supply.v / -solution[supplyIndex];
+      else {
+        const unitRhs = rhs.slice();
+        unitRhs[supplyIndex] = 1;
+        equivalent = 1 / -solveLinear(matrix, unitRhs)[supplyIndex];
+      }
+    } catch (error) {
+      return fail(error.message === 'NUMERIC_ERROR' ? 'NUMERIC_ERROR' : 'UNSOLVABLE_TOPOLOGY', '电路约束冲突、理想支路电流不唯一，或参数超出数值求解范围。');
+    }
+    const potential = node => node === supply.to ? 0 : solution[index(node)];
+    const voltage = (id, a, b) => normalized(potential(uf.find(id + '.' + a)) - potential(uf.find(id + '.' + b)));
+    const sourceCurrent = id => {
+      const i = activeSources.findIndex(source => source.id === id);
+      return i < 0 ? null : normalized(solution[nodes.length + i]);
+    };
+    for (const endpoint of checked.endpoints) nodeVoltages[endpoint] = normalized(potential(uf.find(endpoint)));
+    for (const component of checked.components.values()) {
+      const id = component.id, p = component.params, reading = measurements[id];
+      switch (component.type) {
+        case 'power_supply':
+          reading.voltage = voltage(id, 'positive', 'negative');
+          reading.current = sourceCurrent(id); // 电流流入正端为正，供电时为负。
+          reading.value = reading.voltage;
+          break;
+        case 'ammeter':
+          reading.voltage = voltage(id, 'positive', 'negative');
+          reading.current = sourceCurrent(id);
+          reading.value = reading.current;
+          break;
+        case 'voltmeter':
+          reading.voltage = voltage(id, 'positive', 'negative');
+          reading.current = 0;
+          reading.value = reading.voltage;
+          break;
+        case 'resistor':
+          reading.voltage = voltage(id, 'a', 'b');
+          reading.current = normalized(reading.voltage / p.resistance);
+          reading.value = p.resistance;
+          break;
+        case 'rheostat':
+          reading.voltage = voltage(id, 'a', 'slider');
+          reading.value = p.maxResistance * p.position;
+          reading.current = reading.value === 0 ? sourceCurrent(id + ':a') : normalized(reading.voltage / reading.value);
+          break;
+        case 'switch':
+          reading.voltage = voltage(id, 'a', 'b');
+          reading.current = p.closed ? null : 0;
+          reading.value = p.closed ? 1 : 0;
+          break;
+      }
+      if (reading.range !== null && reading.value !== null) {
+        reading.overrange = Math.abs(reading.value) - reading.range > Number.EPSILON * Math.max(1, reading.range) * 8;
+      }
+    }
+    result.ok = true;
+    result.status = open ? 'open' : 'ok';
+    result.totalCurrent = open ? 0 : normalized(-solution[supplyIndex]);
+    result.sourceVoltage = supply.v;
+    result.equivalentResistance = equivalent;
+    return result;
+  }
+
+  return Object.freeze({ createExperiment, solve });
+});
+
+/*
+ * Reusable, dependency-free SVG bench apparatus for the sgrz teaching pages.
+ * CIRCUIT_VIEW.render(svg, config, solution, { editable, selectedId, onMove, onSelect })
+ * Config x/y are the top-left of each instrument; electrical values come only
+ * from solution.components. No circuit solving or parameter editing occurs here.
+ *
+ * PhET adaptations (MIT, exact license in LICENSE-PHET.txt):
+ * - BatteryNode.ts, Copyright 2024-2026 University of Colorado Boulder:
+ *   the small cell on the DC supply retains the 40% copper cap / 30% terminal
+ *   proportions and the original three-stop vertical metal/copper gradients.
+ * - WireNode.ts, Copyright 2018-2025 University of Colorado Boulder:
+ *   endpoint + outward-normal cubic geometry, translated to native SVG paths.
+ * Source: source/upstream/phet/libs/scenery-phet/js/{BatteryNode,WireNode}.ts.
+ * The analog bench instruments, resistor, rheostat and knife switch are original
+ * project SVG drawings, not copied PhET screenshots or bundled simulation code.
+ */
+(function (global) {
+  'use strict';
+  var NS = 'http://www.w3.org/2000/svg';
+  var WIDTH = 1000, HEIGHT = 650, serial = 0;
+  var states = new WeakMap();
+  var NAMES = { power_supply: '直流电源', ammeter: '电流表', voltmeter: '电压表', resistor: '定值电阻', rheostat: '滑动变阻器', switch: '开关' };
+  var SIZES = { power_supply: [224, 142], ammeter: [220, 196], voltmeter: [220, 196], resistor: [190, 94], rheostat: [245, 120], switch: [165, 100] };
+  var PALETTE = { ink: '#31352f', soft: '#72776f', red: '#b8493c', black: '#333b3c', brass: '#ad844b', border: '#8e9286' };
+
+  function finite(value) { return typeof value === 'number' && Number.isFinite(value); }
+  function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+  function format(value) {
+    if (!finite(value)) return '—';
+    if (value === 0) return '0';
+    return Number(value.toFixed(Math.abs(value) < 0.01 ? 4 : Math.abs(value) < 1 ? 3 : 2)).toString();
+  }
+  function el(parent, name, attributes, text) {
+    var node = parent.ownerDocument.createElementNS(NS, name);
+    Object.keys(attributes || {}).forEach(function (key) { node.setAttribute(key, attributes[key]); });
+    if (text !== undefined) node.textContent = text;
+    parent.appendChild(node);
+    return node;
+  }
+  function rect(parent, x, y, width, height, fill, radius, extra) {
+    return el(parent, 'rect', Object.assign({ x: x, y: y, width: width, height: height, rx: radius || 0, fill: fill }, extra || {}));
+  }
+  function line(parent, x1, y1, x2, y2, stroke, width, extra) {
+    return el(parent, 'line', Object.assign({ x1: x1, y1: y1, x2: x2, y2: y2, stroke: stroke, 'stroke-width': width || 1, 'stroke-linecap': 'round' }, extra || {}));
+  }
+  function text(parent, x, y, content, size, extra) {
+    return el(parent, 'text', Object.assign({ x: x, y: y, fill: PALETTE.ink, 'font-size': size || 18, 'text-anchor': 'middle', 'font-family': 'Arial, Microsoft YaHei, sans-serif' }, extra || {}), content);
+  }
+  function circle(parent, cx, cy, r, fill, extra) { return el(parent, 'circle', Object.assign({ cx: cx, cy: cy, r: r, fill: fill }, extra || {})); }
+  function path(parent, d, fill, stroke, width, extra) {
+    return el(parent, 'path', Object.assign({ d: d, fill: fill || 'none', stroke: stroke || 'none', 'stroke-width': width || 1, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, extra || {}));
+  }
+  function screw(parent, x, y) {
+    circle(parent, x, y, 3.6, '#a8ac9e', { stroke: '#747c70', 'stroke-width': 1 });
+    line(parent, x - 1.8, y + 1.8, x + 1.8, y - 1.8, '#677064', 1);
+  }
+  function terminal(parent, x, y, kind, label, prefix) {
+    circle(parent, x, y + 2, 14.5, '#4b5149');
+    circle(parent, x, y, 12, 'url(#' + prefix + '-terminal)', { stroke: '#555c54', 'stroke-width': 1.5 });
+    circle(parent, x, y, 8.5, kind === 'red' ? PALETTE.red : PALETTE.black, { stroke: kind === 'red' ? '#90352d' : '#202729', 'stroke-width': 1.4 });
+    circle(parent, x - 1, y - 1.5, 3.6, '#deded0', { stroke: '#777d71', 'stroke-width': 1 });
+    circle(parent, x, y, 1.4, '#4d524a');
+    if (label) text(parent, x, y - 19, label, 16, { fill: kind === 'red' ? '#a33d31' : '#495149', 'font-weight': 600 });
+  }
+
+  function dimensions(type) { var size = SIZES[type] || [170, 100]; return { width: size[0], height: size[1] }; }
+  function boundedPosition(type, x, y) {
+    var size = dimensions(type);
+    return {
+      x: clamp(x, 18, WIDTH - size.width - 18),
+      y: clamp(y, type === 'rheostat' ? 32 : 18, HEIGHT - size.height - 58)
+    };
+  }
+  function defaultPosition(component, config, index) {
+    var recipe = config.recipe || 'ohm';
+    var defaults = { V1: [75, 440], A1: [75, 92], M1: [700, 75], S1: [430, 460], R1: [700, 350], RH1: [370, 285], R2: [690, 485] };
+    if (recipe === 'series') { defaults.R1 = [415, 315]; defaults.R2 = [715, 360]; }
+    if (recipe === 'parallel') { defaults.R1 = [590, 340]; defaults.R2 = [590, 490]; defaults.S1 = [350, 475]; }
+    var fallback = { power_supply: defaults.V1, ammeter: defaults.A1, voltmeter: defaults.M1, resistor: index % 2 ? defaults.R1 : defaults.R2, rheostat: defaults.RH1, switch: defaults.S1 };
+    return defaults[component.id] || fallback[component.type] || [60 + index % 3 * 290, 90 + Math.floor(index / 3) * 240];
+  }
+  function layout(config) {
+    return (config.components || []).map(function (component, index) {
+      var fallback = defaultPosition(component, config, index);
+      var position = boundedPosition(component.type, finite(component.x) ? component.x : fallback[0], finite(component.y) ? component.y : fallback[1]);
+      // Clamp only the drawing position; caller-owned config and port names stay
+      // intact. Terminals and wires use this same layout on every render.
+      return { component: component, x: position.x, y: position.y };
+    });
+  }
+  function localPorts(component) {
+    switch (component.type) {
+      case 'power_supply': return { positive: [50, 119, -0.25, 1], negative: [174, 119, 0.25, 1] };
+      case 'ammeter': case 'voltmeter': return { negative: [48, 174, -0.4, 1], positive: [172, 174, 0.4, 1] };
+      case 'resistor': return { a: [20, 62, -1, 0.25], b: [170, 62, 1, 0.25] };
+      case 'rheostat': {
+        var position = component.params && finite(component.params.position) ? clamp(component.params.position, 0, 1) : 0.5;
+        return { a: [23, 99, -0.6, 1], b: [222, 99, 0.6, 1], slider: [38 + 170 * position, 19, 0, -1] };
+      }
+      case 'switch': return { a: [22, 70, -0.7, 1], b: [143, 70, 0.7, 1] };
+      default: return {};
+    }
+  }
+  function terminalDetails(config) {
+    var result = {};
+    layout(config).forEach(function (placed) {
+      var ports = localPorts(placed.component);
+      Object.keys(ports).forEach(function (port) {
+        var point = ports[port];
+        result[placed.component.id + '.' + port] = { x: placed.x + point[0], y: placed.y + point[1], nx: point[2], ny: point[3] };
+      });
+    });
+    return result;
+  }
+  function terminals(config) {
+    var detail = terminalDetails(config), result = {};
+    Object.keys(detail).forEach(function (id) { result[id] = { x: detail[id].x, y: detail[id].y }; });
+    return result;
+  }
+
+  function definitions(svg, prefix) {
+    var defs = el(svg, 'defs');
+    var gradients = {
+      terminal: [[0.05, 'rgb(150,150,150)'], [0.3, 'rgb(244,244,244)'], [0.7, 'rgb(170,170,170)']],
+      cell: [[0.05, 'rgb(102,102,102)'], [0.3, 'rgb(173,173,173)'], [0.7, 'rgb(40,40,40)']],
+      copper: [[0.05, 'rgb(182,103,48)'], [0.3, 'rgb(222,218,215)'], [0.7, 'rgb(200,99,38)']],
+      casing: [[0, '#eeeede'], [0.48, '#dedfd0'], [1, '#c9cebe']],
+      glass: [[0, '#fffef3'], [0.6, '#fbfaf1'], [1, '#e9eadd']],
+      coil: [[0, '#b89c74'], [0.32, '#e8d7ad'], [0.6, '#b59667'], [1, '#836e53']]
+    };
+    Object.keys(gradients).forEach(function (name) {
+      var gradient = el(defs, 'linearGradient', { id: prefix + '-' + name, x1: '0%', y1: '0%', x2: '0%', y2: '100%' });
+      gradients[name].forEach(function (stop) { el(gradient, 'stop', { offset: stop[0], 'stop-color': stop[1] }); });
+    });
+    return defs;
+  }
+  function shadow(parent, x, y, width) { el(parent, 'ellipse', { cx: x, cy: y, rx: width, ry: 9, fill: '#686d56', opacity: 0.12 }); }
+  function label(parent, width, y, title, detail) {
+    text(parent, width / 2, y, title, 20, { 'font-weight': 600 });
+    if (detail) text(parent, width / 2, y + 22, detail, 17, { fill: '#6f776b' });
+  }
+
+  function meter(parent, component, solved, prefix, valid) {
+    var ammeter = component.type === 'ammeter', unit = ammeter ? 'A' : 'V';
+    var params = component.params || {};
+    var range = finite(params.range) && params.range > 0 ? params.range : ammeter ? 0.6 : 3;
+    var value = valid && solved && finite(ammeter ? solved.current : solved.voltage) ? (ammeter ? solved.current : solved.voltage) : null;
+    // The solver owns range status. For standalone readings without that flag,
+    // use the same eight-ULP tolerance as core.js rather than a strict > test.
+    var overrange = finite(value) && (typeof solved.overrange === 'boolean' ? solved.overrange :
+      Math.abs(value) - range > Number.EPSILON * Math.max(1, range) * 8);
+    parent.setAttribute('data-meter-id', component.id);
+    parent.setAttribute('data-value', finite(value) ? value : '');
+    parent.setAttribute('data-range', range);
+    shadow(parent, 111, 200, 111);
+    rect(parent, 0, 6, 220, 190, '#a9b29f', 16, { stroke: '#7e8977', 'stroke-width': 1.5 });
+    rect(parent, 0, 0, 220, 190, 'url(#' + prefix + '-casing)', 15, { stroke: '#808b77', 'stroke-width': 2 });
+    rect(parent, 13, 14, 194, 123, '#75806e', 12);
+    rect(parent, 17, 18, 186, 115, 'url(#' + prefix + '-glass)', 9, { stroke: '#747c69', 'stroke-width': 1 });
+    path(parent, 'M 28 48 Q 110 6 192 48', 'none', '#fff', 6, { opacity: 0.48 });
+    var cx = 110, cy = 121, radius = 80;
+    for (var tick = 0; tick <= 30; tick++) {
+      var angle = (-155 + tick / 30 * 130) * Math.PI / 180;
+      var major = tick % 5 === 0, inner = radius - (major ? 13 : 6);
+      line(parent, cx + Math.cos(angle) * inner, cy + Math.sin(angle) * inner, cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius, '#464d42', major ? 1.8 : 0.9);
+      if (major) text(parent, cx + Math.cos(angle) * 94, cy + Math.sin(angle) * 94 + 5, format(range * tick / 30), 12, { fill: '#464d42' });
+    }
+    text(parent, 110, 83, unit, 29, { 'font-family': 'Georgia, serif', 'font-weight': 700 });
+    text(parent, 110, 104, '直流', 10, { fill: '#74796b', 'letter-spacing': 2 });
+    if (finite(value)) {
+      var needleAngle = (-155 + clamp(value / range, -0.045, 1.045) * 130) * Math.PI / 180;
+      line(parent, cx, cy, cx + Math.cos(needleAngle) * 77, cy + Math.sin(needleAngle) * 77, overrange ? '#c0392b' : '#b14b3e', 2, { 'data-needle-id': component.id, 'data-value': value });
+    }
+    circle(parent, cx, cy, 5.5, '#555e50', { stroke: '#293528', 'stroke-width': 1 });
+    circle(parent, cx - 1, cy - 1, 1.8, '#a7ad9b');
+    text(parent, 110, 154, finite(value) ? format(value) + ' ' + unit : '—', 19, { 'font-family': 'Consolas, monospace', 'font-weight': 600, fill: overrange ? '#ad392e' : '#3d4938', 'data-reading-id': component.id });
+    terminal(parent, 48, 174, 'black', '−', prefix);
+    terminal(parent, 172, 174, 'red', format(range) + ' ' + unit, prefix);
+    screw(parent, 9, 10); screw(parent, 211, 10);
+    label(parent, 220, 225, NAMES[component.type] + ' ' + component.id, overrange ? '超出量程' : '量程 0–' + format(range) + ' ' + unit);
+    if (overrange) parent.setAttribute('data-overrange', 'true');
+  }
+
+  function powerSupply(parent, component, solved, prefix, valid) {
+    var value = valid && solved && finite(solved.voltage) ? solved.voltage : null;
+    shadow(parent, 112, 146, 115);
+    rect(parent, 0, 7, 224, 135, '#697363', 10);
+    rect(parent, 0, 0, 224, 134, '#aeb9a1', 10, { stroke: '#6e7d64', 'stroke-width': 2 });
+    rect(parent, 7, 7, 210, 120, '#e3e6d7', 7, { stroke: '#9ca58e' });
+    text(parent, 112, 25, '直 流 稳 压 电 源', 16, { 'font-weight': 700, fill: '#59664e' });
+    // BatteryNode's end-cap and terminal geometry, rendered directly in SVG.
+    rect(parent, 19, 46, 42, 24, 'url(#' + prefix + '-cell)', 0, { stroke: '#5f6259' });
+    rect(parent, 44.2, 46, 16.8, 24, 'url(#' + prefix + '-copper)', 0, { stroke: '#6f675b' });
+    rect(parent, 60, 54.4, 4, 7.2, 'url(#' + prefix + '-terminal)', 0, { stroke: '#666d61' });
+    text(parent, 40, 89, 'DC', 13, { fill: '#637259', 'font-weight': 700 });
+    rect(parent, 80, 36, 125, 42, '#404f3a', 4);
+    rect(parent, 84, 40, 117, 34, '#d1dec1', 2);
+    text(parent, 145, 64, finite(value) ? format(value) + ' V' : '—', 22, { 'font-family': 'Consolas, monospace', 'data-reading-id': component.id, fill: '#34472e' });
+    circle(parent, 112, 101, 13, '#6c7960', { stroke: '#4e6044', 'stroke-width': 2 });
+    circle(parent, 112, 101, 9, '#7f8d70'); line(parent, 112, 101, 118, 95, '#e8ecdc', 2);
+    text(parent, 112, 123, '输出', 10, { fill: '#596a4b' });
+    terminal(parent, 50, 119, 'red', '+', prefix); terminal(parent, 174, 119, 'black', '−', prefix);
+    screw(parent, 15, 17); screw(parent, 208, 17);
+    // Outgoing cables may loop behind the supply; an opaque label plate keeps
+    // the title legible without changing the connection geometry.
+    rect(parent, 34, 148, 156, 28, '#f5f2e9', 5, { 'data-label-plate': component.id });
+    label(parent, 224, 169, '直流电源 ' + component.id);
+  }
+
+  function resistor(parent, component, solved, prefix, valid) {
+    var params = component.params || {}, resistance = params.resistance;
+    shadow(parent, 95, 96, 97);
+    rect(parent, 7, 49, 176, 38, '#8c7760', 7, { stroke: '#6f6250', 'stroke-width': 2 });
+    rect(parent, 8, 46, 174, 31, '#d4c5a8', 6, { stroke: '#97866a' });
+    rect(parent, 31, 39, 14, 27, 'url(#' + prefix + '-terminal)', 2, { stroke: '#797b6e' });
+    rect(parent, 145, 39, 14, 27, 'url(#' + prefix + '-terminal)', 2, { stroke: '#797b6e' });
+    line(parent, 20, 62, 48, 52, '#777e70', 5); line(parent, 142, 52, 170, 62, '#777e70', 5);
+    rect(parent, 43, 24, 104, 40, '#e7e4d0', 5, { stroke: '#a4a489', 'stroke-width': 1.5 });
+    for (var rib = 0; rib < 9; rib++) line(parent, 52 + rib * 10, 28, 52 + rib * 10, 61, '#c6c9ae', 2);
+    rect(parent, 64, 29, 63, 27, '#eae8d5', 2);
+    text(parent, 95, 49, format(resistance) + ' Ω', 18, { 'font-weight': 600 });
+    terminal(parent, 20, 62, 'black', '', prefix); terminal(parent, 170, 62, 'red', '', prefix);
+    var detail = valid && solved && finite(solved.voltage) ? 'U = ' + format(solved.voltage) + ' V' : '';
+    label(parent, 190, 116, '定值电阻 ' + component.id, detail);
+  }
+
+  function rheostat(parent, component, solved, prefix) {
+    var params = component.params || {}, position = finite(params.position) ? clamp(params.position, 0, 1) : 0.5;
+    var slider = 38 + 170 * position;
+    shadow(parent, 122, 121, 124);
+    rect(parent, 5, 84, 235, 29, '#89755d', 6, { stroke: '#70604d', 'stroke-width': 2 });
+    rect(parent, 5, 80, 235, 27, '#d2b98e', 6, { stroke: '#9c835f' });
+    rect(parent, 25, 37, 17, 51, '#9caa92', 2, { stroke: '#75836c' });
+    rect(parent, 207, 37, 17, 51, '#9caa92', 2, { stroke: '#75836c' });
+    rect(parent, 38, 42, 170, 30, 'url(#' + prefix + '-coil)', 7, { stroke: '#927655', 'stroke-width': 1.2 });
+    for (var turn = 0; turn <= 33; turn++) line(parent, 41 + turn * 4.9, 44, 41 + turn * 4.9, 70, '#8a775a', 1.4);
+    line(parent, 30, 29, 216, 29, '#727d68', 7); line(parent, 30, 27, 216, 27, '#d9ded0', 2);
+    rect(parent, slider - 11, 21, 22, 20, '#6f7866', 3, { stroke: '#4c5c43' });
+    path(parent, 'M ' + (slider - 3) + ' 38 L ' + (slider - 3) + ' 52 L ' + slider + ' 58 L ' + (slider + 3) + ' 52 L ' + (slider + 3) + ' 38 Z', '#a8ac9b', '#6a7861', 1.3);
+    terminal(parent, 23, 99, 'black', 'a', prefix); terminal(parent, 222, 99, 'red', 'b', prefix);
+    terminal(parent, slider, 19, 'red', '', prefix);
+    text(parent, 122, 101, '0–' + format(params.maxResistance) + ' Ω', 15, { fill: '#63543e', 'font-weight': 600 });
+    label(parent, 245, 145, '滑动变阻器 ' + component.id, '滑片位置 ' + Math.round(position * 100) + '%');
+  }
+
+  function knifeSwitch(parent, component, solved, prefix) {
+    var closed = !!(component.params && component.params.closed);
+    shadow(parent, 83, 103, 83);
+    rect(parent, 0, 39, 165, 55, '#6d5947', 9, { stroke: '#574737', 'stroke-width': 1.5 });
+    rect(parent, 0, 34, 165, 51, '#a88d67', 8, { stroke: '#786043', 'stroke-width': 1.5 });
+    screw(parent, 9, 43); screw(parent, 156, 76);
+    rect(parent, 17, 48, 18, 29, '#bca46f', 3, { stroke: '#87723f' });
+    rect(parent, 129, 48, 19, 29, '#bca46f', 3, { stroke: '#87723f' });
+    line(parent, 132, 46, 132, 63, '#927536', 4); line(parent, 145, 46, 145, 63, '#927536', 4);
+    var endX = closed ? 140 : 104, endY = closed ? 53 : 4;
+    line(parent, 27, 55, endX, endY, '#605e4c', 9);
+    line(parent, 27, 53, endX, endY - 2, '#d0c195', 5);
+    var handleX = closed ? 94 : 80, handleY = closed ? 52 : 15;
+    rect(parent, handleX - 17, handleY - 9, 35, 16, '#9b3e30', 4, { stroke: '#763426', 'stroke-width': 1.5, transform: closed ? '' : 'rotate(-31 ' + handleX + ' ' + handleY + ')' });
+    circle(parent, 27, 54, 5, '#6e6e58');
+    terminal(parent, 22, 70, 'black', '', prefix); terminal(parent, 143, 70, 'red', '', prefix);
+    label(parent, 165, 123, '开关 ' + component.id, closed ? '已闭合' : '已断开');
+    parent.setAttribute('data-closed', closed ? 'true' : 'false');
+  }
+
+  function wireCurve(from, to, index) {
+    // Native-SVG adaptation of WireNode's endpoint-plus-normal cubic curve.
+    var distance = Math.hypot(to.x - from.x, to.y - from.y);
+    var bend = clamp(distance * 0.28, 36, 100) + index % 3 * 4;
+    return 'M ' + from.x + ' ' + from.y + ' C ' + (from.x + from.nx * bend) + ' ' + (from.y + from.ny * bend) + ' ' + (to.x + to.nx * bend) + ' ' + (to.y + to.ny * bend) + ' ' + to.x + ' ' + to.y;
+  }
+  function drawWires(parent, config) {
+    var ports = terminalDetails(config);
+    (config.wires || []).forEach(function (wire, index) {
+      var from = ports[wire.from], to = ports[wire.to];
+      if (!from || !to) return;
+      var d = wireCurve(from, to, index);
+      var red = /\.positive$/.test(wire.from) || /\.positive$/.test(wire.to);
+      var black = /\.negative$/.test(wire.from) || /\.negative$/.test(wire.to);
+      var color = red ? '#ae5142' : black ? '#424c48' : index % 2 ? '#58746b' : '#a47e4c';
+      path(parent, d, 'none', '#4c493e', 8, { opacity: 0.15, transform: 'translate(0 3)' });
+      path(parent, d, 'none', '#364039', 7, { 'data-wire-id': wire.id || 'wire-' + index, 'data-from': wire.from, 'data-to': wire.to, 'data-wire-layer': 'outline' });
+      path(parent, d, 'none', color, 4.8, { 'data-wire-id': wire.id || 'wire-' + index, 'data-from': wire.from, 'data-to': wire.to, 'data-wire-layer': 'sheath' });
+      path(parent, d, 'none', '#fff', 1, { opacity: 0.21, transform: 'translate(0 -0.8)', 'pointer-events': 'none' });
+    });
+  }
+
+  function point(svg, event) {
+    var matrix = svg.getScreenCTM && svg.getScreenCTM();
+    if (matrix && svg.createSVGPoint) {
+      var p = svg.createSVGPoint(); p.x = event.clientX; p.y = event.clientY;
+      return p.matrixTransform(matrix.inverse());
+    }
+    var bounds = svg.getBoundingClientRect();
+    return { x: (event.clientX - bounds.left) * WIDTH / bounds.width, y: (event.clientY - bounds.top) * HEIGHT / bounds.height };
+  }
+  function move(svg, state, id, x, y) {
+    var component = (state.config.components || []).find(function (candidate) { return candidate.id === id; });
+    if (!component) return;
+    var position = boundedPosition(component.type, x, y);
+    component.x = Math.round(position.x);
+    component.y = Math.round(position.y);
+    var config = state.config, options = state.options;
+    render(svg, config, state.solution, options);
+    if (typeof options.onMove === 'function') options.onMove(config);
+  }
+  function listeners(svg, state) {
+    svg.addEventListener('pointermove', function (event) {
+      if (!state.drag || !state.options.editable || state.drag.pointerId !== event.pointerId) return;
+      var p = point(svg, event);
+      event.preventDefault();
+      move(svg, state, state.drag.id, p.x - state.drag.offsetX, p.y - state.drag.offsetY);
+    });
+    function finish(event) {
+      if (!state.drag || state.drag.pointerId !== event.pointerId) return;
+      state.drag = null;
+      if (svg.releasePointerCapture) { try { svg.releasePointerCapture(event.pointerId); } catch (_) { /* A browser may already release capture on cancellation. */ } }
+    }
+    svg.addEventListener('pointerup', finish); svg.addEventListener('pointercancel', finish);
+  }
+  function editableGroup(svg, group, placed, state) {
+    group.setAttribute('tabindex', '0');
+    group.setAttribute('role', 'group');
+    group.setAttribute('aria-label', (NAMES[placed.component.type] || placed.component.type) + ' ' + placed.component.id + '，可拖动，方向键移动，Shift 加速');
+    group.setAttribute('aria-roledescription', '可移动实验器材');
+    group.style.cursor = 'grab';
+    group.addEventListener('pointerdown', function (event) {
+      if (event.button !== undefined && event.button !== 0) return;
+      event.preventDefault(); event.stopPropagation();
+      var p = point(svg, event);
+      state.drag = { id: placed.component.id, pointerId: event.pointerId, offsetX: p.x - placed.x, offsetY: p.y - placed.y };
+      if (svg.setPointerCapture) svg.setPointerCapture(event.pointerId);
+      if (typeof state.options.onSelect === 'function') state.options.onSelect(placed.component.id, state.config);
+    });
+    group.addEventListener('keydown', function (event) {
+      var direction = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[event.key];
+      if (!direction) return;
+      event.preventDefault();
+      var step = event.shiftKey ? 10 : 2;
+      move(svg, state, placed.component.id, placed.x + direction[0] * step, placed.y + direction[1] * step);
+      // Re-render replaces the focused group; preserve keyboard focus by id.
+      if (svg.querySelectorAll) {
+        Array.prototype.forEach.call(svg.querySelectorAll('[data-component-id]'), function (node) {
+          if (node.getAttribute('data-component-id') === placed.component.id && node.focus) node.focus();
         });
       }
-      if (prev[end] === undefined) return null;
-      var sum = 0, cur = end;
-      while (cur !== start) { var p = prev[cur]; sum += p.sign * branches[p.id].voltage; cur = p.node; }
-      return sum;
-    }
-    var max = 0;
-    components.forEach(function (c) {
-      if (!c.active) return;
-      var a = c.from, b = c.to, ra = find(a), rb = find(b);
-      if (ra !== rb) {
-        parent[ra] = rb;
-        add(a, { node: b, id: c.id, sign: 1 }); add(b, { node: a, id: c.id, sign: -1 });
+    });
+    group.addEventListener('focus', function () {
+      if (typeof state.options.onSelect === 'function') state.options.onSelect(placed.component.id, state.config);
+    });
+  }
+
+  function render(svg, config, solution, options) {
+    if (!svg || !config) throw new TypeError('CIRCUIT_VIEW.render requires an SVG element and a configuration');
+    options = options || {}; solution = solution || {};
+    var state = states.get(svg);
+    if (!state) { state = { prefix: 'circuit-apparatus-' + (++serial) }; states.set(svg, state); listeners(svg, state); }
+    state.config = config; state.solution = solution; state.options = options;
+    if (!options.editable) state.drag = null;
+    svg.replaceChildren();
+    svg.setAttribute('viewBox', '0 0 ' + WIDTH + ' ' + HEIGHT);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.setAttribute('role', options.editable ? 'group' : 'img');
+    svg.setAttribute('aria-label', options.editable ? '实物电路编辑区，可选择并拖动仪器' : '实物电路实验装置，包含电源、指针式仪表、电阻与开关');
+    svg.style.touchAction = options.editable ? 'none' : 'auto';
+    el(svg, 'title', {}, options.editable ? '实物电路编辑' : '实物电路实验');
+    el(svg, 'desc', {}, '彩色导线连接真实接线柱；红色为正接线柱，黑色为负接线柱。仪表读数来自电路求解结果。');
+    definitions(svg, state.prefix);
+    rect(svg, 8, 8, WIDTH - 16, HEIGHT - 16, '#f5f2e9', 18, { stroke: '#e1dfd2', 'stroke-width': 1.5 });
+    [150, 310, 470, 610].forEach(function (y) { line(svg, 23, y, 977, y, '#d6d2c2', 0.6, { opacity: 0.15 }); });
+    var wires = el(svg, 'g', { 'data-layer': 'wires', 'pointer-events': 'none' }); drawWires(wires, config);
+    var apparatus = el(svg, 'g', { 'data-layer': 'apparatus' });
+    layout(config).forEach(function (placed) {
+      var component = placed.component, solved = solution.components && solution.components[component.id];
+      var group = el(apparatus, 'g', { transform: 'translate(' + placed.x + ' ' + placed.y + ')', 'data-component-id': component.id, 'data-component-type': component.type, 'data-x': placed.x, 'data-y': placed.y });
+      if (options.selectedId === component.id) {
+        var size = dimensions(component.type);
+        rect(group, -9, -10, size.width + 18, size.height + 18, 'none', 19, { stroke: '#6c8c68', 'stroke-width': 2.5, 'stroke-dasharray': '6 5', 'pointer-events': 'none' });
+      }
+      var valid = solution.ok !== false && solution.status !== 'error';
+      if (component.type === 'ammeter' || component.type === 'voltmeter') meter(group, component, solved, state.prefix, valid);
+      else if (component.type === 'power_supply') powerSupply(group, component, solved, state.prefix, valid);
+      else if (component.type === 'resistor') resistor(group, component, solved, state.prefix, valid);
+      else if (component.type === 'rheostat') rheostat(group, component, solved, state.prefix);
+      else if (component.type === 'switch') knifeSwitch(group, component, solved, state.prefix);
+      if (options.editable) editableGroup(svg, group, placed, state);
+    });
+    return svg;
+  }
+
+  global.CIRCUIT_VIEW = { render: render, terminals: terminals, dimensions: dimensions, width: WIDTH, height: HEIGHT };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+(function(){var d=document,sources={"core": "/*\n * 教学直流器材内核。MNA 电阻/理想电压源盖章与部分主元消元改编自仓库内\n * code/eduforge/tools/labkit/circuit/core.mjs；端口图、器材模型和固定实验为本项目实现。\n * 此文件不加载 CircuitJS，也不需要第三方运行库。\n */\n(function (root, factory) {\n  'use strict';\n  const api = factory();\n  root.CIRCUIT = api;\n  if (typeof module === 'object' && module.exports) module.exports = api;\n})(typeof globalThis !== 'undefined' ? globalThis : window, function () {\n  'use strict';\n\n  const PORTS = Object.freeze({\n    power_supply: ['positive', 'negative'],\n    ammeter: ['positive', 'negative'],\n    voltmeter: ['positive', 'negative'],\n    resistor: ['a', 'b'],\n    rheostat: ['a', 'slider', 'b'],\n    switch: ['a', 'b']\n  });\n  const RECIPES = ['ohm', 'resistance', 'series', 'parallel'];\n  const finite = value => typeof value === 'number' && Number.isFinite(value);\n  const positive = value => finite(value) && value > 0;\n  const normalized = value => Object.is(value, -0) ? 0 : value;\n  const blankMeasurement = () => ({ current: null, voltage: null, value: null, range: null, overrange: false });\n\n  function createExperiment(recipe, params) {\n    if (!RECIPES.includes(recipe)) {\n      const error = new Error('未知实验：' + recipe);\n      error.code = 'UNKNOWN_RECIPE';\n      throw error;\n    }\n    const p = Object.assign({ voltage: 6, resistance: 10, resistance2: 20,\n      maxResistance: 50, position: 0.2, closed: true, ammeterRange: recipe === 'parallel' ? 3 : 0.6, voltmeterRange: 15 }, params || {});\n    const components = [\n      { id: 'V1', type: 'power_supply', params: { voltage: p.voltage } },\n      { id: 'A1', type: 'ammeter', params: { range: p.ammeterRange } },\n      { id: 'M1', type: 'voltmeter', params: { range: p.voltmeterRange } },\n      { id: 'R1', type: 'resistor', params: { resistance: p.resistance } },\n      { id: 'S1', type: 'switch', params: { closed: p.closed } }\n    ];\n    const wires = [];\n    const wire = (from, to) => wires.push({ id: 'W' + (wires.length + 1), from, to });\n    wire('V1.positive', 'S1.a');\n    wire('S1.b', 'A1.positive');\n    wire('M1.positive', 'R1.a');\n    wire('M1.negative', 'R1.b');\n    if (recipe === 'resistance') {\n      components.push({ id: 'RH1', type: 'rheostat', params: { maxResistance: p.maxResistance, position: p.position } });\n      wire('A1.negative', 'RH1.a');\n      wire('RH1.slider', 'R1.a');\n      wire('R1.b', 'V1.negative');\n    } else if (recipe === 'series') {\n      components.push({ id: 'R2', type: 'resistor', params: { resistance: p.resistance2 } });\n      wire('A1.negative', 'R1.a');\n      wire('R1.b', 'R2.a');\n      wire('R2.b', 'V1.negative');\n    } else {\n      wire('A1.negative', 'R1.a');\n      wire('R1.b', 'V1.negative');\n      if (recipe === 'parallel') {\n        components.push({ id: 'R2', type: 'resistor', params: { resistance: p.resistance2 } });\n        wire('R1.a', 'R2.a');\n        wire('R1.b', 'R2.b');\n      }\n    }\n    return { schema_version: 1, recipe, components, wires };\n  }\n\n  function unionFind(items) {\n    const parents = new Map(items.map(item => [item, item]));\n    function find(item) {\n      let top = item;\n      while (parents.get(top) !== top) top = parents.get(top);\n      while (item !== top) {\n        const next = parents.get(item);\n        parents.set(item, top);\n        item = next;\n      }\n      return top;\n    }\n    return { find, union(a, b) { parents.set(find(a), find(b)); } };\n  }\n\n  function validate(config) {\n    const errors = [];\n    const add = (code, message) => errors.push({ code, message });\n    const endpoints = [];\n    const components = new Map();\n    if (!config || config.schema_version !== 1 || !Array.isArray(config.components) || !Array.isArray(config.wires)) {\n      add('INVALID_CONFIG', '需要 schema_version: 1、components 数组与 wires 数组。');\n      return { errors, endpoints, components };\n    }\n    const ids = new Set();\n    function checkId(item, label) {\n      if (!item || typeof item !== 'object' || typeof item.id !== 'string' || !/^[A-Za-z][A-Za-z0-9_-]*$/.test(item.id)) {\n        add('INVALID_ID', label + '需要由字母开头的唯一 id。');\n        return false;\n      }\n      if (ids.has(item.id)) { add('DUPLICATE_ID', '重复 id：' + item.id); return false; }\n      ids.add(item.id);\n      return true;\n    }\n    for (const component of config.components) {\n      if (!checkId(component, '器材')) continue;\n      if (!Object.hasOwn(PORTS, component.type)) { add('UNKNOWN_COMPONENT_TYPE', component.id + '：未知器材类型。'); continue; }\n      components.set(component.id, component);\n      for (const port of PORTS[component.type]) endpoints.push(component.id + '.' + port);\n      const p = component.params;\n      if (!p || typeof p !== 'object' || Array.isArray(p)) { add('INVALID_PARAMETER', component.id + '：缺少 params 对象。'); continue; }\n      let valid = true;\n      switch (component.type) {\n        case 'power_supply': valid = finite(p.voltage) && p.voltage >= 0; break;\n        case 'resistor': valid = positive(p.resistance); break;\n        case 'rheostat': valid = positive(p.maxResistance) && finite(p.position) && p.position >= 0 && p.position <= 1; break;\n        case 'switch': valid = typeof p.closed === 'boolean'; break;\n        case 'ammeter': case 'voltmeter':\n          if (!positive(p.range)) add('INVALID_RANGE', component.id + '：量程必须是大于 0 的有限数值。');\n          break;\n      }\n      if (!valid) add('INVALID_PARAMETER', component.id + '：物理参数不合法。');\n    }\n    const endpointSet = new Set(endpoints);\n    for (const wire of config.wires) {\n      if (!checkId(wire, '导线')) continue;\n      if (!endpointSet.has(wire.from) || !endpointSet.has(wire.to)) add('INVALID_ENDPOINT', wire.id + '：导线端点不存在。');\n    }\n    const sources = [...components.values()].filter(component => component.type === 'power_supply');\n    if (!sources.length) add('MISSING_SOURCE', '电路缺少直流电源。');\n    if (sources.length > 1) add('MULTIPLE_SOURCES', '第一阶段仅支持一个直流电源。');\n    return { errors, endpoints, components, source: sources[0] };\n  }\n\n  // 部分主元高斯消元，算法来自内部 MNA 内核；奇异/数值溢出显式报错。\n  function solveLinear(matrix, rhs) {\n    const n = rhs.length;\n    const rows = matrix.map((row, index) => [...row, rhs[index]]);\n    for (let col = 0; col < n; col += 1) {\n      let pivot = col;\n      for (let row = col + 1; row < n; row += 1) if (Math.abs(rows[row][col]) > Math.abs(rows[pivot][col])) pivot = row;\n      if (!Number.isFinite(rows[pivot][col]) || Math.abs(rows[pivot][col]) < 1e-14) throw new Error('SINGULAR_MATRIX');\n      [rows[col], rows[pivot]] = [rows[pivot], rows[col]];\n      const divisor = rows[col][col];\n      for (let index = col; index <= n; index += 1) rows[col][index] /= divisor;\n      for (let row = 0; row < n; row += 1) {\n        if (row === col) continue;\n        const factor = rows[row][col];\n        if (!factor) continue;\n        for (let index = col; index <= n; index += 1) rows[row][index] -= factor * rows[col][index];\n      }\n    }\n    const result = rows.map(row => row[n]);\n    if (!result.every(Number.isFinite)) throw new Error('NUMERIC_ERROR');\n    return result;\n  }\n\n  function solve(config) {\n    const checked = validate(config);\n    const measurements = Object.create(null);\n    const nodeVoltages = Object.create(null);\n    for (const [id, component] of checked.components) {\n      measurements[id] = blankMeasurement();\n      if (component.type === 'ammeter' || component.type === 'voltmeter') measurements[id].range = component.params && component.params.range;\n    }\n    for (const endpoint of checked.endpoints) nodeVoltages[endpoint] = null;\n    const result = { ok: false, status: 'error', errors: checked.errors, components: measurements,\n      totalCurrent: null, sourceVoltage: null, equivalentResistance: null, nodeVoltages };\n    const fail = (code, message) => { result.errors.push({ code, message }); return result; };\n    if (result.errors.length) return result;\n\n    const uf = unionFind(checked.endpoints);\n    for (const wire of config.wires) uf.union(wire.from, wire.to);\n    for (const component of checked.components.values()) {\n      if (component.type === 'switch' && component.params.closed) uf.union(component.id + '.a', component.id + '.b');\n    }\n    const sources = [];\n    const resistors = [];\n    const branch = (id, from, to, resistance) => {\n      if (resistance === 0) sources.push({ id, from: uf.find(from), to: uf.find(to), v: 0 });\n      else resistors.push({ id, from: uf.find(from), to: uf.find(to), r: resistance });\n    };\n    for (const component of checked.components.values()) {\n      const id = component.id;\n      const p = component.params;\n      if (component.type === 'power_supply') sources.unshift({ id, from: uf.find(id + '.positive'), to: uf.find(id + '.negative'), v: p.voltage });\n      if (component.type === 'ammeter') sources.push({ id, from: uf.find(id + '.positive'), to: uf.find(id + '.negative'), v: 0 });\n      if (component.type === 'resistor') branch(id, id + '.a', id + '.b', p.resistance);\n      if (component.type === 'rheostat') {\n        branch(id + ':a', id + '.a', id + '.slider', p.maxResistance * p.position);\n        branch(id + ':b', id + '.slider', id + '.b', p.maxResistance * (1 - p.position));\n      }\n    }\n    const supply = sources.find(source => source.id === checked.source.id);\n    const roots = [...new Set(checked.endpoints.map(endpoint => uf.find(endpoint)))];\n    const conductive = unionFind(roots);\n    for (const source of sources) if (source !== supply) conductive.union(source.from, source.to);\n    if (conductive.find(supply.from) === conductive.find(supply.to)) return fail('SOURCE_SHORT', '电源正负端经导线、闭合开关或理想电流表短接。');\n\n    // 连通性包含电阻、电源和电流表，不包含无限内阻的电压表及断开开关。\n    const connected = unionFind(roots);\n    for (const branch of [...sources, ...resistors]) connected.union(branch.from, branch.to);\n    const floating = roots.filter(node => connected.find(node) !== connected.find(supply.to));\n    if (floating.length) return fail('FLOATING_SUBCIRCUIT', '存在未参考电源负端的悬空端口/子电路：' + floating.join('、'));\n\n    const loadConnected = unionFind(roots);\n    for (const branch of [...sources.filter(source => source !== supply), ...resistors]) loadConnected.union(branch.from, branch.to);\n    const open = loadConnected.find(supply.from) !== loadConnected.find(supply.to);\n    const nodes = roots.filter(node => node !== supply.to);\n    const nodeIndices = new Map(nodes.map((node, index) => [node, index]));\n    // 完全被导线旁路的理想表支路电流不可辨识；不为其制造任意电流。\n    const activeSources = sources.filter(source => source.from !== source.to);\n    const size = nodes.length + activeSources.length;\n    const matrix = Array.from({ length: size }, () => Array(size).fill(0));\n    const rhs = Array(size).fill(0);\n    const index = node => nodeIndices.get(node);\n    for (const resistor of resistors) {\n      const a = index(resistor.from), b = index(resistor.to), g = 1 / resistor.r;\n      if (a !== undefined) matrix[a][a] += g;\n      if (b !== undefined) matrix[b][b] += g;\n      if (a !== undefined && b !== undefined) { matrix[a][b] -= g; matrix[b][a] -= g; }\n    }\n    for (const [k, source] of activeSources.entries()) {\n      const branchIndex = nodes.length + k;\n      const a = index(source.from), b = index(source.to);\n      if (a !== undefined) { matrix[a][branchIndex] += 1; matrix[branchIndex][a] += 1; }\n      if (b !== undefined) { matrix[b][branchIndex] -= 1; matrix[branchIndex][b] -= 1; }\n      rhs[branchIndex] = source.v;\n    }\n    let solution;\n    let equivalent;\n    const supplyIndex = nodes.length + activeSources.indexOf(supply);\n    try {\n      solution = solveLinear(matrix, rhs);\n      if (open) equivalent = Infinity;\n      else if (supply.v !== 0) equivalent = supply.v / -solution[supplyIndex];\n      else {\n        const unitRhs = rhs.slice();\n        unitRhs[supplyIndex] = 1;\n        equivalent = 1 / -solveLinear(matrix, unitRhs)[supplyIndex];\n      }\n    } catch (error) {\n      return fail(error.message === 'NUMERIC_ERROR' ? 'NUMERIC_ERROR' : 'UNSOLVABLE_TOPOLOGY', '电路约束冲突、理想支路电流不唯一，或参数超出数值求解范围。');\n    }\n    const potential = node => node === supply.to ? 0 : solution[index(node)];\n    const voltage = (id, a, b) => normalized(potential(uf.find(id + '.' + a)) - potential(uf.find(id + '.' + b)));\n    const sourceCurrent = id => {\n      const i = activeSources.findIndex(source => source.id === id);\n      return i < 0 ? null : normalized(solution[nodes.length + i]);\n    };\n    for (const endpoint of checked.endpoints) nodeVoltages[endpoint] = normalized(potential(uf.find(endpoint)));\n    for (const component of checked.components.values()) {\n      const id = component.id, p = component.params, reading = measurements[id];\n      switch (component.type) {\n        case 'power_supply':\n          reading.voltage = voltage(id, 'positive', 'negative');\n          reading.current = sourceCurrent(id); // 电流流入正端为正，供电时为负。\n          reading.value = reading.voltage;\n          break;\n        case 'ammeter':\n          reading.voltage = voltage(id, 'positive', 'negative');\n          reading.current = sourceCurrent(id);\n          reading.value = reading.current;\n          break;\n        case 'voltmeter':\n          reading.voltage = voltage(id, 'positive', 'negative');\n          reading.current = 0;\n          reading.value = reading.voltage;\n          break;\n        case 'resistor':\n          reading.voltage = voltage(id, 'a', 'b');\n          reading.current = normalized(reading.voltage / p.resistance);\n          reading.value = p.resistance;\n          break;\n        case 'rheostat':\n          reading.voltage = voltage(id, 'a', 'slider');\n          reading.value = p.maxResistance * p.position;\n          reading.current = reading.value === 0 ? sourceCurrent(id + ':a') : normalized(reading.voltage / reading.value);\n          break;\n        case 'switch':\n          reading.voltage = voltage(id, 'a', 'b');\n          reading.current = p.closed ? null : 0;\n          reading.value = p.closed ? 1 : 0;\n          break;\n      }\n      if (reading.range !== null && reading.value !== null) {\n        reading.overrange = Math.abs(reading.value) - reading.range > Number.EPSILON * Math.max(1, reading.range) * 8;\n      }\n    }\n    result.ok = true;\n    result.status = open ? 'open' : 'ok';\n    result.totalCurrent = open ? 0 : normalized(-solution[supplyIndex]);\n    result.sourceVoltage = supply.v;\n    result.equivalentResistance = equivalent;\n    return result;\n  }\n\n  return Object.freeze({ createExperiment, solve });\n});\n", "apparatus": "/*\n * Reusable, dependency-free SVG bench apparatus for the sgrz teaching pages.\n * CIRCUIT_VIEW.render(svg, config, solution, { editable, selectedId, onMove, onSelect })\n * Config x/y are the top-left of each instrument; electrical values come only\n * from solution.components. No circuit solving or parameter editing occurs here.\n *\n * PhET adaptations (MIT, exact license in LICENSE-PHET.txt):\n * - BatteryNode.ts, Copyright 2024-2026 University of Colorado Boulder:\n *   the small cell on the DC supply retains the 40% copper cap / 30% terminal\n *   proportions and the original three-stop vertical metal/copper gradients.\n * - WireNode.ts, Copyright 2018-2025 University of Colorado Boulder:\n *   endpoint + outward-normal cubic geometry, translated to native SVG paths.\n * Source: source/upstream/phet/libs/scenery-phet/js/{BatteryNode,WireNode}.ts.\n * The analog bench instruments, resistor, rheostat and knife switch are original\n * project SVG drawings, not copied PhET screenshots or bundled simulation code.\n */\n(function (global) {\n  'use strict';\n  var NS = 'http://www.w3.org/2000/svg';\n  var WIDTH = 1000, HEIGHT = 650, serial = 0;\n  var states = new WeakMap();\n  var NAMES = { power_supply: '直流电源', ammeter: '电流表', voltmeter: '电压表', resistor: '定值电阻', rheostat: '滑动变阻器', switch: '开关' };\n  var SIZES = { power_supply: [224, 142], ammeter: [220, 196], voltmeter: [220, 196], resistor: [190, 94], rheostat: [245, 120], switch: [165, 100] };\n  var PALETTE = { ink: '#31352f', soft: '#72776f', red: '#b8493c', black: '#333b3c', brass: '#ad844b', border: '#8e9286' };\n\n  function finite(value) { return typeof value === 'number' && Number.isFinite(value); }\n  function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }\n  function format(value) {\n    if (!finite(value)) return '—';\n    if (value === 0) return '0';\n    return Number(value.toFixed(Math.abs(value) < 0.01 ? 4 : Math.abs(value) < 1 ? 3 : 2)).toString();\n  }\n  function el(parent, name, attributes, text) {\n    var node = parent.ownerDocument.createElementNS(NS, name);\n    Object.keys(attributes || {}).forEach(function (key) { node.setAttribute(key, attributes[key]); });\n    if (text !== undefined) node.textContent = text;\n    parent.appendChild(node);\n    return node;\n  }\n  function rect(parent, x, y, width, height, fill, radius, extra) {\n    return el(parent, 'rect', Object.assign({ x: x, y: y, width: width, height: height, rx: radius || 0, fill: fill }, extra || {}));\n  }\n  function line(parent, x1, y1, x2, y2, stroke, width, extra) {\n    return el(parent, 'line', Object.assign({ x1: x1, y1: y1, x2: x2, y2: y2, stroke: stroke, 'stroke-width': width || 1, 'stroke-linecap': 'round' }, extra || {}));\n  }\n  function text(parent, x, y, content, size, extra) {\n    return el(parent, 'text', Object.assign({ x: x, y: y, fill: PALETTE.ink, 'font-size': size || 18, 'text-anchor': 'middle', 'font-family': 'Arial, Microsoft YaHei, sans-serif' }, extra || {}), content);\n  }\n  function circle(parent, cx, cy, r, fill, extra) { return el(parent, 'circle', Object.assign({ cx: cx, cy: cy, r: r, fill: fill }, extra || {})); }\n  function path(parent, d, fill, stroke, width, extra) {\n    return el(parent, 'path', Object.assign({ d: d, fill: fill || 'none', stroke: stroke || 'none', 'stroke-width': width || 1, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, extra || {}));\n  }\n  function screw(parent, x, y) {\n    circle(parent, x, y, 3.6, '#a8ac9e', { stroke: '#747c70', 'stroke-width': 1 });\n    line(parent, x - 1.8, y + 1.8, x + 1.8, y - 1.8, '#677064', 1);\n  }\n  function terminal(parent, x, y, kind, label, prefix) {\n    circle(parent, x, y + 2, 14.5, '#4b5149');\n    circle(parent, x, y, 12, 'url(#' + prefix + '-terminal)', { stroke: '#555c54', 'stroke-width': 1.5 });\n    circle(parent, x, y, 8.5, kind === 'red' ? PALETTE.red : PALETTE.black, { stroke: kind === 'red' ? '#90352d' : '#202729', 'stroke-width': 1.4 });\n    circle(parent, x - 1, y - 1.5, 3.6, '#deded0', { stroke: '#777d71', 'stroke-width': 1 });\n    circle(parent, x, y, 1.4, '#4d524a');\n    if (label) text(parent, x, y - 19, label, 16, { fill: kind === 'red' ? '#a33d31' : '#495149', 'font-weight': 600 });\n  }\n\n  function dimensions(type) { var size = SIZES[type] || [170, 100]; return { width: size[0], height: size[1] }; }\n  function boundedPosition(type, x, y) {\n    var size = dimensions(type);\n    return {\n      x: clamp(x, 18, WIDTH - size.width - 18),\n      y: clamp(y, type === 'rheostat' ? 32 : 18, HEIGHT - size.height - 58)\n    };\n  }\n  function defaultPosition(component, config, index) {\n    var recipe = config.recipe || 'ohm';\n    var defaults = { V1: [75, 440], A1: [75, 92], M1: [700, 75], S1: [430, 460], R1: [700, 350], RH1: [370, 285], R2: [690, 485] };\n    if (recipe === 'series') { defaults.R1 = [415, 315]; defaults.R2 = [715, 360]; }\n    if (recipe === 'parallel') { defaults.R1 = [590, 340]; defaults.R2 = [590, 490]; defaults.S1 = [350, 475]; }\n    var fallback = { power_supply: defaults.V1, ammeter: defaults.A1, voltmeter: defaults.M1, resistor: index % 2 ? defaults.R1 : defaults.R2, rheostat: defaults.RH1, switch: defaults.S1 };\n    return defaults[component.id] || fallback[component.type] || [60 + index % 3 * 290, 90 + Math.floor(index / 3) * 240];\n  }\n  function layout(config) {\n    return (config.components || []).map(function (component, index) {\n      var fallback = defaultPosition(component, config, index);\n      var position = boundedPosition(component.type, finite(component.x) ? component.x : fallback[0], finite(component.y) ? component.y : fallback[1]);\n      // Clamp only the drawing position; caller-owned config and port names stay\n      // intact. Terminals and wires use this same layout on every render.\n      return { component: component, x: position.x, y: position.y };\n    });\n  }\n  function localPorts(component) {\n    switch (component.type) {\n      case 'power_supply': return { positive: [50, 119, -0.25, 1], negative: [174, 119, 0.25, 1] };\n      case 'ammeter': case 'voltmeter': return { negative: [48, 174, -0.4, 1], positive: [172, 174, 0.4, 1] };\n      case 'resistor': return { a: [20, 62, -1, 0.25], b: [170, 62, 1, 0.25] };\n      case 'rheostat': {\n        var position = component.params && finite(component.params.position) ? clamp(component.params.position, 0, 1) : 0.5;\n        return { a: [23, 99, -0.6, 1], b: [222, 99, 0.6, 1], slider: [38 + 170 * position, 19, 0, -1] };\n      }\n      case 'switch': return { a: [22, 70, -0.7, 1], b: [143, 70, 0.7, 1] };\n      default: return {};\n    }\n  }\n  function terminalDetails(config) {\n    var result = {};\n    layout(config).forEach(function (placed) {\n      var ports = localPorts(placed.component);\n      Object.keys(ports).forEach(function (port) {\n        var point = ports[port];\n        result[placed.component.id + '.' + port] = { x: placed.x + point[0], y: placed.y + point[1], nx: point[2], ny: point[3] };\n      });\n    });\n    return result;\n  }\n  function terminals(config) {\n    var detail = terminalDetails(config), result = {};\n    Object.keys(detail).forEach(function (id) { result[id] = { x: detail[id].x, y: detail[id].y }; });\n    return result;\n  }\n\n  function definitions(svg, prefix) {\n    var defs = el(svg, 'defs');\n    var gradients = {\n      terminal: [[0.05, 'rgb(150,150,150)'], [0.3, 'rgb(244,244,244)'], [0.7, 'rgb(170,170,170)']],\n      cell: [[0.05, 'rgb(102,102,102)'], [0.3, 'rgb(173,173,173)'], [0.7, 'rgb(40,40,40)']],\n      copper: [[0.05, 'rgb(182,103,48)'], [0.3, 'rgb(222,218,215)'], [0.7, 'rgb(200,99,38)']],\n      casing: [[0, '#eeeede'], [0.48, '#dedfd0'], [1, '#c9cebe']],\n      glass: [[0, '#fffef3'], [0.6, '#fbfaf1'], [1, '#e9eadd']],\n      coil: [[0, '#b89c74'], [0.32, '#e8d7ad'], [0.6, '#b59667'], [1, '#836e53']]\n    };\n    Object.keys(gradients).forEach(function (name) {\n      var gradient = el(defs, 'linearGradient', { id: prefix + '-' + name, x1: '0%', y1: '0%', x2: '0%', y2: '100%' });\n      gradients[name].forEach(function (stop) { el(gradient, 'stop', { offset: stop[0], 'stop-color': stop[1] }); });\n    });\n    return defs;\n  }\n  function shadow(parent, x, y, width) { el(parent, 'ellipse', { cx: x, cy: y, rx: width, ry: 9, fill: '#686d56', opacity: 0.12 }); }\n  function label(parent, width, y, title, detail) {\n    text(parent, width / 2, y, title, 20, { 'font-weight': 600 });\n    if (detail) text(parent, width / 2, y + 22, detail, 17, { fill: '#6f776b' });\n  }\n\n  function meter(parent, component, solved, prefix, valid) {\n    var ammeter = component.type === 'ammeter', unit = ammeter ? 'A' : 'V';\n    var params = component.params || {};\n    var range = finite(params.range) && params.range > 0 ? params.range : ammeter ? 0.6 : 3;\n    var value = valid && solved && finite(ammeter ? solved.current : solved.voltage) ? (ammeter ? solved.current : solved.voltage) : null;\n    // The solver owns range status. For standalone readings without that flag,\n    // use the same eight-ULP tolerance as core.js rather than a strict > test.\n    var overrange = finite(value) && (typeof solved.overrange === 'boolean' ? solved.overrange :\n      Math.abs(value) - range > Number.EPSILON * Math.max(1, range) * 8);\n    parent.setAttribute('data-meter-id', component.id);\n    parent.setAttribute('data-value', finite(value) ? value : '');\n    parent.setAttribute('data-range', range);\n    shadow(parent, 111, 200, 111);\n    rect(parent, 0, 6, 220, 190, '#a9b29f', 16, { stroke: '#7e8977', 'stroke-width': 1.5 });\n    rect(parent, 0, 0, 220, 190, 'url(#' + prefix + '-casing)', 15, { stroke: '#808b77', 'stroke-width': 2 });\n    rect(parent, 13, 14, 194, 123, '#75806e', 12);\n    rect(parent, 17, 18, 186, 115, 'url(#' + prefix + '-glass)', 9, { stroke: '#747c69', 'stroke-width': 1 });\n    path(parent, 'M 28 48 Q 110 6 192 48', 'none', '#fff', 6, { opacity: 0.48 });\n    var cx = 110, cy = 121, radius = 80;\n    for (var tick = 0; tick <= 30; tick++) {\n      var angle = (-155 + tick / 30 * 130) * Math.PI / 180;\n      var major = tick % 5 === 0, inner = radius - (major ? 13 : 6);\n      line(parent, cx + Math.cos(angle) * inner, cy + Math.sin(angle) * inner, cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius, '#464d42', major ? 1.8 : 0.9);\n      if (major) text(parent, cx + Math.cos(angle) * 94, cy + Math.sin(angle) * 94 + 5, format(range * tick / 30), 12, { fill: '#464d42' });\n    }\n    text(parent, 110, 83, unit, 29, { 'font-family': 'Georgia, serif', 'font-weight': 700 });\n    text(parent, 110, 104, '直流', 10, { fill: '#74796b', 'letter-spacing': 2 });\n    if (finite(value)) {\n      var needleAngle = (-155 + clamp(value / range, -0.045, 1.045) * 130) * Math.PI / 180;\n      line(parent, cx, cy, cx + Math.cos(needleAngle) * 77, cy + Math.sin(needleAngle) * 77, overrange ? '#c0392b' : '#b14b3e', 2, { 'data-needle-id': component.id, 'data-value': value });\n    }\n    circle(parent, cx, cy, 5.5, '#555e50', { stroke: '#293528', 'stroke-width': 1 });\n    circle(parent, cx - 1, cy - 1, 1.8, '#a7ad9b');\n    text(parent, 110, 154, finite(value) ? format(value) + ' ' + unit : '—', 19, { 'font-family': 'Consolas, monospace', 'font-weight': 600, fill: overrange ? '#ad392e' : '#3d4938', 'data-reading-id': component.id });\n    terminal(parent, 48, 174, 'black', '−', prefix);\n    terminal(parent, 172, 174, 'red', format(range) + ' ' + unit, prefix);\n    screw(parent, 9, 10); screw(parent, 211, 10);\n    label(parent, 220, 225, NAMES[component.type] + ' ' + component.id, overrange ? '超出量程' : '量程 0–' + format(range) + ' ' + unit);\n    if (overrange) parent.setAttribute('data-overrange', 'true');\n  }\n\n  function powerSupply(parent, component, solved, prefix, valid) {\n    var value = valid && solved && finite(solved.voltage) ? solved.voltage : null;\n    shadow(parent, 112, 146, 115);\n    rect(parent, 0, 7, 224, 135, '#697363', 10);\n    rect(parent, 0, 0, 224, 134, '#aeb9a1', 10, { stroke: '#6e7d64', 'stroke-width': 2 });\n    rect(parent, 7, 7, 210, 120, '#e3e6d7', 7, { stroke: '#9ca58e' });\n    text(parent, 112, 25, '直 流 稳 压 电 源', 16, { 'font-weight': 700, fill: '#59664e' });\n    // BatteryNode's end-cap and terminal geometry, rendered directly in SVG.\n    rect(parent, 19, 46, 42, 24, 'url(#' + prefix + '-cell)', 0, { stroke: '#5f6259' });\n    rect(parent, 44.2, 46, 16.8, 24, 'url(#' + prefix + '-copper)', 0, { stroke: '#6f675b' });\n    rect(parent, 60, 54.4, 4, 7.2, 'url(#' + prefix + '-terminal)', 0, { stroke: '#666d61' });\n    text(parent, 40, 89, 'DC', 13, { fill: '#637259', 'font-weight': 700 });\n    rect(parent, 80, 36, 125, 42, '#404f3a', 4);\n    rect(parent, 84, 40, 117, 34, '#d1dec1', 2);\n    text(parent, 145, 64, finite(value) ? format(value) + ' V' : '—', 22, { 'font-family': 'Consolas, monospace', 'data-reading-id': component.id, fill: '#34472e' });\n    circle(parent, 112, 101, 13, '#6c7960', { stroke: '#4e6044', 'stroke-width': 2 });\n    circle(parent, 112, 101, 9, '#7f8d70'); line(parent, 112, 101, 118, 95, '#e8ecdc', 2);\n    text(parent, 112, 123, '输出', 10, { fill: '#596a4b' });\n    terminal(parent, 50, 119, 'red', '+', prefix); terminal(parent, 174, 119, 'black', '−', prefix);\n    screw(parent, 15, 17); screw(parent, 208, 17);\n    // Outgoing cables may loop behind the supply; an opaque label plate keeps\n    // the title legible without changing the connection geometry.\n    rect(parent, 34, 148, 156, 28, '#f5f2e9', 5, { 'data-label-plate': component.id });\n    label(parent, 224, 169, '直流电源 ' + component.id);\n  }\n\n  function resistor(parent, component, solved, prefix, valid) {\n    var params = component.params || {}, resistance = params.resistance;\n    shadow(parent, 95, 96, 97);\n    rect(parent, 7, 49, 176, 38, '#8c7760', 7, { stroke: '#6f6250', 'stroke-width': 2 });\n    rect(parent, 8, 46, 174, 31, '#d4c5a8', 6, { stroke: '#97866a' });\n    rect(parent, 31, 39, 14, 27, 'url(#' + prefix + '-terminal)', 2, { stroke: '#797b6e' });\n    rect(parent, 145, 39, 14, 27, 'url(#' + prefix + '-terminal)', 2, { stroke: '#797b6e' });\n    line(parent, 20, 62, 48, 52, '#777e70', 5); line(parent, 142, 52, 170, 62, '#777e70', 5);\n    rect(parent, 43, 24, 104, 40, '#e7e4d0', 5, { stroke: '#a4a489', 'stroke-width': 1.5 });\n    for (var rib = 0; rib < 9; rib++) line(parent, 52 + rib * 10, 28, 52 + rib * 10, 61, '#c6c9ae', 2);\n    rect(parent, 64, 29, 63, 27, '#eae8d5', 2);\n    text(parent, 95, 49, format(resistance) + ' Ω', 18, { 'font-weight': 600 });\n    terminal(parent, 20, 62, 'black', '', prefix); terminal(parent, 170, 62, 'red', '', prefix);\n    var detail = valid && solved && finite(solved.voltage) ? 'U = ' + format(solved.voltage) + ' V' : '';\n    label(parent, 190, 116, '定值电阻 ' + component.id, detail);\n  }\n\n  function rheostat(parent, component, solved, prefix) {\n    var params = component.params || {}, position = finite(params.position) ? clamp(params.position, 0, 1) : 0.5;\n    var slider = 38 + 170 * position;\n    shadow(parent, 122, 121, 124);\n    rect(parent, 5, 84, 235, 29, '#89755d', 6, { stroke: '#70604d', 'stroke-width': 2 });\n    rect(parent, 5, 80, 235, 27, '#d2b98e', 6, { stroke: '#9c835f' });\n    rect(parent, 25, 37, 17, 51, '#9caa92', 2, { stroke: '#75836c' });\n    rect(parent, 207, 37, 17, 51, '#9caa92', 2, { stroke: '#75836c' });\n    rect(parent, 38, 42, 170, 30, 'url(#' + prefix + '-coil)', 7, { stroke: '#927655', 'stroke-width': 1.2 });\n    for (var turn = 0; turn <= 33; turn++) line(parent, 41 + turn * 4.9, 44, 41 + turn * 4.9, 70, '#8a775a', 1.4);\n    line(parent, 30, 29, 216, 29, '#727d68', 7); line(parent, 30, 27, 216, 27, '#d9ded0', 2);\n    rect(parent, slider - 11, 21, 22, 20, '#6f7866', 3, { stroke: '#4c5c43' });\n    path(parent, 'M ' + (slider - 3) + ' 38 L ' + (slider - 3) + ' 52 L ' + slider + ' 58 L ' + (slider + 3) + ' 52 L ' + (slider + 3) + ' 38 Z', '#a8ac9b', '#6a7861', 1.3);\n    terminal(parent, 23, 99, 'black', 'a', prefix); terminal(parent, 222, 99, 'red', 'b', prefix);\n    terminal(parent, slider, 19, 'red', '', prefix);\n    text(parent, 122, 101, '0–' + format(params.maxResistance) + ' Ω', 15, { fill: '#63543e', 'font-weight': 600 });\n    label(parent, 245, 145, '滑动变阻器 ' + component.id, '滑片位置 ' + Math.round(position * 100) + '%');\n  }\n\n  function knifeSwitch(parent, component, solved, prefix) {\n    var closed = !!(component.params && component.params.closed);\n    shadow(parent, 83, 103, 83);\n    rect(parent, 0, 39, 165, 55, '#6d5947', 9, { stroke: '#574737', 'stroke-width': 1.5 });\n    rect(parent, 0, 34, 165, 51, '#a88d67', 8, { stroke: '#786043', 'stroke-width': 1.5 });\n    screw(parent, 9, 43); screw(parent, 156, 76);\n    rect(parent, 17, 48, 18, 29, '#bca46f', 3, { stroke: '#87723f' });\n    rect(parent, 129, 48, 19, 29, '#bca46f', 3, { stroke: '#87723f' });\n    line(parent, 132, 46, 132, 63, '#927536', 4); line(parent, 145, 46, 145, 63, '#927536', 4);\n    var endX = closed ? 140 : 104, endY = closed ? 53 : 4;\n    line(parent, 27, 55, endX, endY, '#605e4c', 9);\n    line(parent, 27, 53, endX, endY - 2, '#d0c195', 5);\n    var handleX = closed ? 94 : 80, handleY = closed ? 52 : 15;\n    rect(parent, handleX - 17, handleY - 9, 35, 16, '#9b3e30', 4, { stroke: '#763426', 'stroke-width': 1.5, transform: closed ? '' : 'rotate(-31 ' + handleX + ' ' + handleY + ')' });\n    circle(parent, 27, 54, 5, '#6e6e58');\n    terminal(parent, 22, 70, 'black', '', prefix); terminal(parent, 143, 70, 'red', '', prefix);\n    label(parent, 165, 123, '开关 ' + component.id, closed ? '已闭合' : '已断开');\n    parent.setAttribute('data-closed', closed ? 'true' : 'false');\n  }\n\n  function wireCurve(from, to, index) {\n    // Native-SVG adaptation of WireNode's endpoint-plus-normal cubic curve.\n    var distance = Math.hypot(to.x - from.x, to.y - from.y);\n    var bend = clamp(distance * 0.28, 36, 100) + index % 3 * 4;\n    return 'M ' + from.x + ' ' + from.y + ' C ' + (from.x + from.nx * bend) + ' ' + (from.y + from.ny * bend) + ' ' + (to.x + to.nx * bend) + ' ' + (to.y + to.ny * bend) + ' ' + to.x + ' ' + to.y;\n  }\n  function drawWires(parent, config) {\n    var ports = terminalDetails(config);\n    (config.wires || []).forEach(function (wire, index) {\n      var from = ports[wire.from], to = ports[wire.to];\n      if (!from || !to) return;\n      var d = wireCurve(from, to, index);\n      var red = /\\.positive$/.test(wire.from) || /\\.positive$/.test(wire.to);\n      var black = /\\.negative$/.test(wire.from) || /\\.negative$/.test(wire.to);\n      var color = red ? '#ae5142' : black ? '#424c48' : index % 2 ? '#58746b' : '#a47e4c';\n      path(parent, d, 'none', '#4c493e', 8, { opacity: 0.15, transform: 'translate(0 3)' });\n      path(parent, d, 'none', '#364039', 7, { 'data-wire-id': wire.id || 'wire-' + index, 'data-from': wire.from, 'data-to': wire.to, 'data-wire-layer': 'outline' });\n      path(parent, d, 'none', color, 4.8, { 'data-wire-id': wire.id || 'wire-' + index, 'data-from': wire.from, 'data-to': wire.to, 'data-wire-layer': 'sheath' });\n      path(parent, d, 'none', '#fff', 1, { opacity: 0.21, transform: 'translate(0 -0.8)', 'pointer-events': 'none' });\n    });\n  }\n\n  function point(svg, event) {\n    var matrix = svg.getScreenCTM && svg.getScreenCTM();\n    if (matrix && svg.createSVGPoint) {\n      var p = svg.createSVGPoint(); p.x = event.clientX; p.y = event.clientY;\n      return p.matrixTransform(matrix.inverse());\n    }\n    var bounds = svg.getBoundingClientRect();\n    return { x: (event.clientX - bounds.left) * WIDTH / bounds.width, y: (event.clientY - bounds.top) * HEIGHT / bounds.height };\n  }\n  function move(svg, state, id, x, y) {\n    var component = (state.config.components || []).find(function (candidate) { return candidate.id === id; });\n    if (!component) return;\n    var position = boundedPosition(component.type, x, y);\n    component.x = Math.round(position.x);\n    component.y = Math.round(position.y);\n    var config = state.config, options = state.options;\n    render(svg, config, state.solution, options);\n    if (typeof options.onMove === 'function') options.onMove(config);\n  }\n  function listeners(svg, state) {\n    svg.addEventListener('pointermove', function (event) {\n      if (!state.drag || !state.options.editable || state.drag.pointerId !== event.pointerId) return;\n      var p = point(svg, event);\n      event.preventDefault();\n      move(svg, state, state.drag.id, p.x - state.drag.offsetX, p.y - state.drag.offsetY);\n    });\n    function finish(event) {\n      if (!state.drag || state.drag.pointerId !== event.pointerId) return;\n      state.drag = null;\n      if (svg.releasePointerCapture) { try { svg.releasePointerCapture(event.pointerId); } catch (_) { /* A browser may already release capture on cancellation. */ } }\n    }\n    svg.addEventListener('pointerup', finish); svg.addEventListener('pointercancel', finish);\n  }\n  function editableGroup(svg, group, placed, state) {\n    group.setAttribute('tabindex', '0');\n    group.setAttribute('role', 'group');\n    group.setAttribute('aria-label', (NAMES[placed.component.type] || placed.component.type) + ' ' + placed.component.id + '，可拖动，方向键移动，Shift 加速');\n    group.setAttribute('aria-roledescription', '可移动实验器材');\n    group.style.cursor = 'grab';\n    group.addEventListener('pointerdown', function (event) {\n      if (event.button !== undefined && event.button !== 0) return;\n      event.preventDefault(); event.stopPropagation();\n      var p = point(svg, event);\n      state.drag = { id: placed.component.id, pointerId: event.pointerId, offsetX: p.x - placed.x, offsetY: p.y - placed.y };\n      if (svg.setPointerCapture) svg.setPointerCapture(event.pointerId);\n      if (typeof state.options.onSelect === 'function') state.options.onSelect(placed.component.id, state.config);\n    });\n    group.addEventListener('keydown', function (event) {\n      var direction = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[event.key];\n      if (!direction) return;\n      event.preventDefault();\n      var step = event.shiftKey ? 10 : 2;\n      move(svg, state, placed.component.id, placed.x + direction[0] * step, placed.y + direction[1] * step);\n      // Re-render replaces the focused group; preserve keyboard focus by id.\n      if (svg.querySelectorAll) {\n        Array.prototype.forEach.call(svg.querySelectorAll('[data-component-id]'), function (node) {\n          if (node.getAttribute('data-component-id') === placed.component.id && node.focus) node.focus();\n        });\n      }\n    });\n    group.addEventListener('focus', function () {\n      if (typeof state.options.onSelect === 'function') state.options.onSelect(placed.component.id, state.config);\n    });\n  }\n\n  function render(svg, config, solution, options) {\n    if (!svg || !config) throw new TypeError('CIRCUIT_VIEW.render requires an SVG element and a configuration');\n    options = options || {}; solution = solution || {};\n    var state = states.get(svg);\n    if (!state) { state = { prefix: 'circuit-apparatus-' + (++serial) }; states.set(svg, state); listeners(svg, state); }\n    state.config = config; state.solution = solution; state.options = options;\n    if (!options.editable) state.drag = null;\n    svg.replaceChildren();\n    svg.setAttribute('viewBox', '0 0 ' + WIDTH + ' ' + HEIGHT);\n    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');\n    svg.setAttribute('role', options.editable ? 'group' : 'img');\n    svg.setAttribute('aria-label', options.editable ? '实物电路编辑区，可选择并拖动仪器' : '实物电路实验装置，包含电源、指针式仪表、电阻与开关');\n    svg.style.touchAction = options.editable ? 'none' : 'auto';\n    el(svg, 'title', {}, options.editable ? '实物电路编辑' : '实物电路实验');\n    el(svg, 'desc', {}, '彩色导线连接真实接线柱；红色为正接线柱，黑色为负接线柱。仪表读数来自电路求解结果。');\n    definitions(svg, state.prefix);\n    rect(svg, 8, 8, WIDTH - 16, HEIGHT - 16, '#f5f2e9', 18, { stroke: '#e1dfd2', 'stroke-width': 1.5 });\n    [150, 310, 470, 610].forEach(function (y) { line(svg, 23, y, 977, y, '#d6d2c2', 0.6, { opacity: 0.15 }); });\n    var wires = el(svg, 'g', { 'data-layer': 'wires', 'pointer-events': 'none' }); drawWires(wires, config);\n    var apparatus = el(svg, 'g', { 'data-layer': 'apparatus' });\n    layout(config).forEach(function (placed) {\n      var component = placed.component, solved = solution.components && solution.components[component.id];\n      var group = el(apparatus, 'g', { transform: 'translate(' + placed.x + ' ' + placed.y + ')', 'data-component-id': component.id, 'data-component-type': component.type, 'data-x': placed.x, 'data-y': placed.y });\n      if (options.selectedId === component.id) {\n        var size = dimensions(component.type);\n        rect(group, -9, -10, size.width + 18, size.height + 18, 'none', 19, { stroke: '#6c8c68', 'stroke-width': 2.5, 'stroke-dasharray': '6 5', 'pointer-events': 'none' });\n      }\n      var valid = solution.ok !== false && solution.status !== 'error';\n      if (component.type === 'ammeter' || component.type === 'voltmeter') meter(group, component, solved, state.prefix, valid);\n      else if (component.type === 'power_supply') powerSupply(group, component, solved, state.prefix, valid);\n      else if (component.type === 'resistor') resistor(group, component, solved, state.prefix, valid);\n      else if (component.type === 'rheostat') rheostat(group, component, solved, state.prefix);\n      else if (component.type === 'switch') knifeSwitch(group, component, solved, state.prefix);\n      if (options.editable) editableGroup(svg, group, placed, state);\n    });\n    return svg;\n  }\n\n  global.CIRCUIT_VIEW = { render: render, terminals: terminals, dimensions: dimensions, width: WIDTH, height: HEIGHT };\n})(typeof window !== 'undefined' ? window : globalThis);\n", "editor": "/* Independent, offline apparatus editor; edits remain a private draft until Apply. */\n(function (global) {\n  'use strict';\n  function boot(payload) {\n    const config = JSON.parse(JSON.stringify(payload.config));\n    const root = document.getElementById('circuit-editor-root');\n    const style = document.createElement('style');\n    style.textContent = 'body{margin:0;color:#142531;background:#edf1f4;font:16px \"Microsoft YaHei\",sans-serif}*{box-sizing:border-box}header{display:flex;gap:20px;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #d8e0e6;padding:18px 26px}h1{font-size:22px;margin:0}header p{margin:6px 0 0;color:#526574;font-size:14px}.editor-layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px;padding:20px}.bench{background:white;border:1px solid #d8e0e6;border-radius:8px;align-self:start;overflow:hidden}.bench svg{width:100%;height:auto;display:block;touch-action:none}aside{background:#fff;padding:20px;border:1px solid #d8e0e6;border-radius:8px}.exp-field{margin-bottom:20px}.exp-label{display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;font-size:14px}.exp-val{font-variant-numeric:tabular-nums}input[type=range],select{width:100%;accent-color:#1973b8}select{padding:9px;border:1px solid #bccbd6;background:#fff;border-radius:4px}button{font:inherit;font-size:14px;cursor:pointer;padding:10px 16px;background:#fff;border:1px solid #bccbd6;border-radius:5px;color:#173b53}.primary{background:#1a75b9;border-color:#1a75b9;color:white}.actions{display:flex;gap:9px;flex-wrap:wrap}#editor-status{font-size:14px;line-height:1.7;color:#455c6b;padding:0 20px 14px}#editor-selection{font-size:14px;color:#526574;margin:12px 0;min-height:24px}h2{font-size:17px;margin:0 0 18px}@media(max-width:760px){header{padding:14px;align-items:flex-start;flex-wrap:wrap}.editor-layout{grid-template-columns:1fr;padding:10px}.bench{min-width:0}aside{padding:16px}}';\n    document.head.append(style);\n    root.innerHTML = '<header><div><h1>实物电路 · 精细调整</h1><p>拖动器件调整位置；参数与量程修改仅在应用后回传原页面。</p></div><div class=\"actions\"><button id=\"editor-cancel\" type=\"button\">取消并返回</button><button id=\"editor-apply\" class=\"primary\" type=\"button\">应用并返回</button></div></header>'\n      + '<main class=\"editor-layout\"><section class=\"bench\"><svg id=\"editor-cv\" viewBox=\"0 0 1000 650\" aria-label=\"可移动器件的实物电路编辑区\" role=\"img\"></svg><p id=\"editor-status\" aria-live=\"polite\"></p></section>'\n      + '<aside><h2>器件参数与量程</h2><div id=\"editor-controls\"></div><button id=\"editor-switch\" type=\"button\"></button><p id=\"editor-selection\">点击器件后，可用方向键微调位置，Shift 加速。</p><button id=\"editor-layout-reset\" type=\"button\">恢复器件默认位置</button></aside></main>';\n    let selectedId = null;\n    let solved;\n    const $ = id => document.getElementById(id);\n    function paint() {\n      solved = global.CIRCUIT.solve(config);\n      global.CIRCUIT_VIEW.render($('editor-cv'), config, solved, {editable: true, selectedId,\n        onMove: () => {global.__EDITOR_CONFIG__ = config;},\n        onSelect: id => {selectedId = id;$('editor-selection').textContent = '已选中 ' + id + '，可拖动或使用方向键移动。';}});\n      const sw = config.components.find(c => c.type === 'switch');\n      $('editor-switch').textContent = sw.params.closed ? '断开开关' : '闭合开关';\n      const over = config.components.filter(c => (solved.components[c.id] || {}).overrange);\n      $('editor-status').textContent = !solved.ok ? (solved.errors || []).map(e => e.message).join('；')\n        : over.length ? '电表超出量程，请选择更大量程。' : '总电流 ' + Number(solved.totalCurrent.toFixed(4)) + ' A。移动位置不改变电气连接。';\n      $('editor-apply').disabled = !solved.ok;\n      global.__EDITOR_CONFIG__ = config;\n    }\n    global.CIRCUIT_PAGE.fields(config, $('editor-controls'), paint, {advanced: true});\n    $('editor-switch').addEventListener('click', () => {const sw = config.components.find(c => c.type === 'switch');sw.params.closed = !sw.params.closed;paint();});\n    $('editor-layout-reset').addEventListener('click', () => {config.components.forEach(c => {delete c.x;delete c.y;});paint();});\n    $('editor-cancel').addEventListener('click', () => global.close());\n    $('editor-apply').addEventListener('click', () => {\n      if (!global.opener || global.opener.closed) {$('editor-status').textContent = '原页面已关闭，请保留原页面后再进入编辑。';return;}\n      if (!global.CIRCUIT.solve(config).ok) return;\n      global.opener.postMessage({type: 'circuit-apply', token: payload.token, config}, '*');\n      global.close();\n    });\n    paint();\n  }\n  global.CIRCUIT_EDITOR = {boot};\n})(window);\n", "page": "/* Shared main-page controls and standalone editor transport. */\n(function (global) {\n  'use strict';\n  const clone = value => JSON.parse(JSON.stringify(value));\n  const fmt = (value, digits = 3) => Number.isFinite(value) ? Number(value.toFixed(digits)).toString() : '—';\n  function node(tag, attrs, text) {\n    const element = document.createElement(tag);\n    Object.entries(attrs || {}).forEach(([k, v]) => element.setAttribute(k, v));\n    if (text !== undefined) element.textContent = text;\n    return element;\n  }\n  function fields(config, host, onChange, options) {\n    host.replaceChildren();\n    const advanced = options && options.advanced;\n    function field(c, key, label, min, max, step, unit, choices) {\n      const box = node('div', {class: 'exp-field'});\n      const id = 'c-' + c.id + '-' + key;\n      const labelRow = node('label', {class: 'exp-label', for: id}, label + ' ');\n      const output = node('span', {class: 'exp-val'}, fmt(c.params[key]) + ' ' + unit);\n      labelRow.append(output);\n      const input = node(choices ? 'select' : 'input', {id, 'aria-label': label, 'data-key': c.id + '.' + key});\n      if (choices) {\n        choices.forEach(v => input.append(node('option', {value: v}, v + ' ' + unit)));\n        if (!choices.includes(c.params[key])) input.append(node('option', {value: c.params[key]}, c.params[key] + ' ' + unit));\n      } else {\n        Object.entries({type: 'range', min: Math.min(min, c.params[key]), max: Math.max(max, c.params[key]), step}).forEach(([k, v]) => input.setAttribute(k, v));\n      }\n      input.value = c.params[key];\n      input.addEventListener(choices ? 'change' : 'input', () => {\n        c.params[key] = Number(input.value);\n        output.textContent = fmt(c.params[key]) + ' ' + unit;\n        onChange();\n      });\n      box.append(labelRow, input);host.append(box);\n    }\n    config.components.forEach(c => {\n      if (c.type === 'power_supply') field(c, 'voltage', '电源电压', 0, 12, .1, 'V');\n      if (c.type === 'resistor' && (config.recipe !== 'resistance' || advanced)) field(c, 'resistance', c.id === 'R2' ? '电阻 R₂' : (c.id === 'R_load' ? '负载电阻' : (config.recipe === 'voltage_divider' ? '负载电阻 R₁' : '电阻 R₁')), 1, 100, 1, 'Ω');\n      if (c.type === 'rheostat') {\n        field(c, 'position', '滑动变阻器位置', 0, 1, .01, '');\n        if (advanced) field(c, 'maxResistance', '滑动变阻器总阻值', 1, 200, 1, 'Ω');\n      }\n      if (advanced && c.type === 'ammeter') field(c, 'range', '电流表量程', 0, 0, 0, 'A', [.06, .6, 3]);\n      if (advanced && c.type === 'voltmeter') field(c, 'range', '电压表量程', 0, 0, 0, 'V', [3, 15, 30]);\n    });\n  }\n  function editorDocument(config, token) {\n    const ids = ['catalog', 'core', 'apparatus', 'editor', 'page'];\n    const scripts = ids.map(id => {\n      const source = document.getElementById('circuit-' + id);\n      if (!source) throw new Error('缺少电路编辑器运行资源：' + id);\n      return '<scr' + 'ipt>' + source.textContent.replace(/<\\/script/gi, '<\\\\/script') + '</scr' + 'ipt>';\n    }).join('\\n');\n    const data = JSON.stringify({config, token}).replace(/</g, '\\\\u003c');\n    return '<!doctype html><html lang=\"zh-CN\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">'\n      + '<title>实物电路 · 精细调整</title><body><div id=\"circuit-editor-root\"></div>' + scripts\n      + '<scr' + 'ipt>CIRCUIT_EDITOR.boot(' + data + ');</scr' + 'ipt></body></html>';\n  }\n  function mount(svg, initial) {\n    let config = clone(initial);\n    let solution;\n    const original = clone(initial);\n    const records = [];\n    const $ = id => document.getElementById(id);\n    const editors = new Map();\n    const stageHint = $('pf-stage-hint');\n    if (stageHint) {\n      const enlarge = $('btn-enlarge');\n      const tools = enlarge.parentElement;\n      stageHint.replaceWith(enlarge);\n      tools.remove();\n    }\n    function paint() {\n      solution = global.CIRCUIT.solve(config);\n      // Expose the exact model/result pair used by the component.  Browser\n      // review and the Python oracle can now inspect the same state without\n      // reverse-engineering the SVG or the editor snapshot.\n      global.__CIRCUIT_MODEL__ = clone(config);\n      global.__CIRCUIT_RESULT__ = clone(solution);\n      global.CIRCUIT_VIEW.render(svg, config, solution);\n      const ammeter = config.components.find(c => c.type === 'ammeter');\n      const voltmeter = config.components.find(c => c.type === 'voltmeter');\n      const a = ammeter ? (solution.components[ammeter.id] || {}) : {};\n      const v = voltmeter ? (solution.components[voltmeter.id] || {}) : {};\n      const i = a.current !== undefined ? a.current : null;\n      const u = v.voltage !== undefined ? v.voltage : null;\n      $('read-current').textContent = fmt(i, 4);\n      $('read-voltage').textContent = fmt(u, 4);\n      $('read-resistance').textContent = (i !== null && Math.abs(i) > 1e-12) ? fmt(u / i, 2) : '—';\n      const r = config.components.find(c => c.id === 'R1') || config.components.find(c => c.id === 'R_load') || config.components.find(c => c.type === 'resistor');\n      const r2 = config.components.find(c => c.id === 'R2');\n      if (config.recipe === 'parallel') {\n        const r1Curr = solution.components.R1 ? solution.components.R1.current : 0;\n        const r2Curr = solution.components.R2 ? solution.components.R2.current : 0;\n        if ($('read-branch-1')) $('read-branch-1').textContent = fmt(r1Curr, 4);\n        if ($('read-branch-2')) $('read-branch-2').textContent = fmt(r2Curr, 4);\n      } else if (config.recipe === 'series') {\n        const r2Volt = solution.components.R2 ? solution.components.R2.voltage : 0;\n        if ($('read-branch-2')) $('read-branch-2').textContent = fmt(r2Volt, 4);\n      }\n      $('fml').textContent = !solution.ok ? '电路配置有误，请检查接线。' : solution.status === 'open' ? '开关断开：I = 0 A；U/I 暂无定义。'\n        : config.recipe === 'parallel' ? fmt(solution.components.R1 ? solution.components.R1.current : 0, 4) + ' + ' + fmt(solution.components.R2 ? solution.components.R2.current : 0, 4) + ' = ' + fmt(i, 4) + ' A'\n        : config.recipe === 'voltage_divider' ? '分压输出：U = ' + fmt(u, 4) + ' V；负载 I = ' + fmt(i, 4) + ' A'\n        : r ? fmt(u, 4) + ' ÷ ' + fmt(r.params.resistance) + ' = ' + fmt(i, 4) + ' A' : 'U = ' + fmt(u, 4) + ' V, I = ' + fmt(i, 4) + ' A';\n      const over = config.components.filter(c => (solution.components[c.id] || {}).overrange).map(c => c.type === 'ammeter' ? '电流表' : '电压表');\n      const errors = (solution.errors || []).map(e => e.message);\n      $('alert').hidden = !(over.length || errors.length);\n      $('alert').textContent = errors.length ? errors.join('；') : over.join('、') + '超出量程，请点击放大调整并选择合适量程。';\n      $('hint').textContent = solution.status === 'open' ? '电路已断开。闭合开关后再记录数据。'\n        : config.recipe === 'voltage_divider' ? '滑动变阻器接成分压式电路，调节滑片可连续改变负载两端电压。'\n        : '电流表串联，电压表测量被测电阻两端电压。所有示数由实际接线计算。';\n      const sw = config.components.find(c => c.type === 'switch');\n      $('btn-switch').textContent = sw.params.closed ? '断开开关' : '闭合开关';\n      $('btn-record').disabled = !solution.ok || solution.status === 'open' || over.length > 0;\n      global.__DATA__ = {scene_id: config.recipe === 'resistance' ? 'voltmeter_ammeter_resistance' : (config.recipe === 'voltage_divider' ? 'voltage_divider' : 'ohm'),\n        U: u, I: i, R: r ? r.params.resistance : (i !== null && Math.abs(i) > 1e-12 ? u / i : 0), circuit: {config: clone(config), solution: clone(solution)}};\n      global.__CIRCUIT_STATE__ = {config: clone(config), solution: clone(solution)};\n    }\n    function rebuild() { fields(config, $('circuit-controls'), paint);paint(); }\n    $('btn-switch').addEventListener('click', () => {\n      const sw = config.components.find(c => c.type === 'switch');sw.params.closed = !sw.params.closed;paint();\n    });\n    $('btn-reset').addEventListener('click', () => {config = clone(original);records.length = 0;$('rows').replaceChildren();rebuild();});\n    $('btn-record').addEventListener('click', () => {\n      if ($('btn-record').disabled) return;\n      const ammeter = config.components.find(c => c.type === 'ammeter');\n      const voltmeter = config.components.find(c => c.type === 'voltmeter');\n      const i = ammeter ? (solution.components[ammeter.id] || {}).current : 0;\n      const u = voltmeter ? (solution.components[voltmeter.id] || {}).voltage : 0;\n      const row = [records.length + 1, solution.sourceVoltage, u, i, Math.abs(i) > 1e-12 ? u / i : null];\n      records.push(row);\n      const tr = node('tr');row.forEach(v => tr.append(node('td', {}, fmt(v, 4))));$('rows').append(tr);\n    });\n    function download(text, mime, name) {\n      const url = URL.createObjectURL(new Blob([text], {type: mime}));\n      const a = node('a', {href: url, download: name});a.click();setTimeout(() => URL.revokeObjectURL(url), 1000);\n    }\n    $('btn-csv').addEventListener('click', () => download('\\ufeff序号,电源(V),被测电压(V),电流(A),电阻(Ω)\\r\\n' + records.map(r => r.join(',')).join('\\r\\n'), 'text/csv;charset=utf-8', '电路实验记录.csv'));\n    document.querySelectorAll('[data-circuit-download]').forEach(a => a.addEventListener('click', e => {\n      e.preventDefault();\n      // Export a clean original DOM with the edited initial configuration, not a transient form snapshot.\n      const doc = document.documentElement.cloneNode(true);\n      doc.querySelector('#rows').replaceChildren();\n      const entry = doc.querySelector('#circuit-entry');\n      entry.textContent = entry.textContent.replace(/window\\.__CIRCUIT_INITIAL__=[\\s\\S]*?;\\s*\\nCIRCUIT_PAGE\\.mount/, 'window.__CIRCUIT_INITIAL__=' + JSON.stringify(config).replace(/</g, '\\\\u003c') + ';\\nCIRCUIT_PAGE.mount');\n      download('<!doctype html>\\n' + doc.outerHTML, 'text/html;charset=utf-8', document.title.replace(/[<>:\"/\\\\|?*]/g, '_') + '.html');\n      if ($('pf-dl')) $('pf-dl').checked = false;\n    }));\n    $('btn-enlarge').addEventListener('click', () => {\n      const token = global.crypto && global.crypto.randomUUID ? global.crypto.randomUUID() : Date.now() + '-' + Math.random();\n      const url = URL.createObjectURL(new Blob([editorDocument(config, token)], {type: 'text/html;charset=utf-8'}));\n      const editor = global.open(url, '_blank');\n      if (!editor) {$('hint').textContent = '浏览器拦截了放大页，请允许此页面弹出窗口后重试。';URL.revokeObjectURL(url);return;}\n      editors.set(editor, {token, url});\n      const cleanup = global.setInterval(() => {if (editor.closed) {const entry = editors.get(editor);if (entry) URL.revokeObjectURL(entry.url);editors.delete(editor);clearInterval(cleanup);}}, 1500);\n    });\n    global.addEventListener('message', e => {\n      const entry = editors.get(e.source);\n      if (!entry || !e.data || e.data.type !== 'circuit-apply' || e.data.token !== entry.token) return;\n      const next = clone(e.data.config);\n      const result = global.CIRCUIT.solve(next);\n      if (!result.ok) {$('hint').textContent = '调整后的电路无有效解，未应用。';return;}\n      config = next;rebuild();$('hint').textContent = '已应用放大页中的调整。';\n    });\n    rebuild();\n  }\n  global.CIRCUIT_PAGE = {mount, fields, editorDocument};\n})(window);\n", "catalog": "{\n  \"schema_version\": 1,\n  \"title\": \"初中直流电路实物器材库 · 第一阶段\",\n  \"capabilities\": {\n    \"fixed_experiments\": true,\n    \"live_parameter_changes\": true,\n    \"switching\": true,\n    \"free_wiring\": false,\n    \"analysis\": \"线性稳态直流；一个理想直流电源；电阻、完整滑动变阻器轨道、理想仪表与开关\"\n  },\n  \"components\": [\n    {\n      \"type\": \"power_supply\",\n      \"name\": \"直流电源\",\n      \"ports\": [\"positive\", \"negative\"],\n      \"parameters\": { \"voltage\": { \"unit\": \"V\", \"default\": 6, \"minimum\": 0, \"maximum\": 12 } },\n      \"source\": \"本项目自绘教学器材，理想直流电压源模型；非 CircuitJS 素材\"\n    },\n    {\n      \"type\": \"ammeter\",\n      \"name\": \"电流表\",\n      \"ports\": [\"positive\", \"negative\"],\n      \"parameters\": { \"range\": { \"unit\": \"A\", \"default\": 0.6, \"exclusiveMinimum\": 0, \"suggested\": [0.6, 3] } },\n      \"source\": \"本项目自绘教学器材，零内阻理想电流表；以 MNA 的零电压源测支路电流\"\n    },\n    {\n      \"type\": \"voltmeter\",\n      \"name\": \"电压表\",\n      \"ports\": [\"positive\", \"negative\"],\n      \"parameters\": { \"range\": { \"unit\": \"V\", \"default\": 15, \"exclusiveMinimum\": 0, \"suggested\": [3, 15] } },\n      \"source\": \"本项目自绘教学器材，无限内阻理想电压表；只读端点电势差，不加载支路\"\n    },\n    {\n      \"type\": \"resistor\",\n      \"name\": \"定值电阻\",\n      \"ports\": [\"a\", \"b\"],\n      \"parameters\": { \"resistance\": { \"unit\": \"Ω\", \"default\": 10, \"exclusiveMinimum\": 0 } },\n      \"source\": \"本项目自绘教学器材，线性欧姆电阻模型\"\n    },\n    {\n      \"type\": \"rheostat\",\n      \"name\": \"滑动变阻器\",\n      \"ports\": [\"a\", \"slider\", \"b\"],\n      \"parameters\": {\n        \"maxResistance\": { \"unit\": \"Ω\", \"default\": 50, \"exclusiveMinimum\": 0 },\n        \"position\": { \"unit\": \"比例\", \"default\": 0.2, \"minimum\": 0, \"maximum\": 1 }\n      },\n      \"model\": \"a→slider 为 maxResistance×position；slider→b 为剩余轨道。固定实验只接 a 与 slider，b 可以不接。\",\n      \"source\": \"本项目自绘教学器材，三端分段电阻模型；滑片端点通过零电压支路求解\"\n    },\n    {\n      \"type\": \"switch\",\n      \"name\": \"单刀开关\",\n      \"ports\": [\"a\", \"b\"],\n      \"parameters\": { \"closed\": { \"type\": \"boolean\", \"default\": true } },\n      \"source\": \"本项目自绘教学器材，闭合时合并节点，断开时无限电阻\"\n    }\n  ],\n  \"recipes\": [\n    { \"id\": \"ohm\", \"name\": \"欧姆定律\", \"apparatus\": [\"V1\", \"A1\", \"M1\", \"R1\", \"S1\"], \"measurement\": \"A1 测回路电流，M1 测 R1 两端电压\" },\n    { \"id\": \"resistance\", \"name\": \"伏安法测电阻\", \"apparatus\": [\"V1\", \"A1\", \"M1\", \"R1\", \"S1\", \"RH1\"], \"measurement\": \"RH1 串联调流；M1 测 R1，闭合时 R1=U/I\" },\n    { \"id\": \"series\", \"name\": \"串联电路\", \"apparatus\": [\"V1\", \"A1\", \"M1\", \"R1\", \"S1\", \"R2\"], \"measurement\": \"A1 测总电流，M1 测 R1；R2 分压由同一求解结果给出\" },\n    { \"id\": \"parallel\", \"name\": \"并联电路\", \"apparatus\": [\"V1\", \"A1\", \"M1\", \"R1\", \"S1\", \"R2\"], \"defaults\": { \"ammeterRange\": 3 }, \"measurement\": \"A1 测干路总电流，默认 3 A 量程；M1 测 R1（也等于并联支路电压）\" }\n  ],\n  \"provenance\": {\n    \"apparatus\": \"本项目 SVG 教具；电池金属渐变适配本地 scenery-phet/BatteryNode，导线曲线适配 WireNode，保留 MIT 许可。指针表盘、电源面板、电阻、滑变与开关为项目新增；没有嵌入完整 PhET 电路包。\",\n    \"solver\": \"电阻/电压源 MNA 盖章和部分主元消元改编自 code/eduforge/tools/labkit/circuit/core.mjs；本项目增加端口、并查集、理想仪表、变阻器、拓扑校验与固定实验。\",\n    \"historical_reference\": \"source/library/circuit-lab-evidence.json 是 2026-10-19 CircuitJS1 历史交叉验证证据；本模块未在当前轮调用 CircuitJS1，当前验证见 core.test.js。\",\n    \"runtime\": \"纯浏览器 JavaScript；不加载 CircuitJS、npm 包或远程引擎。\"\n  }\n}\n"};Object.keys(sources).forEach(function(k){var n=d.createElement('script');n.type='text/plain';n.id='circuit-'+k;n.textContent=sources[k];d.body.appendChild(n);});})();
+/* Shared main-page controls and standalone editor transport. */
+(function (global) {
+  'use strict';
+  const clone = value => JSON.parse(JSON.stringify(value));
+  const fmt = (value, digits = 3) => Number.isFinite(value) ? Number(value.toFixed(digits)).toString() : '—';
+  function node(tag, attrs, text) {
+    const element = document.createElement(tag);
+    Object.entries(attrs || {}).forEach(([k, v]) => element.setAttribute(k, v));
+    if (text !== undefined) element.textContent = text;
+    return element;
+  }
+  function fields(config, host, onChange, options) {
+    host.replaceChildren();
+    const advanced = options && options.advanced;
+    function field(c, key, label, min, max, step, unit, choices) {
+      const box = node('div', {class: 'exp-field'});
+      const id = 'c-' + c.id + '-' + key;
+      const labelRow = node('label', {class: 'exp-label', for: id}, label + ' ');
+      const output = node('span', {class: 'exp-val'}, fmt(c.params[key]) + ' ' + unit);
+      labelRow.append(output);
+      const input = node(choices ? 'select' : 'input', {id, 'aria-label': label, 'data-key': c.id + '.' + key});
+      if (choices) {
+        choices.forEach(v => input.append(node('option', {value: v}, v + ' ' + unit)));
+        if (!choices.includes(c.params[key])) input.append(node('option', {value: c.params[key]}, c.params[key] + ' ' + unit));
       } else {
-        var rest = pathDrop(b, a);
-        if (rest != null) max = Math.max(max, Math.abs(branches[c.id].voltage + rest));
+        Object.entries({type: 'range', min: Math.min(min, c.params[key]), max: Math.max(max, c.params[key]), step}).forEach(([k, v]) => input.setAttribute(k, v));
       }
-    });
-    return max;
-  }
-
-  function solve(model) {
-    if (!model || !Array.isArray(model.components) || !model.components.length) fail('components 必须是非空数组');
-    if (model.components.length > 80) fail('第一版最多支持 80 个元件');
-    var ground = String(model.ground == null ? '0' : model.ground), nodes = new Set([ground]), ids = new Set(), comps = [];
-    model.components.forEach(function (raw) {
-      if (!raw || typeof raw !== 'object') fail('元件必须是对象');
-      var id = String(raw.id || '').trim();
-      if (!id || ids.has(id)) fail('元件 id 必须存在且唯一');
-      ids.add(id);
-      var type = String(raw.type || '').toLowerCase().replace(/-/g, '_');
-      if (type === 'voltagesource') type = 'voltage_source';
-      if (type === 'currentsource') type = 'current_source';
-      if (['resistor', 'voltage_source', 'current_source', 'switch', 'ammeter', 'voltmeter'].indexOf(type) < 0) fail('不支持的元件类型 ' + raw.type);
-      var from = raw.from == null ? raw.positive : raw.from, to = raw.to == null ? raw.negative : raw.to;
-      if (from == null || to == null) fail('元件 ' + id + ' 缺少 from/to 节点');
-      from = String(from); to = String(to); nodes.add(from); nodes.add(to);
-      var x = { id: id, type: type, from: from, to: to, active: !(type === 'switch' && !raw.closed) };
-      if (type === 'resistor') {
-        x.ohms = num(raw, 'ohms', raw.resistance);
-        if (x.ohms < 0) fail('电阻不能为负值：' + id);
-        if (x.ohms === 0) { x.type = 'voltage_source'; x.volts = 0; }
-      } else if (type === 'voltage_source') x.volts = num(raw, 'volts', raw.value);
-      else if (type === 'ammeter') x.volts = 0;
-      else if (type === 'voltmeter') x.ohms = num(raw, 'inputOhms', raw.ohms == null ? 1e7 : raw.ohms);
-      else if (type === 'current_source') x.amps = num(raw, 'amps', raw.value);
-      else if (type === 'switch' && raw.closed) { x.type = 'voltage_source'; x.volts = 0; }
-      comps.push(x);
-    });
-
-    var ordered = Array.from(nodes).filter(function (n) { return n !== ground; }).sort();
-    if (nodes.size > 80) fail('第一版最多支持 80 个节点');
-    var ni = Object.create(null); ordered.forEach(function (n, i) { ni[n] = i; });
-    var srcs = comps.filter(function (c) { return c.active && (c.type === 'voltage_source' || c.type === 'ammeter'); });
-    var N = ordered.length + srcs.length, A = Array.from({ length: N }, function () { return Array(N).fill(0); });
-    var z = Array(N).fill(0), si = Object.create(null);
-    function ix(name) { return name === ground ? -1 : ni[name]; }
-    function stamp(i, j, g) {
-      if (i >= 0) A[i][i] += g;
-      if (j >= 0) A[j][j] += g;
-      if (i >= 0 && j >= 0) { A[i][j] -= g; A[j][i] -= g; }
+      input.value = c.params[key];
+      input.addEventListener(choices ? 'change' : 'input', () => {
+        c.params[key] = Number(input.value);
+        output.textContent = fmt(c.params[key]) + ' ' + unit;
+        onChange();
+      });
+      box.append(labelRow, input);host.append(box);
     }
-    comps.forEach(function (c) {
-      if (!c.active) return;
-      var i = ix(c.from), j = ix(c.to);
-      if (c.type === 'resistor' || c.type === 'voltmeter') {
-        if (!(c.ohms > 0)) fail('电阻必须大于 0 Ω：' + c.id);
-        stamp(i, j, 1 / c.ohms);
-      } else if (c.type === 'current_source') {
-        if (i >= 0) z[i] -= c.amps;
-        if (j >= 0) z[j] += c.amps;
-      } else if (c.type === 'voltage_source' || c.type === 'ammeter') {
-        var k = ordered.length + Object.keys(si).length; si[c.id] = k;
-        if (i >= 0) { A[i][k] += 1; A[k][i] += 1; }
-        if (j >= 0) { A[j][k] -= 1; A[k][j] -= 1; }
-        z[k] = c.volts;
+    config.components.forEach(c => {
+      if (c.type === 'power_supply') field(c, 'voltage', '电源电压', 0, 12, .1, 'V');
+      if (c.type === 'resistor' && (config.recipe !== 'resistance' || advanced)) field(c, 'resistance', c.id === 'R2' ? '电阻 R₂' : (c.id === 'R_load' ? '负载电阻' : (config.recipe === 'voltage_divider' ? '负载电阻 R₁' : '电阻 R₁')), 1, 100, 1, 'Ω');
+      if (c.type === 'rheostat') {
+        field(c, 'position', '滑动变阻器位置', 0, 1, .01, '');
+        if (advanced) field(c, 'maxResistance', '滑动变阻器总阻值', 1, 200, 1, 'Ω');
       }
+      if (advanced && c.type === 'ammeter') field(c, 'range', '电流表量程', 0, 0, 0, 'A', [.06, .6, 3]);
+      if (advanced && c.type === 'voltmeter') field(c, 'range', '电压表量程', 0, 0, 0, 'V', [3, 15, 30]);
     });
-    if (!N) fail('电路没有可求解节点或元件');
-    var x = gaussian(A, z), nodeVoltages = Object.create(null); nodeVoltages[ground] = 0;
-    ordered.forEach(function (n, i) { nodeVoltages[n] = x[i]; });
-    var branches = Object.create(null), kcl = Object.create(null), totalPower = 0, sourceResidual = 0;
-    Array.from(nodes).forEach(function (n) { kcl[n] = 0; });
-    comps.forEach(function (c) {
-      var voltage = nodeVoltages[c.from] - nodeVoltages[c.to], current = 0;
-      if (c.active) {
-        if (c.type === 'resistor' || c.type === 'voltmeter') current = voltage / c.ohms;
-        else if (c.type === 'current_source') current = c.amps;
-        else { current = x[si[c.id]]; sourceResidual = Math.max(sourceResidual, Math.abs(voltage - (c.volts || 0))); }
+  }
+  function editorDocument(config, token) {
+    const ids = ['catalog', 'core', 'apparatus', 'editor', 'page'];
+    const scripts = ids.map(id => {
+      const source = document.getElementById('circuit-' + id);
+      if (!source) throw new Error('缺少电路编辑器运行资源：' + id);
+      return '<scr' + 'ipt>' + source.textContent.replace(/<\/script/gi, '<\\/script') + '</scr' + 'ipt>';
+    }).join('\n');
+    const data = JSON.stringify({config, token}).replace(/</g, '\\u003c');
+    return '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+      + '<title>实物电路 · 精细调整</title><body><div id="circuit-editor-root"></div>' + scripts
+      + '<scr' + 'ipt>CIRCUIT_EDITOR.boot(' + data + ');</scr' + 'ipt></body></html>';
+  }
+  function mount(svg, initial) {
+    let config = clone(initial);
+    let solution;
+    const original = clone(initial);
+    const records = [];
+    const $ = id => document.getElementById(id);
+    const editors = new Map();
+    const stageHint = $('pf-stage-hint');
+    if (stageHint) {
+      const enlarge = $('btn-enlarge');
+      const tools = enlarge.parentElement;
+      stageHint.replaceWith(enlarge);
+      tools.remove();
+    }
+    function paint() {
+      solution = global.CIRCUIT.solve(config);
+      // Expose the exact model/result pair used by the component.  Browser
+      // review and the Python oracle can now inspect the same state without
+      // reverse-engineering the SVG or the editor snapshot.
+      global.__CIRCUIT_MODEL__ = clone(config);
+      global.__CIRCUIT_RESULT__ = clone(solution);
+      global.CIRCUIT_VIEW.render(svg, config, solution);
+      const ammeter = config.components.find(c => c.type === 'ammeter');
+      const voltmeter = config.components.find(c => c.type === 'voltmeter');
+      const a = ammeter ? (solution.components[ammeter.id] || {}) : {};
+      const v = voltmeter ? (solution.components[voltmeter.id] || {}) : {};
+      const i = a.current !== undefined ? a.current : null;
+      const u = v.voltage !== undefined ? v.voltage : null;
+      $('read-current').textContent = fmt(i, 4);
+      $('read-voltage').textContent = fmt(u, 4);
+      $('read-resistance').textContent = (i !== null && Math.abs(i) > 1e-12) ? fmt(u / i, 2) : '—';
+      const r = config.components.find(c => c.id === 'R1') || config.components.find(c => c.id === 'R_load') || config.components.find(c => c.type === 'resistor');
+      const r2 = config.components.find(c => c.id === 'R2');
+      if (config.recipe === 'parallel') {
+        const r1Curr = solution.components.R1 ? solution.components.R1.current : 0;
+        const r2Curr = solution.components.R2 ? solution.components.R2.current : 0;
+        if ($('read-branch-1')) $('read-branch-1').textContent = fmt(r1Curr, 4);
+        if ($('read-branch-2')) $('read-branch-2').textContent = fmt(r2Curr, 4);
+      } else if (config.recipe === 'series') {
+        const r2Volt = solution.components.R2 ? solution.components.R2.voltage : 0;
+        if ($('read-branch-2')) $('read-branch-2').textContent = fmt(r2Volt, 4);
       }
-      var power = voltage * current;
-      kcl[c.from] += current; kcl[c.to] -= current; totalPower += power;
-      branches[c.id] = { type: c.type, voltage: voltage, current: current, power: power, active: c.active };
+      $('fml').textContent = !solution.ok ? '电路配置有误，请检查接线。' : solution.status === 'open' ? '开关断开：I = 0 A；U/I 暂无定义。'
+        : config.recipe === 'parallel' ? fmt(solution.components.R1 ? solution.components.R1.current : 0, 4) + ' + ' + fmt(solution.components.R2 ? solution.components.R2.current : 0, 4) + ' = ' + fmt(i, 4) + ' A'
+        : config.recipe === 'voltage_divider' ? '分压输出：U = ' + fmt(u, 4) + ' V；负载 I = ' + fmt(i, 4) + ' A'
+        : r ? fmt(u, 4) + ' ÷ ' + fmt(r.params.resistance) + ' = ' + fmt(i, 4) + ' A' : 'U = ' + fmt(u, 4) + ' V, I = ' + fmt(i, 4) + ' A';
+      const over = config.components.filter(c => (solution.components[c.id] || {}).overrange).map(c => c.type === 'ammeter' ? '电流表' : '电压表');
+      const errors = (solution.errors || []).map(e => e.message);
+      $('alert').hidden = !(over.length || errors.length);
+      $('alert').textContent = errors.length ? errors.join('；') : over.join('、') + '超出量程，请点击放大调整并选择合适量程。';
+      $('hint').textContent = solution.status === 'open' ? '电路已断开。闭合开关后再记录数据。'
+        : config.recipe === 'voltage_divider' ? '滑动变阻器接成分压式电路，调节滑片可连续改变负载两端电压。'
+        : '电流表串联，电压表测量被测电阻两端电压。所有示数由实际接线计算。';
+      const sw = config.components.find(c => c.type === 'switch');
+      $('btn-switch').textContent = sw.params.closed ? '断开开关' : '闭合开关';
+      $('btn-record').disabled = !solution.ok || solution.status === 'open' || over.length > 0;
+      global.__DATA__ = {scene_id: config.recipe === 'resistance' ? 'voltmeter_ammeter_resistance' : (config.recipe === 'voltage_divider' ? 'voltage_divider' : 'ohm'),
+        U: u, I: i, R: r ? r.params.resistance : (i !== null && Math.abs(i) > 1e-12 ? u / i : 0), circuit: {config: clone(config), solution: clone(solution)}};
+      global.__CIRCUIT_STATE__ = {config: clone(config), solution: clone(solution)};
+    }
+    function rebuild() { fields(config, $('circuit-controls'), paint);paint(); }
+    $('btn-switch').addEventListener('click', () => {
+      const sw = config.components.find(c => c.type === 'switch');sw.params.closed = !sw.params.closed;paint();
     });
-    var kclMax = Math.max.apply(null, Object.keys(kcl).map(function (n) { return Math.abs(kcl[n]); }).concat([0]));
-    var siScale = Math.max.apply(null, Object.keys(branches).map(function (id) { return Math.abs(branches[id].current); }).concat([1]));
-    var pScale = Math.max.apply(null, Object.keys(branches).map(function (id) { return Math.abs(branches[id].power); }).concat([1]));
-    var kvlMax = kvlResidual(comps, branches);
-    var vScale = Math.max.apply(null, Object.keys(branches).map(function (id) { return Math.abs(branches[id].voltage); }).concat([1]));
-    var checks = { kclMaxResidual: kclMax, kvlMaxResidual: kvlMax, voltageSourceMaxResidual: sourceResidual,
-      powerBalanceResidual: totalPower, kcl: kclMax <= 1e-9 * siScale,
-      kvl: kvlMax <= 1e-9 * vScale, voltageSources: sourceResidual <= 1e-9,
-      powerBalance: Math.abs(totalPower) <= 1e-9 * pScale,
-      ground: ground };
-    checks.ok = checks.kcl && checks.kvl && checks.voltageSources && checks.powerBalance;
-    return { nodes: nodeVoltages, branches: branches, checks: checks };
-  }
-
-  function meter(result, componentId, quantity) {
-    if (!result || !result.branches || !result.branches[componentId]) fail('找不到表计绑定支路 ' + componentId);
-    if (quantity !== 'current' && quantity !== 'voltage') fail('meter quantity 必须是 current 或 voltage');
-    var value = result.branches[componentId][quantity];
-    if (!Number.isFinite(value)) fail('支路 ' + componentId + ' 的 ' + quantity + ' 不可用');
-    return value;
-  }
-
-  function signature(model) {
-    var parts = (model.components || []).map(function (c) {
-      var type = String(c.type || '').toLowerCase().replace(/-/g, '_');
-      if (type === 'voltagesource') type = 'voltage_source';
-      if (type === 'currentsource') type = 'current_source';
-      var from = c.from == null ? c.positive : c.from, to = c.to == null ? c.negative : c.to;
-      return [String(c.id || ''), type, String(from), String(to), type === 'switch' ? (c.closed ? '1' : '0') : '-'].join('|');
-    }).sort();
-    return parts.join(';');
-  }
-
-  // 由求解结果写表计数值；DOM 只提供“测哪条支路”，不再由生成代码手算读数。
-  function bindMeters(result, root) {
-    root = root || document;
-    var bindings = [];
-    Array.from(root.querySelectorAll('[data-circuit-current-for], [data-circuit-voltage-for]')).forEach(function (el) {
-      var kind = el.hasAttribute('data-circuit-current-for') ? 'current' : 'voltage';
-      var id = el.getAttribute(kind === 'current' ? 'data-circuit-current-for' : 'data-circuit-voltage-for');
-      var value = meter(result, id, kind);
-      var decimalsAttr = el.getAttribute('data-decimals');
-      var decimals = decimalsAttr == null || decimalsAttr === '' ? 2 : Number(decimalsAttr);
-      if (!Number.isInteger(decimals) || decimals < 0 || decimals > 8) decimals = 2;
-      el.textContent = value.toFixed(decimals);
-      el.setAttribute('data-circuit-bound', 'true');
-      bindings.push({ component: id, kind: kind, value: value, elementId: el.id || '' });
+    $('btn-reset').addEventListener('click', () => {config = clone(original);records.length = 0;$('rows').replaceChildren();rebuild();});
+    $('btn-record').addEventListener('click', () => {
+      if ($('btn-record').disabled) return;
+      const ammeter = config.components.find(c => c.type === 'ammeter');
+      const voltmeter = config.components.find(c => c.type === 'voltmeter');
+      const i = ammeter ? (solution.components[ammeter.id] || {}).current : 0;
+      const u = voltmeter ? (solution.components[voltmeter.id] || {}).voltage : 0;
+      const row = [records.length + 1, solution.sourceVoltage, u, i, Math.abs(i) > 1e-12 ? u / i : null];
+      records.push(row);
+      const tr = node('tr');row.forEach(v => tr.append(node('td', {}, fmt(v, 4))));$('rows').append(tr);
     });
-    if (!bindings.length) fail('页面没有配置 data-circuit-current-for / data-circuit-voltage-for 表计绑定');
-    window.__CIRCUIT_BINDINGS__ = bindings;
-    return bindings;
-  }
-
-  // 根据模型元件端点和布局节点绘制原理图；导线连接只从同一个 netlist 读取。
-  function draw(cv, model, result) {
-    if (!cv || !model || !model.layout || !model.layout.nodes) fail('绘图需要 canvas 与 model.layout.nodes');
-    if (!result || !result.checks || !result.checks.ok) fail('电路未通过守恒检查，拒绝绘制正常状态');
-    var nodes = model.layout.nodes, ctx = cv.getContext('2d');
-    if (!ctx) fail('canvas 2D context 不可用');
-    var box = cv.parentElement, w = box && box.clientWidth || cv.clientWidth || 780, h = box && box.clientHeight || cv.clientHeight || 420;
-    var dpr = window.devicePixelRatio || 1;
-    cv.width = Math.max(1, Math.round(w * dpr)); cv.height = Math.max(1, Math.round(h * dpr));
-    cv.style.width = w + 'px'; cv.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
-    var pad = Math.min(64, Math.max(30, Math.min(w, h) * .12));
-    var xy = Object.create(null);
-    Object.keys(nodes).forEach(function (id) {
-      var p = nodes[id], x = Number(Array.isArray(p) ? p[0] : p.x), y = Number(Array.isArray(p) ? p[1] : p.y);
-      if (!Number.isFinite(x) || !Number.isFinite(y) || x < 0 || x > 1 || y < 0 || y > 1) fail('节点布局坐标必须是 0~1 之间的比例：' + id);
-      xy[id] = { x: pad + x * (w - 2 * pad), y: pad + y * (h - 2 * pad) };
+    function download(text, mime, name) {
+      const url = URL.createObjectURL(new Blob([text], {type: mime}));
+      const a = node('a', {href: url, download: name});a.click();setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    $('btn-csv').addEventListener('click', () => download('\ufeff序号,电源(V),被测电压(V),电流(A),电阻(Ω)\r\n' + records.map(r => r.join(',')).join('\r\n'), 'text/csv;charset=utf-8', '电路实验记录.csv'));
+    document.querySelectorAll('[data-circuit-download]').forEach(a => a.addEventListener('click', e => {
+      e.preventDefault();
+      // Export a clean original DOM with the edited initial configuration, not a transient form snapshot.
+      const doc = document.documentElement.cloneNode(true);
+      doc.querySelector('#rows').replaceChildren();
+      const entry = doc.querySelector('#circuit-entry');
+      entry.textContent = entry.textContent.replace(/window\.__CIRCUIT_INITIAL__=[\s\S]*?;\s*\nCIRCUIT_PAGE\.mount/, 'window.__CIRCUIT_INITIAL__=' + JSON.stringify(config).replace(/</g, '\\u003c') + ';\nCIRCUIT_PAGE.mount');
+      download('<!doctype html>\n' + doc.outerHTML, 'text/html;charset=utf-8', document.title.replace(/[<>:"/\\|?*]/g, '_') + '.html');
+      if ($('pf-dl')) $('pf-dl').checked = false;
+    }));
+    $('btn-enlarge').addEventListener('click', () => {
+      const token = global.crypto && global.crypto.randomUUID ? global.crypto.randomUUID() : Date.now() + '-' + Math.random();
+      const url = URL.createObjectURL(new Blob([editorDocument(config, token)], {type: 'text/html;charset=utf-8'}));
+      const editor = global.open(url, '_blank');
+      if (!editor) {$('hint').textContent = '浏览器拦截了放大页，请允许此页面弹出窗口后重试。';URL.revokeObjectURL(url);return;}
+      editors.set(editor, {token, url});
+      const cleanup = global.setInterval(() => {if (editor.closed) {const entry = editors.get(editor);if (entry) URL.revokeObjectURL(entry.url);editors.delete(editor);clearInterval(cleanup);}}, 1500);
     });
-    ctx.fillStyle = '#fbfdff'; ctx.fillRect(0, 0, w, h);
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#40566c'; ctx.fillStyle = '#24384c';
-    ctx.font = '13px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    var labels = [];
-    model.components.forEach(function (c) {
-      var from = c.from == null ? c.positive : c.from, to = c.to == null ? c.negative : c.to;
-      from = String(from); to = String(to);
-      if (!xy[from] || !xy[to]) fail('布局缺少元件端点节点：' + c.id);
-      var a = xy[from], b = xy[to], dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy);
-      var angle = Math.atan2(dy, dx), cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
-      var half = Math.min(43, len * .22), x1 = cx - Math.cos(angle) * half, y1 = cy - Math.sin(angle) * half;
-      var x2 = cx + Math.cos(angle) * half, y2 = cy + Math.sin(angle) * half;
-      ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(x1, y1); ctx.moveTo(x2, y2); ctx.lineTo(b.x, b.y); ctx.stroke();
-      ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle); ctx.strokeStyle = '#31536f'; ctx.fillStyle = '#fbfdff'; ctx.lineWidth = 2.5;
-      var type = String(c.type || '').toLowerCase().replace(/-/g, '_');
-      if (type === 'resistor' || type === 'voltmeter') {
-        if (type === 'voltmeter') {
-          ctx.beginPath(); ctx.arc(0, 0, Math.min(15, Math.max(6, len * .16)), 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-          ctx.fillStyle = '#24384c'; ctx.font = 'bold 10px sans-serif'; ctx.fillText('V', 0, 0);
-        } else {
-        ctx.beginPath(); ctx.moveTo(-half, 0);
-        for (var i = 0; i < 8; i++) ctx.lineTo(-half + (i + 1) * (half * 2 / 8), i === 7 ? 0 : (i % 2 ? -10 : 10));
-        ctx.stroke();
+    global.addEventListener('message', e => {
+      const entry = editors.get(e.source);
+      if (!entry || !e.data || e.data.type !== 'circuit-apply' || e.data.token !== entry.token) return;
+      const next = clone(e.data.config);
+      const result = global.CIRCUIT.solve(next);
+      if (!result.ok) {$('hint').textContent = '调整后的电路无有效解，未应用。';return;}
+      config = next;rebuild();$('hint').textContent = '已应用放大页中的调整。';
+    });
+    rebuild();
+  }
+  global.CIRCUIT_PAGE = {mount, fields, editorDocument};
+})(window);
+
+window.__CONFIG__={scene_engine:"circuit",scene_id:"ohm"};
+window.__DATA__={};
+window.__CIRCUIT_INITIAL__={"schema_version": 1, "recipe": "ohm", "components": [{"id": "V1", "type": "power_supply", "params": {"voltage": 6}}, {"id": "A1", "type": "ammeter", "params": {"range": 0.6}}, {"id": "M1", "type": "voltmeter", "params": {"range": 15}}, {"id": "R1", "type": "resistor", "params": {"resistance": 10}}, {"id": "S1", "type": "switch", "params": {"closed": true}}], "wires": [{"id": "W1", "from": "V1.positive", "to": "S1.a"}, {"id": "W2", "from": "S1.b", "to": "A1.positive"}, {"id": "W3", "from": "M1.positive", "to": "R1.a"}, {"id": "W4", "from": "M1.negative", "to": "R1.b"}, {"id": "W5", "from": "A1.negative", "to": "R1.a"}, {"id": "W6", "from": "R1.b", "to": "V1.negative"}]};
+CIRCUIT_PAGE.mount(document.getElementById("cv"), window.__CIRCUIT_INITIAL__);
+
+(function () {
+  'use strict';
+  function messageFor(input, detail) {
+    if (input && input.validity && (input.validity.rangeOverflow || input.validity.rangeUnderflow ||
+        input.validity.badInput || input.validity.stepMismatch)) {
+      return '你输入的数值超出了允许范围，请调整后再试。';
+    }
+    return detail ? '当前输入无法计算，请检查参数后再试。' : '你输入的数值超出了允许范围，请调整后再试。';
+  }
+  function alertBox() {
+    var box = document.querySelector('[data-solver-error], .exp-alert');
+    if (box) return box;
+    box = document.createElement('p');
+    box.className = 'exp-alert';
+    box.setAttribute('role', 'alert');
+    box.setAttribute('aria-live', 'polite');
+    box.id = 'pf-ui-alert';
+    (document.getElementById('sec-result') || document.body).appendChild(box);
+    return box;
+  }
+  function show(input, detail) {
+    var box = alertBox();
+    box.textContent = messageFor(input, detail);
+    box.hidden = false;
+    box.dataset.uiGuard = 'true';
+    if (input) input.setAttribute('aria-invalid', 'true');
+  }
+  function clear(input) {
+    if (input) input.removeAttribute('aria-invalid');
+    var box = document.querySelector('[data-ui-guard="true"]');
+    // 页面自己的求解器可能在同一次 input 事件里给出更具体的错误；可见时不要覆盖它。
+    if (box && box.hidden) { box.textContent = ''; delete box.dataset.uiGuard; }
+  }
+  function check(event) {
+    var input = event.target;
+    if (!input || !input.matches || !input.matches('input[type="number"], input[type="range"]')) return;
+    if (input.type === 'number' && !input.validity.valid) show(input, false);
+    else if (input.type === 'number') clear(input);
+  }
+  function normalizeRangeSteps() {
+    Array.prototype.forEach.call(document.querySelectorAll('input[type="range"]'), function (range) {
+      if (range.getAttribute('step') && range.getAttribute('step') !== 'any') return;
+      var lower = Number(range.min || 0), upper = Number(range.max || 1), span = Math.abs(upper - lower);
+      if (!isFinite(span) || span <= 0) return;
+      var step = Math.pow(10, Math.floor(Math.log10(span) + 1e-9) - 1);
+      if (lower > 0 && lower < step) lower = step;
+      range.min = String(lower);
+      range.step = String(step);
+    });
+  }
+  function bindDualControls() {
+    // 公共双控件约定：number 是唯一数据源，range 仅提供拖动输入。
+    // 这样数学、物理、化学、生物、地理、信息科技的页面都能用同一套同步逻辑。
+    Array.prototype.forEach.call(document.querySelectorAll('input[data-solver-range-for]'), function (range) {
+      if (range.dataset.pfDualBound === 'true') return;
+      var target = document.getElementById(range.getAttribute('data-solver-range-for'));
+      if (!target || target.type !== 'number') return;
+      range.dataset.pfDualBound = 'true';
+      target.dataset.pfDualBound = 'true';
+      range.addEventListener('input', function () {
+        target.value = range.value;
+        target.dispatchEvent(new Event('input', {bubbles: true}));
+      });
+      range.addEventListener('change', function () {
+        target.value = range.value;
+        target.dispatchEvent(new Event('change', {bubbles: true}));
+      });
+      target.addEventListener('input', function () {
+        if (target.value !== range.value && target.value !== '') {
+          range.value = target.value;
         }
-      } else if (type === 'voltage_source' || type === 'voltagesource') {
-        ctx.beginPath(); ctx.moveTo(-half, 0); ctx.lineTo(-10, 0); ctx.moveTo(10, 0); ctx.lineTo(half, 0); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(-7, -13); ctx.lineTo(-7, 13); ctx.moveTo(7, -8); ctx.lineTo(7, 8); ctx.stroke();
-      } else if (type === 'ammeter') {
-        ctx.beginPath(); ctx.arc(0, 0, Math.min(15, Math.max(6, len * .16)), 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-        ctx.fillStyle = '#24384c'; ctx.font = 'bold 10px sans-serif'; ctx.fillText('A', 0, 0);
-      } else if (type === 'current_source' || type === 'currentsource') {
-        ctx.beginPath(); ctx.moveTo(-half, 0); ctx.lineTo(-16, 0); ctx.moveTo(16, 0); ctx.lineTo(half, 0); ctx.stroke();
-        ctx.beginPath(); ctx.arc(0, 0, 16, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(-8, 0); ctx.lineTo(8, 0); ctx.moveTo(8, 0); ctx.lineTo(3, -5); ctx.moveTo(8, 0); ctx.lineTo(3, 5); ctx.stroke();
-      } else if (type === 'switch') {
-        ctx.beginPath(); ctx.arc(-10, 0, 2.7, 0, Math.PI * 2); ctx.arc(10, 0, 2.7, 0, Math.PI * 2); ctx.fill();
-        ctx.moveTo(-half, 0); ctx.lineTo(-10, 0); ctx.moveTo(10, 0); ctx.lineTo(half, 0);
-        ctx.moveTo(-10, 0); ctx.lineTo(c.closed ? 10 : 7, c.closed ? 0 : -10); ctx.stroke();
-      } else fail('绘图器不支持元件类型：' + c.type);
-      ctx.restore();
-      labels.push({ text: String(c.id) + (c.type === 'resistor' ? '  ' + Number(c.ohms).toFixed(1) + ' Ω' : ''), x: cx, y: cy - 24, size: 13 });
-    });
-    Object.keys(xy).forEach(function (id) {
-      var p = xy[id]; ctx.beginPath(); ctx.arc(p.x, p.y, 4.2, 0, Math.PI * 2); ctx.fillStyle = '#24384c'; ctx.fill();
-      labels.push({ text: id, x: p.x, y: p.y + 17, size: 12 });
-    });
-    // Place every canvas label after all circuit geometry. Try nearby anchors
-    // until its measured text box clears earlier labels and canvas edges.
-    var placed = [], offsets = [[0,0],[0,-20],[0,20],[-26,0],[26,0],[-26,-18],[26,-18],[-26,18],[26,18],
-      [0,-40],[0,40],[-48,0],[48,0],[-48,-24],[48,-24],[-48,24],[48,24]];
-    labels.forEach(function (item) {
-      ctx.font = item.size + 'px sans-serif';
-      var tw = ctx.measureText(item.text).width, th = item.size + 5, chosen = null;
-      for (var oi = 0; oi < offsets.length && !chosen; oi++) {
-        var lx = item.x + offsets[oi][0], ly = item.y + offsets[oi][1];
-        var box = { l: lx - tw/2 - 4, r: lx + tw/2 + 4, t: ly - th/2 - 3, b: ly + th/2 + 3 };
-        if (box.l < 4 || box.r > w-4 || box.t < 4 || box.b > h-4) continue;
-        if (placed.some(function (p) { return !(box.r < p.l || box.l > p.r || box.b < p.t || box.t > p.b); })) continue;
-        chosen = { x: lx, y: ly, box: box };
-      }
-      if (!chosen) {
-        for (var step = 1; step <= 8 && !chosen; step++) {
-          var ly2 = Math.min(h-th, Math.max(th, item.y + step*18));
-          var b2 = { l: item.x-tw/2-4, r: item.x+tw/2+4, t: ly2-th/2-3, b: ly2+th/2+3 };
-          if (b2.l >= 4 && b2.r <= w-4 && !placed.some(function (p) { return !(b2.r < p.l || b2.l > p.r || b2.b < p.t || b2.t > p.b); }))
-            chosen = { x: item.x, y: ly2, box: b2 };
+      });
+      target.addEventListener('change', function () {
+        if (target.value !== range.value && target.value !== '') {
+          range.value = target.value;
         }
-      }
-      if (!chosen) chosen = { x: Math.max(tw/2+4, Math.min(w-tw/2-4, item.x)), y: Math.max(th/2+4, Math.min(h-th/2-4, item.y)), box: null };
-      if (chosen.box) placed.push(chosen.box);
-      ctx.fillStyle = 'rgba(255,255,255,0.92)';
-      ctx.fillRect(chosen.x-tw/2-4, chosen.y-th/2-3, tw+8, th+6);
-      ctx.fillStyle = '#24384c'; ctx.font = item.size + 'px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(item.text, chosen.x, chosen.y);
+      });
     });
-    var sig = signature(model);
-    window.__CIRCUIT_DRAW_SIGNATURE__ = sig;
-    cv.setAttribute('data-circuit-signature', sig);
-    return sig;
   }
-
-  window.CIRCUIT = { solve: solve, meter: meter, bindMeters: bindMeters, draw: draw, signature: signature };
+  function ensureLegacyDualControls() {
+    function pair(parent, number, range) {
+      var wrap = parent.querySelector('.exp-control-pair');
+      if (!wrap) {
+        wrap = document.createElement('span');
+        wrap.className = 'exp-control-pair';
+        parent.insertBefore(wrap, number || range);
+      }
+      wrap.appendChild(number);
+      wrap.appendChild(range);
+    }
+    var ranges = Array.prototype.slice.call(document.querySelectorAll('input[type="range"]'));
+    Array.prototype.forEach.call(document.querySelectorAll('input[type="number"]'), function (number) {
+      if (!number.id || document.querySelector('input[data-solver-range-for="' + number.id + '"]')) return;
+      var parent = number.parentElement;
+      if (!parent || parent.querySelector('select')) return;
+      var range = document.createElement('input');
+      range.type = 'range';
+      range.id = number.id + '-range';
+      range.min = number.min || '0'; range.max = number.max || '1';
+      range.step = number.step && number.step !== 'any' ? number.step : '0.1';
+      range.value = number.value || range.min;
+      range.setAttribute('data-solver-range-for', number.id);
+      range.setAttribute('aria-label', '拖动调节' + (number.getAttribute('aria-label') || '数值'));
+      range.setAttribute('data-pf-generated-range', 'true');
+      pair(parent, number, range);
+    });
+    ranges.forEach(function (range) {
+      if (range.getAttribute('data-solver-range-for') || range.getAttribute('data-pf-generated-range')) return;
+      var parent = range.parentElement;
+      if (!parent || parent.querySelector('select')) return;
+      var base = (range.id || '数值').replace(/-(range|slider)$/, '');
+      var number = document.createElement('input');
+      number.type = 'number'; number.id = base + '-input';
+      number.min = range.min || '0'; number.max = range.max || '1';
+      number.step = 'any'; number.value = range.value || number.min;
+      number.setAttribute('aria-label', '输入' + (range.getAttribute('aria-label') || '数值').replace(/^拖动调节/, ''));
+      range.setAttribute('data-solver-range-for', number.id);
+      pair(parent, number, range);
+    });
+  }
+  function simplifyPresetButtons() {
+    // 统一的最小按钮策略：所有实验只保留“重置”和“记录”。
+    // 旧页面的按钮 ID 不统一，因此不能只依赖 preset-* 选择器，必须按按钮语义兜底。
+    Array.prototype.forEach.call(document.querySelectorAll('button'), function (button) {
+      var label = (button.textContent || '').replace(/\s+/g, '').trim();
+      var id = (button.id || '').toLowerCase();
+      var keep = label.indexOf('记录') === 0 || label.indexOf('重置') === 0 ||
+        label.indexOf('复位') === 0 || id === 'reset' || id === 'record' ||
+        /(?:^|-)reset$/.test(id) || /(?:^|-)record$/.test(id) ||
+        id.indexOf('btn-reset') === 0 || id.indexOf('btn-record') === 0;
+      button.hidden = !keep;
+      button.style.display = keep ? '' : 'none';
+      if (!keep) button.setAttribute('aria-hidden', 'true');
+    });
+    var visibleLabels = {
+      temperature_change: '温度变化', final_temperature: '末温', double_mass: '质量加倍',
+      double_capacity: '比热容加倍', warmer_start: '初温升高', cooling: '降温过程',
+      zero_heat: '不输入热量', scaled: '质量与热量同步加倍', double_depth: '深度加倍',
+      double_time: '时间加倍', double_speed: '速度加倍', double_height: '提升高度加倍',
+      double_load: '载荷加倍', perpendicular: '垂直不做功', reverse: '反向状态',
+      no_displacement: '零位移', no_force: '零作用力'
+    };
+    Array.prototype.forEach.call(document.querySelectorAll('.exp-read .v, .exp-comparison .v'), function (node) {
+      var text = node.textContent;
+      Object.keys(visibleLabels).forEach(function (key) {
+        text = text.replace(new RegExp('(^|[^A-Za-z0-9_])' + key + '([^A-Za-z0-9_]|$)', 'g'), '$1' + visibleLabels[key] + '$2');
+      });
+      if (text !== node.textContent) node.textContent = text;
+    });
+  }
+  normalizeRangeSteps();
+  ensureLegacyDualControls();
+  bindDualControls();
+  simplifyPresetButtons();
+  if (window.MutationObserver) {
+    new MutationObserver(function () { ensureLegacyDualControls(); bindDualControls(); simplifyPresetButtons(); }).observe(document.body, {subtree:true, childList:true, characterData:true});
+  }
+  document.addEventListener('input', check, false);
+  document.addEventListener('change', check, false);
+  window.addEventListener('error', function () { show(null, true); });
+  window.addEventListener('unhandledrejection', function () { show(null, true); });
 })();
-
-var cv = document.getElementById('cv');
-var dpr = 1, DWc = 820, DHc = 470;
-var state = { U: 6, R: 10, Rh: 20, closed: true };
-var recs = [];
-var LAST = { I: 0, UR: 0, Rcalc: 0 };
-
-function fit(){
-  var box = cv.parentNode;
-  var w = box.clientWidth || 820, h = box.clientHeight || 470;
-  dpr = window.devicePixelRatio || 1;
-  cv.width = Math.round(w * dpr);
-  cv.height = Math.round(h * dpr);
-  cv.style.width = w + 'px';
-  cv.style.height = h + 'px';
-  DWc = w; DHc = h;
-  render();
-}
-
-function buildModel(){
-  return {
-    ground: '0',
-    layout: { nodes: {
-      '0': { x: 0.10, y: 0.80 },
-      n1:  { x: 0.10, y: 0.22 },
-      n2:  { x: 0.32, y: 0.22 },
-      n3:  { x: 0.56, y: 0.22 },
-      n4:  { x: 0.80, y: 0.22 },
-      n5:  { x: 0.90, y: 0.80 }
-    } },
-    components: [
-      { id: 'src1', type: 'voltage_source', positive: 'n1', negative: '0', volts: state.U },
-      { id: 'sw1', type: 'switch', from: 'n1', to: 'n2', closed: state.closed },
-      { id: 'ammeter1', type: 'ammeter', from: 'n2', to: 'n3' },
-      { id: 'r1', type: 'resistor', from: 'n3', to: 'n4', ohms: state.R },
-      { id: 'rh1', type: 'resistor', from: 'n4', to: 'n5', ohms: state.Rh },
-      { id: 'wire1', type: 'resistor', from: 'n5', to: '0', ohms: 1e-4 },
-      { id: 'voltmeter1', type: 'voltmeter', from: 'n3', to: 'n4', inputOhms: 1e7 }
-    ]
-  };
-}
-
-function meter(sr, id, kind){
-  if(!sr) return 0;
-  if(kind === 'current'){
-    if(sr.currents && sr.currents[id] != null) return Math.abs(sr.currents[id]);
-    if(sr.branchCurrents && sr.branchCurrents[id] != null) return Math.abs(sr.branchCurrents[id]);
-    if(sr.meters && sr.meters[id] && sr.meters[id].current != null) return Math.abs(sr.meters[id].current);
-  } else {
-    if(sr.volts && sr.volts[id] != null) return Math.abs(sr.volts[id]);
-    if(sr.voltages && sr.voltages[id] != null) return Math.abs(sr.voltages[id]);
-    if(sr.meters && sr.meters[id] && sr.meters[id].voltage != null) return Math.abs(sr.meters[id].voltage);
-  }
-  return 0;
-}
-
-function render(){
-  var model = buildModel();
-  window.__CIRCUIT_MODEL__ = model;
-  var sr = null;
-  try { sr = CIRCUIT.solve(model); } catch(e){ sr = null; }
-  window.__CIRCUIT_RESULT__ = sr;
-  var ok = !!(sr && sr.checks && sr.checks.ok !== false);
-
-  var I = 0, UR = 0;
-  if(ok && state.closed){
-    I = CIRCUIT.meter(sr, 'ammeter1', 'current');
-    UR = CIRCUIT.meter(sr, 'r1', 'voltage');
-  }
-  var Rcalc = I > 1e-6 ? UR / I : 0;
-  LAST = { I: I, UR: UR, Rcalc: Rcalc };
-
-  document.getElementById('v-u').textContent = state.U.toFixed(1);
-  document.getElementById('v-r').textContent = state.R.toFixed(0);
-  document.getElementById('v-rh').textContent = state.Rh.toFixed(0);
-  document.getElementById('r-i').textContent = I.toFixed(3);
-  document.getElementById('r-ur').textContent = UR.toFixed(2);
-  document.getElementById('r-rx').textContent = Rcalc.toFixed(1);
-
-  var tot = state.R + state.Rh;
-  document.getElementById('fml').textContent =
-    'I = U/(R+R滑) = ' + state.U.toFixed(1) + ' V /(' + state.R.toFixed(0) + ' + ' + state.Rh.toFixed(0) + ') Ω = ' + I.toFixed(3) + ' A；' +
-    'U_R = I·R = ' + I.toFixed(3) + ' A × ' + state.R.toFixed(0) + ' Ω = ' + UR.toFixed(2) + ' V；' +
-    'U_R/I = ' + Rcalc.toFixed(1) + ' Ω';
-
-  var al = document.getElementById('alert');
-  var msg = '';
-  if(!ok){ msg = '求解失败：电路未形成有效闭合回路，请检查开关与接线。'; }
-  else if(state.closed && I > 0.6){ msg = '电流 ' + I.toFixed(3) + ' A 超过电流表量程 0.6 A，请增大 R 或 R滑、降低 U。'; }
-  if(msg){ al.hidden = false; al.textContent = msg; } else { al.hidden = true; }
-
-  document.getElementById('hint').textContent = state.closed
-    ? '总电阻 R总 = ' + tot.toFixed(0) + ' Ω；串联分压 U_R = U·R/R总 = ' + state.U.toFixed(1) + '×' + state.R.toFixed(0) + '/' + tot.toFixed(0) + ' = ' + UR.toFixed(2) + ' V。'
-    : '开关断开：回路中断，I = 0 A，U_R = 0 V，导线显示为灰色。';
-
-  try { CIRCUIT.draw(cv, model, sr); } catch(e){}
-  try { CIRCUIT.bindMeters(sr); } catch(e){}
-
-  window.__DATA__ = {
-    params: { U: state.U, R: state.R, Rh: state.Rh, closed: state.closed },
-    result: { I: +I.toFixed(4), UR: +UR.toFixed(4), Rcalc: +Rcalc.toFixed(2), Rtotal: +tot.toFixed(2) },
-    checks: {
-      ohm_I_equals_U_over_Rtotal: Math.abs(I - (state.closed ? state.U / tot : 0)) < 1e-3,
-      UR_equals_I_times_R: Math.abs(UR - I * state.R) < 1e-3,
-      Rcalc_equals_R: state.closed ? Math.abs(Rcalc - state.R) < 0.05 * state.R : true,
-      within_ammeter_range: I <= 0.6
-    }
-  };
-}
-
-document.querySelectorAll('input[type=range]').forEach(function(el){
-  el.addEventListener('input', function(){ state[el.dataset.key] = +el.value; render(); });
-});
-
-document.getElementById('btn-sw').addEventListener('click', function(){
-  state.closed = !state.closed;
-  this.textContent = state.closed ? '开关：闭合' : '开关：断开';
-  this.classList.toggle('is-on', state.closed);
-  render();
-});
-
-document.getElementById('btn-record').addEventListener('click', function(){
-  if(recs.length >= 30){ recs.shift(); }
-  recs.push({ U: state.U, R: state.R, Rh: state.Rh, I: LAST.I, UR: LAST.UR, Rc: LAST.Rcalc });
-  var tb = document.getElementById('rows');
-  tb.innerHTML = '';
-  recs.forEach(function(r, idx){
-    var tr = document.createElement('tr');
-    tr.innerHTML = '<td>' + (idx + 1) + '</td><td>' + r.U.toFixed(1) + '</td><td>' + r.R.toFixed(0) +
-      '</td><td>' + r.Rh.toFixed(0) + '</td><td>' + r.I.toFixed(3) + '</td><td>' + r.UR.toFixed(2) +
-      '</td><td>' + r.Rc.toFixed(1) + '</td>';
-    tb.appendChild(tr);
-  });
-});
-
-document.getElementById('btn-reset').addEventListener('click', function(){
-  state.U = 6; state.R = 10; state.Rh = 20; state.closed = true;
-  document.getElementById('rg-u').value = 6;
-  document.getElementById('rg-r').value = 10;
-  document.getElementById('rg-rh').value = 20;
-  var b = document.getElementById('btn-sw');
-  b.textContent = '开关：闭合'; b.classList.add('is-on');
-  recs = []; document.getElementById('rows').innerHTML = '';
-  render();
-});
-
-window.addEventListener('resize', fit);
-fit();
   </script>
 
   <!-- 字号兜底：页面自己写的小字号（9~12px）统一抬到 26px 以上 -->
@@ -791,9 +1628,9 @@ fit();
  *  normal.css 只能约束「我们已知的类名」。模型每页都会临时写一些自己的
  *  小字号（11px 的图注、10px 的脚注）和自己挑的颜色（深蓝、灰蓝），
  *  这些只能在上线后量出来再改。这个脚本做三件事：
- *    1. 页面加载完，扫一遍正文区，把小于 26px 的文字抬到 26px（原始规范 13px × 2）
+ *    1. 页面加载完，扫一遍正文区，把小于 12px 的文字抬到 12px
  *    2. 把「浅色底上的彩色文字」改成纯黑（深色底上的白字不动）
- *    3. 读数数值太长放不下一行时自动降档（38→35→32…直到装得下，不低于 26px）
+ *    3. 读数数值太长放不下一行时自动降档（23→21→19…直到装得下，不低于 12px）
  *    4. 页面动态改读数后再扫一遍
  *
  *  只碰「自己直接含文字」的元素，不碰容器，避免影响布局层级；
@@ -802,7 +1639,7 @@ fit();
 (function () {
   'use strict';
 
-  var MIN = 26;                       // 与 normal.css 的 --pf-fs-min 保持一致
+  var MIN = 12;                       // 与 normal.css 的 --pf-fs-min 保持一致
   var ROOTS = ['.pf-main', '.pf-footer'];
   var COLOR_ROOT = '.pf-main';        // 只规范正文区，页脚保持浅灰
   var TEXTY = 'p,li,td,th,dt,dd,div,span,label,a,summary,h1,h2,h3,h4,h5,h6,' +
@@ -899,10 +1736,10 @@ fit();
     for (var i = 0; i < list.length; i++) {
       var el = list[i];
       if (inCanvas(el)) continue;
-      var size = 38, guard = 0;                 // 数值档：38px（原始 19px × 2）
+      var size = 23, guard = 0;                 // 数值档：23px
       el.style.setProperty('font-size', size + 'px', 'important');
-      while (lineCount(el) > 1 && size - 3 >= MIN && guard < 6) {
-        size -= 3;                              // 数字放得下就用 38，文字太长就一档档降到装得下
+      while (lineCount(el) > 1 && size - 2 >= MIN && guard < 6) {
+        size -= 2;                              // 数字放得下就用 24，文字太长就一档档降到装得下
         el.style.setProperty('font-size', size + 'px', 'important');
         guard++; n++;
       }
