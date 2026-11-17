@@ -279,6 +279,8 @@ def render_2d_sections(model=None, provenance=PROVENANCE):
         '         "v = −u·f ÷ (f − u) = −("+m.u.toFixed(1)+" × "+m.f.toFixed(1)+" ÷ "+(m.f-m.u).toFixed(1)+") = "+r.v.toFixed(1)+" cm；")\n'
         '        +"m = −v ÷ u = "+r.m.toFixed(2)+"×（"+r.kindText+"）";\n'
         '    }\n'
+        '    window.__OPTICS_MODEL__=JSON.parse(JSON.stringify(m));\n'
+        '    window.__OPTICS_RESULT__=r;\n'
         '    window.__DATA__={f:m.f,u:m.u,s:m.screen.s,v:r.v,m:r.m,kind:r.kind,sharp:r.onScreen.sharp};\n'
         '  }\n'
         '  document.addEventListener("input",function(e){\n'

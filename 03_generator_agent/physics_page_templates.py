@@ -317,7 +317,7 @@ def render_thin_lens(req):
         "3": controls + actions,
         "4": _result_section("lens", model, comparison),
         "5": render_record_table(("物距 (cm)", "焦距 (cm)", "像距 (cm)", "放大率", "成像状态"), "lens-records"),
-        "6": '<h3>成像规律</h3><p>像的位置和大小由薄透镜成像关系决定。物距等于焦距时没有有限像。'
+        "6": '<h3>成像规律</h3><p>在光具座上改变物体与凸透镜的距离，观察像的位置和大小。物距等于焦距时没有有限像。'
              '</p><h3>探究问题</h3><p>比较物距小于焦距、位于焦距和两倍焦距之间、等于两倍焦距以及大于两倍焦距时的成像变化。</p>',
         "css": STAGE_CSS,
         "js": _lesson_script("lens", model, initial, presets, "thin_lens", "optics", """

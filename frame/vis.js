@@ -1162,6 +1162,9 @@
     if (typeof value !== 'number' || !Number.isFinite(value)) return String(value);
     if (Number.isInteger(value)) return String(value);
     var name = String(key || '').toLowerCase();
+    if (name === 'image_distance_cm' || name === 'magnification') {
+      return Number(value.toPrecision(8)).toString();
+    }
     if (Math.abs(value) < 0.001 && value !== 0) {
       return value.toPrecision(4).replace(/(\.\d*?[1-9])0+(?:e|$)/i, '$1');
     }

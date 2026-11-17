@@ -18,6 +18,7 @@
 const { chromium } = require('playwright');
 const { pathToFileURL } = require('url');
 const fs = require('fs');
+const probeInteractions = require('./browser_regression');
 const physicsModels = require('../03_generator_agent/solvers/physics/lesson_models.json');
 const mathModels = require('../03_generator_agent/solvers/mathematics/lesson_models.json');
 const presetLessonModels = { ...physicsModels, ...mathModels };
@@ -25,6 +26,93 @@ const presetLessonModels = { ...physicsModels, ...mathModels };
 const FILE = process.argv[2];
 // 第三个参数是审查端生成的变形计划（JSON）。没有计划时保持原有行为。
 const PLAN = process.argv[3] ? JSON.parse(fs.readFileSync(process.argv[3], 'utf8')) : null;
+
+// Sample the actual optics control. The Python reviewer supplies the oracle and memory.
+async function probeOpticsBoundaries(page, plan) {
+  const legacy = plan.interface === 'thin-lens';
+  const selector = legacy ? '[data-solver-input="u"]' : '[data-optics-control="u"]';
+  const modelKey = legacy ? '__PHYS_LENS_REQUEST__' : '__OPTICS_MODEL__';
+  const resultKey = legacy ? '__PHYS_LENS_RESULT__' : '__OPTICS_RESULT__';
+  const fieldsKey = legacy ? 'data-solver-field' : 'data-optics-readout';
+  const layout = await page.evaluate(({selector, modelKey, legacy}) => {
+    const controls = [...document.querySelectorAll(selector)]
+      .filter(el => el.getClientRects().length && getComputedStyle(el).visibility === 'visible'
+        && !el.matches(':disabled,[readonly]'));
+    const control = controls.find(el => el.type === 'number') || controls.find(el => el.type === 'range');
+    const model = window[modelKey];
+    if (!control || (!legacy && model?.scene_id !== 'lens_imaging') ||
+        !Number.isFinite(model?.f) || model.f <= 0) return null;
+    return {model, original: Number(control.value), index: [...document.querySelectorAll(selector)].indexOf(control)};
+  }, {selector, modelKey, legacy});
+  if (!layout) return {model: null, samples: [], skipped: []};
+  const {model, index} = layout;
+  const targets = await page.evaluate(({model, index, plan, selector}) => {
+    const el = document.querySelectorAll(selector)[index];
+    const probe = el.cloneNode();
+    const reachable = (value, tolerance = 0) => {
+      probe.value = String(value);
+      return Number.isFinite(value) && probe.value !== '' && probe.validity.valid
+        && Math.abs(Number(probe.value) - value) <= tolerance ? Number(probe.value) : null;
+    };
+    const result = new Map();
+    const skipped = [];
+    const add = (value, source, label) => {
+      const target = reachable(value, source === '迁移' || source === '历史' || source === '待确认' ? 1e-8 : 0);
+      if (target !== null) result.set(target, {target, source});
+      else skipped.push({target: value, source, label});
+    };
+    for (const point of [model.u, 5, 15]) add(point, '基础', '原有检查点');
+    add(model.f, '基础', '一倍焦距');
+    if (plan.mode === 'baseline') return {points: [...result.values()], skipped};
+    for (const edge of [model.f, 2 * model.f]) {
+      if (edge !== model.f) add(edge, '主动', '二倍焦距');
+      for (const direction of [-1, 1]) {
+        for (let offset = 1; offset <= (plan.mode === 'deep' ? 2 : 1); offset++) {
+          const step = el.step === 'any' ? edge / 100 : Number(el.step) || 1;
+          const base = el.min !== '' ? Number(el.min) : Number(el.getAttribute('value')) || 0;
+          const tick = (edge - base) / step;
+          const first = direction < 0 ? Math.ceil(tick - 1e-9) - 1 : Math.floor(tick + 1e-9) + 1;
+          const point = Number((base + (first + direction * (offset - 1)) * step).toPrecision(14));
+          add(point, '主动', (edge === model.f ? '焦距' : '二倍焦距') + (direction < 0 ? '左侧' : '右侧'));
+        }
+      }
+    }
+    // Local evidence takes precedence over evidence from a different focal length.
+    for (const entry of [...plan.cases].sort((a, b) => Number(a.focus === model.f) - Number(b.focus === model.f))) {
+      if (entry.focus === model.f || entry.confirmed) {
+        const value = entry.focus === model.f ? entry.object_distance : entry.ratio * model.f;
+        add(value, entry.focus === model.f ? (entry.confirmed ? '历史' : '待确认') : '迁移', '历史反例');
+      }
+    }
+    return {points: [...result.values()], skipped};
+  }, {model, index, plan, selector});
+  const samples = [];
+  for (const point of targets.points) {
+    const evidence = await page.evaluate(({target, index, selector, modelKey, resultKey, fieldsKey}) => {
+      const el = document.querySelectorAll(selector)[index];
+      el.value = String(target);
+      el.dispatchEvent(new Event('input', {bubbles: true}));
+      el.dispatchEvent(new Event('change', {bubbles: true}));
+      const fields = {};
+      for (const node of document.querySelectorAll('[' + fieldsKey + ']')) {
+        if (node.getClientRects().length && getComputedStyle(node).visibility === 'visible') {
+          const key = node.getAttribute(fieldsKey);
+          (fields[key] ??= []).push(node.innerText.trim());
+        }
+      }
+      return {actual: Number(el.value), valid: el.validity.valid, fields,
+        model: window[modelKey] || null, result: window[resultKey] || null};
+    }, {target: point.target, index, selector, modelKey, resultKey, fieldsKey});
+    samples.push({...point, ...evidence});
+  }
+  await page.evaluate(({index, value, selector}) => {
+    const el = document.querySelectorAll(selector)[index];
+    el.value = String(value);
+    el.dispatchEvent(new Event('input', {bubbles: true}));
+    el.dispatchEvent(new Event('change', {bubbles: true}));
+  }, {index, value: layout.original, selector});
+  return {model, samples, skipped: targets.skipped, legacy};
+}
 
 /**
  * 画布绘制取证：记录文字、填充和矩形描边的设备像素包围盒。
@@ -237,6 +325,8 @@ async function main() {
 
   const browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH || undefined,
+    // Match the optics example probe's headless WebGL renderer.
+    ...(PLAN?.opticsBoundaries && {args: ['--use-gl=angle', '--use-angle=swiftshader', '--disable-gpu-sandbox']}),
   });
   const context = await browser.newContext({ viewport: { width: 1366, height: 900 }, acceptDownloads: true });
   await context.addInitScript(CANVAS_HOOK);
@@ -257,6 +347,7 @@ async function main() {
   result.loadMs = Date.now() - t0;
   await page.waitForTimeout(400);
   result.ok = true;
+  if (PLAN?.opticsBoundaries) result.opticsBoundaries = await probeOpticsBoundaries(page, PLAN.opticsBoundaries);
   const captureCircuit = async label => {
     const state = await page.evaluate(() => {
       const clone = v => { try { return JSON.parse(JSON.stringify(v)); } catch (e) { return null; } };
@@ -2309,14 +2400,16 @@ async function main() {
 
   // Isolate the extra clicks so the existing table, formula and layout
   // evidence stays on the original page.
-  if (PLAN?.recordClicks && await page.locator('#btn-record:visible').count() === 1
+  if (PLAN?.interactions) result.interactions = await probeInteractions(context, pathToFileURL(FILE).href, PLAN.interactions);
+  const recordSelector = '#btn-record:visible, [data-optics-record-btn]:visible';
+  if (PLAN?.recordClicks && await page.locator(recordSelector).count() === 1
       && await page.locator('#sec-record table:visible tbody').count() === 1) {
     const replay = await context.newPage();
     const deltas = [];
     result.records.regression = { deltas };
     try {
       await replay.goto(pathToFileURL(FILE).href, {waitUntil: 'load'});
-      const record = replay.locator('#btn-record:visible');
+      const record = replay.locator(recordSelector);
       const rows = replay.locator('#sec-record table:visible tbody tr');
       let previous = await rows.count();
       for (let i = 0; i < PLAN.recordClicks; i++) {

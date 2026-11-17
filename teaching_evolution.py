@@ -26,6 +26,14 @@ def connect():
         contract TEXT NOT NULL, scope TEXT, rule TEXT NOT NULL, fraction REAL NOT NULL,
         failed_hash TEXT NOT NULL, passed_hash TEXT,
         PRIMARY KEY (contract, rule, fraction))""")
+    db.execute("""CREATE TABLE IF NOT EXISTS optics_boundary_cases (
+        focus REAL NOT NULL, object_distance REAL NOT NULL,
+        failed_hash TEXT NOT NULL, passed_hash TEXT,
+        PRIMARY KEY (focus, object_distance))""")
+    db.execute("""CREATE TABLE IF NOT EXISTS interaction_cases (
+        scope TEXT NOT NULL, control TEXT NOT NULL, value TEXT NOT NULL,
+        failed_hash TEXT NOT NULL, passed_hash TEXT,
+        PRIMARY KEY (scope, control, value))""")
     return db
 
 
@@ -141,3 +149,83 @@ def observe(contract, memory, html, failures, passed, *, failed_cases=(), verifi
     except (OSError, sqlite3.Error) as error:
         info["storage_error"] = str(error)
     return info
+
+
+def optics_boundary_memory():
+    memory = {"cases": []}
+    try:
+        with closing(connect()) as db:
+            rows = db.execute("""SELECT focus, object_distance, passed_hash IS NOT NULL
+                FROM optics_boundary_cases ORDER BY focus, object_distance""").fetchall()
+            memory["cases"] = [dict(focus=f, object_distance=u, ratio=u / f, confirmed=bool(confirmed))
+                               for f, u, confirmed in rows]
+    except (OSError, sqlite3.Error) as error:
+        memory["storage_error"] = str(error)
+    return memory
+
+
+def observe_optics_boundaries(memory, html, focus, failed, verified, passed):
+    """Only a different HTML with a successful replay can confirm a counterexample."""
+    report = dict(memory, recorded=[], confirmed=[])
+    if not failed and not (passed and verified):
+        return report
+    digest = hashlib.sha256(html.encode()).hexdigest()
+    try:
+        with closing(connect()) as db, db:
+            for point in sorted(failed):
+                cursor = db.execute("""INSERT OR IGNORE INTO optics_boundary_cases
+                    (focus, object_distance, failed_hash) VALUES (?, ?, ?)""", (focus, point, digest))
+                if cursor.rowcount:
+                    report["recorded"].append(point)
+            if passed and not failed:
+                for point in sorted(verified):
+                    cursor = db.execute("""UPDATE optics_boundary_cases SET passed_hash = ?
+                        WHERE focus = ? AND object_distance = ?
+                          AND passed_hash IS NULL AND failed_hash <> ?""", (digest, focus, point, digest))
+                    if cursor.rowcount:
+                        report["confirmed"].append(point)
+    except (OSError, sqlite3.Error) as error:
+        report["storage_error"] = str(error)
+    return report
+
+
+def interaction_memory(scope):
+    report = {"cases": []}
+    try:
+        with closing(connect()) as db:
+            rows = db.execute("""SELECT control, value, passed_hash IS NOT NULL
+                FROM interaction_cases WHERE scope = ? ORDER BY control, value""", (scope,)).fetchall()
+            report["cases"] = [dict(control=field, value=value, confirmed=bool(confirmed))
+                               for field, value, confirmed in rows]
+    except (OSError, sqlite3.Error) as error:
+        report["storage_error"] = str(error)
+    return report
+
+
+def observe_interactions(scope, memory, html, samples, *, can_confirm):
+    report = dict(memory, recorded=[], confirmed=[])
+    if not any(row["errors"] for row in samples) and not memory["cases"]:
+        return report
+    digest = hashlib.sha256(html.encode()).hexdigest()
+    clean = can_confirm and not any(row["errors"] for row in samples)
+    try:
+        with closing(connect()) as db, db:
+            for row in samples:
+                field, value = row["control"], row["value"]
+                if not field:
+                    continue
+                if row["errors"]:
+                    cursor = db.execute("""INSERT OR IGNORE INTO interaction_cases
+                        (scope, control, value, failed_hash) VALUES (?, ?, ?, ?)""",
+                                        (scope, field, value, digest))
+                    if cursor.rowcount:
+                        report["recorded"].append(dict(control=row["name"], value=value))
+                elif clean and row["source"] == "待确认":
+                    cursor = db.execute("""UPDATE interaction_cases SET passed_hash = ?
+                        WHERE scope = ? AND control = ? AND value = ?
+                          AND passed_hash IS NULL AND failed_hash <> ?""", (digest, scope, field, value, digest))
+                    if cursor.rowcount:
+                        report["confirmed"].append(dict(control=row["name"], value=value))
+    except (OSError, sqlite3.Error) as error:
+        report["storage_error"] = str(error)
+    return report
