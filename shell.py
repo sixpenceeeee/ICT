@@ -21,6 +21,7 @@ shell.py —— 平台外壳装配器（把「模型生成的内容」装进「�
 
 import argparse
 import io
+import json
 import os
 import re
 import shutil
@@ -134,6 +135,20 @@ def check_sections(secs):
     return problems
 
 
+def strip_stage_explanatory_text(body):
+    """演示区只保留图形本身，不把图注/状态说明排在画布下方。"""
+    body = body or ""
+    # 不同页面模板使用了不同的 caption 类名；只处理 ② 区字符串，
+    # 因而不会误删 ④ 结果与 ⑥ 教学说明中的解释文字。
+    return re.sub(
+        r"<(?P<tag>[a-z][\w:-]*)\b(?=[^>]*\bclass\s*=\s*['\"][^'\"]*"
+        r"(?:caption|exp-canvas-tip|exp-note)[^'\"]*['\"])[^>]*>.*?</(?P=tag)>",
+        "",
+        body,
+        flags=re.I | re.S,
+    ).strip()
+
+
 # ============================================================ 渲染
 
 def _read(path):
@@ -225,6 +240,21 @@ def strip_exp_name(html):
         "", html, flags=re.S | re.I)
 
 
+def strip_info_metadata(html):
+    """Remove the optional source/experiment-metadata paragraph from ①.
+
+    The information header is intentionally limited to subject/grade tags and
+    learning goals.  Older subject templates and model-produced pages could
+    inject a ``来源：…`` or ``实验性质：…来源：…`` paragraph at this position;
+    stripping it at the shell boundary keeps every generated page consistent.
+    """
+    if not html:
+        return html or ""
+    return re.sub(
+        r'<p[^>]*>\s*(?:实验性质：[^<]*来源：[^<]*|来源：[^<]*)\s*</p>',
+        "", html, flags=re.S | re.I)
+
+
 # ---------------------------------------------------------------- 共享绘图层
 # 统一质感分三层：
 #   vis.js    —— 全学科共用的视觉原语（玻璃器皿/立体实体/光影/标注）
@@ -248,13 +278,57 @@ SCENE_LIBS = {
 }
 # 页面 JS 里直接调用的库名，用于正文没写学科时的兜底判断
 CALL_HINTS = [
+    ("EDU_MODEL.", "model.js"),
+    ("CIRCUIT_PAGE.", "circuit_page_bundle.js"),
+    ("OPTICS3D.", "optics3d_bundle.js"),
     ("CIRCUIT.", "circuit_solver.js"),
+    ("CHEMSOLVER.", "chem_solver.js"),
+    ("BIOSOLVER.", "supplement_solver.js"),
+    ("GEOSOLVER.", "supplement_solver.js"),
+    ("CSSOLVER.", "supplement_solver.js"),
+    ("DISPLAYRULES.", "supplement_solver.js"),
     ("CHEM.", "chem.js"), ("PHYS.", "phys.js"), ("MATH.", "math.js"),
+    ("MATHPAGE.", "math_page.js"),
     ("BIO.", "bio.js"), ("GEO.", "geo.js"), ("CS.", "cs.js"),
 ]
 
 
+def _component_bundle(name):
+    """Return offline bundles for the imported circuit/optics components.
+
+    The teammate's components are deliberately kept as their original files;
+    the shell only concatenates them at delivery time so generated pages stay
+    single-file and do not depend on a local ``frame/`` directory.  The
+    circuit page also stores editor sources in inert script nodes because its
+    enlarge button serialises those sources into the standalone editor window.
+    """
+    if name == "circuit_page_bundle.js":
+        paths = {
+            "core": os.path.join(FRAME_DIR, "circuit", "core.js"),
+            "apparatus": os.path.join(FRAME_DIR, "circuit", "apparatus.js"),
+            "editor": os.path.join(FRAME_DIR, "circuit", "editor.js"),
+            "page": os.path.join(FRAME_DIR, "circuit", "page.js"),
+            "catalog": os.path.join(FRAME_DIR, "circuit", "catalog.json"),
+        }
+        sources = {key: _read(path) for key, path in paths.items()}
+        inert = "(function(){var d=document,sources=" + json.dumps(sources, ensure_ascii=False) + ";"
+        inert += "Object.keys(sources).forEach(function(k){var n=d.createElement('script');"
+        inert += "n.type='text/plain';n.id='circuit-'+k;n.textContent=sources[k];d.body.appendChild(n);});})();"
+        return "\n".join((sources["core"], sources["apparatus"], inert, sources["page"]))
+    if name == "optics3d_bundle.js":
+        paths = (
+            os.path.join(FRAME_DIR, "optics", "vendor", "three.r118.js"),
+            os.path.join(FRAME_DIR, "optics_solver.js"),
+            os.path.join(FRAME_DIR, "optics3d.js"),
+        )
+        return "\n".join(_read(path) for path in paths)
+    return None
+
+
 def _read_lib(name):
+    bundled = _component_bundle(name)
+    if bundled is not None:
+        return bundled.strip()
     path = os.path.join(FRAME_DIR, name)
     if not os.path.exists(path):
         return ""
@@ -293,6 +367,12 @@ def _with_libs(js, secs=None):
     if not js and not libs:
         return js
     blocks = []
+    # 所有交互页面都带一层轻量模型运行时：即使页面没有显式声明
+    # EDU_MODEL，也会在 DOMContentLoaded 后自动发现控件、结果和画布，
+    # 形成跨学科的 edu-model.v1 页面模型。
+    model = _read_lib("model.js")
+    if model:
+        blocks.append(model)
     if libs:
         if "chem.js" not in libs and any(name in libs for name in ("phys.js", "math.js", "bio.js", "geo.js", "cs.js")):
             vis = _read_lib("vis.js")
@@ -311,19 +391,187 @@ def _with_libs(js, secs=None):
     return "\n\n".join(blocks) + "\n\n" + (js or "")
 
 
+# 所有页面共用的交互兜底：越界输入给出可理解的提示，运行时异常也不把画布清空。
+# 具体求解器仍可提供更精确的错误信息；这里负责保证任何页面都有可见反馈。
+UI_GUARD_JS = r'''(function () {
+  'use strict';
+  function messageFor(input, detail) {
+    if (input && input.validity && (input.validity.rangeOverflow || input.validity.rangeUnderflow ||
+        input.validity.badInput || input.validity.stepMismatch)) {
+      return '你输入的数值超出了允许范围，请调整后再试。';
+    }
+    return detail ? '当前输入无法计算，请检查参数后再试。' : '你输入的数值超出了允许范围，请调整后再试。';
+  }
+  function alertBox() {
+    var box = document.querySelector('[data-solver-error], .exp-alert');
+    if (box) return box;
+    box = document.createElement('p');
+    box.className = 'exp-alert';
+    box.setAttribute('role', 'alert');
+    box.setAttribute('aria-live', 'polite');
+    box.id = 'pf-ui-alert';
+    (document.getElementById('sec-result') || document.body).appendChild(box);
+    return box;
+  }
+  function show(input, detail) {
+    var box = alertBox();
+    box.textContent = messageFor(input, detail);
+    box.hidden = false;
+    box.dataset.uiGuard = 'true';
+    if (input) input.setAttribute('aria-invalid', 'true');
+  }
+  function clear(input) {
+    if (input) input.removeAttribute('aria-invalid');
+    var box = document.querySelector('[data-ui-guard="true"]');
+    // 页面自己的求解器可能在同一次 input 事件里给出更具体的错误；可见时不要覆盖它。
+    if (box && box.hidden) { box.textContent = ''; delete box.dataset.uiGuard; }
+  }
+  function check(event) {
+    var input = event.target;
+    if (!input || !input.matches || !input.matches('input[type="number"], input[type="range"]')) return;
+    if (input.type === 'number' && !input.validity.valid) show(input, false);
+    else if (input.type === 'number') clear(input);
+  }
+  function normalizeRangeSteps() {
+    Array.prototype.forEach.call(document.querySelectorAll('input[type="range"]'), function (range) {
+      if (range.getAttribute('step') && range.getAttribute('step') !== 'any') return;
+      var lower = Number(range.min || 0), upper = Number(range.max || 1), span = Math.abs(upper - lower);
+      if (!isFinite(span) || span <= 0) return;
+      var step = Math.pow(10, Math.floor(Math.log10(span) + 1e-9) - 1);
+      if (lower > 0 && lower < step) lower = step;
+      range.min = String(lower);
+      range.step = String(step);
+    });
+  }
+  function bindDualControls() {
+    // 公共双控件约定：number 是唯一数据源，range 仅提供拖动输入。
+    // 这样数学、物理、化学、生物、地理、信息科技的页面都能用同一套同步逻辑。
+    Array.prototype.forEach.call(document.querySelectorAll('input[data-solver-range-for]'), function (range) {
+      if (range.dataset.pfDualBound === 'true') return;
+      var target = document.getElementById(range.getAttribute('data-solver-range-for'));
+      if (!target || target.type !== 'number') return;
+      range.dataset.pfDualBound = 'true';
+      target.dataset.pfDualBound = 'true';
+      range.addEventListener('input', function () {
+        target.value = range.value;
+        target.dispatchEvent(new Event('input', {bubbles: true}));
+      });
+      range.addEventListener('change', function () {
+        target.value = range.value;
+        target.dispatchEvent(new Event('change', {bubbles: true}));
+      });
+      target.addEventListener('input', function () {
+        if (target.value !== range.value && target.value !== '') {
+          range.value = target.value;
+        }
+      });
+      target.addEventListener('change', function () {
+        if (target.value !== range.value && target.value !== '') {
+          range.value = target.value;
+        }
+      });
+    });
+  }
+  function ensureLegacyDualControls() {
+    function pair(parent, number, range) {
+      var wrap = parent.querySelector('.exp-control-pair');
+      if (!wrap) {
+        wrap = document.createElement('span');
+        wrap.className = 'exp-control-pair';
+        parent.insertBefore(wrap, number || range);
+      }
+      wrap.appendChild(number);
+      wrap.appendChild(range);
+    }
+    var ranges = Array.prototype.slice.call(document.querySelectorAll('input[type="range"]'));
+    Array.prototype.forEach.call(document.querySelectorAll('input[type="number"]'), function (number) {
+      if (!number.id || document.querySelector('input[data-solver-range-for="' + number.id + '"]')) return;
+      var parent = number.parentElement;
+      if (!parent || parent.querySelector('select')) return;
+      var range = document.createElement('input');
+      range.type = 'range';
+      range.id = number.id + '-range';
+      range.min = number.min || '0'; range.max = number.max || '1';
+      range.step = number.step && number.step !== 'any' ? number.step : '0.1';
+      range.value = number.value || range.min;
+      range.setAttribute('data-solver-range-for', number.id);
+      range.setAttribute('aria-label', '拖动调节' + (number.getAttribute('aria-label') || '数值'));
+      range.setAttribute('data-pf-generated-range', 'true');
+      pair(parent, number, range);
+    });
+    ranges.forEach(function (range) {
+      if (range.getAttribute('data-solver-range-for') || range.getAttribute('data-pf-generated-range')) return;
+      var parent = range.parentElement;
+      if (!parent || parent.querySelector('select')) return;
+      var base = (range.id || '数值').replace(/-(range|slider)$/, '');
+      var number = document.createElement('input');
+      number.type = 'number'; number.id = base + '-input';
+      number.min = range.min || '0'; number.max = range.max || '1';
+      number.step = 'any'; number.value = range.value || number.min;
+      number.setAttribute('aria-label', '输入' + (range.getAttribute('aria-label') || '数值').replace(/^拖动调节/, ''));
+      range.setAttribute('data-solver-range-for', number.id);
+      pair(parent, number, range);
+    });
+  }
+  function simplifyPresetButtons() {
+    // 统一的最小按钮策略：所有实验只保留“重置”和“记录”。
+    // 旧页面的按钮 ID 不统一，因此不能只依赖 preset-* 选择器，必须按按钮语义兜底。
+    Array.prototype.forEach.call(document.querySelectorAll('button'), function (button) {
+      var label = (button.textContent || '').replace(/\s+/g, '').trim();
+      var id = (button.id || '').toLowerCase();
+      var keep = label.indexOf('记录') === 0 || label.indexOf('重置') === 0 ||
+        label.indexOf('复位') === 0 || id === 'reset' || id === 'record' ||
+        /(?:^|-)reset$/.test(id) || /(?:^|-)record$/.test(id) ||
+        id.indexOf('btn-reset') === 0 || id.indexOf('btn-record') === 0;
+      button.hidden = !keep;
+      button.style.display = keep ? '' : 'none';
+      if (!keep) button.setAttribute('aria-hidden', 'true');
+    });
+    var visibleLabels = {
+      temperature_change: '温度变化', final_temperature: '末温', double_mass: '质量加倍',
+      double_capacity: '比热容加倍', warmer_start: '初温升高', cooling: '降温过程',
+      zero_heat: '不输入热量', scaled: '质量与热量同步加倍', double_depth: '深度加倍',
+      double_time: '时间加倍', double_speed: '速度加倍', double_height: '提升高度加倍',
+      double_load: '载荷加倍', perpendicular: '垂直不做功', reverse: '反向状态',
+      no_displacement: '零位移', no_force: '零作用力'
+    };
+    Array.prototype.forEach.call(document.querySelectorAll('.exp-read .v, .exp-comparison .v'), function (node) {
+      var text = node.textContent;
+      Object.keys(visibleLabels).forEach(function (key) {
+        text = text.replace(new RegExp('(^|[^A-Za-z0-9_])' + key + '([^A-Za-z0-9_]|$)', 'g'), '$1' + visibleLabels[key] + '$2');
+      });
+      if (text !== node.textContent) node.textContent = text;
+    });
+  }
+  normalizeRangeSteps();
+  ensureLegacyDualControls();
+  bindDualControls();
+  simplifyPresetButtons();
+  if (window.MutationObserver) {
+    new MutationObserver(function () { ensureLegacyDualControls(); bindDualControls(); simplifyPresetButtons(); }).observe(document.body, {subtree:true, childList:true, characterData:true});
+  }
+  document.addEventListener('input', check, false);
+  document.addEventListener('change', check, false);
+  window.addEventListener('error', function () { show(null, true); });
+  window.addEventListener('unhandledrejection', function () { show(null, true); });
+})();'''
+
+
 def render(title, secs, slug=None):
     """套上平台外壳，返回完整 HTML 字符串。"""
     shell = _read(SHELL_PATH)
     title = short_title(title)          # 蓝色条只放实验名字
     secs = dict(secs or {})
     secs["1"] = strip_exp_name(secs.get("1") or "")   # ① 区不重复名字
+    secs["1"] = strip_info_metadata(secs["1"])         # ① 区不放来源/性质元信息
+    secs["2"] = strip_stage_explanatory_text(secs.get("2") or "")
     mapping = {
         "{{TITLE}}": _esc(title),
         "{{SLUG}}": _esc(slug or title),
         "{{EXTRA_CSS}}": (secs.get("css") or "").strip(),
         "{{NORMAL_CSS}}": _read_soft(NORMAL_CSS).strip(),
         "{{TYPO_JS}}": _read_soft(TYPO_JS).strip(),
-        "{{JS}}": _with_libs((secs.get("js") or "").strip(), secs),
+        "{{JS}}": _with_libs((secs.get("js") or "").strip(), secs) + "\n\n" + UI_GUARD_JS,
     }
     for key, _ in SECTIONS:
         mapping["{{SEC%s}}" % key] = (secs.get(key) or "").strip()
@@ -356,6 +604,22 @@ def _calls(html, token):
     return pat.search(html) is not None
 
 
+def _namespace_exported(html, namespace):
+    """Return whether a shared library exports its namespace on a global root.
+
+    Libraries may be wrapped in an IIFE and export through ``root.NAME``;
+    that is the same browser global as ``window.NAME`` when ``root`` is the
+    window object. Accept the common global aliases while avoiding comments or
+    plain text that merely mentions the namespace.
+    """
+    escaped = re.escape(namespace)
+    pat = re.compile(
+        r"(?<![A-Za-z0-9_$])(?:window|globalThis|self|root|global)\s*"
+        r"(?:\.\s*" + escaped + r"|\[\s*['\"]" + escaped + r"['\"]\s*\])\s*="
+    )
+    return pat.search(html or "") is not None
+
+
 def validate(html):
     """外壳完整性校验：交付前必须全过，否则页面上会缺导航或缺页脚。"""
     problems = []
@@ -380,9 +644,9 @@ def validate(html):
         # 必须按「标识符左边界」匹配。以前直接 `token in html`，会把
         # PAGE_GEO.params 里的 "GEO." 当成地理库调用，报出根本不存在的
         # 注入缺失（二次函数页就被这样误伤），日志里一片红但页面是好的。
-        if _calls(html, token) and ("window." + ns) not in html:
+        if _calls(html, token) and not _namespace_exported(html, ns):
             problems.append("页面调用了 %s，但 %s 没有注入（检查 shell.py 的注入路由）" % (token, lib))
-    if _calls(html, "VIS.") and "window.VIS" not in html:
+    if _calls(html, "VIS.") and not _namespace_exported(html, "VIS"):
         problems.append("页面调用了 VIS 原语，但 vis.js 没有注入（检查 frame/vis.js）")
 
     for key, name in SECTIONS:
@@ -409,7 +673,12 @@ def validate(html):
     if "--pf-fs-min" not in html:
         problems.append("缺少平台阅读规范（frame/normal.css 未注入）")
 
-    urls = re.findall(r"https?://[^\s\"'<>)]+", html)
+    # Vendor runtimes (notably the offline Three.js copy used by OPTICS3D)
+    # carry attribution URLs in comments.  They are not network dependencies;
+    # scan document markup rather than inline script comments for real links.
+    markup_for_urls = re.sub(r"<script\b[^>]*>.*?</script>", "", html,
+                             flags=re.S | re.I)
+    urls = re.findall(r"https?://[^\s\"'<>)]+", markup_for_urls)
     urls = [u for u in urls if "w3.org" not in u]      # svg/xml 命名空间不算外链
     if urls:
         problems.append("出现外部链接（离线会失效）：%s" % "、".join(urls[:3]))

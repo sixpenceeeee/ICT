@@ -1,0 +1,404 @@
+{
+  "version": "1.0.0",
+  "sources": [
+    {
+      "source_id": "source-legacy-001",
+      "source_type": "教材",
+      "subject": "化学",
+      "title": "人教版九年级化学下册 金属的化学性质",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-002",
+      "source_type": "教材",
+      "subject": "化学",
+      "title": "人教版九年级化学下册 金属活动性顺序",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-003",
+      "source_type": "教材",
+      "subject": "化学",
+      "title": "人教版九年级化学下册 酸和碱的中和反应",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-004",
+      "source_type": "课程标准",
+      "subject": "化学",
+      "title": "义务教育化学课程标准 质量守恒定律",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-005",
+      "source_type": "教材",
+      "subject": "物理",
+      "title": "人教版九年级物理 欧姆定律",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-006",
+      "source_type": "教材",
+      "subject": "物理",
+      "title": "人教版九年级物理 串并联电路",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-007",
+      "source_type": "教材",
+      "subject": "物理",
+      "title": "人教版八年级物理上册 光的反射 平面镜成像",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-008",
+      "source_type": "教材",
+      "subject": "物理",
+      "title": "人教版八年级物理下册 阿基米德原理",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-009",
+      "source_type": "教材",
+      "subject": "物理",
+      "title": "人教版八年级物理上册 凸透镜成像规律",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-010",
+      "source_type": "教材",
+      "subject": "生物",
+      "title": "人教版七年级生物上册 练习使用显微镜",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-011",
+      "source_type": "教材",
+      "subject": "生物",
+      "title": "人教版八年级生物下册 基因的显性和隐性",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-012",
+      "source_type": "教材",
+      "subject": "生物",
+      "title": "人教版七年级生物上册 光合作用与呼吸作用",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-013",
+      "source_type": "教材",
+      "subject": "地理",
+      "title": "人教版七年级地理上册 等高线地形图",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-014",
+      "source_type": "教材",
+      "subject": "地理",
+      "title": "人教版高中地理必修一 地球运动",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-015",
+      "source_type": "课程标准",
+      "subject": "信息科技",
+      "title": "义务教育信息科技课程标准 算法与程序",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-016",
+      "source_type": "课程标准",
+      "subject": "信息科技",
+      "title": "义务教育信息科技课程标准 数据与编码",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-017",
+      "source_type": "教材",
+      "subject": "数学",
+      "title": "人教版九年级数学上册 二次函数",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-018",
+      "source_type": "教材",
+      "subject": "数学",
+      "title": "人教A版必修二 空间几何体",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    },
+    {
+      "source_id": "source-legacy-019",
+      "source_type": "教材",
+      "subject": "数学",
+      "title": "人教版八年级数学下册 勾股定理",
+      "publisher": "",
+      "edition": "",
+      "chapter": "",
+      "page": "",
+      "url": "",
+      "retrieved_at": "",
+      "source_status": "待核验",
+      "copyright_note": "只保存摘要和定位信息，不复制整段教材正文",
+      "migration_note": "来源标题由旧 facts.json 的依据字段迁移，尚未完成外部核验",
+      "review": {
+        "status": "待教师审核",
+        "reviewer": "",
+        "review_date": "",
+        "notes": ""
+      }
+    }
+  ]
+}

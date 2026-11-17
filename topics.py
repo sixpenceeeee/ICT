@@ -17,6 +17,7 @@ topics.py —— 实验主题配置表（新增实验只改这一个文件）
 
 PROFILES = {
     "电路": {
+        "学科": "物理",
         "关键词": ["电路", "电阻", "电压", "电流", "欧姆", "变阻器", "伏安", "电表"],
         "检索侧重": [
             "实验 规范 接线 电表 滑动变阻器",
@@ -38,6 +39,7 @@ PROFILES = {
     },
 
     "浮力": {
+        "学科": "物理",
         "关键词": ["浮力", "阿基米德", "排开", "液体密度", "浮沉", "溢水", "浸没"],
         "检索侧重": [
             "实验 规范 器材 弹簧测力计 溢水杯 步骤",
@@ -55,12 +57,28 @@ PROFILES = {
             {"单位": "N", "名称": "力", "上限": 20},
         ],
         "核心公式": "F浮 = ρ液 g V排",
-        "公式示例": "F浮 = ρ液 g V排 = 1000 kg/m³ × 10 N/kg × 0.0002 m³ = 2.00 N"
-                    "（g 取 10 N/kg，体积先换算成 m³；不要用 1.0×10³ 这类科学计数法写代入式）",
+        "公式示例": "F浮 = ρ液 g V排 = 1000 kg/m³ × 9.8 N/kg × 0.0002 m³ = 1.96 N"
+                    "（求解器取 g=9.8 N/kg，体积先换算成 m³）",
+    },
+
+    # 该主题的五类知识条目已存在于 knowledge/191–195；此前只漏了
+    # 主题 profile，导致需求理解后无法把“光的反射”映射到知识库主题。
+    "光的反射定律": {
+        "学科": "物理",
+        "关键词": ["光的反射定律", "光的反射", "反射定律", "入射角", "反射角", "法线", "平面镜反射"],
+        "检索侧重": [
+            "实验 规范 平面镜 纸板 量角器 光线 步骤",
+            "安全 激光 照射 眼睛 范围 准确",
+            "交互 滑块 角度 读数 记录表 学生 易错",
+        ],
+        "单位组": [("角度", ["°", "度"])],
+        "数值上限": [],
+        "核心公式": "反射角 β = 入射角 α",
+        "公式示例": "入射角 α = 30°，反射角 β = 30°；两角均以法线为基准测量",
     },
 }
 
-# 六学科展示清单补充的 29 个主题：配置由 02_retrieval_agent/seed/build_topics.py 生成，
+# 补充主题配置由 02_retrieval_agent/seed/build_topics.py 生成，
 # 与知识库共用同一份源数据（seed/*_kb.py），避免关键词和公式两处漂移。
 try:
     from topics_extra import EXTRA_PROFILES
@@ -100,18 +118,46 @@ def unit_pattern(unit):
     return "(?:%s)" % "|".join(aliases)
 
 
-def detect_topic(text):
-    """从需求文字里判断属于哪个实验主题，认不出返回 None。
+def detect_topic(text, subject=None, *, title=""):
+    """从需求文字里判断实验主题，可选按学科过滤，认不出返回 None。
 
     只做关键词计分，不调模型：这一步要的是"稳定且可解释"，
     评委问"你怎么知道这是浮力实验"时，能直接指着关键词表回答。
     """
-    text = text or ""
+    text = (text or "").lower()
+    subject = (subject or "").strip()
+    subject = {"物理学": "物理", "生物学": "生物"}.get(subject, subject)
+    # 需求理解 Agent 常返回“初中生物 / 七年级”“高中物理”等带学段的写法。
+    # 主题 profile 存的是学科短名，先归一化再做主题过滤，否则会误判为未识别。
+    if "生物" in subject:
+        subject = "生物"
+    elif "物理" in subject:
+        subject = "物理"
+    elif "化学" in subject:
+        subject = "化学"
+    elif "数学" in subject:
+        subject = "数学"
+    elif "地理" in subject:
+        subject = "地理"
+    elif "信息" in subject or "技术" in subject:
+        subject = "信息科技"
+    if subject in ("数学", "物理") and title:
+        # Prefer a named topic before scoring terms mentioned as background.
+        named = [name for name, profile in PROFILES.items()
+                 if profile.get("学科") == subject and len(name) >= 4 and name in title]
+        if named:
+            return max(named, key=len)
+        title_topic = detect_topic(title, subject)
+        if title_topic:
+            return title_topic
     best, best_score = None, 0
     for name, p in PROFILES.items():
+        if subject and p.get("学科") and p["学科"] != subject:
+            continue
         # 按关键词长度加权：命中的词越长越具体。
         # 只数个数会让「伏安」和「伏安法」同分，导致「伏安法测电阻」被认成「电路」。
-        score = sum(len(kw) for kw in p["关键词"] if kw in text)
+        # 英文缩写（如 Ksp、pH）大小写不应影响主题识别。
+        score = sum(len(kw) for kw in p["关键词"] if kw.lower() in text)
         if score > best_score:
             best, best_score = name, score
     return best

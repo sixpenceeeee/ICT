@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-"""地理 5 个主题。
+"""地理主题。
 
 地理的判据以 J2（几何复算：角度、距离、比例）和 J7（统计）为主，
 所有「示意」都要能落到具体数值上，否则审查只能给 review。
 """
+
+from geography_supplement import TOPICS as SUPPLEMENTAL_TOPICS
 
 TOPICS = [
     {
@@ -398,3 +400,5 @@ TOPICS = [
         },
     },
 ]
+
+TOPICS.extend(SUPPLEMENTAL_TOPICS)

@@ -22,9 +22,11 @@
 
   var ctx = null;
   // 画布最小字号：化学版也是位图，10.5px 的中文在页面上认不出来
-  var FS_MIN = 24;      // 画布内最小字号 = 原始 12px × 2
-  var TYPE_SCALE = 2;   // 画布内所有字号统一放大倍数
-  var SC = TYPE_SCALE;  // 几何放大系数：必须与字号同步，否则标签会溢出
+  // 参考页的化学装置标注采用 12px 基线；几何尺寸本身已经是设计坐标，
+  // 不再额外放大文字，避免标签覆盖烧杯、箭头和反应式。
+  var FS_MIN = 12;
+  var TYPE_SCALE = 1;
+  var SC = TYPE_SCALE;
   function fs(v) { v = (+v || 0) * TYPE_SCALE; return v < FS_MIN ? FS_MIN : v; }
   // 设计坐标系（几何尺寸）。注意：字号已被 fs() 放大 TYPE_SCALE 倍，
   // 几何必须跟着一起放大，否则文字翻倍、烧杯间距不变 → 标签溢出。
@@ -670,7 +672,10 @@
    * 也不把版式压扁。这样文字与几何始终同比例，任何画布尺寸都不会压字。
    */
   function fit(cv) {
-    var box = cv.parentNode;
+    // 化学页的 canvas 可能包在带 padding/说明文字的场景卡中。
+    // 不能读取直接父节点高度再写回 canvas，否则每次 input 重绘都会
+    // 把父卡片再次撑高，导致画面漂移、膨胀并最终消失。
+    var box = cv.closest ? (cv.closest('.exp-canvas-box') || cv.parentNode) : cv.parentNode;
     var w = box.clientWidth || 700;
     var h = box.clientHeight || 460;
     view.dpr = window.devicePixelRatio || 1;
@@ -795,6 +800,571 @@
     cv.setAttribute('aria-label', desc);
     var tipEl = document.getElementById('tip');
     if (tipEl && cfg.tip !== false) tipEl.textContent = cfg.tip || desc;
+  }
+
+  // Acid–base titration apparatus. Numerical values are supplied by the
+  // deterministic titration solver; this function only maps that result to
+  // the shared glassware visual style.
+  function titration(cv, result) {
+    result = result || {};
+    ctx = cv.getContext('2d');
+    window.__CHEM_DRAWN__ = true;
+    window.__CHEM_CV__ = cv;
+    fit(cv); begin(); drawBG();
+
+    // Heavy iron stand and clamp.
+    ctx.save();
+    ctx.shadowColor = 'rgba(28,52,75,.18)'; ctx.shadowBlur = 9; ctx.shadowOffsetY = 4;
+    rr(130, 622, 260, 16, 8);
+    var foot = ctx.createLinearGradient(130, 622, 130, 638);
+    foot.addColorStop(0, '#8996a3'); foot.addColorStop(.32, '#e7edf2'); foot.addColorStop(1, '#73808c');
+    ctx.fillStyle = foot; ctx.fill(); ctx.restore();
+    ctx.save();
+    rr(242, 118, 18, 508, 8);
+    var stand = ctx.createLinearGradient(242, 0, 260, 0);
+    stand.addColorStop(0, '#6d7883'); stand.addColorStop(.32, '#f2f5f7');
+    stand.addColorStop(.7, '#aab4bd'); stand.addColorStop(1, '#66717d');
+    ctx.fillStyle = stand; ctx.fill(); ctx.strokeStyle = '#71808d'; ctx.lineWidth = 1.4; ctx.stroke();
+    ctx.restore();
+
+    // Clamp arm and burette body.
+    ctx.save(); ctx.lineCap = 'round';
+    ctx.strokeStyle = '#778692'; ctx.lineWidth = 12;
+    ctx.beginPath(); ctx.moveTo(252, 174); ctx.lineTo(340, 174); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.78)'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(255, 170); ctx.lineTo(333, 170); ctx.stroke();
+    ctx.restore();
+    ctx.save();
+    rr(318, 126, 44, 314, 12);
+    var glass = ctx.createLinearGradient(318, 126, 362, 126);
+    glass.addColorStop(0, 'rgba(184,215,235,.78)'); glass.addColorStop(.2, 'rgba(255,255,255,.66)');
+    glass.addColorStop(.75, 'rgba(233,246,252,.38)'); glass.addColorStop(1, 'rgba(142,185,213,.72)');
+    ctx.fillStyle = glass; ctx.fill(); ctx.strokeStyle = '#86abc5'; ctx.lineWidth = 2.4; ctx.stroke();
+    var eq = Math.max(1e-12, Number(result.equivalence_volume_ml) || 1);
+    var added = Math.max(0, Number((result.base || {}).volume_L) || 0) * 1000;
+    var used = Math.min(1, added / eq);
+    var liquidTop = 158 + 228 * used;
+    ctx.save(); rr(323, 132, 34, 298, 8); ctx.clip();
+    var titrant = ctx.createLinearGradient(0, liquidTop, 0, 430);
+    titrant.addColorStop(0, 'rgba(117,205,238,.58)'); titrant.addColorStop(1, 'rgba(48,137,193,.74)');
+    ctx.fillStyle = titrant; ctx.fillRect(323, liquidTop, 34, 280); ctx.restore();
+    ctx.strokeStyle = 'rgba(255,255,255,.82)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(326, liquidTop + 2); ctx.lineTo(354, liquidTop + 2); ctx.stroke();
+    for (var mark = 0; mark <= 10; mark++) {
+      var my = 158 + mark * 24;
+      ctx.beginPath(); ctx.moveTo(362, my); ctx.lineTo(362 + (mark % 2 ? 8 : 13), my);
+      ctx.strokeStyle = 'rgba(62,104,133,.74)'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+    ctx.restore();
+
+    // Stopcock and narrow delivery tip.
+    ctx.save();
+    ctx.fillStyle = '#9aa8b4'; rr(324, 434, 34, 18, 7); ctx.fill();
+    ctx.fillStyle = '#596875'; rr(336, 440, 9, 34, 4); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(337, 468); ctx.lineTo(344, 468); ctx.lineTo(341, 493); ctx.closePath();
+    ctx.fillStyle = '#9ab3c4'; ctx.fill();
+    ctx.restore();
+
+    // Drop from the burette into the flask (kept separate from text labels).
+    if (added > 0) {
+      ctx.save();
+      ctx.beginPath(); ctx.moveTo(341, 507); ctx.bezierCurveTo(328, 525, 334, 536, 341, 538);
+      ctx.bezierCurveTo(350, 535, 353, 525, 341, 507); ctx.closePath();
+      var drop = ctx.createLinearGradient(331, 510, 352, 538);
+      drop.addColorStop(0, 'rgba(192,238,251,.95)'); drop.addColorStop(1, 'rgba(57,153,204,.78)');
+      ctx.fillStyle = drop; ctx.fill(); ctx.strokeStyle = 'rgba(82,149,187,.68)'; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.restore();
+    }
+
+    // Erlenmeyer flask with a real neck, sloped shoulder and rounded base.
+    var fx = 600, fy = 520;
+    ctx.save();
+    ctx.shadowColor = 'rgba(29,57,82,.20)'; ctx.shadowBlur = 17; ctx.shadowOffsetY = 9;
+    ctx.beginPath(); ctx.ellipse(fx + 8, fy + 8, 128, 18, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(41,72,98,.12)'; ctx.fill(); ctx.restore();
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(fx - 26, 303); ctx.lineTo(fx + 26, 303); ctx.lineTo(fx + 27, 410);
+    ctx.lineTo(fx + 94, 512); ctx.quadraticCurveTo(fx + 105, 534, fx + 84, 548);
+    ctx.quadraticCurveTo(fx, 568, fx - 84, 548); ctx.quadraticCurveTo(fx - 105, 534, fx - 94, 512);
+    ctx.lineTo(fx - 27, 410); ctx.closePath();
+    var flaskGlass = ctx.createLinearGradient(fx - 95, 0, fx + 95, 0);
+    flaskGlass.addColorStop(0, 'rgba(174,209,230,.68)'); flaskGlass.addColorStop(.18, 'rgba(255,255,255,.62)');
+    flaskGlass.addColorStop(.72, 'rgba(242,250,255,.35)'); flaskGlass.addColorStop(1, 'rgba(150,190,217,.74)');
+    ctx.fillStyle = flaskGlass; ctx.fill(); ctx.strokeStyle = '#86abc5'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(fx - 22, 309); ctx.lineTo(fx + 22, 309); ctx.lineTo(fx + 23, 409);
+    ctx.lineTo(fx + 88, 512); ctx.quadraticCurveTo(fx + 96, 530, fx + 78, 540);
+    ctx.quadraticCurveTo(fx, 556, fx - 78, 540); ctx.quadraticCurveTo(fx - 96, 530, fx - 88, 512);
+    ctx.lineTo(fx - 23, 409); ctx.closePath(); ctx.clip();
+    var fillFrac = Math.max(.14, Math.min(.72, .28 + (Number(result.total_volume_l) || .025) * 3.2));
+    var surface = 548 - 210 * fillFrac;
+    var pink = Number(result.pH) >= 8.2;
+    var liquid = ctx.createLinearGradient(fx, surface, fx, 548);
+    liquid.addColorStop(0, pink ? 'rgba(250,190,215,.68)' : 'rgba(226,243,250,.58)');
+    liquid.addColorStop(1, pink ? 'rgba(219,91,151,.58)' : 'rgba(126,193,220,.58)');
+    ctx.fillStyle = liquid; ctx.fillRect(fx - 110, surface, 220, 210);
+    ctx.beginPath(); ctx.ellipse(fx, surface, 88, 8, 0, 0, Math.PI * 2);
+    ctx.fillStyle = pink ? 'rgba(255,213,230,.83)' : 'rgba(247,253,255,.84)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.restore();
+    // Neck rim and glass highlights.
+    ctx.beginPath(); ctx.ellipse(fx, 303, 26, 7, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(245,251,255,.82)'; ctx.fill(); ctx.strokeStyle = '#86abc5'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.82)'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(fx - 78, 434); ctx.lineTo(fx - 119, 510); ctx.stroke();
+    ctx.restore();
+
+    // Labels are drawn last, with enough spacing to avoid glassware overlap.
+    label(340, 103, '滴定管 · 标准碱液', { size: 12, color: '#315875', stroke: false });
+    label(600, 277, '锥形瓶 · 待测酸液 + 酚酞', { size: 12, color: '#315875', stroke: false });
+    var stateText = result.state === 'acidic' ? '酸性' : (result.state === 'basic' ? '碱性' : '当量点');
+    pill(704, 124, 'pH ' + (Number.isFinite(Number(result.pH)) ? Number(result.pH).toFixed(2) : '--'), '#1b62b0', 15);
+    pill(690, 186, stateText, result.state === 'basic' ? '#b94d82' : '#527b9e', 13);
+    label(600, 599, pink ? '酚酞：浅红色' : '酚酞：无色', {
+      size: 13, color: pink ? '#9d3769' : '#49677d', weight: 600, stroke: false
+    });
+    leader(340, 117, 340, 138);
+    leader(600, 289, 600, 307);
+    var desc = '酸碱滴定装置：铁架台固定滴定管，滴定液逐滴加入锥形瓶；当前 ' +
+      stateText + '，pH ' + (Number.isFinite(Number(result.pH)) ? Number(result.pH).toFixed(2) : '未知');
+    cv.setAttribute('aria-label', desc);
+    var tip = document.getElementById('tip'); if (tip) tip.textContent = desc;
+    window.__CHEM_TITRATION_STATE__ = {
+      pH: result.pH, state: result.state, addedVolumeMl: added,
+      equivalenceVolumeMl: result.equivalence_volume_ml,
+      indicator: pink ? 'pale-pink' : 'colorless'
+    };
+  }
+
+  // Reusable chart component. The caller supplies samples calculated by
+  // CHEMSOLVER; this renderer never estimates or modifies pH values itself.
+  function titrationCurve(cv, data, currentResult) {
+    data = data || {};
+    currentResult = currentResult || {};
+    var samples = Array.isArray(data.samples) ? data.samples : [];
+    if (!cv || !samples.length) return;
+    var box = cv.getBoundingClientRect();
+    var width = Math.max(320, box.width || 640), height = Math.max(220, box.height || 320);
+    var dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(width * dpr); cv.height = Math.round(height * dpr);
+    var chart = cv.getContext('2d');
+    chart.setTransform(dpr, 0, 0, dpr, 0, 0);
+    chart.clearRect(0, 0, width, height);
+    var background = chart.createLinearGradient(0, 0, 0, height);
+    background.addColorStop(0, '#fbfdff'); background.addColorStop(1, '#edf5fb');
+    chart.fillStyle = background; chart.fillRect(0, 0, width, height);
+    var pad = { left: 56, right: 22, top: 25, bottom: 43 };
+    var plotW = width - pad.left - pad.right, plotH = height - pad.top - pad.bottom;
+    var maxX = Math.max(1, Number(data.max_ml) || 1);
+    var x = function (value) { return pad.left + Math.max(0, Math.min(maxX, Number(value) || 0)) / maxX * plotW; };
+    var y = function (value) { return pad.top + (14 - Math.max(0, Math.min(14, Number(value) || 0))) / 14 * plotH; };
+    chart.font = '12px system-ui,"Microsoft YaHei",sans-serif'; chart.lineWidth = 1;
+    [0, 7, 14].forEach(function (tick) {
+      var py = y(tick); chart.beginPath(); chart.moveTo(pad.left, py); chart.lineTo(width - pad.right, py);
+      chart.strokeStyle = tick === 7 ? '#adc5d9' : '#d8e5ef';
+      chart.setLineDash(tick === 7 ? [5, 4] : []); chart.stroke(); chart.setLineDash([]);
+      chart.fillStyle = '#526a80'; chart.textAlign = 'right'; chart.textBaseline = 'middle';
+      chart.fillText(String(tick), pad.left - 10, py);
+    });
+    chart.beginPath(); chart.moveTo(pad.left, pad.top); chart.lineTo(pad.left, height - pad.bottom);
+    chart.lineTo(width - pad.right, height - pad.bottom); chart.strokeStyle = '#647b90';
+    chart.lineWidth = 1.5; chart.stroke();
+    chart.beginPath();
+    samples.forEach(function (point, index) {
+      if (index === 0) chart.moveTo(x(point.volume_ml), y(point.pH));
+      else chart.lineTo(x(point.volume_ml), y(point.pH));
+    });
+    chart.strokeStyle = '#e27749'; chart.lineWidth = 3; chart.lineJoin = 'round'; chart.stroke();
+    var equivalence = Number(data.equivalence_ml);
+    if (Number.isFinite(equivalence) && equivalence <= maxX) {
+      var eqX = x(equivalence); chart.beginPath(); chart.moveTo(eqX, pad.top);
+      chart.lineTo(eqX, height - pad.bottom); chart.strokeStyle = '#367fc0'; chart.lineWidth = 1.5;
+      chart.setLineDash([5, 4]); chart.stroke(); chart.setLineDash([]);
+      chart.fillStyle = '#286aa6'; chart.textAlign = 'center'; chart.textBaseline = 'bottom';
+      chart.fillText('当量点 ' + Number(equivalence).toPrecision(4) + ' mL', eqX, pad.top - 3);
+    } else {
+      chart.fillStyle = '#8b5b35'; chart.textAlign = 'right'; chart.textBaseline = 'top';
+      chart.fillText('当量点超出当前图示范围', width - pad.right, pad.top + 4);
+    }
+    chart.beginPath(); chart.arc(x(data.current_ml), y(currentResult.pH), 6, 0, Math.PI * 2);
+    chart.fillStyle = '#fff'; chart.fill(); chart.lineWidth = 3; chart.strokeStyle = '#d65f35'; chart.stroke();
+    chart.fillStyle = '#405a70'; chart.textAlign = 'center'; chart.textBaseline = 'top';
+    chart.fillText('滴入体积（mL）', pad.left + plotW / 2, height - 23);
+    chart.save(); chart.translate(17, pad.top + plotH / 2); chart.rotate(-Math.PI / 2);
+    chart.textAlign = 'center'; chart.textBaseline = 'middle'; chart.fillText('pH', 0, 0); chart.restore();
+    cv.setAttribute('aria-label', '强酸强碱中和滴定曲线；横轴滴入体积，纵轴 pH；蓝色虚线为理论当量点，圆点表示当前状态。');
+    window.__CHEM_TITRATION_CURVE__ = {
+      sampleCount: samples.length, equivalenceVolumeMl: equivalence,
+      currentVolumeMl: Number(data.current_ml), currentPH: Number(currentResult.pH)
+    };
+  }
+
+  // Oxidation-state and electron-transfer diagram. The equation and numeric
+  // electron count remain in the HTML result panel so long equations do not
+  // collide with canvas labels.
+  function redox(cv, result) {
+    result = result || {};
+    ctx = cv.getContext('2d');
+    window.__CHEM_DRAWN__ = true;
+    window.__CHEM_CV__ = cv;
+    fit(cv); begin(); drawBG();
+    var changes = Array.isArray(result.oxidation_changes) ? result.oxidation_changes : [];
+    pill(218, 118, '失电子 · 氧化', '#bd5d3d', 14);
+    pill(662, 118, '得电子 · 还原', '#2e78b7', 14);
+    var lost = Number((result.electron_balance || {}).lost_electrons) || 0;
+    var gained = Number((result.electron_balance || {}).gained_electrons) || 0;
+    ctx.save();
+    ctx.fillStyle = 'rgba(57,126,190,.78)';
+    ctx.beginPath(); ctx.moveTo(370, 187); ctx.lineTo(486, 187); ctx.lineTo(486, 173);
+    ctx.lineTo(512, 198); ctx.lineTo(486, 223); ctx.lineTo(486, 209); ctx.lineTo(370, 209);
+    ctx.closePath(); ctx.fill(); ctx.restore();
+    label(440, 249, '电子守恒  ' + lost + ' e⁻ = ' + gained + ' e⁻',
+      { size: 12, color: '#245c91', weight: 700, stroke: false });
+
+    var oxidized = changes.filter(function (row) { return Number(row.electrons_lost) > 0; });
+    var reduced = changes.filter(function (row) { return Number(row.electrons_gained) > 0; });
+    function drawRows(rows, cx, color, verb) {
+      var shown = rows.slice(0, 4);
+      if (!shown.length) {
+        label(cx, 345, '该方向暂无氧化数变化', { size: 12, color: '#60758a', stroke: false });
+        return;
+      }
+      shown.forEach(function (row, index) {
+        var y = 326 + index * 78;
+        ctx.save();
+        ctx.shadowColor = 'rgba(34,65,91,.10)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
+        rr(cx - 151, y - 26, 302, 54, 14);
+        ctx.fillStyle = 'rgba(255,255,255,.93)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(122,158,188,.38)'; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.restore();
+        var stateText = function (value) { return Number(value) > 0 ? '+' + value : String(value); };
+        label(cx - 105, y + 2, row.element, { size: 16, color: color, weight: 700, stroke: false, align: 'center' });
+        label(cx + 7, y + 2, stateText(row.before) + ' → ' + stateText(row.after),
+          { size: 13, color: '#203c55', weight: 600, stroke: false, align: 'center' });
+        label(cx, y + 22, verb + ' ' + (Number(row.electrons_lost) || Number(row.electrons_gained)) + ' e⁻',
+          { size: 10.5, color: color, weight: 700, stroke: false, align: 'center' });
+      });
+    }
+    drawRows(oxidized, 218, '#ad4c31', '失去');
+    drawRows(reduced, 662, '#236ca7', '得到');
+    var desc = '氧化还原电子守恒图：' + oxidized.map(function (row) {
+      return row.element + ' 氧化数 ' + row.before + ' 升至 ' + row.after;
+    }).join('；') + '；' + reduced.map(function (row) {
+      return row.element + ' 氧化数 ' + row.before + ' 降至 ' + row.after;
+    }).join('；') + '；失电子和得电子均为 ' + lost + '。';
+    cv.setAttribute('aria-label', desc);
+    var tip = document.getElementById('tip'); if (tip) tip.textContent = desc;
+    window.__CHEM_REDOX_STATE__ = { medium: result.medium, lost_electrons: lost,
+      gained_electrons: gained, oxidation_changes: changes };
+  }
+
+  // Precipitation experiment: keep the demonstration area as apparatus only.
+  // The quantitative mass and net ionic equation remain in the HTML results panel.
+  function precipitation(cv, result) {
+    result = result || {};
+    ctx = cv.getContext('2d');
+    window.__CHEM_DRAWN__ = true;
+    window.__CHEM_CV__ = cv;
+    fit(cv); begin(); drawBG();
+    var formula = safeText(result.precipitate_formula, '沉淀');
+    var progress = Math.max(0, Math.min(1, Number(result.progress) || 0));
+    var sedimentFraction = Number(result.max_extent_mol) > 0
+      ? Math.max(0, Math.min(1, Number(result.precipitate_moles) /
+        (Number(result.max_extent_mol) * ((result.products || []).find(function (item) {
+          return item.formula === formula;
+        }) || {}).coefficient))) : 0;
+    var sedimentColor = formula === 'Cu(OH)2' ? ['#9bd8ed', '#348eb6']
+      : formula === 'Fe(OH)3' ? ['#d8a06c', '#97572f'] : ['#f4f4ed', '#b7c1c8'];
+
+    drawBeaker(190, 470, { V: 72, coat: 0, t: 0.08 });
+    drawBeaker(660, 470, { V: 72, coat: 0, t: 0.08 });
+
+    // Granular sediment sits inside the second beaker; grain locations are fixed
+    // so re-rendering the same amount produces the same apparatus drawing.
+    if (sedimentFraction > 0) {
+      ctx.save(); ctx.translate(660, 470); bodyPath(); ctx.clip();
+      var bedHeight = 4 + 18 * sedimentFraction;
+      ctx.beginPath();
+      ctx.moveTo(-64, -7); ctx.quadraticCurveTo(-46, -bedHeight, -22, -bedHeight + 2);
+      ctx.quadraticCurveTo(0, -bedHeight - 4, 24, -bedHeight + 1);
+      ctx.quadraticCurveTo(47, -bedHeight + 4, 64, -7); ctx.closePath();
+      var bed = ctx.createLinearGradient(0, -bedHeight, 0, 0);
+      bed.addColorStop(0, sedimentColor[0]); bed.addColorStop(1, sedimentColor[1]);
+      ctx.fillStyle = bed; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 1.4; ctx.stroke();
+      var grainCount = Math.round(8 + sedimentFraction * 26);
+      for (var grain = 0; grain < grainCount; grain++) {
+        var gx = -52 + SPK[grain] * 104;
+        var gy = -5 - SPK[grain + 52] * Math.max(2, bedHeight - 2);
+        ctx.beginPath(); ctx.ellipse(gx, gy, 1.5 + SPK[grain + 92] * 3,
+          1 + SPK[grain + 122] * 2.1, SPK[grain + 152] * Math.PI, 0, Math.PI * 2);
+        ctx.fillStyle = grain % 3 ? sedimentColor[0] : sedimentColor[1]; ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,.45)'; ctx.lineWidth = .6; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    pill(190, 112, '混合前 · 两份溶液', '#527b9e', 13);
+    pill(660, 112, '混合后 · ' + formula + (sedimentFraction > 0 ? ' 沉淀' : '待反应'), '#1b62b0', 13);
+    label(190, 507, '澄清溶液', { size: 12, color: '#315875', weight: 600, stroke: false });
+    label(660, 507, sedimentFraction > 0 ? '沉淀颗粒沉降' : '尚未生成沉淀',
+      { size: 12, color: '#315875', weight: 600, stroke: false });
+    ctx.save();
+    ctx.fillStyle = 'rgba(55,126,190,.78)';
+    ctx.beginPath(); ctx.moveTo(386, 320); ctx.lineTo(468, 320); ctx.lineTo(468, 307);
+    ctx.lineTo(497, 333); ctx.lineTo(468, 359); ctx.lineTo(468, 346); ctx.lineTo(386, 346);
+    ctx.closePath(); ctx.fill(); ctx.restore();
+    label(440, 292, progress >= 1 ? '混合反应' : '反应进度 ' + Math.round(progress * 100) + '%',
+      { size: 13, color: '#245c91', weight: 700, stroke: false });
+    var desc = '沉淀反应装置：左侧为混合前溶液，右侧为反应后溶液；' +
+      (sedimentFraction > 0 ? '生成 ' + formula + ' 固体沉淀。' : '当前没有可见沉淀。');
+    cv.setAttribute('aria-label', desc);
+    var tip = document.getElementById('tip'); if (tip) tip.textContent = desc;
+    window.__CHEM_PRECIPITATION_STATE__ = {
+      reaction_id: result.reaction_id, precipitate_formula: formula,
+      precipitate_moles: result.precipitate_moles, precipitate_mass_g: result.precipitate_mass_g,
+      precipitation_occurs: !!result.precipitation_occurs, progress: progress,
+      sediment_fraction: sedimentFraction
+    };
+  }
+
+  // Ksp equilibrium scene: suspended ions, an undissolved crystal and a
+  // reversible interface communicate dynamic equilibrium without embedding
+  // a bitmap or implying a reaction yield that the solver does not compute.
+  function solubility(cv, result) {
+    result = result || {};
+    ctx = cv.getContext('2d');
+    window.__CHEM_DRAWN__ = true;
+    window.__CHEM_CV__ = cv;
+    fit(cv); begin(); drawBG();
+    var state = result.saturation_state || 'unknown';
+    var formula = safeText(result.solid_formula, '难溶盐');
+    var dissolvedRaw = result.molar_solubility_mol_L;
+    var dissolved = typeof dissolvedRaw === 'number' ? dissolvedRaw : Number.NaN;
+    var ions = Array.isArray(result.ions) ? result.ions : [];
+    drawBeaker(410, 468, { V: 82, coat: 0, t: 0.08 });
+
+    var saturationColor = state === 'supersaturated' ? '#b85b43'
+      : state === 'saturated' ? '#8a6a2e' : '#247b72';
+    var labelText = state === 'supersaturated' ? '过饱和 · 有沉淀倾向'
+      : state === 'saturated' ? '饱和 · 动态平衡' : '未饱和 · 可继续溶解';
+    pill(410, 116, formula + ' 溶解平衡', '#1b62b0', 14);
+    pill(410, 164, labelText, saturationColor, 13);
+
+    // The crystalline phase rests on the beaker bottom; facets and highlights
+    // suggest a granular solid rather than a flat color patch.
+    ctx.save();
+    ctx.shadowColor = 'rgba(47,62,75,.22)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 4;
+    ctx.beginPath(); ctx.moveTo(357, 535); ctx.lineTo(376, 512); ctx.lineTo(391, 520);
+    ctx.lineTo(410, 501); ctx.lineTo(427, 518); ctx.lineTo(443, 508); ctx.lineTo(465, 535);
+    ctx.quadraticCurveTo(412, 547, 357, 535); ctx.closePath();
+    var crystal = ctx.createLinearGradient(0, 502, 0, 545);
+    crystal.addColorStop(0, '#f5f6f2'); crystal.addColorStop(.45, '#c6d0d7'); crystal.addColorStop(1, '#8798a4');
+    ctx.fillStyle = crystal; ctx.fill(); ctx.strokeStyle = '#718594'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.restore();
+    ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.86)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(377, 522); ctx.lineTo(389, 529); ctx.lineTo(410, 508);
+    ctx.lineTo(426, 526); ctx.lineTo(442, 516); ctx.stroke(); ctx.restore();
+
+    // Keep the visual response continuous.  The old renderer only used the
+    // three state labels, so changing Ksp or a concentration inside the same
+    // state produced an identical picture.  Teachers need the apparatus to
+    // acknowledge every parameter change, not only threshold crossings.
+    var logKsp = Number(result.Ksp);
+    var kspLevel = Number.isFinite(logKsp) && logKsp > 0
+      ? Math.max(0, Math.min(1, (Math.log10(logKsp) + 12) / 18)) : 0;
+    var ratio = Number(result.saturation_ratio);
+    var ratioLevel = Number.isFinite(ratio) && ratio > 0
+      ? Math.max(0, Math.min(1, (Math.log10(ratio) + 6) / 8)) : 0;
+    var backgroundLevel = ions.reduce(function (sum, ion) {
+      return sum + Math.max(0, Number(ion.initial_concentration_mol_L) || 0);
+    }, 0);
+    var concentrationLevel = Math.max(0, Math.min(1, backgroundLevel / 0.2));
+    var visualLevel = Math.max(0, Math.min(1,
+      0.18 + 0.42 * kspLevel + 0.28 * ratioLevel + 0.32 * concentrationLevel));
+    var ionCount = Math.max(6, Math.min(24, Math.round(6 + 15 * visualLevel)));
+    for (var i = 0; i < ionCount; i++) {
+      var x = 342 + SPK[i + 12] * 135, y = 286 + SPK[i + 42] * 194;
+      var ion = ions[i % Math.max(ions.length, 1)] || {};
+      var color = (ion.charge || 0) > 0 ? '#4c8bc4' : '#d58b4d';
+      ctx.save(); ctx.shadowColor = 'rgba(28,60,88,.15)'; ctx.shadowBlur = 4;
+      var particleRadius = 5.5 + 3.5 * visualLevel + (i % 3);
+      ctx.beginPath(); ctx.arc(x, y, particleRadius, 0, Math.PI * 2);
+      var bead = ctx.createRadialGradient(x - 2, y - 3, 1, x, y, 9);
+      bead.addColorStop(0, '#ffffff'); bead.addColorStop(.25, color); bead.addColorStop(1, '#31536c');
+      ctx.fillStyle = bead; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.86)'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.restore();
+    }
+    // Two opposing arrows mark dissolution and crystallization as reversible.
+    ctx.save(); ctx.lineWidth = 3; ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(44,117,170,' + (0.46 + 0.46 * visualLevel).toFixed(3) + ')';
+    ctx.beginPath(); ctx.moveTo(345, 468); ctx.quadraticCurveTo(318, 445, 338, 421); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(338, 421); ctx.lineTo(328, 424); ctx.moveTo(338, 421); ctx.lineTo(339, 432); ctx.stroke();
+    ctx.strokeStyle = 'rgba(185,112,59,' + (0.46 + 0.46 * (1 - visualLevel)).toFixed(3) + ')';
+    ctx.beginPath(); ctx.moveTo(470, 421); ctx.quadraticCurveTo(497, 445, 477, 468); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(477, 468); ctx.lineTo(487, 465); ctx.moveTo(477, 468); ctx.lineTo(476, 457); ctx.stroke();
+    ctx.restore();
+    label(283, 444, '溶解', { size: 12, color: '#2c75aa', weight: 600, stroke: false });
+    label(536, 444, '结晶', { size: 12, color: '#a96332', weight: 600, stroke: false });
+    label(410, 578, state === 'supersaturated' ? '离子积 Q > Ksp'
+      : 'Ksp = 离子浓度幂次乘积 · 动态示意', { size: 13, color: '#315875', weight: 700, stroke: false });
+    // A compact visual meter makes even within-state changes legible in a
+    // classroom: the particle field and this meter are driven by the same
+    // continuous value.
+    ctx.save();
+    rr(300, 596, 220, 10, 5); ctx.fillStyle = 'rgba(207,225,237,.82)'; ctx.fill();
+    rr(300, 596, 220 * visualLevel, 10, 5); ctx.fillStyle = state === 'supersaturated' ? '#b85b43' : '#438bd2'; ctx.fill();
+    ctx.restore();
+    label(410, 619, '当前条件示意强度 ' + Math.round(visualLevel * 100) + '%',
+      { size: 11, color: '#607b91', weight: 600, stroke: false });
+
+    var desc = formula + ' 溶解平衡：' + labelText + '；初始离子积 Q=' +
+      (Number.isFinite(Number(result.initial_ion_product)) ? Number(result.initial_ion_product).toExponential(3) : '0') +
+      '，Ksp=' + Number(result.Ksp).toExponential(3) +
+      (Number.isFinite(dissolved) ? '；摩尔溶解度 s=' + dissolved.toExponential(3) + ' mol/L' : '；不计算过饱和后的沉淀量');
+    cv.setAttribute('aria-label', desc);
+    var tip = document.getElementById('tip'); if (tip) tip.textContent = desc;
+    window.__CHEM_KSP_STATE__ = { solid_formula: formula, saturation_state: state,
+      molar_solubility_mol_L: Number.isFinite(dissolved) ? dissolved : null,
+      precipitation_expected: !!result.precipitation_expected,
+      visual_level: visualLevel, particle_count: ionCount };
+  }
+
+  // Gas preparation and collection. The picture is intentionally a single
+  // apparatus scene: state/quantity comes from the solver; this function only
+  // visualizes a reaction flask and either a gas syringe or water trough.
+  function gasCollection(cv, result) {
+    result = result || {};
+    ctx = cv.getContext('2d');
+    window.__CHEM_DRAWN__ = true;
+    window.__CHEM_CV__ = cv;
+    fit(cv); begin(); drawBG();
+    var progress = Math.max(0, Math.min(1, Number(result.progress) || 0));
+    var volume = Math.max(0, Number(result.gas_volume_l) || 0);
+    var gas = safeText(result.gas_formula, '气体');
+    var wet = result.collection_method === 'over_water';
+
+    // Reaction flask, thick glass, stopper and reagent surface.
+    ctx.save();
+    ctx.shadowColor = 'rgba(28,52,75,.18)'; ctx.shadowBlur = 13; ctx.shadowOffsetY = 7;
+    ctx.beginPath(); ctx.ellipse(205, 574, 132, 19, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(41,72,98,.13)'; ctx.fill(); ctx.restore();
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(177, 284); ctx.lineTo(233, 284); ctx.lineTo(237, 392);
+    ctx.lineTo(304, 526); ctx.quadraticCurveTo(313, 546, 295, 558);
+    ctx.quadraticCurveTo(205, 579, 115, 558); ctx.quadraticCurveTo(97, 546, 106, 526);
+    ctx.lineTo(173, 392); ctx.closePath();
+    var flask = ctx.createLinearGradient(106, 300, 304, 300);
+    flask.addColorStop(0, 'rgba(174,209,230,.72)'); flask.addColorStop(.2, 'rgba(255,255,255,.68)');
+    flask.addColorStop(.72, 'rgba(242,250,255,.34)'); flask.addColorStop(1, 'rgba(150,190,217,.72)');
+    ctx.fillStyle = flask; ctx.fill(); ctx.strokeStyle = '#86abc5'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(180, 291); ctx.lineTo(230, 291); ctx.lineTo(233, 392);
+    ctx.lineTo(296, 528); ctx.quadraticCurveTo(303, 544, 289, 550);
+    ctx.quadraticCurveTo(205, 568, 121, 550); ctx.quadraticCurveTo(108, 544, 115, 528);
+    ctx.lineTo(177, 392); ctx.closePath(); ctx.clip();
+    var liquidTop = 479 - 24 * progress;
+    var liquid = ctx.createLinearGradient(0, liquidTop, 0, 560);
+    liquid.addColorStop(0, 'rgba(168,224,240,.62)'); liquid.addColorStop(1, 'rgba(50,133,182,.72)');
+    ctx.fillStyle = liquid; ctx.fillRect(100, liquidTop, 210, 100);
+    ctx.beginPath(); ctx.ellipse(205, liquidTop, 91, 9, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(239,251,255,.85)'; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.88)'; ctx.stroke();
+    for (var bubble = 0; bubble < Math.round(3 + 16 * progress); bubble++) {
+      var bx = 168 + SPK[bubble] * 74, by = liquidTop + 16 + SPK[bubble + 22] * 56;
+      ctx.beginPath(); ctx.arc(bx, by, 2 + SPK[bubble + 44] * 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(238,251,255,.78)'; ctx.fill();
+    }
+    ctx.restore();
+    ctx.beginPath(); ctx.ellipse(205, 284, 29, 7, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(241,248,252,.95)'; ctx.fill(); ctx.strokeStyle = '#748b9c'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#687986'; rr(194, 268, 22, 24, 5); ctx.fill();
+    ctx.restore();
+
+    // Delivery tube with a soft glass highlight and moving-state bubbles.
+    ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#7896aa'; ctx.lineWidth = 15;
+    ctx.beginPath(); ctx.moveTo(205, 270); ctx.lineTo(205, 228); ctx.quadraticCurveTo(205, 210, 224, 210);
+    ctx.lineTo(572, 210); ctx.quadraticCurveTo(594, 210, 594, 232); ctx.lineTo(594, wet ? 412 : 348); ctx.stroke();
+    ctx.strokeStyle = 'rgba(246,252,255,.86)'; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(201, 270); ctx.lineTo(201, 228); ctx.quadraticCurveTo(201, 214, 224, 214);
+    ctx.lineTo(572, 214); ctx.quadraticCurveTo(590, 214, 590, 232); ctx.lineTo(590, wet ? 412 : 348); ctx.stroke();
+    ctx.restore();
+    for (var tb = 0; tb < Math.round(progress * 5); tb++) {
+      var tx = 286 + tb * 45;
+      ctx.beginPath(); ctx.arc(tx, 210, 4.2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(103,190,225,.88)'; ctx.fill();
+    }
+
+    if (wet) {
+      // Water trough and inverted graduated gas jar.
+      ctx.save(); ctx.shadowColor = 'rgba(30,58,82,.16)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 6;
+      rr(472, 478, 355, 120, 10);
+      var trough = ctx.createLinearGradient(0, 478, 0, 598);
+      trough.addColorStop(0, 'rgba(224,245,252,.88)'); trough.addColorStop(1, 'rgba(134,194,220,.74)');
+      ctx.fillStyle = trough; ctx.fill(); ctx.strokeStyle = '#8db7ce'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.beginPath(); ctx.rect(479, 486, 341, 104); ctx.clip();
+      var water = ctx.createLinearGradient(0, 490, 0, 596);
+      water.addColorStop(0, 'rgba(119,202,232,.45)'); water.addColorStop(1, 'rgba(51,142,190,.68)');
+      ctx.fillStyle = water; ctx.fillRect(480, 493, 340, 105); ctx.restore();
+      var gasBottom = 490 - 170 * progress;
+      ctx.save(); ctx.beginPath(); ctx.moveTo(548, 273); ctx.lineTo(640, 273); ctx.lineTo(640, 492);
+      ctx.moveTo(548, 273); ctx.lineTo(548, 492); ctx.strokeStyle = '#85a9c0'; ctx.lineWidth = 4; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(552, gasBottom); ctx.lineTo(636, gasBottom); ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(552, 280); ctx.lineTo(552, gasBottom); ctx.lineTo(636, gasBottom); ctx.lineTo(636, 280);
+      ctx.closePath();
+      var gasFill = ctx.createLinearGradient(552, 280, 636, gasBottom);
+      gasFill.addColorStop(0, 'rgba(246,252,255,.32)'); gasFill.addColorStop(1, 'rgba(189,219,235,.26)');
+      ctx.fillStyle = gasFill; ctx.fill();
+      ctx.restore();
+      // Collection bubbles rise from the delivery tube into the inverted jar.
+      for (var wb = 0; wb < Math.round(2 + 7 * progress); wb++) {
+        var wy = 454 - (wb * 21 % Math.max(25, 170 * Math.max(progress, .18)));
+        ctx.beginPath(); ctx.arc(594 + Math.sin(wb * 2) * 5, wy, 3 + (wb % 2), 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(235,250,255,.94)'; ctx.fill(); ctx.strokeStyle = '#78b8d5'; ctx.lineWidth = 1; ctx.stroke();
+      }
+      ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.moveTo(562, 292); ctx.lineTo(562, 408); ctx.stroke(); ctx.restore();
+    } else {
+      // Dry collection with a horizontal gas syringe and movable plunger.
+      ctx.save(); ctx.shadowColor = 'rgba(30,58,82,.16)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 6;
+      rr(550, 300, 287, 94, 18);
+      var syringe = ctx.createLinearGradient(550, 300, 550, 394);
+      syringe.addColorStop(0, 'rgba(238,248,253,.86)'); syringe.addColorStop(.45, 'rgba(255,255,255,.54)');
+      syringe.addColorStop(1, 'rgba(177,211,231,.72)');
+      ctx.fillStyle = syringe; ctx.fill(); ctx.strokeStyle = '#81a8c0'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.restore();
+      var pistonX = 610 + (1 - progress) * 150;
+      ctx.save(); ctx.strokeStyle = '#718493'; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.moveTo(pistonX, 302); ctx.lineTo(pistonX, 392); ctx.stroke();
+      ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(pistonX, 347); ctx.lineTo(836, 347); ctx.stroke();
+      ctx.lineWidth = 10; ctx.beginPath(); ctx.moveTo(836, 326); ctx.lineTo(836, 368); ctx.stroke();
+      ctx.restore();
+      for (var tick = 0; tick < 7; tick++) {
+        ctx.beginPath(); ctx.moveTo(604 + tick * 32, 380); ctx.lineTo(604 + tick * 32, tick % 2 ? 367 : 360);
+        ctx.strokeStyle = '#7393a8'; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+    }
+
+    // All text is painted after glassware and tubing to keep labels readable.
+    pill(205, 620, '反应发生器', '#1b62b0', 13);
+    pill(wet ? 595 : 690, 252, wet ? '排水集气 · ' + gas : '干燥集气 · ' + gas, '#527b9e', 13);
+    pill(wet ? 700 : 690, 430, gas + ' · ' + volume.toFixed(2) + ' L', '#1b62b0', 15);
+    label(205, 650, '反应液与气泡', { size: 11, color: '#49677d', stroke: false });
+    label(435, 172, '导气管', { size: 11, color: '#49677d', stroke: false });
+    // 右下说明文字按右边缘对齐，给不同视口留出画布内安全边距。
+    label(868, 586, '温度 ' + Number(result.temperature_c).toFixed(1) + ' °C  ·  干气分压 ' +
+      Number(result.dry_gas_partial_pressure_kpa).toFixed(2) + ' kPa',
+      { size: 10, align: 'right', color: '#49677d', stroke: false });
+    var desc = '气体制取与收集装置：' + gas + '，理论收集体积 ' + volume.toFixed(2) + ' L；' +
+      (wet ? '采用排水集气并扣除水蒸气压。' : '采用干燥集气。');
+    cv.setAttribute('aria-label', desc);
+    var tip = document.getElementById('tip'); if (tip) tip.textContent = desc;
+    window.__CHEM_GAS_COLLECTION_STATE__ = {
+      gas_formula: result.gas_formula, gas_volume_l: result.gas_volume_l,
+      collection_method: result.collection_method, gas_moles: result.gas_moles,
+      pressure_kpa: result.dry_gas_partial_pressure_kpa
+    };
   }
 
   // 统一化学实验的阶段版式：所有化学过程共用图一的蓝白实验室、玻璃高光、
@@ -965,5 +1535,7 @@
   }
   scheduleAuto();
 
-  window.CHEM = { scene: scene, stages: stages, fit: fit, auto: autoScene };
+  window.CHEM = { scene: scene, titration: titration, titrationCurve: titrationCurve, gasCollection: gasCollection,
+    precipitation: precipitation, solubility: solubility, redox: redox,
+    stages: stages, fit: fit, auto: autoScene };
 })();

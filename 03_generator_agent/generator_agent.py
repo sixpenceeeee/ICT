@@ -49,6 +49,22 @@ except Exception as exc:                      # noqa: BLE001
 
 from prompts import GENERATOR_SYSTEM_PROMPT, build_user_prompt
 from scene_registry import required_scene_call, required_solver_call, select_page_skeleton
+from solver_templates import (render_solver_template, ksp_template_values, resolve_ksp_config,
+                              resolve_acid_base_titration_config, titration_template_values,
+                              resolve_precipitation_config, precipitation_template_values,
+                              resolve_gas_collection_config, gas_collection_template_values,
+                              resolve_redox_config, redox_template_values,
+                              resolve_stoich_config, stoich_template_values,
+                              resolve_mix_config, mix_template_values)
+from math_page_plan import MathPlanError
+from scene_renderer import render_registered_scene
+
+
+SUPPLEMENT_SCENE_IDS = {
+    "biology-enzyme", "biology-respiration", "biology-ecosystem-foodweb",
+    "geography-scale-distance", "geography-climate-reading", "geography-population-resources",
+    "informatics-binary-representation", "informatics-data-visualization", "informatics-sensor-control",
+}
 
 
 # ============ 1. 找最新的输入文件 ============
@@ -86,6 +102,8 @@ def load_inputs(req_path, kb_path):
         kb_raw = json.load(f)
 
     req = req_raw.get("output", req_raw)
+    if req_raw.get("input"):
+        req = dict(req, 原始需求=req_raw["input"])
     pack = kb_raw.get("knowledge_pack", {})
     return req, pack, req_path, kb_path
 
@@ -112,7 +130,24 @@ def clean_sections(text):
     return secs
 
 
-def hard_validate(secs, req=None):
+JS_IDENTIFIER = r"[A-Za-z_$][\w$]*"
+
+
+def solver_result_names(code, solver):
+    """Accept initialization and later assignment, including inside try blocks."""
+    solver_call = r"\s*\.\s*".join(map(re.escape, solver.split(".")))
+    return set(re.findall(
+        rf"(?<![\w$.])({JS_IDENTIFIER})\s*=(?!=)\s*{solver_call}\s*\(", code))
+
+
+def draws_solver_result(code, solver, drawing):
+    drawing_call = r"\s*\.\s*".join(map(re.escape, drawing.split(".")))
+    drawn = set(re.findall(
+        rf"{drawing_call}\s*\(\s*[^,]+,\s*[^,]+,\s*({JS_IDENTIFIER})\s*\)", code))
+    return bool(solver_result_names(code, solver) & drawn)
+
+
+def hard_validate(secs, req=None, *, managed_readouts=False):
     """生成阶段的硬校验比审查宽松些，只卡"装配不出来"的问题。"""
     problems = []
 
@@ -128,14 +163,221 @@ def hard_validate(secs, req=None):
     skeleton = select_page_skeleton(req or {})
     required_scene = required_scene_call(req or {})
     required_solver = required_solver_call(req or {})
+    component_api = skeleton.get("component_api")
     js_code = re.sub(r"/\*.*?\*/|//[^\r\n]*", "", secs.get("js") or "", flags=re.S)
-    if required_scene and not re.search(required_scene[0], js_code, re.I):
+    composite_volume = (skeleton.get("solver_api") == "MATH.solveSolidVolume"
+                        and bool(re.search(r"MATH\s*\.\s*solveCompositeVolume\s*\(", js_code)))
+    if (required_scene and not composite_volume
+            and "DISPLAYRULES." not in js_code
+            and not re.search(required_scene[0], js_code, re.I)):
         problems.append("选定骨架 %s 要求页面脚本实际调用 %s，不能只在注释中提及或另写简化手绘"
                         % (skeleton["id"], required_scene[1]))
     if required_solver:
-        if not re.search(required_solver[0], js_code, re.I):
+        solver_or_component = re.search(required_solver[0], js_code, re.I)
+        if component_api:
+            component_pattern = re.escape(component_api).replace(r"\.", r"\s*\.\s*") + r"\s*\("
+            solver_or_component = solver_or_component or re.search(component_pattern, js_code, re.I)
+        if not composite_volume and not solver_or_component:
             problems.append("选定骨架 %s 必须在 render 中调用学科求解器 %s" % (skeleton["id"], required_solver[1]))
-        if skeleton.get("solver_api") == "CIRCUIT.solve":
+        if skeleton.get("solver_api") == "CHEMSOLVER.balanceEquation":
+            for marker in ("__CHEM_BALANCE_REQUEST__", "__CHEM_BALANCE_RESULT__"):
+                if marker not in js_code:
+                    problems.append("化学方程式配平页必须暴露 %s，供质量审查独立复算" % marker)
+            if "data-chem-balance-equation" not in ((secs.get("2") or "") + js_code):
+                problems.append("可见配平结果必须标记 data-chem-balance-equation，供审查器核对实际显示内容")
+            if not re.search(r"\.\s*equation\b", js_code, re.I) or not re.search(r"\.\s*atom_counts\b", js_code, re.I):
+                problems.append("配平后的方程式和原子数对照必须读取求解器返回结果，不能手写系数或计数")
+            if not re.search(r"\.\s*checks\s*\.\s*ok\b", js_code, re.I):
+                problems.append("只有求解器 checks.ok 为 true 时才能显示配平成功；失败时必须呈现错误状态")
+            if skeleton.get("id") == "chemistry-equation-balance":
+                controls_html = "\n".join((secs.get("3") or "", secs.get("4") or "", visual))
+                for marker in ("data-chem-balance-coefficient-side", "data-chem-balance-coefficient-index",
+                               "data-chem-balance-student-check"):
+                    if marker not in controls_html:
+                        problems.append("方程式配平交互必须标记学生系数输入和校验结果 %s，供浏览器变形测试" % marker)
+                for token in ("checkCoefficients", "__CHEM_BALANCE_STUDENT_COEFFICIENTS__",
+                              "__CHEM_BALANCE_STUDENT_CHECK__"):
+                    if token not in js_code:
+                        problems.append("方程式配平交互必须调用/暴露 %s，供浏览器核验学生系数变形" % token)
+        if skeleton.get("solver_api") == "CHEMSOLVER.solveStoichiometry":
+            for marker in ("__CHEM_STOICH_REQUEST__", "__CHEM_STOICH_RESULT__"):
+                if marker not in js_code:
+                    problems.append("反应计量页面必须暴露 %s，供质量审查独立复算" % marker)
+            if "data-chem-stoich-equation" not in ((secs.get("2") or "") + js_code):
+                problems.append("可见反应方程式必须标记 data-chem-stoich-equation，供审查器核对实际显示内容")
+            controls_html = "\n".join((secs.get("3") or "", secs.get("4") or "", visual))
+            if "data-chem-stoich-amount-index" not in controls_html or "data-chem-stoich-progress" not in controls_html:
+                problems.append("限量试剂页面必须标记可见物质的量与反应进度控件，供审查器核对控件值和计算请求")
+            progress_control = re.search(
+                r'<input\b[^>]*\bdata-chem-stoich-progress\b[^>]*>', controls_html, re.I)
+            progress_max = r'1(?:\.0+)?' if skeleton.get("id") != "chemistry-reaction-compare" else r'60(?:\.0+)?'
+            if not progress_control or not re.search(r'\bmin=["\']0(?:\.0+)?["\']', progress_control.group(0), re.I) or not re.search(
+                    r'\bmax=["\']%s["\']' % progress_max, progress_control.group(0), re.I):
+                problems.append("反应时间/进度控件必须是可操作的 input，范围覆盖当前场景要求的起点到终点")
+            for field in ("max_extent_mol", "extent_mol", "limiting_reactants", "remaining_mol", "produced_mol", "element_balance"):
+                if not re.search(r"\.\s*%s\b" % re.escape(field), js_code, re.I):
+                    problems.append("反应计量页面必须从求解结果读取 %s，不能手写理论量" % field)
+            if not re.search(r"\.\s*checks\s*\.\s*ok\b", js_code, re.I):
+                problems.append("只有求解器 checks.ok 为 true 时才能显示反应计量结果；失败时必须呈现错误状态")
+        if skeleton.get("solver_api") == "CHEMSOLVER.solveSolutionMixing":
+            for marker in ("__CHEM_MIX_REQUEST__", "__CHEM_MIX_RESULT__"):
+                if marker not in js_code:
+                    problems.append("溶液混合反应页面必须暴露 %s，供质量审查独立复算" % marker)
+            if "data-chem-mix-equation" not in ((secs.get("2") or "") + js_code):
+                problems.append("可见反应方程式必须标记 data-chem-mix-equation，供审查器核对实际显示内容")
+            controls_html = "\n".join((secs.get("3") or "", secs.get("4") or "", visual))
+            control_markers = ("data-chem-mix-concentration-index", "data-chem-mix-volume-index",
+                               "data-chem-mix-unit-index", "data-chem-mix-progress")
+            if any(marker not in controls_html for marker in control_markers):
+                problems.append("溶液混合页必须标记浓度、体积、单位和反应进度控件，供审查器验证输入联动")
+            for field in ("solution_inputs", "initial_amounts_mol", "limiting_reactants",
+                          "max_extent_mol", "remaining_mol", "produced_mol", "element_balance"):
+                if not re.search(r"\.\s*%s\b" % re.escape(field), js_code, re.I):
+                    problems.append("溶液混合页面必须从求解结果读取 %s，不能手写换算或理论量" % field)
+            if not re.search(r"\.\s*checks\s*\.\s*ok\b", js_code, re.I):
+                problems.append("只有求解器 checks.ok 为 true 时才能显示溶液混合计算结果")
+        if skeleton.get("solver_api") == "CHEMSOLVER.solvePrecipitation":
+            for marker in ("__CHEM_PRECIP_REQUEST__", "__CHEM_PRECIP_RESULT__"):
+                if marker not in js_code:
+                    problems.append("沉淀反应页面必须暴露 %s，供变形测试和独立审查复算" % marker)
+            content_html = "\n".join((secs.get("2") or "", secs.get("3") or "",
+                                       secs.get("4") or "", secs.get("5") or "", visual, js_code))
+            for marker in ("data-chem-precip-equation", "data-chem-precip-net-ionic",
+                           "data-chem-precip-mass"):
+                if marker not in content_html:
+                    problems.append("沉淀反应页面必须标记可见输出 %s，供审查器核验" % marker)
+            controls_html = "\n".join((secs.get("3") or "", secs.get("4") or "", visual))
+            for marker in ("data-chem-precip-concentration-index", "data-chem-precip-volume-index",
+                           "data-chem-precip-unit-index", "data-chem-precip-progress"):
+                if marker not in controls_html:
+                    problems.append("沉淀反应页面必须提供并标记真实控件 %s，供页面变形测试" % marker)
+            if not re.search(r"CHEM\s*\.\s*precipitation\s*\(", js_code, re.I):
+                problems.append("沉淀反应演示必须调用 CHEM.precipitation(cv,result)，由求解结果绘制沉淀")
+            for field in ("precipitate_formula", "precipitate_moles", "precipitate_mass_g",
+                          "limiting_reactants", "net_ionic_equation"):
+                if not re.search(r"\.\s*%s\b" % re.escape(field), js_code, re.I):
+                    problems.append("沉淀反应页面必须从求解结果读取 %s，不能手写计算" % field)
+            if not re.search(r"\.\s*checks\s*\.\s*ok\b", js_code, re.I):
+                problems.append("只有求解器 checks.ok 为 true 时才能显示沉淀质量；失败时须显示错误状态")
+        if skeleton.get("solver_api") == "CHEMSOLVER.solveSolubilityEquilibrium":
+            for marker in ("__CHEM_KSP_REQUEST__", "__CHEM_KSP_RESULT__"):
+                if marker not in js_code:
+                    problems.append("Ksp 页面必须暴露 %s，供页面变形测试和独立复算" % marker)
+            content_html = "\n".join((secs.get("2") or "", secs.get("3") or "",
+                                       secs.get("4") or "", secs.get("5") or "", visual, js_code))
+            for marker in ("data-chem-ksp-equation", "data-chem-ksp-expression", "data-chem-ksp-ion-product",
+                           "data-chem-ksp-state", "data-chem-ksp-solubility"):
+                if marker not in content_html:
+                    problems.append("Ksp 页面必须标记可见结果 %s，供审查器核验" % marker)
+            controls_html = "\n".join((secs.get("3") or "", secs.get("4") or "", visual))
+            ksp_control = re.search(r'<input\b[^>]*\bdata-chem-ksp-value\b[^>]*>', controls_html, re.I)
+            if not ksp_control or not re.search(r'\btype=["\']number["\']', ksp_control.group(0), re.I) or not re.search(
+                    r'\bstep=["\']any["\']', ksp_control.group(0), re.I):
+                problems.append("Ksp 必须使用 step=any 的 number 控件，支持溶度积数量级输入和页面变形")
+            ion_controls = re.findall(
+                r'<input\b[^>]*\bdata-chem-ksp-ion-index=["\'][^"\']+["\'][^>]*>', controls_html, re.I)
+            if len(ion_controls) < 2 or any(
+                    not re.search(r'\btype=["\']number["\']', tag, re.I) or
+                    not re.search(r'\bmin=["\']0(?:\.0+)?["\']', tag, re.I) or
+                    not re.search(r'\bstep=["\']any["\']', tag, re.I) for tag in ion_controls):
+                problems.append("Ksp 页面至少需要两个 min=0、step=any 的 number 离子浓度控件")
+            if not re.search(r"CHEM\s*\.\s*solubility\s*\(", js_code, re.I):
+                problems.append("Ksp 演示必须调用 CHEM.solubility(cv,result)，图示与求解结果同源")
+            for field in ("dissolution_equation", "initial_ion_product", "saturation_state",
+                          "molar_solubility_mol_L", "checks"):
+                if not re.search(r"\.\s*%s\b" % re.escape(field), js_code, re.I):
+                    problems.append("Ksp 页面必须从求解结果读取 %s，不得手写平衡结论" % field)
+            equation_rhs = [rhs.strip() for rhs in re.findall(
+                r"(?:\.textContent|\.innerText|\.innerHTML)\s*=\s*([^;\n]+)", js_code, re.I)
+                if re.search(r"\.\s*dissolution_equation\b", rhs, re.I)]
+            if not equation_rhs or not any(re.fullmatch(
+                    r"[A-Za-z_$][\w$]*\s*\.\s*dissolution_equation", rhs, re.I)
+                    for rhs in equation_rhs) or any("+" in rhs for rhs in equation_rhs):
+                problems.append("Ksp 方程元素必须只显示 result.dissolution_equation；Q 表达式等内容须放入独立元素")
+            if not re.search(r"\.\s*checks\s*\.\s*ok\b", js_code, re.I):
+                problems.append("只有 Ksp 求解器 checks.ok 为 true 时才能显示数值结论；失败时必须显示错误状态")
+        if skeleton.get("solver_api") == "CHEMSOLVER.solveRedox":
+            for marker in ("__CHEM_REDOX_REQUEST__", "__CHEM_REDOX_RESULT__"):
+                if marker not in js_code:
+                    problems.append("氧化还原页面必须暴露 %s，供页面变形测试和独立复算" % marker)
+            content_html = "\n".join((secs.get("2") or "", secs.get("3") or "",
+                                       secs.get("4") or "", secs.get("5") or "", visual, js_code))
+            for marker in ("data-chem-redox-equation", "data-chem-redox-electrons",
+                           "data-chem-redox-changes"):
+                if marker not in content_html:
+                    problems.append("氧化还原页面必须标记可见结果 %s，供审查器核验" % marker)
+            controls_html = "\n".join((secs.get("3") or "", secs.get("4") or "", visual))
+            for marker in ("data-chem-redox-medium", "data-chem-redox-reorder"):
+                if marker not in controls_html:
+                    problems.append("氧化还原页面必须提供并标记真实控件 %s，供页面变形测试" % marker)
+            medium_select = re.search(
+                r'<select\b[^>]*\bdata-chem-redox-medium\b[^>]*>(.*?)</select>',
+                controls_html, re.I | re.S)
+            if not medium_select:
+                problems.append("氧化还原介质必须用带 acidic/basic 两种选项的 select，供页面变形测试")
+            else:
+                option_values = re.findall(r'<option\b[^>]*\bvalue=["\']([^"\']+)',
+                                           medium_select.group(1), re.I)
+                normalized_values = {value.strip().lower() for value in option_values}
+                if not (normalized_values & {"acidic", "acid", "酸性"} and
+                        normalized_values & {"basic", "base", "碱性", "鹼性"}):
+                    problems.append("氧化还原介质选择器必须同时提供酸性和碱性选项")
+            if not re.search(r"CHEM\s*\.\s*redox\s*\(", js_code, re.I):
+                problems.append("氧化数变化图必须调用 CHEM.redox(cv,result)，并与求解结果同源")
+            for field in ("equation", "oxidation_changes", "electron_balance", "transferred_electrons"):
+                if not re.search(r"\.\s*%s\b" % re.escape(field), js_code, re.I):
+                    problems.append("氧化还原页面必须从求解结果读取 %s，不得手写配平或电子数" % field)
+            if not re.search(r"\.\s*checks\s*\.\s*ok\b", js_code, re.I):
+                problems.append("只有求解器 checks.ok 为 true 时才能显示氧化还原结论；失败时必须显示错误状态")
+        if skeleton.get("solver_api") == "CHEMSOLVER.solveAcidBaseTitration":
+            for marker in ("__CHEM_TITRATION_REQUEST__", "__CHEM_TITRATION_RESULT__"):
+                if marker not in js_code:
+                    problems.append("酸碱滴定页面必须暴露 %s，供浏览器变形测试和质量审查独立复算" % marker)
+            if "data-chem-titration-equation" not in ((secs.get("2") or "") + js_code):
+                problems.append("酸碱滴定方程式必须标记 data-chem-titration-equation，供审查器核对实际显示内容")
+            if not re.search(r"CHEM\s*\.\s*titration\s*\(", js_code, re.I):
+                problems.append("酸碱滴定演示必须调用 CHEM.titration(cv, result)，让滴定器材和液体状态使用求解结果绘制")
+            if not re.search(r"CHEM\s*\.\s*titrationCurve\s*\(", js_code, re.I):
+                problems.append("pH—滴入体积图必须调用共享滴定曲线组件绘制")
+            controls_html = "\n".join((secs.get("3") or "", secs.get("4") or "", visual))
+            for marker in ("data-chem-titration-acid-concentration", "data-chem-titration-acid-volume",
+                           "data-chem-titration-acid-unit", "data-chem-titration-base-concentration",
+                           "data-chem-titration-base-volume", "data-chem-titration-base-unit"):
+                if marker not in controls_html:
+                    problems.append("酸碱滴定页必须提供并标记可见参数控件 %s" % marker)
+            for field in ("equivalence_volume_ml", "acid_moles_remaining", "base_moles_remaining", "pH", "state"):
+                if not re.search(r"\.\s*%s\b" % re.escape(field), js_code, re.I):
+                    problems.append("酸碱滴定页面必须从求解结果读取 %s，不能独立手算" % field)
+            if not re.search(r"\.\s*checks\s*\.\s*ok\b", js_code, re.I):
+                problems.append("只有求解器 checks.ok 为 true 时才能显示滴定读数；失败时必须显示错误状态")
+            if "data-chem-titration-curve" not in "\n".join(
+                    (secs.get(key) or "") for key in ("2", "3", "4", "5", "6", "js")):
+                problems.append("酸碱滴定页面必须包含可见 pH—滴入体积曲线")
+            if "__CHEM_TITRATION_CURVE_SAMPLES__" not in js_code or len(re.findall(
+                    r"CHEMSOLVER\s*\.\s*solveAcidBaseTitration\s*\(", js_code, re.I)) < 2:
+                problems.append("滴定曲线采样点必须逐点调用同一滴定求解器，不能用手写公式另算")
+        if skeleton.get("solver_api") == "CHEMSOLVER.solveGasCollection":
+            for marker in ("__CHEM_GAS_REQUEST__", "__CHEM_GAS_RESULT__"):
+                if marker not in js_code:
+                    problems.append("气体制取页面必须暴露 %s，供变形测试和独立审查复算" % marker)
+            if "data-chem-gas-equation" not in ((secs.get("2") or "") + js_code):
+                problems.append("可见化学方程式必须标记 data-chem-gas-equation，供审查器核验")
+            if "data-chem-gas-volume" not in ("\n".join((secs.get("2") or "", secs.get("3") or "",
+                                                               secs.get("4") or "", visual, js_code))):
+                problems.append("可见气体体积读数必须标记 data-chem-gas-volume，供审查器核验")
+            controls_html = "\n".join((secs.get("3") or "", secs.get("4") or "", visual))
+            for marker in ("data-chem-gas-amount-index", "data-chem-gas-progress",
+                           "data-chem-gas-temperature", "data-chem-gas-pressure", "data-chem-gas-method"):
+                if marker not in controls_html:
+                    problems.append("气体制取页面必须提供并标记可见控件 %s，供页面变形测试" % marker)
+            if not re.search(r"CHEM\s*\.\s*gasCollection\s*\(", js_code, re.I):
+                problems.append("气体制取演示必须调用 CHEM.gasCollection(cv, result)，且使用求解结果绘图")
+            for field in ("gas_moles", "gas_volume_l", "dry_gas_partial_pressure_kpa", "limiting_reactants"):
+                if not re.search(r"\.\s*%s\b" % re.escape(field), js_code, re.I):
+                    problems.append("气体制取页面必须从求解结果读取 %s，不能另行手算" % field)
+            if not re.search(r"\.\s*checks\s*\.\s*ok\b", js_code, re.I):
+                problems.append("只有求解器 checks.ok 为 true 时才能显示气体体积；失败时必须显示错误状态")
+        if skeleton.get("solver_api") == "CIRCUIT.solve" and skeleton.get("component_engine") != "circuit_page":
             if not re.search(r"CIRCUIT\s*\.\s*bindMeters\s*\(", js_code, re.I):
                 problems.append("电路表计读数必须由 CIRCUIT.bindMeters 从求解器结果直接写入，不能使用手写公式")
             if not re.search(r"CIRCUIT\s*\.\s*draw\s*\(", js_code, re.I):
@@ -174,14 +416,155 @@ def hard_validate(secs, req=None):
                 meters = [x for x in component_rows if x[1] == "voltmeter"]
                 if target and meters and not any(x[2] == target[2] for x in meters):
                     problems.append("voltmeter 元件必须与 data-circuit-voltage-for 所指的被测电阻并联（两端节点完全相同）")
-        for marker in ("__CIRCUIT_MODEL__", "__CIRCUIT_RESULT__"):
-            if marker not in js_code:
-                problems.append("电路页必须暴露 %s，供独立审查器复算和对拍" % marker)
-        if not re.search(r"data-circuit-current-for=[\"']", "\n".join((secs.get("3") or "", visual, secs.get("4") or "")), re.I):
-            problems.append("电路页面必须用 data-circuit-current-for 标记绑定到求解器支路的电流表读数")
-        if not re.search(r"data-circuit-voltage-for=[\"']", "\n".join((secs.get("3") or "", visual, secs.get("4") or "")), re.I):
-            problems.append("电路页面必须用 data-circuit-voltage-for 标记绑定到求解器支路的电压表读数")
+            for marker in ("__CIRCUIT_MODEL__", "__CIRCUIT_RESULT__"):
+                if marker not in js_code:
+                    problems.append("电路页必须暴露 %s，供独立审查器复算和对拍" % marker)
+            if not re.search(r"data-circuit-current-for=[\"']", "\n".join((secs.get("3") or "", visual, secs.get("4") or "")), re.I):
+                problems.append("电路页面必须用 data-circuit-current-for 标记绑定到求解器支路的电流表读数")
+            if not re.search(r"data-circuit-voltage-for=[\"']", "\n".join((secs.get("3") or "", visual, secs.get("4") or "")), re.I):
+                problems.append("电路页面必须用 data-circuit-voltage-for 标记绑定到求解器支路的电压表读数")
+        supplement_solver = skeleton.get("solver_api") or ""
+        if supplement_solver.startswith(("BIOSOLVER.", "GEOSOLVER.", "CSSOLVER.")):
+            namespace = supplement_solver.split(".", 1)[0]
+            for marker in ("__SUPP_REQUEST__", "__SUPP_RESULT__"):
+                if marker not in js_code:
+                    problems.append("%s 页面必须暴露 %s，供独立复算和变形测试" % (skeleton.get("id"), marker))
+            if not re.search(rf"{re.escape(namespace)}\s*\.\s*draw", js_code, re.I):
+                problems.append("%s 页面必须把同一次求解结果传给组件绘图" % skeleton.get("id"))
+            if "data-supp-input" not in "\n".join((secs.get("3") or "", visual)):
+                problems.append("%s 页面缺少可变形的 data-supp-input 控件" % skeleton.get("id"))
+            if "data-supp-field" not in "\n".join((secs.get("4") or "", js_code)):
+                problems.append("%s 页面缺少 data-supp-field 结果绑定" % skeleton.get("id"))
+            if not re.search(r"\.\s*checks\s*\.\s*ok\b", js_code, re.I):
+                problems.append("%s 只有求解器 checks.ok 为 true 时才能显示结论" % skeleton.get("id"))
+
+        lesson_model = skeleton.get("lesson_model")
+        component_engine = skeleton.get("component_engine")
+        if (lesson_model or skeleton.get("solver_api") in ("MATH.solveQuadratic", "PHYS.solveThinLens")) and not component_engine:
+            api = required_solver[1]
+            if lesson_model:
+                prefix, draw_api = lesson_model["prefix"], lesson_model.get("draw")
+                inputs, outputs = lesson_model["inputs"], lesson_model["fields"]
+            elif api == "MATH.solveQuadratic":
+                prefix, draw_api, inputs = "MATH_QUADRATIC", "MATH.funcPlot", ("a", "b", "c")
+                outputs = ("vertex_x", "vertex_y", "axis_x", "discriminant", "roots", "y_intercept", "opening")
+            else:
+                prefix, draw_api, inputs = "PHYS_LENS", "PHYS.optics", ("u", "f")
+                outputs = ("image_distance_cm", "magnification", "state")
+            for suffix in ("REQUEST", "RESULT"):
+                if f"__{prefix}_{suffix}__" not in js_code:
+                    problems.append(f"{api} 页面必须暴露 __{prefix}_{suffix}__ 供独立复算")
+            if draw_api and not draws_solver_result(js_code, api, draw_api):
+                problems.append(f"必须将 {api} 返回的结果传给 {draw_api}(cv, cfg, result)")
+            if lesson_model and managed_readouts:
+                bound = set(re.findall(
+                    rf"VIS\s*\.\s*bindSolverReadouts\s*\(\s*({JS_IDENTIFIER})\s*\)", js_code))
+                if not solver_result_names(js_code, api) & bound:
+                    problems.append(f"必须调用 VIS.bindSolverReadouts(result)，直接绑定 {api} 的同一求解结果")
+            markup = "\n".join(secs.get(key) or "" for key in ("2", "3", "4")) + "\n" + js_code
+            for attr, fields in (("data-solver-input", inputs), ("data-solver-field", outputs)):
+                for field in fields:
+                    if not re.search(rf'{attr}\s*=\s*["\']{field}["\']', markup):
+                        problems.append(f'求解器页面缺少 {attr}="{field}"')
+        if component_engine == "circuit_page":
+            content = "\n".join((secs.get("2") or "", secs.get("3") or "", secs.get("4") or "", js_code))
+            if "CIRCUIT_PAGE.mount" not in content:
+                problems.append("电路器材组件页必须调用 CIRCUIT_PAGE.mount")
+            if "window.__CIRCUIT_INITIAL__" not in content:
+                problems.append("电路器材组件页必须暴露 window.__CIRCUIT_INITIAL__，供浏览器变形测试")
+            if not re.search(r"data-circuit-control|data-key=|circuit-controls", content, re.I):
+                problems.append("电路器材组件页缺少可变参数控件")
+        if component_engine == "optics3d":
+            content = "\n".join((secs.get("2") or "", secs.get("3") or "", secs.get("4") or "", js_code))
+            if re.search(r"\bv\s*=\s*u\s*\*\s*f\s*/\s*\(\s*u\s*-\s*f\s*\)", js_code, re.I):
+                problems.append("3D 光学组件页不得自己用公式算像距，必须读取 OPTICS.solve 返回值")
+            if "OPTICS3D.mount" not in content:
+                problems.append("3D 光学组件页必须调用 OPTICS3D.mount")
+            if "window.__OPTICS_INITIAL__" not in content:
+                problems.append("3D 光学组件页必须暴露 window.__OPTICS_INITIAL__，供浏览器变形测试")
+            for marker in ("data-optics-control", "data-optics-readout"):
+                if marker not in content:
+                    problems.append("3D 光学组件页缺少 %s 标记" % marker)
+        if skeleton.get("solver_api") == "MATH.solveCubeCut":
+            if not draws_solver_result(js_code, "MATH.solveCubeCut", "MATH.cubeCut"):
+                problems.append("正方体截面绘图必须把 MATH.solveCubeCut 的结果传给 MATH.cubeCut，禁止绘图和结果各算一套")
+            if "__MATH_CUBE_RESULT__" not in js_code:
+                problems.append("正方体截面页必须暴露 window.__MATH_CUBE_RESULT__，供独立审查器复算")
+            if not re.search(r"MATH\s*\.\s*solveCubeCut\s*\(", js_code, re.I):
+                problems.append("每次参数更新都必须先调用 MATH.solveCubeCut")
+        if skeleton.get("solver_api") == "MATH.solveCuboidCut":
+            if not draws_solver_result(js_code, "MATH.solveCuboidCut", "MATH.cuboidSection"):
+                problems.append("长方体截面绘图必须使用 MATH.solveCuboidCut 的同一结果对象")
+            if "__MATH_POLYHEDRON_RESULT__" not in js_code:
+                problems.append("长方体截面页必须暴露 window.__MATH_POLYHEDRON_RESULT__，供独立审查器复算")
+        if skeleton.get("solver_api") == "MATH.solveTriangularPrismCut":
+            if not draws_solver_result(js_code, "MATH.solveTriangularPrismCut", "MATH.triangularPrismSection"):
+                problems.append("三棱柱截面绘图必须使用 MATH.solveTriangularPrismCut 的同一结果对象")
+            if "__MATH_POLYHEDRON_RESULT__" not in js_code:
+                problems.append("三棱柱截面页必须暴露 window.__MATH_POLYHEDRON_RESULT__，供独立审查器复算")
+        if skeleton.get("solver_api") == "MATH.solveSquarePyramidCut":
+            if not draws_solver_result(js_code, "MATH.solveSquarePyramidCut", "MATH.squarePyramidSection"):
+                problems.append("正四棱锥截面绘图必须使用 MATH.solveSquarePyramidCut 的同一结果对象")
+            if "__MATH_POLYHEDRON_RESULT__" not in js_code:
+                problems.append("正四棱锥截面页必须暴露 window.__MATH_POLYHEDRON_RESULT__，供独立审查器复算")
+        if skeleton.get("solver_api") == "MATH.solveCylinderCut":
+            if not draws_solver_result(js_code, "MATH.solveCylinderCut", "MATH.cylinderSection"):
+                problems.append("圆柱截面图示必须使用 MATH.solveCylinderCut 的同一结果对象")
+            if "__MATH_CYLINDER_RESULT__" not in js_code:
+                problems.append("圆柱截面页必须暴露 window.__MATH_CYLINDER_RESULT__，供独立审查器复算")
+            if not re.search(r"MATH\s*\.\s*solveCylinderCut\s*\(", js_code, re.I):
+                problems.append("每次参数更新都必须调用 MATH.solveCylinderCut")
+        if skeleton.get("solver_api") == "MATH.solveConeCut":
+            if not draws_solver_result(js_code, "MATH.solveConeCut", "MATH.coneSection"):
+                problems.append("圆锥截面图示必须使用 MATH.solveConeCut 的同一结果对象")
+            if "__MATH_CONE_RESULT__" not in js_code:
+                problems.append("圆锥截面页必须暴露 window.__MATH_CONE_RESULT__，供独立审查器复算")
+        if skeleton.get("solver_api") == "MATH.solveSphereCut":
+            if not draws_solver_result(js_code, "MATH.solveSphereCut", "MATH.sphereSection"):
+                problems.append("球体截面图示必须使用 MATH.solveSphereCut 的同一结果对象")
+            if "__MATH_SPHERE_RESULT__" not in js_code:
+                problems.append("球体截面页必须暴露 window.__MATH_SPHERE_RESULT__，供独立审查器复算")
+        if skeleton.get("solver_api") == "MATH.solveSpatialMetrics":
+            if not re.search(r"MATH\s*\.\s*solveSpatialMetrics\s*\(", js_code, re.I):
+                problems.append("空间距离/角度页面必须调用 MATH.solveSpatialMetrics")
+            if "__MATH_SPATIAL_REQUEST__" not in js_code or "__MATH_SPATIAL_RESULT__" not in js_code:
+                problems.append("空间距离/角度页面必须暴露求解请求和结果，供独立审查器复算")
+        if skeleton.get("solver_api") == "MATH.solveSolidVolume":
+            if not composite_volume and not re.search(r"MATH\s*\.\s*solveSolidVolume\s*\(", js_code, re.I):
+                problems.append("立体体积页面必须调用 MATH.solveSolidVolume")
+            if "__MATH_VOLUME_REQUEST__" not in js_code or "__MATH_VOLUME_RESULT__" not in js_code:
+                problems.append("立体体积页面必须暴露求解请求和结果，供独立审查器复算")
+        if skeleton.get("solver_api") == "MATH.solveCubeNet":
+            if not re.search(r"MATH\s*\.\s*solveCubeNet\s*\(", js_code, re.I):
+                problems.append("正方体展开折叠页面必须调用 MATH.solveCubeNet")
+            if "__MATH_CUBE_NET_REQUEST__" not in js_code or "__MATH_CUBE_NET_RESULT__" not in js_code:
+                problems.append("正方体展开折叠页面必须暴露求解请求和结果，供独立审查器复算")
+            if not re.search(r"\.\s*faces\b|MATHPAGE\.drawCubeNet\(", js_code, re.I):
+                problems.append("正方体折叠空间图必须使用 MATH.solveCubeNet 返回的六面坐标")
+        if skeleton.get("solver_api") == "MATH.solveCuboidNet":
+            if not re.search(r"MATH\s*\.\s*solveCuboidNet\s*\(", js_code, re.I):
+                problems.append("长方体展开折叠页面必须调用 MATH.solveCuboidNet")
+            if "__MATH_CUBOID_NET_REQUEST__" not in js_code or "__MATH_CUBOID_NET_RESULT__" not in js_code:
+                problems.append("长方体展开折叠页面必须暴露求解请求和结果，供独立审查器复算")
+            if not re.search(r"\.\s*faces\b|MATHPAGE\.drawCuboidNet\(", js_code, re.I):
+                problems.append("长方体折叠空间图必须使用 MATH.solveCuboidNet 返回的六面坐标")
+        if skeleton.get("solver_api") == "MATH.solveCylinderNet":
+            if not re.search(r"MATH\s*\.\s*solveCylinderNet\s*\(", js_code, re.I):
+                problems.append("圆柱展开页面必须调用 MATH.solveCylinderNet")
+            if "__MATH_CYLINDER_NET_REQUEST__" not in js_code or "__MATH_CYLINDER_NET_RESULT__" not in js_code:
+                problems.append("圆柱展开页面必须暴露求解请求和结果，供独立审查器复算")
+            if not re.search(r"\.\s*surface_grid\b|MATHPAGE\.drawCylinderNet\(", js_code, re.I):
+                problems.append("折叠圆柱图必须使用 MATH.solveCylinderNet 返回的 surface_grid")
+        if skeleton.get("solver_api") == "MATH.solveConeNet":
+            if not re.search(r"MATH\s*\.\s*solveConeNet\s*\(", js_code, re.I):
+                problems.append("圆锥展开页面必须调用 MATH.solveConeNet")
+            if "__MATH_CONE_NET_REQUEST__" not in js_code or "__MATH_CONE_NET_RESULT__" not in js_code:
+                problems.append("圆锥展开页面必须暴露求解请求和结果，供独立审查器复算")
+            if not re.search(r"\.\s*(?:side_grid|sector_boundary)\b|MATHPAGE\.drawConeNet\(", js_code, re.I):
+                problems.append("圆锥展开图和折叠图必须使用 MATH.solveConeNet 返回的几何数据")
     expected_visual = skeleton["visual_type"]
+    if skeleton.get("subject") == "生物" and expected_visual != "apparatus":
+        problems.append("生物场景的②区必须使用 apparatus 虚拟实验室画布，图表只能放在④结果区")
     visual_match = re.search(r'<(?:canvas|svg)\b[^>]*\bdata-visual-type=["\']([^"\']+)', visual, re.I)
     if visual_match and visual_match.group(1).lower() != expected_visual:
         problems.append("选定骨架 %s 的演示类型应为 %s，当前写成 %s"
@@ -190,13 +573,13 @@ def hard_validate(secs, req=None):
             r"实验六步流程|步骤\s*[1-6]\s*[.、:]|暗处理.{0,28}遮光|遮光.{0,28}光照",
             visual, re.I | re.S):
         problems.append("生物光合作用骨架要求②区只显示实验图，不能在演示区放步骤流程；请把步骤控件移到③区")
-    if (required_scene and required_scene[1] == "MATH.cubeCut"
+    if (required_scene and required_scene[1] in ("MATH.cubeCut", "MATH.cuboidSection", "MATH.triangularPrismSection", "MATH.squarePyramidSection", "MATH.cylinderSection")
             and re.search(r"恢复.{0,4}视角|默认视角|重置视角", (secs.get("3") or "") + "\n" + js_code)
             and not re.search(r"MATH\s*\.\s*resetView\s*\(", js_code, re.I)):
         problems.append("页面提供了恢复视角按钮，但没有调用 MATH.resetView(canvas)；必须恢复 yaw/pitch 初始值并重绘，不能只调用 render()")
-    if not re.search(r'<(?:canvas|svg)\b[^>]*\bdata-visual-type=["\'](?:apparatus|graph|geometry|process|molecular|diagram)["\']',
+    if not re.search(r'<(?:canvas|svg)\b[^>]*\bdata-visual-type=["\'](?:apparatus|circuit|graph|geometry|process|molecular|particle|diagram|map|network|table|chart)["\']',
                      visual, re.I):
-        problems.append("②区 canvas/svg 缺少有效的 data-visual-type（apparatus/graph/geometry/process/molecular/diagram）")
+        problems.append("②区 canvas/svg 缺少有效的 data-visual-type（apparatus/circuit/graph/geometry/process/molecular/particle/diagram/map/network/table/chart）")
     if re.search(r'<(?:img|image|picture|video)\b|url\s*\(|background-image\s*:',
                  visual + "\n" + (secs.get("css") or ""), re.I):
         problems.append("②演示区不得嵌入图片或 CSS 图片；请改为状态驱动的 Canvas/SVG 矢量绘制")
@@ -217,7 +600,7 @@ def hard_validate(secs, req=None):
         problems.append("没有暴露机读数据（window.__DATA__ 或 window.__GEO__），审查无法复算")
 
     if len(full) > 16000:
-        problems.append("内容过长（%d 字符），必须压到 9000 字符以内" % len(full))
+        problems.append("内容过长（%d 字符），超过 16000 字符上限" % len(full))
 
     return problems
 
@@ -238,16 +621,17 @@ FALLBACK = {
   <li>能记录多组数据并比较差异</li>
 </ul>""",
 
-    "2": """<canvas id="cv" data-visual-type="graph"></canvas>
-<span class="exp-canvas-tip">拖动滑块可改变参数</span>""",
+    "2": """<canvas id="cv" data-visual-type="graph"></canvas>""",
 
-    "3": """<div class="exp-field">
+    "3": """<div class="exp-field exp-dual-field">
   <div class="exp-label"><span>自变量 x</span><span class="exp-val"><b id="v-x">2.0</b></span></div>
-  <input type="range" id="rg-x" min="0" max="10" step="0.5" value="2" data-key="x">
+  <span class="exp-control-pair"><input type="number" id="in-x" min="0" max="10" step="any" value="2" data-key="x" aria-label="输入自变量 x">
+  <input type="range" id="rg-x" min="0" max="10" step="1" value="2" data-key="x" data-solver-range-for="in-x" aria-label="拖动调节自变量 x"></span>
 </div>
-<div class="exp-field">
+<div class="exp-field exp-dual-field">
   <div class="exp-label"><span>系数 k</span><span class="exp-val"><b id="v-k">1.5</b></span></div>
-  <input type="range" id="rg-k" min="0.5" max="3" step="0.1" value="1.5" data-key="k">
+  <span class="exp-control-pair"><input type="number" id="in-k" min="0.5" max="3" step="any" value="1.5" data-key="k" aria-label="输入系数 k">
+  <input type="range" id="rg-k" min="0.5" max="3" step="0.1" value="1.5" data-key="k" data-solver-range-for="in-k" aria-label="拖动调节系数 k"></span>
 </div>
 <div class="exp-btns">
   <button class="exp-btn is-primary" id="btn-record" type="button">记录当前数据</button>
@@ -276,7 +660,7 @@ FALLBACK = {
 <h3>结论</h3>
 <p>k 不变时 y 与 x 成正比，比值恒为 k；改变 k 只改变斜率，不改变正比关系。</p>
 <h3>注意事项</h3>
-<ul><li>兜底页只保证"能打开、能操作、数值自洽"，学科内容需重新生成。</li></ul>""",
+<ul><li>本页为虚拟仿真演示，不能替代真实实验；只保证"能打开、能操作、数值自洽"，学科内容需重新生成。</li></ul>""",
 
     "js": """(function () {
   var state = { x: 2, k: 1.5 };
@@ -327,9 +711,14 @@ FALLBACK = {
     };
   }
 
-  document.querySelectorAll('input[type=range]').forEach(function (el) {
+  document.querySelectorAll('input[type=range], input[type=number]').forEach(function (el) {
     el.addEventListener('input', function () {
-      state[el.dataset.key] = +el.value; render();
+      state[el.dataset.key] = +el.value;
+      var range = document.getElementById(el.dataset.key === 'x' ? 'rg-x' : 'rg-k');
+      var number = document.getElementById(el.dataset.key === 'x' ? 'in-x' : 'in-k');
+      if (el.type === 'number' && range) range.value = el.value;
+      if (el.type === 'range' && number) number.value = el.value;
+      render();
     });
   });
 
@@ -337,6 +726,8 @@ FALLBACK = {
     state.x = 2; state.k = 1.5;
     document.getElementById('rg-x').value = 2;
     document.getElementById('rg-k').value = 1.5;
+    document.getElementById('in-x').value = 2;
+    document.getElementById('in-k').value = 1.5;
     document.getElementById('rows').innerHTML = '';
     render();
   });
@@ -380,16 +771,236 @@ def generate(req, pack, feedback=None, template_only=False):
     started = time.time()
     selected_skeleton = select_page_skeleton(req or {})
     meta = {"来源": "兜底片段", "模型": "-", "是否修复过": False, "续写次数": 0,
-            "问题": [], "外壳校验": [],
+            "问题": [], "模型输出问题": [], "生成契约通过": False,
+            "生成尝试": [], "外壳校验": [],
             "页面骨架": {"id": selected_skeleton["id"],
                          "画布类型": selected_skeleton["visual_type"],
                          "场景库API": selected_skeleton.get("api"),
                          "学科求解器": selected_skeleton.get("solver_api")}}
 
+    registered_resolvers = {
+        "chemistry-solubility-ksp": resolve_ksp_config,
+        "chemistry-acid-base-titration": resolve_acid_base_titration_config,
+        "chemistry-precipitation-quantitative": resolve_precipitation_config,
+        "chemistry-gas-collection": resolve_gas_collection_config,
+        "chemistry-redox-electron-balance": resolve_redox_config,
+    }
+    registered_serializers = {
+        "chemistry-solubility-ksp": ksp_template_values,
+        "chemistry-acid-base-titration": titration_template_values,
+        "chemistry-precipitation-quantitative": precipitation_template_values,
+        "chemistry-gas-collection": gas_collection_template_values,
+        "chemistry-redox-electron-balance": redox_template_values,
+    }
+    if (selected_skeleton.get("id") in registered_resolvers
+            or selected_skeleton.get("subject") in ("数学", "物理", "化学", "生物", "地理", "信息科技")
+            or selected_skeleton.get("id") in SUPPLEMENT_SCENE_IDS):
+        try:
+            registered = render_registered_scene(
+                req or {}, selected_skeleton,
+                render_solver=render_solver_template,
+                hard_validate=hard_validate,
+                resolvers=registered_resolvers,
+                serializers=registered_serializers,
+            )
+        except ValueError as exc:
+            registered = None
+            meta["问题"] = [str(exc)]
+        if registered is not None:
+            secs, registered_meta = registered
+            meta.update(registered_meta)
+            meta["来源"] = "统一场景配置与组件渲染"
+            meta["模型"] = "未调用（配置、组件与确定性求解器）"
+            meta["生成契约通过"] = registered_meta["生成契约通过"]
+            meta["生成尝试"].append({"来源": "统一场景渲染",
+                                    "问题数": len(registered_meta["问题"]),
+                                    "问题": registered_meta["问题"]})
+            meta["耗时秒"] = round(time.time() - started, 2)
+            return secs, meta
+
+    physics_template = (selected_skeleton.get("subject") == "物理" and
+                        (bool(selected_skeleton.get("lesson_model")) or
+                         selected_skeleton.get("solver_api") == "PHYS.solveThinLens"))
+    if selected_skeleton["subject"] == "数学" or physics_template:
+        subject = selected_skeleton["subject"]
+        try:
+            secs = render_solver_template(req or {}, selected_skeleton)
+        except MathPlanError as exc:
+            problem = f"{subject}页面参数或组件超出当前范围：{exc}"
+            meta.update({"来源": subject + "配置待补齐", "模型": "未调用", "问题": [problem],
+                         "耗时秒": round(time.time() - started, 2)})
+            meta["生成尝试"].append({"来源": subject + "配置检查", "问题数": 1, "问题": [problem]})
+            return render_fallback(req or {}), meta
+        if secs is not None:
+            problems = hard_validate(secs, req, managed_readouts=True)
+            source = ("一次函数参数化页面模板" if selected_skeleton["id"] == "math-linearSystem"
+                      else subject + "组件页面")
+            meta.update({"来源": source, "模型": "未调用（固定模板渲染）",
+                         "生成契约通过": not problems, "问题": problems,
+                         "耗时秒": round(time.time() - started, 2)})
+            meta["生成尝试"].append({"来源": source, "问题数": len(problems), "问题": problems})
+            return secs, meta
+
+    # Ksp is the first template-first solver scene: the page's equation,
+    # controls, solver call, and result bindings are maintained in code. The
+    # model is not asked to rewrite executable science-page logic.
+    if selected_skeleton.get("id") == "chemistry-solubility-ksp":
+        try:
+            ksp_config = resolve_ksp_config(req or {})
+        except ValueError as exc:
+            problem = "该 Ksp 需求尚未配置好：%s 未调用大模型猜测离子价态或方程式。" % exc
+            secs = render_fallback(req or {})
+            meta.update({"来源": "Ksp 场景暂不支持（不可交付）", "模型": "未调用",
+                         "生成契约通过": False, "问题": [problem]})
+            meta["生成尝试"].append({"来源": "Ksp 场景参数检查", "问题数": 1, "问题": [problem]})
+        else:
+            secs = render_solver_template(req or {}, selected_skeleton, config=ksp_config)
+            problems = hard_validate(secs, req)
+            meta.update({"来源": "Ksp 参数化页面模板", "模型": "未调用（固定模板渲染）",
+                         "生成契约通过": not problems, "问题": problems})
+            meta["生成尝试"].append({"来源": "Ksp 参数化页面模板", "问题数": len(problems),
+                                    "问题": problems})
+            meta["Ksp页面参数"] = ksp_template_values(req)
+        meta["耗时秒"] = round(time.time() - started, 2)
+        return secs, meta
+
+    if selected_skeleton.get("id") == "chemistry-acid-base-titration":
+        try:
+            titration_config = resolve_acid_base_titration_config(req or {})
+        except ValueError as exc:
+            problem = "该酸碱滴定需求超出当前已核验模型：%s 未调用大模型猜测反应物或结果。" % exc
+            secs = render_fallback(req or {})
+            meta.update({"来源": "酸碱滴定场景暂不支持（不可交付）", "模型": "未调用",
+                         "生成契约通过": False, "问题": [problem]})
+            meta["生成尝试"].append({"来源": "酸碱滴定参数检查", "问题数": 1, "问题": [problem]})
+        else:
+            secs = render_solver_template(req or {}, selected_skeleton, config=titration_config)
+            problems = hard_validate(secs, req)
+            meta.update({"来源": "酸碱滴定组件页面", "模型": "未调用（组件装配与确定性求解）",
+                         "生成契约通过": not problems, "问题": problems})
+            meta["生成尝试"].append({"来源": "酸碱滴定组件页面", "问题数": len(problems),
+                                    "问题": problems})
+            meta["酸碱滴定页面参数"] = titration_template_values(req)
+        meta["耗时秒"] = round(time.time() - started, 2)
+        return secs, meta
+
+    if selected_skeleton.get("id") == "chemistry-precipitation-quantitative":
+        try:
+            precipitation_config = resolve_precipitation_config(req or {})
+        except ValueError as exc:
+            problem = "该沉淀需求超出当前已核验反应目录：%s 未调用大模型猜测产物或沉淀质量。" % exc
+            secs = render_fallback(req or {})
+            meta.update({"来源": "沉淀场景暂不支持（不可交付）", "模型": "未调用",
+                         "生成契约通过": False, "问题": [problem]})
+            meta["生成尝试"].append({"来源": "沉淀反应参数检查", "问题数": 1, "问题": [problem]})
+        else:
+            secs = render_solver_template(req or {}, selected_skeleton, config=precipitation_config)
+            problems = hard_validate(secs, req)
+            meta.update({"来源": "沉淀反应组件页面", "模型": "未调用（组件装配与确定性求解）",
+                         "生成契约通过": not problems, "问题": problems})
+            meta["生成尝试"].append({"来源": "沉淀反应组件页面", "问题数": len(problems),
+                                    "问题": problems})
+            meta["沉淀反应页面参数"] = precipitation_template_values(req)
+        meta["耗时秒"] = round(time.time() - started, 2)
+        return secs, meta
+
+    if selected_skeleton.get("id") == "chemistry-gas-collection":
+        try:
+            gas_config = resolve_gas_collection_config(req or {})
+        except ValueError as exc:
+            problem = "该气体制取需求超出当前已核验反应目录：%s 未调用大模型猜测产物或气体体积。" % exc
+            secs = render_fallback(req or {})
+            meta.update({"来源": "气体制取场景暂不支持（不可交付）", "模型": "未调用",
+                         "生成契约通过": False, "问题": [problem]})
+            meta["生成尝试"].append({"来源": "气体制取参数检查", "问题数": 1, "问题": [problem]})
+        else:
+            secs = render_solver_template(req or {}, selected_skeleton, config=gas_config)
+            problems = hard_validate(secs, req)
+            meta.update({"来源": "气体制取组件页面", "模型": "未调用（组件装配与确定性求解）",
+                         "生成契约通过": not problems, "问题": problems})
+            meta["生成尝试"].append({"来源": "气体制取组件页面", "问题数": len(problems),
+                                    "问题": problems})
+            meta["气体制取页面参数"] = gas_collection_template_values(req)
+        meta["耗时秒"] = round(time.time() - started, 2)
+        return secs, meta
+
+    if selected_skeleton.get("id") == "chemistry-redox-electron-balance":
+        try:
+            redox_config = resolve_redox_config(req or {})
+        except ValueError as exc:
+            problem = "该氧化还原需求不满足当前已核验物种目录：%s 未调用大模型猜测方程式。" % exc
+            secs = render_fallback(req or {})
+            meta.update({"来源": "氧化还原场景暂不支持（不可交付）", "模型": "未调用",
+                         "生成契约通过": False, "问题": [problem]})
+            meta["生成尝试"].append({"来源": "氧化还原参数检查", "问题数": 1, "问题": [problem]})
+        else:
+            secs = render_solver_template(req or {}, selected_skeleton, config=redox_config)
+            problems = hard_validate(secs, req)
+            meta.update({"来源": "氧化还原组件页面", "模型": "未调用（组件装配与确定性求解）",
+                         "生成契约通过": not problems, "问题": problems})
+            meta["生成尝试"].append({"来源": "氧化还原组件页面", "问题数": len(problems),
+                                    "问题": problems})
+            meta["氧化还原页面参数"] = redox_template_values(req)
+        meta["耗时秒"] = round(time.time() - started, 2)
+        return secs, meta
+
+    if selected_skeleton.get("id") == "chemistry-stoichiometry-limiting-reagent":
+        try:
+            stoich_config = resolve_stoich_config(req or {})
+        except ValueError as exc:
+            problem = "该限量试剂需求缺少可核验的反应物/生成物：%s。" % exc
+            secs = render_fallback(req or {})
+            meta.update({"来源": "限量试剂场景暂不支持（不可交付）", "模型": "未调用",
+                         "生成契约通过": False, "问题": [problem]})
+            meta["生成尝试"].append({"来源": "限量试剂参数检查", "问题数": 1, "问题": [problem]})
+        else:
+            secs = render_solver_template(req or {}, selected_skeleton, config=stoich_config)
+            problems = hard_validate(secs, req)
+            meta.update({"来源": "限量试剂组件页面", "模型": "未调用（组件装配与确定性求解）",
+                         "生成契约通过": not problems, "问题": problems})
+            meta["生成尝试"].append({"来源": "限量试剂组件页面", "问题数": len(problems),
+                                    "问题": problems})
+            meta["限量试剂页面参数"] = stoich_template_values(req)
+        meta["耗时秒"] = round(time.time() - started, 2)
+        return secs, meta
+
+    if selected_skeleton.get("id") == "chemistry-solution-mixing-stoichiometry":
+        try:
+            mix_config = resolve_mix_config(req or {})
+        except ValueError as exc:
+            problem = "该溶液混合需求不满足当前可核验输入：%s。" % exc
+            secs = render_fallback(req or {})
+            meta.update({"来源": "溶液混合场景暂不支持（不可交付）", "模型": "未调用",
+                         "生成契约通过": False, "问题": [problem]})
+            meta["生成尝试"].append({"来源": "溶液混合参数检查", "问题数": 1, "问题": [problem]})
+        else:
+            secs = render_solver_template(req or {}, selected_skeleton, config=mix_config)
+            problems = hard_validate(secs, req)
+            meta.update({"来源": "溶液混合组件页面", "模型": "未调用（组件装配与确定性求解）",
+                         "生成契约通过": not problems, "问题": problems})
+            meta["生成尝试"].append({"来源": "溶液混合组件页面", "问题数": len(problems),
+                                    "问题": problems})
+            meta["溶液混合页面参数"] = mix_template_values(req)
+        meta["耗时秒"] = round(time.time() - started, 2)
+        return secs, meta
+
     if template_only or not HAS_LLM or not get_config()["api_key"]:
         if not template_only and HAS_LLM and not get_config()["api_key"]:
             print("   未检测到 API Key，使用兜底片段生成（效果同样可演示）")
-        secs = render_fallback(req)
+        secs = render_solver_template(req or {}, selected_skeleton)
+        if secs is not None:
+            problems = hard_validate(secs, req)
+            meta["来源"] = "场景库确定性模板"
+            meta["生成契约通过"] = not problems
+            meta["问题"] = problems
+            meta["生成尝试"].append({"来源": "场景库确定性模板", "问题数": len(problems), "问题": problems})
+        else:
+            secs = render_fallback(req)
+            problems = hard_validate(secs, req) if selected_skeleton.get("solver_api") else []
+            meta["来源"] = ("兜底片段（求解器契约未满足）"
+                            if selected_skeleton.get("solver_api") else "兜底片段")
+            meta["生成契约通过"] = not problems and not selected_skeleton.get("solver_api")
+            meta["问题"] = problems
         meta["耗时秒"] = round(time.time() - started, 2)
         return secs, meta
 
@@ -404,7 +1015,9 @@ def generate(req, pack, feedback=None, template_only=False):
     meta["来源"] = "大模型"
     meta["模型"] = get_config()["model"]
 
-    problems = hard_validate(secs, req)
+    problems = hard_validate(secs, req, managed_readouts=True)
+    best_secs, best_problems = secs, problems
+    meta["生成尝试"].append({"来源": "大模型首轮", "问题数": len(problems), "问题": problems})
 
     # 不合格 → 带着问题清单让模型自己修一次
     if problems:
@@ -412,24 +1025,56 @@ def generate(req, pack, feedback=None, template_only=False):
         messages.append({"role": "assistant", "content": raw})
         messages.append({
             "role": "user",
-            "content": "这份输出有以下问题：\n- %s\n\n请修正后重新输出完整的八块内容"
-                       "（<!--1--> 到 <!--6-->、<!--CSS-->、<!--JS-->），"
-                       "只输出内容，不要解释，总长控制在 9000 字符以内。"
-                       % "\n- ".join(problems),
+            "content": (
+                "本页的生成器硬校验未通过。请按清单逐项修复，尤其不能遗漏求解器接线、"
+                "可见输出标记和可操作控件；不得用手算结果、静态文案或仅在注释里提及 API 来代替调用。\n"
+                "选中骨架：%s\n必需求解器：%s\n场景契约：%s\n\n"
+                "未通过项：\n- %s\n\n"
+                "请保留满足要求的教学内容，输出修复后的完整八块内容"
+                "（<!--1--> 到 <!--6-->、<!--CSS-->、<!--JS-->），只输出内容，不要解释。"
+                % (selected_skeleton.get("id"), selected_skeleton.get("solver_api") or "无",
+                   selected_skeleton.get("solver_contract") or "无专用求解器契约",
+                   "\n- ".join(problems))
+            ),
         })
         raw2, _ = call_llm(messages, temperature=0.3, timeout=300, max_tokens=8192)
         secs2 = clean_sections(raw2)
-        problems2 = hard_validate(secs2, req)
+        problems2 = hard_validate(secs2, req, managed_readouts=True)
         meta["是否修复过"] = True
+        meta["生成尝试"].append({"来源": "大模型自动修复", "问题数": len(problems2), "问题": problems2})
 
         if not problems2:
-            secs, problems = secs2, []
+            best_secs, best_problems = secs2, []
+        elif len(problems2) < len(best_problems):
+            best_secs, best_problems = secs2, problems2
 
-    # 还是不合格 → 退回兜底，保证有可演示的产物
-    if problems:
-        meta["问题"] = problems
-        meta["来源"] = "兜底片段（模型输出未通过校验）"
-        secs = render_fallback(req)
+    if best_problems:
+        # Solver pages must not silently degrade into an unrelated generic demo.
+        # Use a deterministic scene template when available; otherwise retain
+        # the best model candidate and mark it unpublishable in metadata.
+        template_secs = render_solver_template(req or {}, selected_skeleton)
+        template_problems = hard_validate(template_secs, req) if template_secs is not None else None
+        if template_secs is not None and not template_problems:
+            secs = template_secs
+            meta["来源"] = "场景库确定性模板（模型输出未通过校验）"
+            meta["模型输出问题"] = best_problems
+            meta["生成契约通过"] = True
+            meta["问题"] = []
+        elif selected_skeleton.get("solver_api"):
+            secs = best_secs
+            meta["来源"] = "大模型候选（求解器契约未通过）"
+            meta["生成契约通过"] = False
+            meta["问题"] = best_problems
+        else:
+            secs = render_fallback(req)
+            fallback_problems = hard_validate(secs, req)
+            meta["来源"] = "兜底片段（模型输出未通过校验）"
+            meta["生成契约通过"] = not fallback_problems
+            meta["问题"] = best_problems
+    else:
+        secs = best_secs
+        meta["生成契约通过"] = True
+        meta["问题"] = []
 
     meta["耗时秒"] = round(time.time() - started, 2)
     return secs, meta
@@ -442,6 +1087,8 @@ def save(secs, req, meta):
     # 页眉/文件名都用「实验名字」，不用整句主题（名字只出现在蓝色条上一次）
     title = req.get("实验名称") or req.get("实验主题") or "教学资源"
     name = shell.safe_name(shell.short_title(title))
+    if not meta.get("生成契约通过", True):
+        name += "_待修复不可交付"
     html = shell.render(name, secs, slug=name)
 
     html_path = os.path.join(OUTPUT_DIR, "教学资源_%s.html" % name)
@@ -453,11 +1100,17 @@ def save(secs, req, meta):
         shutil.copy2(os.path.join(shell.FRAME_DIR, res),
                      os.path.join(OUTPUT_DIR, res))
 
-    zip_path = os.path.join(OUTPUT_DIR, "教学资源_%s.zip" % name)
+    # The shell's download dialog links to ``<slug>.zip``. Keep the historical
+    # prefixed archive as an alias for existing scripts, but make the linked
+    # archive the canonical metadata/CLI result.
+    zip_path = os.path.join(OUTPUT_DIR, "%s.zip" % name)
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
         z.write(html_path, "%s.html" % name)
         for res in ("frame.css", "exp.css", "logo.png"):
             z.write(os.path.join(OUTPUT_DIR, res), res)
+    legacy_zip_path = os.path.join(OUTPUT_DIR, "教学资源_%s.zip" % name)
+    if legacy_zip_path != zip_path:
+        shutil.copy2(zip_path, legacy_zip_path)
 
     meta_path = os.path.join(OUTPUT_DIR, "教学资源_%s.meta.json" % name)
     with open(meta_path, "w", encoding="utf-8") as f:
@@ -481,7 +1134,12 @@ def main():
     parser.add_argument("--template-only", action="store_true", help="不调模型，只用兜底片段")
     parser.add_argument("--open", action="store_true", help="生成后用浏览器打开")
     parser.add_argument("--show-prompt", action="store_true", help="只打印最终提示词，不调用模型")
+    parser.add_argument("--output-dir", help="按场景隔离生成产物的目录")
     args = parser.parse_args()
+
+    global OUTPUT_DIR
+    if args.output_dir:
+        OUTPUT_DIR = os.path.abspath(args.output_dir)
 
     load_env()
     req, pack, req_path, kb_path = load_inputs(args.req, args.kb)
@@ -510,6 +1168,7 @@ def main():
     print("=" * 58)
     print("生成来源   %s" % meta["来源"])
     print("耗时       %.2fs" % meta["耗时秒"])
+    print("生成契约   %s" % ("通过" if meta.get("生成契约通过") else "未通过（不可交付）"))
     print("内容字符   %d" % sum(len(secs.get(k, "")) for k in ("1", "2", "3", "4", "5", "6", "js")))
     print("外壳校验   %s" % ("通过" if not shell_problems else "未通过：" + "；".join(shell_problems)))
     if meta["问题"]:

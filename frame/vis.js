@@ -903,8 +903,10 @@
 
   /* 画布最小字号：画布是位图，9~10px 的中文缩到屏幕上根本认不出。
      所有走 text/pill/card 的文字都会被抬到这个下限，刻度数字也一并抬。 */
-  var FS_MIN = 25;      // 画布内最小字号 = 原始 12.5px × 2
-  var TYPE_SCALE = 2;   // 画布内所有字号统一放大倍数
+  // 与“六学科统一质感”参考页一致：画布标注使用 12.5px 基线，
+  // 不再把字号整体放大两倍。放大坐标系会让胶囊、引线和刻度互相挤压。
+  var FS_MIN = 12.5;
+  var TYPE_SCALE = 1;
   function fs(v) { v = (+v || 0) * TYPE_SCALE; return v < FS_MIN ? FS_MIN : v; }
 
   /* ============================ 标注系统 ============================ */
@@ -1156,7 +1158,31 @@
     return run;
   }
 
+  function formatNumber(value, key) {
+    if (typeof value !== 'number' || !Number.isFinite(value)) return String(value);
+    if (Number.isInteger(value)) return String(value);
+    var name = String(key || '').toLowerCase();
+    if (Math.abs(value) < 0.001 && value !== 0) {
+      return value.toPrecision(4).replace(/(\.\d*?[1-9])0+(?:e|$)/i, '$1');
+    }
+    var digits = 4;
+    if (/(?:count|number|index|order|rank|sides|strands)/.test(name)) digits = 0;
+    else if (/(?:force|tension|buoyancy|pressure|work|power|energy|speed|distance|height|length|mass|temperature|voltage|current|resistance|area|radius|volume|time|period|frequency|image_distance|pull_force)/.test(name)) digits = 3;
+    else if (/(?:fraction|ratio|prob|efficiency|magnification|coefficient|sine|cosine|tangent|angle)/.test(name)) digits = 3;
+    return value.toLocaleString('zh-CN', {useGrouping:false, maximumFractionDigits:digits});
+  }
+
+  function bindSolverReadouts(result, root = document) {
+    for (const element of root.querySelectorAll('[data-solver-field]')) {
+      const value = result?.[element.dataset.solverField];
+      element.textContent = value == null || (Array.isArray(value) && value.length === 0)
+        ? '—' : (Array.isArray(value) ? value.map(item => formatNumber(item, element.dataset.solverField)).join(', ') : formatNumber(value, element.dataset.solverField));
+    }
+  }
+
   window.VIS = {
+    bindSolverReadouts: bindSolverReadouts,
+    formatNumber: formatNumber,
     /* 状态 */
     S: S,
     /* 基础 */

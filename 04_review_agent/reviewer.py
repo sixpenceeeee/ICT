@@ -31,7 +31,9 @@ reviewer.py —— 质量审查 Agent（按《界面设计+审查判据》V1.0 �
 
 import argparse
 import glob
+import importlib.util
 import json
+import math
 import os
 import re
 import shutil
@@ -44,15 +46,84 @@ PARENT = os.path.dirname(BASE_DIR)
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 CHECK_JS = os.path.join(BASE_DIR, "checks_browser.js")
 FACTS_PATH = os.path.join(BASE_DIR, "facts.json")
+FACTS_REGISTRY_PATH = os.path.join(BASE_DIR, "facts_registry.json")
+SOURCE_REGISTRY_PATH = os.path.join(BASE_DIR, "source_registry.json")
+SCENE_FACT_MAP_PATH = os.path.join(BASE_DIR, "scene_fact_map.json")
 
 sys.path.insert(0, PARENT)
 sys.path.insert(0, BASE_DIR)
-sys.path.insert(0, os.path.join(PARENT, "03_generator_agent", "solvers"))
+GENERATOR_DIR = os.path.join(PARENT, "03_generator_agent")
+_scene_registry_spec = importlib.util.spec_from_file_location(
+    "generator_scene_registry", os.path.join(GENERATOR_DIR, "scene_registry.py"))
+generator_scene_registry = importlib.util.module_from_spec(_scene_registry_spec)
+_scene_registry_spec.loader.exec_module(generator_scene_registry)
+SOLVER_ROOT = os.path.join(PARENT, "03_generator_agent", "solvers")
+sys.path.insert(0, SOLVER_ROOT)
+for solver_path in (
+        os.path.join(SOLVER_ROOT, "physics", "electric_circuits"),
+        os.path.join(SOLVER_ROOT, "mathematics", "solid_sections", "polyhedra"),
+        os.path.join(SOLVER_ROOT, "mathematics", "solid_sections", "curved_solids"),
+        os.path.join(SOLVER_ROOT, "mathematics", "spatial_geometry", "distance_angles"),
+        os.path.join(SOLVER_ROOT, "mathematics", "solid_geometry", "volume"),
+        os.path.join(SOLVER_ROOT, "mathematics", "solid_geometry", "nets_folding"),
+        os.path.join(SOLVER_ROOT, "chemistry", "equations")):
+    sys.path.insert(0, solver_path)
 
 from topics import detect_topic, profile_of, unit_pattern  # noqa: E402
 import judges as judge_lib                                  # noqa: E402
 import registry                                            # noqa: E402
 from circuit_solver import CircuitError, solve_circuit      # noqa: E402
+from circuit_judge import verify_circuit as verify_component_circuit  # noqa: E402
+from cube_cut_solver import solve_cube_cut                  # noqa: E402
+from cuboid_cut_solver import solve_cuboid_cut              # noqa: E402
+from triangular_prism_cut_solver import solve_triangular_prism_cut  # noqa: E402
+from square_pyramid_cut_solver import solve_square_pyramid_cut    # noqa: E402
+from polyhedron_volume_oracle import split_polyhedron_volumes      # noqa: E402
+from cylinder_section_solver import solve_cylinder_cut             # noqa: E402
+from cone_section_solver import solve_cone_cut                       # noqa: E402
+from sphere_section_solver import solve_sphere_cut                   # noqa: E402
+from spatial_metrics_solver import solve_spatial_metrics             # noqa: E402
+from solid_volume_solver import solve_solid_volume, solve_composite_volume, check_volume_partition  # noqa: E402
+from cube_net_solver import solve_cube_net                         # noqa: E402
+from cuboid_net_solver import solve_cuboid_net                     # noqa: E402
+from cylinder_net_solver import solve_cylinder_net                 # noqa: E402
+from cone_net_solver import solve_cone_net                         # noqa: E402
+from equation_balancer import balance_equation, check_coefficients  # noqa: E402
+from chemistry.reactions.stoichiometry_solver import solve_stoichiometry  # noqa: E402
+from chemistry.reactions.solution_mixing_solver import solve_solution_mixing  # noqa: E402
+from chemistry.reactions.acid_base_titration_solver import solve_acid_base_titration  # noqa: E402
+from chemistry.reactions.gas_collection_solver import solve_gas_collection  # noqa: E402
+from chemistry.reactions.precipitation_solver import solve_precipitation  # noqa: E402
+from chemistry.reactions.redox_solver import solve_redox  # noqa: E402
+from chemistry.reactions.solubility_equilibrium_solver import solve_solubility_equilibrium  # noqa: E402
+from mathematics.quadratic_solver import solve_quadratic  # noqa: E402
+from mathematics.lesson_models import SOLVERS as MATH_SOLVERS  # noqa: E402
+from physics.thin_lens_solver import solve_thin_lens  # noqa: E402
+from physics.lesson_models import SOLVERS as PHYSICS_SOLVERS  # noqa: E402
+from facts_store import (check_page_facts, load_facts as load_registry_facts,
+                         load_scene_fact_map, load_sources)  # noqa: E402
+from teaching_contract import compile_contract, vessel_geometry, GRAVITY, WATER_DENSITY  # noqa: E402
+import teaching_evolution  # noqa: E402
+
+PHYSICS_MODELS = generator_scene_registry.PHYSICS_MODELS
+MATH_MODELS = generator_scene_registry.MATH_MODELS
+PRESET_LESSON_MODELS = {**PHYSICS_MODELS, **MATH_MODELS}
+LESSON_SOLVERS = {
+    "MATH.solveQuadratic": ("quadratic", "MATH_QUADRATIC", "J3-14", "二次函数", solve_quadratic,
+                            ("vertex_x", "vertex_y", "axis_x", "discriminant", "roots", "y_intercept", "opening")),
+    "PHYS.solveThinLens": ("thinLens", "PHYS_LENS", "J3-15", "凸透镜成像", solve_thin_lens,
+                           ("image_distance_cm", "magnification", "state")),
+    **{
+        "PHYS." + model["api"]: (key, model["prefix"], model["check"], model["title"],
+                                PHYSICS_SOLVERS[model["api"]], model["fields"])
+        for key, model in PHYSICS_MODELS.items()
+    },
+    **{
+        "MATH." + model["api"]: (key, model["prefix"], model["check"], model["title"],
+                                MATH_SOLVERS[model["api"]], model["fields"])
+        for key, model in MATH_MODELS.items()
+    },
+}
 
 PASS_SCORE = 80
 MAJOR_LINE = 60
@@ -95,6 +166,17 @@ def find_node_modules():
 
 
 def find_chrome():
+    configured = os.environ.get("CHROME_PATH")
+    if configured and os.path.exists(configured):
+        return configured
+    for exe in (
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+    ):
+        if os.path.exists(exe):
+            return exe
     bases = [
         os.path.join(os.environ.get("LOCALAPPDATA", ""), "ms-playwright"),
         os.path.join(os.path.expanduser("~"), "AppData", "Local", "ms-playwright"),
@@ -665,6 +747,122 @@ def gate2_assets(html, low, text, br, html_path):
 
 # ============ 第3关：学科判据 ============
 
+def lesson_value_matches(expected, actual, display=False):
+    if isinstance(expected, list):
+        if display:
+            actual = [] if actual == "—" else re.split(r"[,，]", actual)
+        return isinstance(actual, list) and len(expected) == len(actual) and all(
+            lesson_value_matches(value, observed, display) for value, observed in zip(expected, actual))
+    if expected is None:
+        return actual == "—" if display else actual is None
+    if isinstance(expected, str):
+        return actual == expected
+    if display:
+        try:
+            actual = float(actual.strip().replace("−", "-"))
+        except ValueError:
+            return False
+    return type(actual) in (int, float) and abs(actual - expected) <= (
+        (1e-6 if display else 1e-10) * abs(expected))
+
+
+MISSING_LESSON_FIELD = object()
+
+
+def lesson_result_field(sample, field):
+    value = sample.get("result")
+    for part in field.split("."):
+        if isinstance(value, dict):
+            value = value.get(part, MISSING_LESSON_FIELD)
+        elif isinstance(value, list) and part.isdecimal() and int(part) < len(value):
+            value = value[int(part)]
+        else:
+            return MISSING_LESSON_FIELD
+    return value
+
+
+def lesson_metamorphic_failures(samples, model):
+    presets = {sample["label"].removeprefix("preset:"): sample for sample in samples
+               if sample["label"].startswith("preset:")}
+    failures = []
+    changed_fields = set()
+    for name, expected in model["cases"].items():
+        sample = presets.get(name) or {}
+        request = sample.get("request")
+        evidence = sample.get("control") or {}
+        controls = evidence.get("controls") or []
+        if (not isinstance(request, dict) or not isinstance(sample.get("result"), dict)
+                or evidence.get("errors") or {control["field"] for control in controls} != expected.keys()
+                or any(not lesson_value_matches(value, request.get(field)) for field, value in expected.items())):
+            failures.append(f"{name} 未通过真实控件到达验收输入")
+            continue
+        changed_fields.update(control["field"] for control in controls if control["oldValue"] != control["newValue"])
+    if failures:
+        return failures
+    unchanged_fields = model["inputs"].keys() - changed_fields
+    if unchanged_fields:
+        return ["控件未发生变更：" + "、".join(sorted(unchanged_fields))]
+    for case, field, *target in model["relations"]:
+        actual = lesson_result_field(presets[case], field)
+        expected = target[0]
+        if len(target) == 3:
+            baseline, baseline_field, factor = target
+            value = lesson_result_field(presets[baseline], baseline_field)
+            expected = value * factor if type(value) in (int, float) else MISSING_LESSON_FIELD
+        if expected is MISSING_LESSON_FIELD or not lesson_value_matches(expected, actual):
+            failures.append(f"{case} 的 {field} 不符合变形关系")
+    return failures
+
+
+def lesson_solver_checks(br, expected_api):
+    observed = (br or {}).get("lessonSolvers") or {}
+    checks = []
+    for api, (key, _, check_id, label, solve, fields) in LESSON_SOLVERS.items():
+        if api != expected_api and key not in observed:
+            continue
+        samples = observed.get(key) or []
+        failures = [] if samples else ["缺少浏览器采集的求解状态"]
+        input_fields = {"a", "b", "c"} if key == "quadratic" else {"u", "f"} if key == "thinLens" else set()
+        tested_inputs = set()
+        for index, sample in enumerate(samples):
+            location = sample["label"]
+            request = sample.get("request")
+            control = sample.get("control") or {}
+            input_field = control.get("field")
+            if input_field in input_fields and isinstance(request, dict):
+                if lesson_value_matches(float(control["newValue"]), request.get(input_field)):
+                    tested_inputs.add(input_field)
+                else:
+                    failures.append(f"{location} 控件 {input_field} 的值没有传入求解请求")
+            try:
+                expected = solve(request)
+            except ValueError as exc:
+                if (index == 0 or location.startswith("preset:") or sample.get("result") is not None or not sample.get("error")
+                        or any(value != "—" for values in sample["fields"].values() for value in values)):
+                    failures.append(f"{location} 请求无效：{exc}")
+                continue
+            result = sample.get("result")
+            if sample.get("error"):
+                failures.append(f"{location} 合法输入仍显示求解错误")
+            if not isinstance(result, dict):
+                failures.append(f"{location} 缺少求解结果")
+                continue
+            for field, value in expected.items():
+                if field not in result or not lesson_value_matches(value, result[field]):
+                    failures.append(f"{location} 结果 {field} 与独立复算不符")
+            for field in fields:
+                values = sample["fields"].get(field) or []
+                if not values or not all(lesson_value_matches(expected[field], value, display=True) for value in values):
+                    failures.append(f"{location} 可见读数 {field} 与独立复算不符")
+        if samples and input_fields - tested_inputs:
+            failures.append("缺少真实控件变更：" + "、".join(sorted(input_fields - tested_inputs)))
+        checks.append(mk("G3", check_id, label + "独立复算", "fail" if failures else "pass",
+                         "初始状态和真实控件变更后的结果、可见读数均与 Python 独立复算一致",
+                         "；".join(failures[:10]) if failures else f"复核了 {len(samples)} 个页面状态",
+                         "页面求解结果及读数核对", severity=CRITICAL, weight=4, judge="J3"))
+    return checks
+
+
 def gate3_subject(ctx, subject):
     if not subject:
         return [mk("G3", "G3-00", "学科判据可执行", "review",
@@ -684,6 +882,70 @@ def gate3_subject(ctx, subject):
                           "引擎与学科的判据组合不一致，需确认是否有意省略",
                           advice="在 registry.SUBJECT_JUDGES 中补充该判据，或说明省略理由",
                           weight=0, judge=j))
+    return out
+
+
+def gate3_facts(fact_result):
+    """把教材事实库结果接入 G3，但不把机器匹配当作教师审核。"""
+    out = []
+    out.append(mk(
+        "G3", "G3-F-01", "事实内容机器匹配",
+        "pass" if fact_result.get("facts_pass") else "review",
+        "场景映射存在，页面包含必须概念且未命中禁止表述",
+        "通过" if fact_result.get("facts_pass") else "；".join(fact_result.get("missing_terms", [])) or "待补事实",
+        "机器匹配结果仅作为事实覆盖提示，不代表教师审核通过",
+        evidence=json.dumps(fact_result, ensure_ascii=False),
+        advice="补齐场景事实映射和页面必需概念；不要用机器匹配替代教师审核",
+        weight=0, judge="FACTS"))
+    forbidden = fact_result.get("forbidden_term_found")
+    out.append(mk(
+        "G3", "G3-F-02", "禁止表述检查",
+        "fail" if forbidden else "pass",
+        "页面不得出现事实库 must_not_include",
+        "；".join(fact_result.get("forbidden_terms", [])) if forbidden else "未发现禁止表述",
+        "发现事实库禁止表述" if forbidden else "未发现冲突表述",
+        evidence="、".join(fact_result.get("forbidden_terms", [])),
+        advice="依据已审核事实改写页面表述；不确定时删除该表述",
+        severity=CRITICAL if forbidden else MAJOR, weight=0, judge="FACTS"))
+    source_pending = bool(fact_result.get("source_missing"))
+    out.append(mk(
+        "G3", "G3-F-03", "事实来源可追踪",
+        "review" if source_pending else "pass",
+        "所有 source_refs 均存在且来源已核验",
+        "缺失：%s；待核验：%s" % (
+            "、".join(fact_result.get("missing_source_refs", [])) or "无",
+            "、".join(fact_result.get("unverified_sources", [])) or "无"),
+        "来源缺失或尚未完成核验，不能发布",
+        evidence=json.dumps({"missing": fact_result.get("missing_source_refs", []),
+                             "unverified": fact_result.get("unverified_sources", [])}, ensure_ascii=False),
+        advice="补充来源定位信息并完成教师/教研核验；不得伪造页码或网址",
+        weight=0, judge="FACTS"))
+    safety_pending = bool(fact_result.get("safety_missing"))
+    out.append(mk(
+        "G3", "G3-F-04", "事实安全边界",
+        "review" if safety_pending else "pass",
+        "页面包含事实对应的 safety_boundary",
+        "缺少安全边界" if safety_pending else "安全边界已呈现",
+        "虚拟模型、实验安全或适用边界仍需教师确认" if safety_pending else "安全边界可见",
+        advice="在页面教学说明或实验声明中补充安全/模型边界",
+        weight=0, judge="FACTS"))
+    teacher_pending = bool(fact_result.get("teacher_review_pending"))
+    out.append(mk(
+        "G3", "G3-F-05", "事实教师审核状态",
+        "review" if teacher_pending else "pass",
+        "事实 review.status 为教师审核通过",
+        "待教师审核" if teacher_pending else "已有审核记录",
+        "机器匹配成功不能替代教师审核" if teacher_pending else "事实审核记录已登记",
+        advice="由教师/教研填写 reviewer、review_date 和 notes，确认后再发布",
+        weight=0, judge="FACTS"))
+    out.append(mk(
+        "G3", "G3-F-06", "事实发布许可",
+        "pass" if fact_result.get("publish_allowed") else "review",
+        "事实、来源、安全边界、教师审核和场景覆盖均满足发布条件",
+        "允许发布" if fact_result.get("publish_allowed") else "待事实/来源/教师审核",
+        "发布许可是独立状态，不由页面可运行性推断",
+        advice="先完成事实补齐、来源核验和教师审核，再进入发布队列",
+        weight=0, judge="FACTS"))
     return out
 
 
@@ -737,6 +999,18 @@ def verify_circuit_samples(br):
         if len(components) > 80:
             return {"checked": True, "ok": False,
                     "actual": "电路元件数超过审查上限 80，拒绝执行过大模型"}
+        # sgrz 器材组件使用 schema_version/recipe/config 结构，独立复算
+        # 由 Python circuit_judge 完成；旧的 netlist 页面继续走下方 MNA
+        # 分支。这样组件页面也不会因模型结构不同而被误判为“无网表”。
+        if model.get("schema_version") == 1 and model.get("recipe"):
+            verdict = verify_component_circuit({"config": model, "solution": actual})
+            if not verdict.get("ok"):
+                return {"checked": True, "ok": False,
+                        "actual": "%s: 器材组件独立复算失败：%s" % (
+                            sample.get("label", "state"), "；".join(verdict.get("issues", []))[:500]),
+                        "advice": "检查 CIRCUIT_PAGE 的 config、接线与参数是否和 Python 器材审查器一致"}
+            checked += 1
+            continue
         expected_signature = diagram_signature(model)
         actual_signature = sample.get("diagramSignature")
         if not actual_signature or actual_signature != expected_signature:
@@ -848,6 +1122,576 @@ def verify_circuit_samples(br):
             "actual": "独立 MNA 对拍通过 %d 个状态（首屏与滑块/选择器操作后）" % checked,
             "advice": "继续扩充边界拓扑样例，重点覆盖断路、短路和并联分支"}
 
+
+def verify_polyhedron_section_samples(br):
+    """Recompute cube/cuboid plane sections with independent Python adapters."""
+    samples = ((br or {}).get("cubeCut") or {}).get("samples") or []
+    if not samples:
+        return {"checked": False, "ok": False,
+                "actual": "浏览器未暴露立体截面求解结果样本",
+                "advice": "每次 render 调用对应立体求解器，并将同一结果传给绘图 API"}
+    checked = 0
+    for sample in samples[:12]:
+        actual, geo = sample.get("result"), sample.get("geo") or {}
+        label = sample.get("label", "state")
+        if not isinstance(actual, dict):
+            return {"checked": True, "ok": False, "actual": "%s: 求解结果不是对象" % label}
+        try:
+            if actual.get("solid") == "square_pyramid":
+                dims = actual.get("dimensions") or []
+                if len(dims) != 2:
+                    raise ValueError("缺少正四棱锥尺寸")
+                expected = solve_square_pyramid_cut(*dims, n=actual.get("normal"), offset=actual.get("offset"))
+            elif actual.get("solid") == "triangular_prism":
+                dims = actual.get("dimensions") or []
+                if len(dims) != 3:
+                    raise ValueError("缺少三棱柱尺寸")
+                expected = solve_triangular_prism_cut(*dims, n=actual.get("normal"), offset=actual.get("offset"))
+            elif actual.get("solid") == "cuboid":
+                dims = actual.get("dimensions") or []
+                if len(dims) != 3:
+                    raise ValueError("缺少长方体尺寸")
+                expected = solve_cuboid_cut(*dims, n=actual.get("normal"), offset=actual.get("offset"))
+            else:
+                expected = solve_cube_cut(actual.get("a"), actual.get("normal"), actual.get("offset"))
+        except Exception as exc:  # noqa: BLE001
+            return {"checked": True, "ok": False, "actual": "%s: 独立几何求解失败（%s）" % (label, exc)}
+        if actual.get("shape") != expected["shape"] or actual.get("sides") != expected["sides"]:
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 截面形状/边数不一致，参考 %s/%s，页面 %s/%s" %
+                             (label, expected["shape"], expected["sides"], actual.get("shape"), actual.get("sides"))}
+        if not isinstance(actual.get("area"), (int, float)) or abs(actual["area"] - expected["area"]) > max(1e-7, expected["area"] * 1e-6):
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 截面面积偏离独立复算值 %.9g" % (label, expected["area"])}
+        if not isinstance(actual.get("plane_residual"), (int, float)) or actual["plane_residual"] > 1e-7:
+            return {"checked": True, "ok": False, "actual": "%s: 截面顶点不在声明的截平面上" % label}
+        vertices = actual.get("vertices") or []
+        if len(vertices) != len(expected["vertices"]):
+            return {"checked": True, "ok": False, "actual": "%s: 页面与独立求解器的截面顶点数不同" % label}
+        # Compare unordered vertices; cyclic ordering may differ across runtimes.
+        unmatched = [list(map(float, p)) for p in expected["vertices"]]
+        for p in vertices:
+            try:
+                q = [float(v) for v in p]
+            except (TypeError, ValueError):
+                return {"checked": True, "ok": False, "actual": "%s: 截面顶点格式无效" % label}
+            nearest = min(range(len(unmatched)), key=lambda i: sum((q[k]-unmatched[i][k])**2 for k in range(3))) if unmatched else None
+            if nearest is None or sum((q[k]-unmatched[nearest][k])**2 for k in range(3)) > 1e-12:
+                return {"checked": True, "ok": False, "actual": "%s: 页面截面顶点偏离独立几何结果" % label}
+            unmatched.pop(nearest)
+        if not sample.get("drawSignature"):
+            return {"checked": True, "ok": False, "actual": "%s: 绘图结果缺少求解结果签名" % label}
+        try:
+            signature = json.loads(sample["drawSignature"])
+        except (TypeError, ValueError):
+            signature = None
+        if not isinstance(signature, dict) or signature.get("sides") != actual.get("sides") or signature.get("vertices") != actual.get("vertices"):
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 截面绘图与机读求解结果不是同一组顶点" % label}
+        expected_dimensions = expected.get("dimensions")
+        if signature.get("solid") != expected.get("solid") or signature.get("dimensions") != expected_dimensions:
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 绘图使用的立体类型或尺寸与求解模型不一致" % label}
+        expected_solver = str(expected.get("solid", "cube")) + "_cut_v1"
+        if geo.get("solver") != expected_solver or geo.get("sides") != expected["sides"]:
+            return {"checked": True, "ok": False, "actual": "%s: __GEO__ 缺少一致的截面求解结果" % label}
+        if geo.get("dimensions") != expected_dimensions:
+            return {"checked": True, "ok": False, "actual": "%s: __GEO__ 中的立体尺寸与独立求解结果不一致" % label}
+        geo_vertices = geo.get("vertices") or []
+        if len(geo_vertices) != len(expected["vertices"]):
+            return {"checked": True, "ok": False, "actual": "%s: __GEO__ 截面顶点数量与独立复算不一致" % label}
+        remaining = [list(map(float, p)) for p in expected["vertices"]]
+        for p in geo_vertices:
+            try:
+                q = [float(p["x"]), float(p["y"]), float(p["z"])]
+            except (TypeError, KeyError, ValueError):
+                return {"checked": True, "ok": False, "actual": "%s: __GEO__ 截面顶点格式无效" % label}
+            nearest = min(range(len(remaining)), key=lambda i: sum((q[k]-remaining[i][k])**2 for k in range(3))) if remaining else None
+            if nearest is None or sum((q[k]-remaining[nearest][k])**2 for k in range(3)) > 1e-12:
+                return {"checked": True, "ok": False, "actual": "%s: __GEO__ 截面顶点偏离独立复算结果" % label}
+            remaining.pop(nearest)
+        if not isinstance(geo.get("area_abs"), (int, float)) or abs(geo["area_abs"] - expected["area"]) > max(1e-7, expected["area"] * 1e-6):
+            return {"checked": True, "ok": False, "actual": "%s: __GEO__ 面积与独立复算不一致" % label}
+        try:
+            split = split_polyhedron_volumes(expected["solid_vertices"], expected["faces"],
+                                              expected["normal"], expected["offset"])
+            total = float(expected["volume"])
+            ref_negative = split["negative"] / total
+            ref_positive = split["positive"] / total
+            geo_negative = float(geo.get("v_up"))
+            geo_positive = float(geo.get("v_down"))
+            volume_ok = bool(geo.get("volume_ok"))
+        except (KeyError, TypeError, ValueError, ZeroDivisionError):
+            return {"checked": True, "ok": False, "actual": "%s: 缺少可复算的分割体积或 __GEO__ 体积分量" % label}
+        tol_volume = 1e-6
+        if (not volume_ok or abs(ref_negative + ref_positive - 1.0) > tol_volume
+                or abs(geo_negative - ref_negative) > tol_volume
+                or abs(geo_positive - ref_positive) > tol_volume):
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 截面两侧体积分数与独立裁剪复算不一致（参考 %.6f+%.6f，页面 %.6f+%.6f）" %
+                             (label, ref_negative, ref_positive, geo_negative, geo_positive)}
+        max_sides = len(expected.get("faces") or [])
+        if (actual.get("sides") not in (0,) and
+                (actual.get("sides") not in (3, 4, 5, 6) or actual.get("sides") > max_sides)):
+            return {"checked": True, "ok": False,
+                    "actual": "%s: 截面边数超出该立体面的数量上限 %d" % (label, max_sides)}
+        checked += 1
+    return {"checked": checked > 0, "ok": checked > 0,
+            "actual": "独立几何与面裁剪体积复算通过 %d 个状态（顶点、边数、面积、体积分割、图示和 __GEO__ 一致）" % checked,
+            "advice": "继续加入经过棱、顶点以及切平面离开正方体的边界状态"}
+
+
+def verify_cylinder_section_samples(br):
+    samples = ((br or {}).get("cylinderCut") or {}).get("samples") or []
+    if not samples:
+        return {"checked": False, "ok": False, "actual": "浏览器未采集圆柱截面求解结果",
+                "advice": "页面应暴露 __MATH_CYLINDER_RESULT__ 并将同一结果交给 cylinderSection"}
+    for sample in samples[:12]:
+        actual, geo = sample.get("result") or {}, sample.get("geo") or {}
+        try:
+            expected = solve_cylinder_cut(actual["radius"], actual["height"], actual["normal"], actual["offset"])
+            if actual.get("shape") != expected["shape"] or abs(float(actual.get("area")) - expected["area"]) > 2e-5:
+                raise ValueError("页面截面类型或面积与独立积分不符")
+            if geo.get("solver") != "cylinder_cut_v1" or abs(float(geo.get("area")) - expected["area"]) > 2e-5:
+                raise ValueError("绘图 __GEO__ 与求解结果不一致")
+            sig = json.loads(sample["drawSignature"])
+            if sig.get("solid") != "cylinder" or abs(float(sig.get("area")) - expected["area"]) > 2e-5:
+                raise ValueError("绘图签名未使用当前求解结果")
+        except Exception as exc:  # noqa: BLE001
+            return {"checked": True, "ok": False, "actual": "%s: %s" % (sample.get("label", "state"), exc)}
+    return {"checked": True, "ok": True, "actual": "独立 Python 积分通过 %d 个圆柱截面状态" % min(len(samples), 12)}
+
+
+def verify_cone_section_samples(br):
+    samples = ((br or {}).get("coneCut") or {}).get("samples") or []
+    if not samples:
+        return {"checked": False, "ok": False, "actual": "浏览器未采集圆锥截面求解结果",
+                "advice": "页面应暴露 __MATH_CONE_RESULT__ 并将同一结果交给 coneSection"}
+    for sample in samples[:12]:
+        actual, geo = sample.get("result") or {}, sample.get("geo") or {}
+        try:
+            expected = solve_cone_cut(actual["radius"], actual["height"], actual["normal"], actual["offset"])
+            if actual.get("shape") != expected["shape"] or abs(float(actual.get("area"))-expected["area"]) > 2e-5:
+                raise ValueError("页面截面类型或面积与独立积分不符")
+            if geo.get("solver") != "cone_cut_v1" or abs(float(geo.get("area"))-expected["area"]) > 2e-5:
+                raise ValueError("绘图 __GEO__ 与求解结果不一致")
+            sig = json.loads(sample["drawSignature"])
+            if sig.get("solid") != "cone" or sig.get("shape") != expected["shape"] or abs(float(sig.get("area"))-expected["area"]) > 2e-5:
+                raise ValueError("绘图签名未使用当前求解结果")
+        except Exception as exc:  # noqa: BLE001
+            return {"checked": True, "ok": False, "actual": "%s: %s" % (sample.get("label", "state"), exc)}
+    return {"checked": True, "ok": True, "actual": "独立 Python 积分通过 %d 个圆锥截面状态" % min(len(samples), 12)}
+
+
+def verify_sphere_section_samples(br):
+    samples = ((br or {}).get("sphereCut") or {}).get("samples") or []
+    if not samples:
+        return {"checked": False, "ok": False, "actual": "浏览器未采集球体截面求解结果",
+                "advice": "页面应暴露 __MATH_SPHERE_RESULT__ 并将同一结果传给 sphereSection"}
+    for sample in samples[:12]:
+        actual, geo = sample.get("result") or {}, sample.get("geo") or {}
+        try:
+            expected = solve_sphere_cut(actual["radius"], actual["normal"], actual["offset"])
+            if actual.get("shape") != expected["shape"] or abs(float(actual.get("area"))-expected["area"]) > 1e-8:
+                raise ValueError("页面截面类型或面积与解析解不符")
+            sig = json.loads(sample["drawSignature"])
+            for entry in (actual, geo, sig):
+                center = entry.get("center")
+                reference = expected["center"]
+                center_matches = (center is None if reference is None else
+                                  isinstance(center, list) and len(center) == len(reference) and all(
+                                      math.isclose(x, y, rel_tol=1e-10, abs_tol=1e-8)
+                                      for x, y in zip(center, reference)))
+                if not center_matches or not math.isclose(float(entry.get("section_radius")),
+                                                          expected["section_radius"], rel_tol=1e-10, abs_tol=1e-8):
+                    raise ValueError("截面圆心或半径与解析解不符")
+            if geo.get("solver") != "sphere_cut_v1" or abs(float(geo.get("area"))-expected["area"]) > 1e-8:
+                raise ValueError("绘图 __GEO__ 与求解结果不一致")
+            if sig.get("solid") != "sphere" or abs(float(sig.get("area"))-expected["area"]) > 1e-8:
+                raise ValueError("绘图签名未使用当前求解结果")
+        except Exception as exc:  # noqa: BLE001
+            return {"checked": True, "ok": False, "actual": "%s: %s" % (sample.get("label", "state"), exc)}
+    return {"checked": True, "ok": True, "actual": "独立解析几何复算通过 %d 个球体截面状态" % min(len(samples), 12)}
+
+
+def verify_spatial_metric_samples(br):
+    samples = ((br or {}).get("spatialMetric") or {}).get("samples") or []
+    if not samples:
+        return {"checked": False, "ok": False, "actual": "浏览器未采集空间距离/角度求解请求与结果"}
+    for sample in samples[:12]:
+        try:
+            expected = solve_spatial_metrics(sample["request"])
+            actual = sample["result"]
+            if actual.get("operation") != expected["operation"] or actual.get("unit") != expected["unit"]:
+                raise ValueError("运算类型或单位不一致")
+            if abs(float(actual.get("value"))-expected["value"]) > max(1e-8, abs(expected["value"])*1e-8):
+                raise ValueError("页面数值与独立向量复算不一致")
+            checks = actual.get("checks") or {}
+            if not checks.get("finite") or not checks.get("non_negative") or (expected["unit"] == "degree" and not checks.get("angle_in_range")):
+                raise ValueError("结果未通过非负、有限或角度范围检查")
+        except Exception as exc:  # noqa: BLE001
+            return {"checked": True, "ok": False, "actual": "%s: %s" % (sample.get("label", "state"), exc)}
+    return {"checked": True, "ok": True, "actual": "独立向量/解析复算通过 %d 个距离或角度状态" % min(len(samples), 12)}
+
+
+def verify_solid_volume_samples(br):
+    samples = ((br or {}).get("solidVolume") or {}).get("samples") or []
+    if not samples:
+        return {"checked": False, "ok": False, "actual": "浏览器未采集立体体积求解请求与结果"}
+    for sample in samples[:12]:
+        try:
+            request = sample["request"]
+            composite = request.get("operation") == "sum_disjoint_components"
+            expected = solve_composite_volume(request["components"]) if composite else solve_solid_volume(request)
+            actual = sample["result"]
+            label = "operation" if composite else "solid"
+            if actual.get(label) != expected[label] or actual.get("unit") != "unit^3":
+                raise ValueError("立体类型或体积单位不一致")
+            if abs(float(actual.get("volume"))-expected["volume"]) > max(1e-8, abs(expected["volume"])*1e-8):
+                raise ValueError("页面体积与独立公式复算不一致")
+            checks = actual.get("checks") or {}
+            if not checks.get("finite") or not checks.get("positive"):
+                raise ValueError("页面体积结果未通过正值和有限性检查")
+            if composite:
+                parts = actual.get("components") or []
+                if len(parts) != len(expected["components"]) or any(
+                        part.get("solid") != ref["solid"] or part.get("dimensions") != ref["dimensions"]
+                        or not math.isclose(part["volume"], ref["volume"], rel_tol=1e-8, abs_tol=1e-8)
+                        for part, ref in zip(parts, expected["components"])):
+                    raise ValueError("组成部分的尺寸或体积与独立复算不一致")
+            partition = sample.get("partition")
+            if partition is not None:
+                expected_partition = check_volume_partition(partition["original"], partition["parts"])
+                if bool(partition.get("ok")) != expected_partition["ok"]:
+                    raise ValueError("切割后各部分体积和原体积的守恒检查不一致")
+        except Exception as exc:  # noqa: BLE001
+            return {"checked": True, "ok": False, "actual": "%s: %s" % (sample.get("label", "state"), exc)}
+    return {"checked": True, "ok": True, "actual": "独立体积公式复算通过 %d 个状态" % min(len(samples), 12)}
+
+
+def verify_cube_net_samples(br):
+    """Independently refold browser cube-net results using the Python oracle."""
+    samples = ((br or {}).get("cubeNet") or {}).get("samples") or []
+    if not samples:
+        return {"checked": False, "ok": False, "actual": "浏览器未采集正方体展开图请求与折叠结果",
+                "advice": "暴露 __MATH_CUBE_NET_REQUEST__ / __MATH_CUBE_NET_RESULT__，并从 result.faces 绘制折叠视图"}
+
+    def same(actual, expected, tolerance=1e-8):
+        if isinstance(expected, (list, tuple)):
+            return isinstance(actual, (list, tuple)) and len(actual) == len(expected) and all(
+                same(a, e, tolerance) for a, e in zip(actual, expected))
+        if isinstance(expected, (int, float)) and not isinstance(expected, bool):
+            try:
+                return abs(float(actual)-float(expected)) <= tolerance * max(1.0, abs(float(expected)))
+            except (TypeError, ValueError):
+                return False
+        return actual == expected
+
+    for sample in samples[:12]:
+        request, actual = sample.get("request") or {}, sample.get("result") or {}
+        try:
+            expected = solve_cube_net(request.get("cells"), request.get("edge_length", 1),
+                                      request.get("tolerance", 1e-8))
+            for field in ("solid", "valid", "connected", "hinge_count", "tree",
+                          "unique_face_normals", "reason"):
+                if actual.get(field) != expected.get(field):
+                    raise ValueError("页面字段 %s 与独立折叠结果不一致" % field)
+            if not same(actual.get("hinges"), expected["hinges"]):
+                raise ValueError("页面公共棱列表与输入网格不一致")
+            if not same(actual.get("faces"), expected["faces"]):
+                raise ValueError("页面六面法向、中心或折叠顶点与独立空间坐标不一致")
+            if expected["hinge_residual"] is None:
+                if actual.get("hinge_residual") is not None:
+                    raise ValueError("非树形/断开网格不应伪造铰链闭合残差")
+            elif not same(actual.get("hinge_residual"), expected["hinge_residual"]):
+                raise ValueError("页面公共棱闭合残差与独立计算不一致")
+            if not same(actual.get("checks"), expected.get("checks")):
+                raise ValueError("页面检查标记与独立折叠判定不一致")
+        except Exception as exc:  # noqa: BLE001
+            return {"checked": True, "ok": False,
+                    "actual": "%s：%s" % (sample.get("label", "state"), exc)}
+    return {"checked": True, "ok": True,
+            "actual": "独立拓扑与三维折叠复算通过 %d 个正方体展开图状态" % min(len(samples), 12)}
+
+
+def verify_cuboid_net_samples(br):
+    """Refold each sampled rectangular net using the Python reference solver."""
+    samples = ((br or {}).get("cuboidNet") or {}).get("samples") or []
+    if not samples:
+        return {"checked": False, "ok": False, "actual": "浏览器未采集长方体展开图请求与折叠结果",
+                "advice": "暴露 __MATH_CUBOID_NET_REQUEST__ / __MATH_CUBOID_NET_RESULT__，绘图使用 result.faces"}
+
+    def same(actual, expected, tolerance=1e-8):
+        if isinstance(expected, dict):
+            return isinstance(actual, dict) and actual.keys() == expected.keys() and all(
+                same(actual[k], expected[k], tolerance) for k in expected)
+        if isinstance(expected, (list, tuple)):
+            return isinstance(actual, (list, tuple)) and len(actual) == len(expected) and all(
+                same(a, e, tolerance) for a, e in zip(actual, expected))
+        if isinstance(expected, (int, float)) and not isinstance(expected, bool):
+            try:
+                return abs(float(actual)-float(expected)) <= tolerance * max(1.0, abs(float(expected)))
+            except (TypeError, ValueError):
+                return False
+        return actual == expected
+
+    for sample in samples[:12]:
+        request, actual = sample.get("request") or {}, sample.get("result") or {}
+        try:
+            expected = solve_cuboid_net(request)
+            for field in ("solid", "valid", "connected", "tree", "hinge_count",
+                          "reason", "unique_face_normals", "checks"):
+                if not same(actual.get(field), expected.get(field)):
+                    raise ValueError("页面字段 %s 与独立折叠结果不一致" % field)
+            for field in ("dimensions", "rectangles", "hinges", "faces"):
+                if not same(actual.get(field), expected.get(field)):
+                    raise ValueError("页面 %s 与独立折叠结果不一致" % field)
+            if expected["hinge_residual"] is None:
+                if actual.get("hinge_residual") is not None:
+                    raise ValueError("无可折叠树结构时不应报告铰链闭合残差")
+            elif not same(actual.get("hinge_residual"), expected["hinge_residual"]):
+                raise ValueError("公共棱闭合残差与独立计算不一致")
+        except Exception as exc:  # noqa: BLE001
+            return {"checked": True, "ok": False,
+                    "actual": "%s：%s" % (sample.get("label", "state"), exc)}
+    return {"checked": True, "ok": True,
+            "actual": "独立矩形拼接与三维折叠复算通过 %d 个长方体展开图状态" % min(len(samples), 12)}
+
+
+def verify_cylinder_net_samples(br):
+    """Independently recompute cylinder net dimensions, areas, and fold samples."""
+    samples = ((br or {}).get("cylinderNet") or {}).get("samples") or []
+    if not samples:
+        return {"checked": False, "ok": False, "actual": "浏览器未采集圆柱展开求解请求与结果",
+                "advice": "暴露 __MATH_CYLINDER_NET_REQUEST__ / __MATH_CYLINDER_NET_RESULT__，图示使用 surface_grid"}
+
+    def same(actual, expected, tolerance=1e-8):
+        if isinstance(expected, dict):
+            return isinstance(actual, dict) and actual.keys() == expected.keys() and all(
+                same(actual[k], expected[k], tolerance) for k in expected)
+        if isinstance(expected, (list, tuple)):
+            return isinstance(actual, (list, tuple)) and len(actual) == len(expected) and all(
+                same(a, e, tolerance) for a, e in zip(actual, expected))
+        if isinstance(expected, (int, float)) and not isinstance(expected, bool):
+            try:
+                return abs(float(actual)-float(expected)) <= tolerance * max(1.0, abs(float(expected)))
+            except (TypeError, ValueError):
+                return False
+        return actual == expected
+
+    for sample in samples[:12]:
+        request, actual = sample.get("request") or {}, sample.get("result") or {}
+        try:
+            expected = solve_cylinder_net(request)
+            for field in ("solid", "valid", "reason", "checks", "segments", "net"):
+                if not same(actual.get(field), expected.get(field)):
+                    raise ValueError("页面字段 %s 与独立圆柱展开结果不一致" % field)
+            for field in ("radius", "height", "circumference", "lateral_area", "cap_area",
+                          "surface_area", "net_area", "area_error", "relative_area_error",
+                          "fold_map", "surface_grid", "bottom_cap", "top_cap"):
+                if not same(actual.get(field), expected.get(field)):
+                    raise ValueError("页面几何量 %s 与独立解析结果不一致" % field)
+        except Exception as exc:  # noqa: BLE001
+            return {"checked": True, "ok": False,
+                    "actual": "%s：%s" % (sample.get("label", "state"), exc)}
+    return {"checked": True, "ok": True,
+            "actual": "独立周长、面积守恒和折叠坐标复算通过 %d 个圆柱展开状态" % min(len(samples), 12)}
+
+
+def verify_cone_net_samples(br):
+    """Independently recompute cone sector constraints and folded geometry."""
+    samples = ((br or {}).get("coneNet") or {}).get("samples") or []
+    if not samples:
+        return {"checked": False, "ok": False, "actual": "浏览器未采集圆锥展开求解请求与结果",
+                "advice": "暴露 __MATH_CONE_NET_REQUEST__ / __MATH_CONE_NET_RESULT__，绘图使用 sector_boundary/side_grid"}
+
+    def same(actual, expected, tolerance=1e-8):
+        if isinstance(expected, dict):
+            return isinstance(actual, dict) and actual.keys() == expected.keys() and all(
+                same(actual[k], expected[k], tolerance) for k in expected)
+        if isinstance(expected, (list, tuple)):
+            return isinstance(actual, (list, tuple)) and len(actual) == len(expected) and all(
+                same(a, e, tolerance) for a, e in zip(actual, expected))
+        if isinstance(expected, (int, float)) and not isinstance(expected, bool):
+            try:
+                return abs(float(actual)-float(expected)) <= tolerance * max(1.0, abs(float(expected)))
+            except (TypeError, ValueError):
+                return False
+        return actual == expected
+
+    for sample in samples[:12]:
+        request, actual = sample.get("request") or {}, sample.get("result") or {}
+        try:
+            expected = solve_cone_net(request)
+            for field in ("solid", "valid", "reason", "checks", "segments", "net"):
+                if not same(actual.get(field), expected.get(field)):
+                    raise ValueError("页面字段 %s 与独立圆锥展开结果不一致" % field)
+            for field in ("radius", "height", "slant_height", "expected_sector_angle_deg",
+                          "sector_arc_length", "base_circumference", "lateral_area", "cap_area",
+                          "surface_area", "sector_area", "net_area", "area_error",
+                          "relative_area_error", "sector_boundary", "base_boundary", "side_grid",
+                          "base_cap", "apex", "fold_map"):
+                if not same(actual.get(field), expected.get(field)):
+                    raise ValueError("页面几何量 %s 与独立解析结果不一致" % field)
+        except Exception as exc:  # noqa: BLE001
+            return {"checked": True, "ok": False,
+                    "actual": "%s：%s" % (sample.get("label", "state"), exc)}
+    return {"checked": True, "ok": True,
+            "actual": "独立母线、扇形弧长、面积守恒和折叠坐标复算通过 %d 个圆锥展开状态" % min(len(samples), 12)}
+
+
+def verify_solver_page_metamorphic(br, expected_solver_api=None):
+    """Require a real browser input mutation to reach the active solver state."""
+    br = br or {}
+    machine = br.get("machine") or {}
+    meta_samples = (br.get("metamorphic") or {}).get("samples") or []
+    requirements = []
+
+    def add(name, input_patterns, response_patterns):
+        requirements.append((name, input_patterns, response_patterns))
+
+    if (br.get("circuit") or {}).get("initial"):
+        add("物理电路", ("__CIRCUIT_MODEL__",), ("__CIRCUIT_RESULT__",))
+    if (br.get("cubeCut") or {}).get("initial"):
+        add("多面体截面", ("__GEO__", "__MATH_POLYHEDRON_REQUEST__", "__MATH_CUBE_REQUEST__"),
+            ("__MATH_POLYHEDRON_RESULT__", "__MATH_CUBE_RESULT__"))
+    for key, label, input_keys, output_keys in (
+        ("cylinderCut", "圆柱截面", ("__GEO__", "__MATH_CYLINDER_REQUEST__"), ("__MATH_CYLINDER_RESULT__",)),
+        ("coneCut", "圆锥截面", ("__GEO__", "__MATH_CONE_REQUEST__"), ("__MATH_CONE_RESULT__",)),
+        ("sphereCut", "球体截面", ("__GEO__", "__MATH_SPHERE_REQUEST__"), ("__MATH_SPHERE_RESULT__",)),
+        ("spatialMetric", "空间距离/角度", ("__MATH_SPATIAL_REQUEST__",), ("__MATH_SPATIAL_RESULT__",)),
+        ("solidVolume", "立体体积", ("__MATH_VOLUME_REQUEST__",), ("__MATH_VOLUME_RESULT__",)),
+        ("cubeNet", "正方体展开", ("__MATH_CUBE_NET_REQUEST__",), ("__MATH_CUBE_NET_RESULT__",)),
+        ("cuboidNet", "长方体展开", ("__MATH_CUBOID_NET_REQUEST__",), ("__MATH_CUBOID_NET_RESULT__",)),
+        ("cylinderNet", "圆柱展开", ("__MATH_CYLINDER_NET_REQUEST__",), ("__MATH_CYLINDER_NET_RESULT__",)),
+        ("coneNet", "圆锥展开", ("__MATH_CONE_NET_REQUEST__",), ("__MATH_CONE_NET_RESULT__",)),
+    ):
+        if (br.get(key) or {}).get("initial"):
+            add(label, input_keys, output_keys)
+
+    # The selected scene is authoritative: if it declares a solver, missing
+    # browser state is a failed page-level test, not an inapplicable check.
+    solver_requirements = {
+        "CIRCUIT.solve": ("物理电路", "circuit", ("__CIRCUIT_MODEL__",), ("__CIRCUIT_RESULT__",)),
+        "MATH.solveCubeCut": ("正方体截面", "cubeCut", ("__GEO__", "__MATH_CUBE_REQUEST__"), ("__MATH_CUBE_RESULT__",)),
+        "MATH.solveCuboidCut": ("多面体截面", "cubeCut", ("__GEO__", "__MATH_POLYHEDRON_REQUEST__"), ("__MATH_POLYHEDRON_RESULT__",)),
+        "MATH.solveTriangularPrismCut": ("多面体截面", "cubeCut", ("__GEO__", "__MATH_POLYHEDRON_REQUEST__"), ("__MATH_POLYHEDRON_RESULT__",)),
+        "MATH.solveSquarePyramidCut": ("多面体截面", "cubeCut", ("__GEO__", "__MATH_POLYHEDRON_REQUEST__"), ("__MATH_POLYHEDRON_RESULT__",)),
+        "MATH.solveCylinderCut": ("圆柱截面", "cylinderCut", ("__GEO__", "__MATH_CYLINDER_REQUEST__"), ("__MATH_CYLINDER_RESULT__",)),
+        "MATH.solveConeCut": ("圆锥截面", "coneCut", ("__GEO__", "__MATH_CONE_REQUEST__"), ("__MATH_CONE_RESULT__",)),
+        "MATH.solveSphereCut": ("球体截面", "sphereCut", ("__GEO__", "__MATH_SPHERE_REQUEST__"), ("__MATH_SPHERE_RESULT__",)),
+        "MATH.solveSpatialMetrics": ("空间距离/角度", "spatialMetric", ("__MATH_SPATIAL_REQUEST__",), ("__MATH_SPATIAL_RESULT__",)),
+        "MATH.solveSolidVolume": ("立体体积", "solidVolume", ("__MATH_VOLUME_REQUEST__",), ("__MATH_VOLUME_RESULT__",)),
+        "MATH.solveCubeNet": ("正方体展开", "cubeNet", ("__MATH_CUBE_NET_REQUEST__",), ("__MATH_CUBE_NET_RESULT__",)),
+        "MATH.solveCuboidNet": ("长方体展开", "cuboidNet", ("__MATH_CUBOID_NET_REQUEST__",), ("__MATH_CUBOID_NET_RESULT__",)),
+        "MATH.solveCylinderNet": ("圆柱展开", "cylinderNet", ("__MATH_CYLINDER_NET_REQUEST__",), ("__MATH_CYLINDER_NET_RESULT__",)),
+        "MATH.solveConeNet": ("圆锥展开", "coneNet", ("__MATH_CONE_NET_REQUEST__",), ("__MATH_CONE_NET_RESULT__",)),
+        "CHEMSOLVER.solveAcidBaseTitration": ("酸碱中和滴定", "chemistryTitration",
+            ("__CHEM_TITRATION_REQUEST__",), ("__CHEM_TITRATION_RESULT__",)),
+        "CHEMSOLVER.solveGasCollection": ("气体制取与收集", "chemistryGasCollection",
+            ("__CHEM_GAS_REQUEST__",), ("__CHEM_GAS_RESULT__",)),
+        "CHEMSOLVER.solvePrecipitation": ("沉淀反应定量", "chemistryPrecipitation",
+            ("__CHEM_PRECIP_REQUEST__",), ("__CHEM_PRECIP_RESULT__",)),
+        "CHEMSOLVER.solveRedox": ("氧化还原电子守恒", "chemistryRedox",
+            ("__CHEM_REDOX_REQUEST__",), ("__CHEM_REDOX_RESULT__",)),
+        "CHEMSOLVER.solveSolubilityEquilibrium": ("溶解平衡与 Ksp", "chemistryKsp",
+            ("__CHEM_KSP_REQUEST__",), ("__CHEM_KSP_RESULT__",)),
+    }
+    expected = solver_requirements.get(expected_solver_api)
+    for api, (key, prefix, _, label, _, _) in LESSON_SOLVERS.items():
+        if key not in PRESET_LESSON_MODELS and (expected_solver_api == api or (br.get("lessonSolvers") or {}).get(key)):
+            add(label, (f"__{prefix}_REQUEST__",), (f"__{prefix}_RESULT__",))
+    if expected:
+        name, browser_key, input_keys, output_keys = expected
+        if not any(set(input_keys).intersection(item[1]) and
+                   set(output_keys).intersection(item[2]) for item in requirements):
+            add(name, input_keys, output_keys)
+
+    missing = []
+    passed = []
+    observed = br.get("lessonSolvers") or {}
+    for api, (key, _, _, _, _, _) in LESSON_SOLVERS.items():
+        model = PRESET_LESSON_MODELS.get(key)
+        if model and (expected_solver_api == api or key in observed):
+            failures = lesson_metamorphic_failures(observed.get(key) or [], model)
+            if failures:
+                missing.append(model["title"] + "（" + "；".join(failures[:3]) + "）")
+            else:
+                passed.append(model["title"])
+    for name, input_patterns, response_patterns in requirements:
+        covered = any(
+            sample.get("inputChanged") is True and
+            any(pattern in key for pattern in input_patterns for key in sample.get("changedInputs", [])) and
+            any(pattern in key for pattern in response_patterns for key in sample.get("changedResponses", []))
+            for sample in meta_samples
+        )
+        if covered:
+            passed.append(name)
+        else:
+            missing.append(name)
+
+    balance_required = expected_solver_api == "CHEMSOLVER.balanceEquation"
+    if isinstance(machine.get("CHEM_BALANCE_REQUEST"), dict) or balance_required:
+        kinds = {sample.get("kind") for sample in machine.get("CHEM_BALANCE_SAMPLES") or []}
+        required = {"uniform-formula-scaling", "unicode-subscript-equivalence", "species-reordering"}
+        if isinstance(machine.get("CHEM_BALANCE_REQUEST"), dict) and required.issubset(kinds):
+            passed.append("化学方程式配平")
+        else:
+            missing.append("化学方程式配平")
+    for request_key, sample_key, name in (
+        ("CHEM_STOICH_REQUEST", "CHEM_STOICH_SAMPLES", "化学反应计量"),
+        ("CHEM_MIX_REQUEST", "CHEM_MIX_SAMPLES", "化学溶液混合"),
+        ("CHEM_TITRATION_REQUEST", "CHEM_TITRATION_SAMPLES", "酸碱中和滴定"),
+        ("CHEM_GAS_REQUEST", "CHEM_GAS_SAMPLES", "气体制取与收集"),
+        ("CHEM_PRECIP_REQUEST", "CHEM_PRECIP_SAMPLES", "沉淀反应定量"),
+        ("CHEM_REDOX_REQUEST", "CHEM_REDOX_SAMPLES", "氧化还原电子守恒"),
+        ("CHEM_KSP_REQUEST", "CHEM_KSP_SAMPLES", "溶解平衡与 Ksp"),
+    ):
+        baseline = machine.get(request_key)
+        required_api = {"CHEM_STOICH_REQUEST": "CHEMSOLVER.solveStoichiometry",
+                        "CHEM_MIX_REQUEST": "CHEMSOLVER.solveSolutionMixing",
+                        "CHEM_TITRATION_REQUEST": "CHEMSOLVER.solveAcidBaseTitration",
+                        "CHEM_GAS_REQUEST": "CHEMSOLVER.solveGasCollection",
+                        "CHEM_PRECIP_REQUEST": "CHEMSOLVER.solvePrecipitation",
+                        "CHEM_REDOX_REQUEST": "CHEMSOLVER.solveRedox",
+                        "CHEM_KSP_REQUEST": "CHEMSOLVER.solveSolubilityEquilibrium"}[request_key]
+        if isinstance(baseline, dict) or expected_solver_api == required_api:
+            changed = isinstance(baseline, dict) and any((sample or {}).get("request") != baseline
+                          for sample in machine.get(sample_key) or [])
+            (passed if changed else missing).append(name)
+
+    if not requirements and not passed and not missing:
+        return {"checked": False, "ok": False, "actual": "页面未暴露已登记求解器状态"}
+    return {"checked": True, "ok": not missing,
+            "actual": ("浏览器输入变形已到达并更新求解器：" + "、".join(passed) if not missing else
+                       "缺少有效页面变形状态：" + "、".join(missing)),
+            "passed": passed, "missing": missing,
+            "advice": "在浏览器实际改变求解控件；确保请求随控件更新、重算结果更新，并由独立参考实现复核变形状态"}
+
+
+def expected_solver_api_for_page(content, subject, cfg=None, review_scene=None, title=""):
+    """Resolve the solver from page content/config, never a possibly stale request."""
+    cfg = cfg or {}
+    if review_scene and review_scene.get("solver_api"):
+        return review_scene["solver_api"]
+    page_scene = generator_scene_registry.select_page_skeleton({
+        "学科": subject or "",
+        # Chemistry pages often explain their model boundary in section ⑥.
+        # Words such as “不计算 Ksp” must not select a Ksp scene. Use the
+        # page title as the scene hint and let explicit scene metadata win.
+        "实验主题": title if title else content or "",
+        "技术要点": "",
+    })
+    if page_scene.get("solver_api"):
+        return page_scene["solver_api"]
+
+    configured_id = cfg.get("scene_id")
+    configured_scene = next((item for item in generator_scene_registry.SCENE_SKELETONS
+                             if item.get("id") == configured_id), None)
+    if configured_scene and configured_scene.get("solver_api"):
+        return configured_scene["solver_api"]
+    return (review_scene or {}).get("solver_api")
+
 def gate4_browser(br, reason, text=""):
     if br is None:
         return [mk("G4", "G4-00", "浏览器测试", "skip",
@@ -876,6 +1720,16 @@ def gate4_browser(br, reason, text=""):
                   advice="常见原因：DOM 取到 null、函数名拼错、脚本早于元素执行",
                   severity=CRITICAL, weight=4))
 
+    meta = br.get("solverMetamorphicCheck") or {}
+    if meta.get("checked"):
+        out.append(mk("G4", "G4-32", "求解器页面变形测试", "pass" if meta.get("ok") else "fail",
+                      "改变实际页面输入后，求解请求/结果随之更新，并可对变形状态独立复算",
+                      meta.get("actual", ""),
+                      "页面变形状态或学科关系未通过" if not meta.get("ok") else "页面求解器变形测试通过",
+                      evidence="；".join(meta.get("passed", []) + meta.get("missing", [])),
+                      advice=meta.get("advice", "检查控件事件是否重建求解请求并刷新图示/读数"),
+                      severity=CRITICAL, weight=5))
+
     if br.get("circuitRequired") or re.search(r"欧姆定律|电路|电流表|电压表", text or ""):
         cc = br.get("circuitCheck")
         if not cc or not cc.get("checked"):
@@ -894,6 +1748,95 @@ def gate4_browser(br, reason, text=""):
                           advice=cc.get("advice", "检查电路拓扑映射、元件值及页面读数是否来自同一结果对象"),
                           severity=CRITICAL, weight=5))
 
+    if br.get("polyhedronSectionRequired"):
+        cc = br.get("polyhedronSectionCheck")
+        if not cc or not cc.get("checked"):
+            out.append(mk("G4", "G4-14", "立体截面独立几何复算", "fail",
+                          "浏览器各状态的截面顶点、边数、面积、绘图和 __GEO__ 与独立 Python 几何内核一致",
+                          (cc or {}).get("actual", "未发现可复算的截面数据"),
+                          "页面截面正确性还没有被独立几何内核验证",
+                          advice=(cc or {}).get("advice", "调用对应立体求解器并将同一结果交给场景绘图 API"),
+                          severity=CRITICAL, weight=5))
+        else:
+            out.append(mk("G4", "G4-14", "立体截面独立几何复算",
+                          "pass" if cc.get("ok") else "fail",
+                          "浏览器各状态的截面顶点、边数、面积、绘图和 __GEO__ 与独立 Python 几何内核一致",
+                          cc.get("actual", ""),
+                          "页面几何数据与独立内核一致" if cc.get("ok") else "页面几何数据偏离独立求解结果",
+                          advice=cc.get("advice", "检查截面位置参数和图示数据是否来自同一求解结果"),
+                          severity=CRITICAL, weight=5))
+    if br.get("cylinderSectionRequired"):
+        cc = br.get("cylinderSectionCheck")
+        out.append(mk("G4", "G4-15", "圆柱截面独立复算", "pass" if cc and cc.get("ok") else "fail",
+                      "Python 参考积分、页面结果、绘图签名和 __GEO__ 面积一致",
+                      (cc or {}).get("actual", "未发现圆柱截面复算结果"),
+                      "圆柱截面面积或演示图没有使用同一求解结果" if not cc or not cc.get("ok") else "数值与绘图共用圆柱求解结果",
+                      advice=(cc or {}).get("advice", "每次 render 用 MATH.solveCylinderCut 求解并将结果传给 MATH.cylinderSection"),
+                      severity=CRITICAL, weight=5))
+    if br.get("coneSectionRequired"):
+        cc = br.get("coneSectionCheck")
+        out.append(mk("G4", "G4-16", "圆锥截面独立复算", "pass" if cc and cc.get("ok") else "fail",
+                      "Python 参考积分、页面结果、绘图签名和 __GEO__ 面积一致",
+                      (cc or {}).get("actual", "未发现圆锥截面复算结果"),
+                      "圆锥截面面积或演示图没有使用同一求解结果" if not cc or not cc.get("ok") else "数值与绘图共用圆锥求解结果",
+                      advice=(cc or {}).get("advice", "每次 render 用 MATH.solveConeCut 求解并将结果传给 MATH.coneSection"),
+                      severity=CRITICAL, weight=5))
+    if br.get("sphereSectionRequired"):
+        cc = br.get("sphereSectionCheck")
+        out.append(mk("G4", "G4-17", "球体截面独立复算", "pass" if cc and cc.get("ok") else "fail",
+                      "Python 解析解、页面结果、绘图签名和 __GEO__ 中的圆心/半径/面积一致",
+                      (cc or {}).get("actual", "未发现球体截面复算结果"),
+                      "球体截面数据或演示图没有使用同一解析结果" if not cc or not cc.get("ok") else "解析结果与图示一致",
+                      advice=(cc or {}).get("advice", "每次 render 用 MATH.solveSphereCut 求解并将结果传给 MATH.sphereSection"),
+                      severity=CRITICAL, weight=5))
+    if br.get("spatialMetricRequired"):
+        cc = br.get("spatialMetricCheck")
+        out.append(mk("G4", "G4-18", "空间距离/角度独立复算", "pass" if cc and cc.get("ok") else "fail",
+                      "Python 向量参考解与页面结果一致，距离非负，角度在 0°–90°",
+                      (cc or {}).get("actual", "未发现空间求解结果"),
+                      "空间度量结果未通过独立计算" if not cc or not cc.get("ok") else "独立向量复算一致",
+                      advice=(cc or {}).get("advice", "页面请求和结果须暴露，并从同一结果驱动数值显示"),
+                      severity=CRITICAL, weight=5))
+    if br.get("solidVolumeRequired"):
+        cc = br.get("solidVolumeCheck")
+        out.append(mk("G4", "G4-19", "立体体积独立复算", "pass" if cc and cc.get("ok") else "fail",
+                      "Python 体积公式与页面结果一致；如有切割，分体体积和守恒",
+                      (cc or {}).get("actual", "未发现立体体积求解结果"),
+                      "体积结果没有通过独立公式复算" if not cc or not cc.get("ok") else "独立体积复算一致",
+                      advice=(cc or {}).get("advice", "页面应暴露请求/结果，并从求解结果读取体积与单位"),
+                      severity=CRITICAL, weight=5))
+    if br.get("cubeNetRequired"):
+        cc = br.get("cubeNetCheck")
+        out.append(mk("G4", "G4-20", "正方体展开折叠独立复算", "pass" if cc and cc.get("ok") else "fail",
+                      "Python 独立复算展开网格连通性、公共棱、六个面法向与折叠顶点",
+                      (cc or {}).get("actual", "未发现正方体展开图求解结果"),
+                      "页面折叠判定或三维坐标未通过独立复算" if not cc or not cc.get("ok") else "展开图拓扑与三维折叠结果一致",
+                      advice=(cc or {}).get("advice", "每次状态更新调用 MATH.solveCubeNet，并使用同一结果绘制六个面"),
+                      severity=CRITICAL, weight=5))
+    if br.get("cuboidNetRequired"):
+        cc = br.get("cuboidNetCheck")
+        out.append(mk("G4", "G4-21", "长方体展开折叠独立复算", "pass" if cc and cc.get("ok") else "fail",
+                      "Python 复核矩形不重叠、公共棱等长、六面尺寸与三维折叠坐标",
+                      (cc or {}).get("actual", "未发现长方体展开图求解结果"),
+                      "页面展开图或折叠坐标未通过独立复算" if not cc or not cc.get("ok") else "平面拼接和三维折叠结果一致",
+                      advice=(cc or {}).get("advice", "每次状态更新调用 MATH.solveCuboidNet，并让所有显示共用同一结果"),
+                      severity=CRITICAL, weight=5))
+    if br.get("cylinderNetRequired"):
+        cc = br.get("cylinderNetCheck")
+        out.append(mk("G4", "G4-22", "圆柱展开面积与折叠独立复算", "pass" if cc and cc.get("ok") else "fail",
+                      "Python 独立复算底面周长、矩形尺寸、底圆半径、表面积守恒和折叠采样点",
+                      (cc or {}).get("actual", "未发现圆柱展开求解结果"),
+                      "圆柱展开尺寸或折叠坐标未通过独立复算" if not cc or not cc.get("ok") else "展开面积和圆柱折叠几何一致",
+                      advice=(cc or {}).get("advice", "调用 MATH.solveCylinderNet 并从同一结果绘制圆柱"),
+                      severity=CRITICAL, weight=5))
+    if br.get("coneNetRequired"):
+        cc = br.get("coneNetCheck")
+        out.append(mk("G4", "G4-23", "圆锥展开与折叠独立复算", "pass" if cc and cc.get("ok") else "fail",
+                      "Python 独立复算母线、扇形弧长、扇形角、底圆半径、面积守恒和折叠坐标",
+                      (cc or {}).get("actual", "未发现圆锥展开求解结果"),
+                      "圆锥展开参数或三维折叠坐标未通过独立复算" if not cc or not cc.get("ok") else "扇形与圆锥折叠几何一致",
+                      advice=(cc or {}).get("advice", "调用 MATH.solveConeNet，并从同一结果绘制扇形和圆锥"),
+                      severity=CRITICAL, weight=5))
     r = br.get("ranges") or {}
     if r.get("count", 0) == 0:
         out.append(mk("G4", "G4-03", "参数变化有响应", "skip",
@@ -1266,7 +2209,70 @@ def build_feedback(failed):
     return "\n".join(lines)
 
 
-def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, verbose=True):
+def teaching_checks(contract, points, br, failed_cases, verified_points):
+    """Validate the fixed-water teaching profile and feed failures to memory."""
+    if not contract or br is None:
+        return []
+    evidence = br.get("teaching") or {}
+    controls = evidence.get("controls") or []
+    slider = contract["slider"]
+    selected = [c for c in controls if c.get("field") == slider["field"]
+                and c.get("type") == "range" and not c.get("disabled")]
+    slider_ok = (len(selected) == 1 and selected[0].get("min") == str(slider["min"])
+                 and lesson_value_matches(slider["max"], selected[0].get("max"), display=True))
+    editable = [c.get("field") for c in controls if not c.get("disabled")
+                and c.get("field") != slider["field"]]
+    samples = evidence.get("samples") or []
+    fixed_ok = not editable and bool(samples) and all(
+        all(lesson_value_matches(value, (sample.get("request") or {}).get(field))
+            for field, value in contract["fixed"].items()) for sample in samples)
+    model_ok = water_ok = len(samples) == len(points)
+    vessel = vessel_geometry(contract)
+    readings = []
+    for point, sample in zip(points, samples):
+        ml = point * slider["max"]
+        result, water = sample.get("result") or {}, sample.get("water") or {}
+        expected = vessel["initialMl"] + ml
+        expected_level = vessel["scaleFill"] * expected / vessel["scaleMl"]
+        reached = slider_ok and not sample.get("errors") and lesson_value_matches(ml, sample.get("ml"))
+        solver_ok = (reached and lesson_value_matches(point, (sample.get("request") or {}).get(slider["field"]))
+                     and lesson_value_matches(ml * 1e-6, result.get("displaced_volume"))
+                     and lesson_value_matches(WATER_DENSITY * GRAVITY * ml * 1e-6, result.get("buoyancy")))
+        level_ok = (reached and lesson_value_matches(expected, water.get("reading"))
+                    and lesson_value_matches(expected_level, water.get("level")))
+        model_ok &= solver_ok; water_ok &= level_ok
+        if reached:
+            if not solver_ok: failed_cases.append(("T-03", point))
+            if not level_ok: failed_cases.append(("T-06", point))
+            if solver_ok and level_ok: verified_points.add(point)
+        readings.append(expected)
+    images = [s.get("canvas") for p, s in zip(points, samples) if p in teaching_evolution.BASE_PROBES]
+    model_ok = model_ok and None not in images and len(set(images)) == len(teaching_evolution.BASE_PROBES)
+    rows_ok = all(evidence.get(k, False) == contract["records"] for k in ("recordButton", "recordTable"))
+    csv = br.get("csv") or {}
+    csv_ok = bool(csv.get("downloaded")) if contract["csv"] else not csv.get("found")
+    bad = {rule: [f"{p * slider['max']:g}" for rule2, p in failed_cases if rule2 == rule]
+           for rule in teaching_evolution.VOLUME_RULES}
+    return [mk("G2", code, label, "pass" if ok else "fail", expected, actual,
+               "按原始教学需求核对页面行为", severity=CRITICAL, weight=2)
+            for code, label, ok, expected, actual in (
+        ("T-01", "排开体积滑块", slider_ok, f"0–{slider['max']:g} mL 滑块",
+         "范围正确" if slider_ok else "缺少指定范围的可操作体积滑块"),
+        ("T-02", "固定用水与单变量", fixed_ok, "水密度保持 1000 kg/m³，只有排开体积可调",
+         "约束一致" if fixed_ok else "额外可调参数：" + "、".join(editable)),
+        ("T-03", "体积、浮力与装置联动", model_ok, "浏览器采样与独立公式相符，且画布像素发生变化",
+         "采样（mL）" if model_ok else "浮力或排液体积不符：" + "、".join(b["T-03"])),
+        ("T-04", "记录表符合要求", rows_ok, "每次记录正确追加一行" if contract["records"] else "无记录按钮",
+         "符合" if rows_ok else "按钮或记录数据与要求不一致"),
+        ("T-05", "CSV 符合要求", csv_ok, "实际下载 CSV" if contract["csv"] else "没有导出控件",
+         "符合" if csv_ok else "导出行为与要求不一致"),
+        ("T-06", "水位随排液体积上升", water_ok, "水位读数与排液体积联动",
+         "水位读数（mL）：" + "、".join(f"{v:g}" for v in readings) if water_ok
+         else "水位或液面位置不符：" + "、".join(b["T-06"])),
+    )]
+
+
+def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, verbose=True, *, probe_ml=()):
     with open(html_path, "r", encoding="utf-8") as f:
         html = f.read()
     low = html.lower()
@@ -1291,28 +2297,215 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
 
     # 主题决定单位与安全阈值；先看页面再看需求（需求可能是另一次实验的）
     content = re.sub(r"<[^>]+>", " ", visible)
+    mt = re.search(r"<title>(.*?)</title>", html, re.S | re.I)
+    title = mt.group(1) if mt else ""
     probe = " ".join([req.get("实验主题", "")]
                      + [str(g) for g in req.get("学习目标", [])]
                      + [v.get("名称", "") for v in req.get("核心变量", [])])
     # 学科优先看页面本身：需求文件默认取最新，可能来自另一次实验（拿电路需求审几何页会全错）
-    subject = registry.default_subject(content) or registry.default_subject("", req.get("学科", ""))
+    tags = re.findall(r'<span\b[^>]*\bclass=["\'][^"\']*\bexp-tag\b[^"\']*["\'][^>]*>'
+                      r'\s*([^<]+?)\s*</span>', visible, re.I)
+    declared_subject = next((tag.strip() for tag in tags if tag.strip() in registry.SUBJECTS), "")
+    subject = declared_subject or registry.default_subject(content) or registry.default_subject("", req.get("学科", ""))
     # topics.py 的单位组与安全阈值只服务物理/化学这类有量纲的实验；
     # 数学页里出现"体积"不代表要用浮力的单位组去卡它。
     if subject in ("物理", "化学") or not subject:
-        topic = detect_topic(content) or detect_topic(probe)
+        topic = detect_topic(content, subject, title=title) or detect_topic(
+            probe, subject, title=req.get("实验主题", ""))
     else:
         topic = subject
     profile = profile_of(topic) if subject in ("物理", "化学") or not subject else profile_of(None)
 
+    preliminary_api = expected_solver_api_for_page(content, subject or "", {}, None, title)
+    contract = compile_contract(req) if req_path and os.path.exists(req_path) else None
+    memory = teaching_evolution.plan(contract) if contract else None
+    if probe_ml:
+        if not use_browser or not contract:
+            raise ValueError("补充采样需要浏览器和固定用水浮力需求。")
+        maximum = contract["slider"]["max"]
+        memory["points"] = sorted(set(memory["points"]) | {value / maximum for value in probe_ml})
+    browser_plan = ({"teaching": dict(contract, points=memory["points"])}
+                    if contract else None)
+    if contract:
+        browser_plan["recordClicks"] = 3 if memory["status"] == "new" else 5
     br, reason = (None, "未启用")
     if use_browser:
-        br, reason = dynamic_checks(html_path)
-    circuit_topic = bool(re.search(r"欧姆定律|电路|电流表|电压表", content + " " + probe))
+        br, reason = dynamic_checks(html_path, browser_plan)
+    circuit_topic = bool(re.search(r"欧姆定律|电路|电流表|电压表", content))
     if br is not None and circuit_topic:
         br["circuitRequired"] = True
         br["circuitCheck"] = verify_circuit_samples(br)
+    if br is not None and subject == "数学":
+        math_api = expected_solver_api_for_page(content, subject, title=title)
+        for browser_key, check_key, apis, oracle in (
+            ("cubeCut", "polyhedronSection", ("solveCubeCut", "solveCuboidCut", "solveTriangularPrismCut",
+                                             "solveSquarePyramidCut"), verify_polyhedron_section_samples),
+            ("cylinderCut", "cylinderSection", ("solveCylinderCut",), verify_cylinder_section_samples),
+            ("coneCut", "coneSection", ("solveConeCut",), verify_cone_section_samples),
+            ("sphereCut", "sphereSection", ("solveSphereCut",), verify_sphere_section_samples),
+            ("spatialMetric", "spatialMetric", ("solveSpatialMetrics",), verify_spatial_metric_samples),
+            ("solidVolume", "solidVolume", ("solveSolidVolume",), verify_solid_volume_samples),
+            ("cubeNet", "cubeNet", ("solveCubeNet",), verify_cube_net_samples),
+            ("cuboidNet", "cuboidNet", ("solveCuboidNet",), verify_cuboid_net_samples),
+            ("cylinderNet", "cylinderNet", ("solveCylinderNet",), verify_cylinder_net_samples),
+            ("coneNet", "coneNet", ("solveConeNet",), verify_cone_net_samples),
+        ):
+            if math_api in {"MATH." + api for api in apis} or (br.get(browser_key) or {}).get("initial"):
+                br[check_key + "Required"] = True
+                br[check_key + "Check"] = oracle(br)
 
     machine = (br or {}).get("machine") or {}
+    chem_balance_oracle = None
+    balance_request = machine.get("CHEM_BALANCE_REQUEST")
+    if isinstance(balance_request, dict):
+        try:
+            chem_balance_oracle = {"result": balance_equation(balance_request)}
+        except (TypeError, ValueError) as exc:
+            chem_balance_oracle = {"error": str(exc)}
+    chem_balance_sample_oracles = []
+    for sample in machine.get("CHEM_BALANCE_SAMPLES") or []:
+        sample = sample or {}
+        sample_request = sample.get("request")
+        if not isinstance(sample_request, dict):
+            chem_balance_sample_oracles.append({"sample": sample, "oracle": {"error": "缺少变形请求"}})
+            continue
+        try:
+            if sample.get("kind") == "student-coefficients-common-scale":
+                sample_oracle = {"result": check_coefficients(
+                    balance_request, sample.get("student_coefficients") or {})}
+            else:
+                sample_oracle = {"result": balance_equation(sample_request)}
+        except (TypeError, ValueError) as exc:
+            sample_oracle = {"error": str(exc)}
+        chem_balance_sample_oracles.append({"sample": sample, "oracle": sample_oracle})
+    chem_stoich_oracle = None
+    stoich_request = machine.get("CHEM_STOICH_REQUEST")
+    if isinstance(stoich_request, dict):
+        try:
+            chem_stoich_oracle = {"result": solve_stoichiometry(stoich_request)}
+        except (TypeError, ValueError) as exc:
+            chem_stoich_oracle = {"error": str(exc)}
+    chem_stoich_sample_oracles = []
+    for sample in machine.get("CHEM_STOICH_SAMPLES") or []:
+        sample_request = (sample or {}).get("request")
+        if not isinstance(sample_request, dict):
+            chem_stoich_sample_oracles.append({"sample": sample, "oracle": {"error": "缺少变形状态请求"}})
+            continue
+        try:
+            sample_oracle = {"result": solve_stoichiometry(sample_request)}
+        except (TypeError, ValueError) as exc:
+            sample_oracle = {"error": str(exc)}
+        chem_stoich_sample_oracles.append({"sample": sample, "oracle": sample_oracle})
+    chem_mix_oracle = None
+    mix_request = machine.get("CHEM_MIX_REQUEST")
+    if isinstance(mix_request, dict):
+        try:
+            chem_mix_oracle = {"result": solve_solution_mixing(mix_request)}
+        except (TypeError, ValueError) as exc:
+            chem_mix_oracle = {"error": str(exc)}
+    chem_mix_sample_oracles = []
+    for sample in machine.get("CHEM_MIX_SAMPLES") or []:
+        sample_request = (sample or {}).get("request")
+        if not isinstance(sample_request, dict):
+            chem_mix_sample_oracles.append({"sample": sample, "oracle": {"error": "缺少溶液混合变形状态请求"}})
+            continue
+        try:
+            sample_oracle = {"result": solve_solution_mixing(sample_request)}
+        except (TypeError, ValueError) as exc:
+            sample_oracle = {"error": str(exc)}
+        chem_mix_sample_oracles.append({"sample": sample, "oracle": sample_oracle})
+    chem_titration_oracle = None
+    titration_request = machine.get("CHEM_TITRATION_REQUEST")
+    if isinstance(titration_request, dict):
+        try:
+            chem_titration_oracle = {"result": solve_acid_base_titration(titration_request)}
+        except (TypeError, ValueError) as exc:
+            chem_titration_oracle = {"error": str(exc)}
+    chem_titration_sample_oracles = []
+    for sample in machine.get("CHEM_TITRATION_SAMPLES") or []:
+        sample_request = (sample or {}).get("request")
+        if not isinstance(sample_request, dict):
+            chem_titration_sample_oracles.append(
+                {"sample": sample, "oracle": {"error": "缺少酸碱滴定变形请求"}})
+            continue
+        try:
+            sample_oracle = {"result": solve_acid_base_titration(sample_request)}
+        except (TypeError, ValueError) as exc:
+            sample_oracle = {"error": str(exc)}
+        chem_titration_sample_oracles.append({"sample": sample, "oracle": sample_oracle})
+    chem_gas_oracle = None
+    gas_request = machine.get("CHEM_GAS_REQUEST")
+    if isinstance(gas_request, dict):
+        try:
+            chem_gas_oracle = {"result": solve_gas_collection(gas_request)}
+        except (TypeError, ValueError) as exc:
+            chem_gas_oracle = {"error": str(exc)}
+    chem_gas_sample_oracles = []
+    for sample in machine.get("CHEM_GAS_SAMPLES") or []:
+        sample_request = (sample or {}).get("request")
+        if not isinstance(sample_request, dict):
+            chem_gas_sample_oracles.append({"sample": sample, "oracle": {"error": "缺少气体收集变形请求"}})
+            continue
+        try:
+            sample_oracle = {"result": solve_gas_collection(sample_request)}
+        except (TypeError, ValueError) as exc:
+            sample_oracle = {"error": str(exc)}
+        chem_gas_sample_oracles.append({"sample": sample, "oracle": sample_oracle})
+    chem_precip_oracle = None
+    precip_request = machine.get("CHEM_PRECIP_REQUEST")
+    if isinstance(precip_request, dict):
+        try:
+            chem_precip_oracle = {"result": solve_precipitation(precip_request)}
+        except (TypeError, ValueError) as exc:
+            chem_precip_oracle = {"error": str(exc)}
+    chem_precip_sample_oracles = []
+    for sample in machine.get("CHEM_PRECIP_SAMPLES") or []:
+        sample_request = (sample or {}).get("request")
+        if not isinstance(sample_request, dict):
+            chem_precip_sample_oracles.append(
+                {"sample": sample, "oracle": {"error": "缺少沉淀反应变形请求"}})
+            continue
+        try:
+            sample_oracle = {"result": solve_precipitation(sample_request)}
+        except (TypeError, ValueError) as exc:
+            sample_oracle = {"error": str(exc)}
+        chem_precip_sample_oracles.append({"sample": sample, "oracle": sample_oracle})
+    chem_redox_oracle = None
+    redox_request = machine.get("CHEM_REDOX_REQUEST")
+    if isinstance(redox_request, dict):
+        try:
+            chem_redox_oracle = {"result": solve_redox(redox_request)}
+        except (TypeError, ValueError) as exc:
+            chem_redox_oracle = {"error": str(exc)}
+    chem_redox_sample_oracles = []
+    for sample in machine.get("CHEM_REDOX_SAMPLES") or []:
+        sample_request = (sample or {}).get("request")
+        if not isinstance(sample_request, dict):
+            chem_redox_sample_oracles.append({"sample": sample, "oracle": {"error": "缺少氧化还原变形请求"}})
+            continue
+        try:
+            sample_oracle = {"result": solve_redox(sample_request)}
+        except (TypeError, ValueError) as exc:
+            sample_oracle = {"error": str(exc)}
+        chem_redox_sample_oracles.append({"sample": sample, "oracle": sample_oracle})
+    chem_ksp_oracle = None
+    ksp_request = machine.get("CHEM_KSP_REQUEST")
+    if isinstance(ksp_request, dict):
+        try:
+            chem_ksp_oracle = {"result": solve_solubility_equilibrium(ksp_request)}
+        except (TypeError, ValueError) as exc:
+            chem_ksp_oracle = {"error": str(exc)}
+    chem_ksp_sample_oracles = []
+    for sample in machine.get("CHEM_KSP_SAMPLES") or []:
+        sample_request = (sample or {}).get("request")
+        if not isinstance(sample_request, dict):
+            chem_ksp_sample_oracles.append({"sample": sample, "oracle": {"error": "缺少 Ksp 变形请求"}})
+            continue
+        try:
+            sample_oracle = {"result": solve_solubility_equilibrium(sample_request)}
+        except (TypeError, ValueError) as exc:
+            sample_oracle = {"error": str(exc)}
+        chem_ksp_sample_oracles.append({"sample": sample, "oracle": sample_oracle})
     cfg = {}
     for key in ("CONFIG", "EXP"):
         if isinstance(machine.get(key), dict):
@@ -1326,10 +2519,6 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
     scene = registry.scene_of(cfg.get("scene_id"))
     if not scene:
         # 从场景名称反查（模型不一定声明 scene_id）
-        title = ""
-        mt = re.search(r"<title>(.*?)</title>", html, re.S)
-        if mt:
-            title = mt.group(1)
         for sid, s in registry.SCENES.items():
             if s["name"] in title or (s["name"] in text and s["name"][:4] in text):
                 scene = s
@@ -1340,15 +2529,44 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
     if not subject and scene:
         subject = scene.get("subject", "")
 
+    expected_solver_api = expected_solver_api_for_page(content, subject, cfg, scene, title)
+    if br is not None:
+        br["solverMetamorphicCheck"] = verify_solver_page_metamorphic(br, expected_solver_api)
+
     try:
         with open(facts_path, "r", encoding="utf-8") as f:
             facts = json.load(f).get("条目", [])
     except (OSError, ValueError):
         facts = []
 
+    # 新版教材事实库：与旧 facts.json 并存，旧表继续服务 J8，
+    # 新表负责来源、场景覆盖、安全边界和教师审核状态。
+    registry_facts = load_registry_facts(FACTS_REGISTRY_PATH)
+    registry_sources = load_sources(SOURCE_REGISTRY_PATH)
+    registry_scene_maps = load_scene_fact_map(SCENE_FACT_MAP_PATH)
+    scene_id = str(cfg.get("scene_id") or req.get("场景配置") or req.get("scene_id") or "")
+    facts_result = check_page_facts(
+        text, scene_id, registry_facts, registry_sources, registry_scene_maps)
+
     ctx = {"html": html, "low": low, "text": text, "req": req, "profile": profile,
            "br": br, "machine": machine, "subject": subject, "engine": engine,
-           "scene": scene, "facts": facts, "topic": topic}
+           "scene": scene, "facts": facts, "topic": topic,
+           "chem_balance_oracle": chem_balance_oracle,
+           "chem_balance_sample_oracles": chem_balance_sample_oracles,
+           "chem_stoich_oracle": chem_stoich_oracle,
+           "chem_stoich_sample_oracles": chem_stoich_sample_oracles,
+           "chem_mix_oracle": chem_mix_oracle,
+           "chem_mix_sample_oracles": chem_mix_sample_oracles,
+           "chem_titration_oracle": chem_titration_oracle,
+           "chem_titration_sample_oracles": chem_titration_sample_oracles,
+           "chem_gas_oracle": chem_gas_oracle,
+           "chem_gas_sample_oracles": chem_gas_sample_oracles,
+           "chem_precip_oracle": chem_precip_oracle,
+           "chem_precip_sample_oracles": chem_precip_sample_oracles,
+           "chem_redox_oracle": chem_redox_oracle,
+           "chem_redox_sample_oracles": chem_redox_sample_oracles,
+           "chem_ksp_oracle": chem_ksp_oracle,
+           "chem_ksp_sample_oracles": chem_ksp_sample_oracles}
 
     checks = []
     if verbose:
@@ -1362,12 +2580,26 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
               % (subject or "未识别",
                  "、".join(registry.subject_judges(subject)) if subject else "无"))
     checks += gate3_subject(ctx, subject)
+    checks += gate3_facts(facts_result)
+    checks += lesson_solver_checks(br, expected_solver_api)
     if verbose:
         print("[4/5] 第4关 浏览器测试")
     checks += gate4_browser(br, reason, text)
     if verbose:
         print("[5/5] 第5关 教学审核")
     checks += gate5_teaching(html, low, text, req, subject, br)
+
+    failed_cases, verified_points = [], set()
+    contract_checks = (teaching_checks(contract, memory["points"], br, failed_cases, verified_points)
+                       if contract else [])
+    checks += contract_checks
+    record_trace = ((br or {}).get("records") or {}).get("regression")
+    record_ok = bool(record_trace) and record_trace.get("deltas") == [1] * ((browser_plan or {}).get("recordClicks", 0))
+    if record_trace is not None:
+        deltas = record_trace.get("deltas", [])
+        checks.append(mk("G4", "G4-42", "逐次记录追加", "pass" if record_ok else "fail",
+                         "每次新增一行", "每次新增行数：" + "、".join(map(str, deltas)),
+                         "共享记录按钮的浏览器回归检查", severity=CRITICAL, weight=2))
 
     gates, total = aggregate(checks)
     failed = [c for c in checks if c["status"] == "fail"]
@@ -1397,6 +2629,11 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
     else:
         release = "禁止发布"
 
+    # 事实库的发布许可独立于页面运行分数：缺事实、缺来源、缺安全边界或
+    # 待教师审核时，页面只能进入人工审核，不得因为机器分数高而发布。
+    if not facts_result.get("publish_allowed") and not critical:
+        release = "待教师审核"
+
     report = {
         "文件": os.path.basename(html_path),
         "审查时间": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -1408,6 +2645,8 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
         "总分": total,
         "结论": verdict,
         "发布状态": release,
+        "publish_allowed": bool(facts_result.get("publish_allowed") and release == "可发布"),
+        "事实验收": facts_result,
         "严重问题数": len(critical),
         "五关": gates,
         "判据": judge_summary(checks),
@@ -1417,12 +2656,30 @@ def run_review(html_path, req_path, facts_path=FACTS_PATH, use_browser=True, ver
         "修改意见": build_feedback(failed),
         "动态验证": "已执行" if br is not None else "跳过（%s）" % reason,
         "独立性说明": "J1–J8 由本文件独立重算，页面自报的 __DATA__.checks 只记为 review，"
-                      "不作为通过依据；J8 依赖 facts.json 中已通过教研复核的条目。",
+                      "不作为通过依据；J8 依赖 facts.json 中已通过教研复核的条目；"
+                      "事实来源、安全边界和教师审核状态来自 facts_registry/source_registry/scene_fact_map。",
     }
+    if contract:
+        report["教学需求契约"] = contract
+        report["教学需求取证"] = (br or {}).get("teaching")
+        report["持续回归"] = (teaching_evolution.observe(
+            contract, memory, html,
+            [c["check_id"] for c in contract_checks if c["status"] == "fail"],
+            verdict == "通过" and bool(contract_checks),
+            failed_cases=failed_cases, verified_points=verified_points)
+            if br is not None else memory)
+    if record_trace is not None:
+        record_contract = {"component": "append-record-row", "scene": preliminary_api}
+        record_memory = teaching_evolution.plan(record_contract)
+        report["通用组件回归"] = dict(teaching_evolution.observe(
+            record_contract, record_memory, html, [] if record_ok else ["G4-42"],
+            record_ok and verdict == "通过"), component="逐次记录追加",
+            scene=preliminary_api, clicks=(browser_plan or {}).get("recordClicks", 0),
+            deltas=record_trace.get("deltas", []))
     return report
 
 
-def dynamic_checks(html_path):
+def dynamic_checks(html_path, plan=None):
     node = find_node()
     modules = find_node_modules()
     if not node:
@@ -1436,12 +2693,25 @@ def dynamic_checks(html_path):
     if chrome:
         env["CHROME_PATH"] = chrome
 
+    plan_path = None
     try:
-        proc = subprocess.run([node, CHECK_JS, html_path],
-                              capture_output=True, text=True, encoding="utf-8",
-                              timeout=240, env=env)
-    except subprocess.TimeoutExpired:
-        return None, "浏览器检查超时"
+        if plan:
+            os.makedirs(OUTPUT_DIR, exist_ok=True)
+            plan_path = os.path.join(OUTPUT_DIR, ".teaching_plan_%d.json" % os.getpid())
+            with open(plan_path, "w", encoding="utf-8") as handle:
+                json.dump(plan, handle, ensure_ascii=False)
+        command = [node, CHECK_JS, html_path] + ([plan_path] if plan_path else [])
+        try:
+            proc = subprocess.run(command, capture_output=True, text=True, encoding="utf-8",
+                                  timeout=240, env=env)
+        except subprocess.TimeoutExpired:
+            return None, "浏览器检查超时"
+    finally:
+        if plan_path and os.path.exists(plan_path):
+            try:
+                os.remove(plan_path)
+            except OSError:
+                pass
 
     out = (proc.stdout or "").strip().splitlines()
     if not out:

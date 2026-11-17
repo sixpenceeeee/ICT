@@ -305,6 +305,11 @@ html.pf-hosted .pf-main { flex: 1 1 auto; min-height: 0; }
   .pf-header { padding: 0 14px; gap: 10px; }
   .pf-title { font-size: 30px; }
   .pf-dialog { padding: 28px 22px 24px; }
+  .pf-tip {
+    max-width: calc(100vw - 24px);
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 }
 @media (max-width: 480px) {
   .pf-title { font-size: 26px; }

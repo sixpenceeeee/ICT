@@ -126,7 +126,8 @@
     "stage control"
     "result result";
   gap: 20px;
-  align-items: stretch;
+  /* 两栏高度不必相互撑齐，避免右侧参数栏出现大片顶部空白 */
+  align-items: start;
 }
 
 .exp-stage { grid-area: stage; display: flex; flex-direction: column; }
@@ -138,8 +139,10 @@
   grid-area: control;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 26px;              /* 均分前的最小行距：窄屏没有富余空间时也不会挤在一起 */
+  align-self: start;
+  justify-content: flex-start;
+  height: fit-content;
+  gap: 18px;
 }
 .exp-control .exp-field { margin-bottom: 0; }
 
@@ -188,6 +191,14 @@
   pointer-events: none;
 }
 
+/* 演示区只展示图形；图注、状态说明和画布提示统一放到结果/教学区。 */
+.exp-stage .exp-canvas-box .exp-canvas-tip,
+.exp-stage .exp-canvas-box [class*="caption"],
+.exp-stage .exp-canvas-box .exp-note,
+.exp-stage .exp-canvas-box p {
+  display: none !important;
+}
+
 /* ---------- ③ 参数与操作 ---------- */
 .exp-field { margin-bottom: 18px; }
 .exp-field:last-child { margin-bottom: 0; }
@@ -213,6 +224,17 @@
   accent-color: var(--pf-primary);
   cursor: pointer;
 }
+
+/* Numeric solver controls expose both precise entry and quick dragging. */
+.exp-control-pair {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.85fr) minmax(180px, 1.5fr);
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.exp-control-pair input[type="number"],
+.exp-control-pair input[type="range"] { min-width: 0; }
 
 .exp-field select,
 .exp-field input[type="number"] {
@@ -246,6 +268,10 @@
   font-family: inherit;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+@media (max-width: 720px) {
+  .exp-control-pair { grid-template-columns: minmax(0, 1fr); gap: 8px; }
 }
 
 .exp-btn:hover { background: var(--pf-primary-soft); border-color: #cfe2f5; }

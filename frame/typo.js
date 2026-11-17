@@ -4,9 +4,9 @@
  *  normal.css 只能约束「我们已知的类名」。模型每页都会临时写一些自己的
  *  小字号（11px 的图注、10px 的脚注）和自己挑的颜色（深蓝、灰蓝），
  *  这些只能在上线后量出来再改。这个脚本做三件事：
- *    1. 页面加载完，扫一遍正文区，把小于 26px 的文字抬到 26px（原始规范 13px × 2）
+ *    1. 页面加载完，扫一遍正文区，把小于 12px 的文字抬到 12px
  *    2. 把「浅色底上的彩色文字」改成纯黑（深色底上的白字不动）
- *    3. 读数数值太长放不下一行时自动降档（38→35→32…直到装得下，不低于 26px）
+ *    3. 读数数值太长放不下一行时自动降档（23→21→19…直到装得下，不低于 12px）
  *    4. 页面动态改读数后再扫一遍
  *
  *  只碰「自己直接含文字」的元素，不碰容器，避免影响布局层级；
@@ -15,7 +15,7 @@
 (function () {
   'use strict';
 
-  var MIN = 26;                       // 与 normal.css 的 --pf-fs-min 保持一致
+  var MIN = 12;                       // 与 normal.css 的 --pf-fs-min 保持一致
   var ROOTS = ['.pf-main', '.pf-footer'];
   var COLOR_ROOT = '.pf-main';        // 只规范正文区，页脚保持浅灰
   var TEXTY = 'p,li,td,th,dt,dd,div,span,label,a,summary,h1,h2,h3,h4,h5,h6,' +
@@ -112,10 +112,10 @@
     for (var i = 0; i < list.length; i++) {
       var el = list[i];
       if (inCanvas(el)) continue;
-      var size = 38, guard = 0;                 // 数值档：38px（原始 19px × 2）
+      var size = 23, guard = 0;                 // 数值档：23px
       el.style.setProperty('font-size', size + 'px', 'important');
-      while (lineCount(el) > 1 && size - 3 >= MIN && guard < 6) {
-        size -= 3;                              // 数字放得下就用 38，文字太长就一档档降到装得下
+      while (lineCount(el) > 1 && size - 2 >= MIN && guard < 6) {
+        size -= 2;                              // 数字放得下就用 24，文字太长就一档档降到装得下
         el.style.setProperty('font-size', size + 'px', 'important');
         guard++; n++;
       }

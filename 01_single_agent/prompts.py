@@ -29,6 +29,11 @@ REQUIREMENT_SYSTEM_PROMPT = """
 5. 核心变量：**只列页面上要提供滑块/按钮供学生调节的自变量**（如电压 U、电阻 R），
    给出合理取值范围和单位。因变量（如电流 I）不要列——它是公式算出来的；
    控制变量也不要列，改写成"交互要求"里的一条（例如"保持滑动变阻器阻值不变"）。
+   数学需求明确给出初始数值时，在对应变量附上数值字段 "初始值"；用户未给时省略该字段。
+   组合体体积题若明确给出了各部分的形状、尺寸和内部不重叠条件，额外输出
+   "内部不重叠": true 及 "组成部分" 数组。每项含 solid 和题目给出的尺寸字段；
+   cube 用 edge，cuboid 用 length/width/height，sphere 用 radius，cylinder/cone 用 radius/height，
+   square_pyramid 用 base/height，triangular_prism 用 base/triangle_height/length。缺条件时保留风险提示。
    列表里有几个变量，页面就必须有几个可调控件
 6. 交互要求：3~5 条具体的界面行为，要能直接指导前端实现，禁止写"界面友好"这类空话
 7. 技术要点：技术实现方向（单文件 HTML / Canvas / 纯前端计算，不依赖外部服务）

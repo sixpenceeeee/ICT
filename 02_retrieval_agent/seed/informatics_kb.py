@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-"""信息科技 5 个主题。
+"""信息科技主题。
 
 判据以 J5（单步序列与参考实现对拍）与 J3（计数/位权守恒）为主，
 所以每个主题都必须能给出「逐步中间状态」，否则 J5 无从比对。
 """
+
+from informatics_supplement import TOPICS as SUPPLEMENTAL_TOPICS
 
 TOPICS = [
     {
@@ -402,3 +404,5 @@ TOPICS = [
         },
     },
 ]
+
+TOPICS.extend(SUPPLEMENTAL_TOPICS)

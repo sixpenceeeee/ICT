@@ -88,7 +88,12 @@ python shell.py build cases/数学_平面截正方体.txt --title 平面截正�
 
 页面骨架选型集中在 `scene_registry.py`：每个主题条目声明 `id`、适用学科/关键词、`visual_type`、可选场景库 API、布局和控件约束。`prompts.py` 将选中的骨架注入生成提示，`generator_agent.py` 用同一注册表校验必须调用的 API 和画布类型。新增已覆盖主题时，在该注册表加一项即可；先写更具体的关键词规则，规则按列表顺序匹配，具体主题应排在通用主题之前。库尚未覆盖的主题可以先注册布局骨架并将 `api` 设为 `None`，后续补完场景库后再绑定 API。
 
-物理电路主题已接入独立求解器：页面调用内联的 `CIRCUIT.solve(model)`，生成器硬校验要求页面暴露当前电路模型与求解结果；浏览器审查器在首屏和滑块/选择器变化后，读取页面的模型与结果，再由 `solvers/circuit_solver.py` 独立复算节点电压、支路电流和功率。支持范围、模型格式和不支持的电路现象见 [solvers/README.md](solvers/README.md)。
+交互能力也在同一注册表声明。当前 `interaction_capabilities.rotatable_view` 只对数学立体几何白名单场景开启；这些场景必须维护 `yaw/pitch` 视角状态，并用 `MATH.resetView(canvas)` 恢复初始视角。化学、物理及其他非立体几何场景暂不自动加入旋转控件，待补齐对应场景库实现和浏览器验收后再扩展白名单。
+
+连续数值参数统一使用双控件：左侧精确 `number` 输入，右侧 `range` 拖动条；滑块步长按范围自动取整（范围 0–10 默认步长 1，范围 0–1 默认步长 0.1），输入框仍支持任意小数。两者通过 `data-solver-range-for` 关联，修改任一控件都进入同一个求解与绘图状态。页面按钮只允许“重置参数”和按需求启用的“记录当前数据”，不生成预设、保存对照或导出按钮。
+所有页面装配时还会注入统一交互兜底：数值越过 `min/max/step` 会在结果区提示“你输入的数值超出了允许范围，请调整后再试”，并保留最近一次有效画面；求解器异常不会通过清空画布制造白屏。
+
+物理电路主题已接入独立求解器：页面调用内联的 `CIRCUIT.solve(model)`，生成器硬校验要求页面暴露当前电路模型与求解结果；浏览器审查器在首屏和滑块/选择器变化后，读取页面的模型与结果，再由 `solvers/physics/electric_circuits/circuit_solver.py` 独立复算节点电压、支路电流和功率。求解器按学科与题型分类的目录结构见 [solvers/README.md](solvers/README.md)。
 
 更完整的设计与验收要求见根目录 [优质页面标准.md](../优质页面标准.md)。
 
@@ -113,3 +118,10 @@ python shell.py build cases/数学_平面截正方体.txt --title 平面截正�
 3. `02_retrieval_agent/knowledge/` 放 5 个带「主题:」字段的 md
 
 只有出现全新的画法时才动 `exp.css`；外壳 `frame.css` 一律不碰。
+# 数学组件页面
+
+已登记的数学求解器由公共页面代码接入控件、求解、绘图和读数。页面根据教学需求选装预设、对比图、对比表、记录、CSV 和计算步骤。课堂演示版默认保留核心图示和结果，学生探究版默认附带对比与记录。
+
+可在需求中使用「课堂演示版」「学生探究版」和「加对比图」「加记录表及 CSV」等描述。结构化需求也可用 `初始参数` 传入当前场景的字段和值，并通过 `页面组件` 指定 `presets`、`comparison`、`comparison_graph`、`records`、`csv`、`observations` 或 `derivation`。教师给出的初始值用于开场和重置，计算能力由对应求解器的输入校验决定。
+
+验收可运行 `python -B -m unittest discover -s 04_review_agent/tests -p test_math_composed_pages.py -v`。该测试为每个登记场景生成两种页面，核对实际初始值和组件，再执行浏览器审查。

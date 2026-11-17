@@ -8,13 +8,63 @@
  *
  *  三条规范：
  *    1. 正文文字一律纯黑 #000（不再跟随蓝色主题色）
- *    2. 最小字号 26px（= 原始 13px × 2；配合 typo.js 兜住页面自带的 9~12px 小字）
+ *    2. 最小字号 12px（在统一质感基础上再收小一档）
  *    3. 实验名称只在页眉出现一次，① 区不再重复
  * ===================================================================== */
 
 :root {
-  --pf-fs-min: 26px;      /* 全站最小字号（= 原始 13px × 2），改这里就够 */
+  --pf-fs-min: 12px;      /* 全站最小字号，改这里就够 */
+  --pf-font: "Times New Roman", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
   --pf-body-ink: #000;    /* 正文文字色 */
+}
+
+/* 全场景统一字体：西文优先 Times New Roman，中文使用系统中文回退字体。 */
+.pf-hosted,
+.pf-hosted * {
+  font-family: var(--pf-font) !important;
+}
+
+/* ---------------------------------------------------------------------
+ * 0. 移动端边界约束
+ *     长标签、表格和页面自带的固定宽度不能把整页撑出视口。
+ *     表格仍允许在自己的容器内横向滚动，页面本身不横向滚动。
+ * ------------------------------------------------------------------- */
+html.pf-hosted,
+html.pf-hosted body,
+.pf-hosted .pf-main,
+.pf-hosted .pf-content,
+.pf-hosted .exp-wrap,
+.pf-hosted .exp-grid,
+.pf-hosted .exp-info,
+.pf-hosted .exp-card {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+html.pf-hosted,
+html.pf-hosted body {
+  overflow-x: hidden;
+}
+
+.pf-hosted .exp-wrap,
+.pf-hosted .exp-grid > *,
+.pf-hosted .exp-info > * {
+  overflow-wrap: anywhere;
+}
+
+.pf-hosted .exp-wrap .exp-table-wrap {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.pf-hosted .exp-wrap .exp-tag {
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* ---------------------------------------------------------------------
@@ -55,6 +105,20 @@
   color: var(--pf-body-ink) !important;
 }
 
+/* 公共化学组件中的说明标题也属于正文，统一为黑色。 */
+.pf-hosted .exp-wrap h3,
+.pf-hosted .exp-wrap .titration-scene-caption,
+.pf-hosted .exp-wrap .titration-chart-summary,
+.pf-hosted .exp-wrap .titration-unit-caption,
+.pf-hosted .exp-wrap .ksp-scene-caption,
+.pf-hosted .exp-wrap .gas-caption,
+.pf-hosted .exp-wrap .precip-caption,
+.pf-hosted .exp-wrap .redox-caption,
+.pf-hosted .exp-wrap .stoich-caption,
+.pf-hosted .exp-wrap .mix-caption {
+  color: var(--pf-body-ink) !important;
+}
+
 /* 代入式里的高亮结论（<em>）保留橙色，是「看这里」而不是正文 */
 .pf-hosted .exp-wrap .exp-formula em {
   color: #b5561b !important;
@@ -67,7 +131,7 @@
 }
 
 /* ---------------------------------------------------------------------
- * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一抬到 26px+
+ * 2. 最小字号：把 exp.css / frame.css 里已知偏小的档位统一收敛到 12px+
  *    （页面自己写死的更小字号由 typo.js 在运行时兜底）
  * ------------------------------------------------------------------- */
 .pf-hosted .exp-wrap .exp-tag,
@@ -90,27 +154,27 @@
 .pf-hosted .exp-wrap .exp-note,
 .pf-hosted .exp-wrap .exp-alert,
 .pf-hosted .exp-wrap .exp-table {
-  font-size: 27px;
+  font-size: 12.5px;
 }
 
-/* 正文（学习目标 / 教学说明）用 28px，比辅助文字再大一档 */
+/* 正文（学习目标 / 教学说明）用 14px，比辅助文字再大一档 */
 .pf-hosted .exp-wrap .exp-goals,
 .pf-hosted .exp-wrap .exp-goals li,
 .pf-hosted .exp-wrap .exp-body,
 .pf-hosted .exp-wrap .exp-body p,
 .pf-hosted .exp-wrap .exp-body li {
-  font-size: 28px;
+  font-size: 13px;
 }
 
 /* 标题档：六区域标题 / 教学说明折叠头 */
 .pf-hosted .exp-wrap .exp-card > h2,
 .pf-hosted .exp-wrap .exp-teach summary {
-  font-size: 29px;
+  font-size: 15px;
 }
 
 /* 读数数值：全站最大的字，读数一眼能看清 */
 .pf-hosted .exp-wrap .exp-read .v {
-  font-size: 38px;
+  font-size: 23px;
 }
 
 /* ---------------------------------------------------------------------
@@ -123,15 +187,13 @@
 }
 
 /* ---------------------------------------------------------------------
- * 2b. 字号放大后的版式补偿
- *     字大一倍，原来的格子宽度就不够了：读数卡按两列铺、允许换行，
- *     表格窄了横向滚动。这几条只为「不挤、不裁」，不改字号。
+ * 2b. 紧凑版式：与参考页的白卡片、轻阴影、两栏实验布局保持一致。
  * ------------------------------------------------------------------- */
 .pf-hosted .exp-wrap .exp-reads { gap: 12px; }
 
 .pf-hosted .exp-wrap .exp-read {
   box-sizing: border-box;   /* 不加这句，百分比基准只算内容区，加上内边距就放不下 */
-  flex: 1 1 calc(50% - 7px);   /* 默认两列：窄屏、单列时也不会把字挤到折行 */
+  flex: 1 1 calc(25% - 9px);
   min-width: 0;
 }
 
@@ -155,4 +217,44 @@
 /* 名字挪走后，① 区首个元素不要留出额外的上间距 */
 .pf-hosted .exp-info > *:first-child {
   margin-top: 0;
+}
+
+/* ---------------------------------------------------------------------
+ * 4. 参考页密度覆盖：保留平台结构，收回旧版 2× 字号后的留白。
+ * ------------------------------------------------------------------- */
+.pf-hosted .pf-header {
+  height: 68px;
+  padding: 0 18px;
+  gap: 10px;
+}
+.pf-hosted .pf-logo { width: 34px; height: 34px; border-radius: 9px; }
+.pf-hosted .pf-logo img { width: 28px; height: 28px; }
+.pf-hosted .pf-title { font-size: 21px; }
+.pf-hosted .pf-side { width: 72px; padding-top: 86px; gap: 10px; }
+.pf-hosted .pf-side a, .pf-hosted .pf-side label { width: 38px; height: 38px; border-radius: 10px; }
+.pf-hosted .pf-side a .ico, .pf-hosted .pf-side label .ico { font-size: 22px; }
+.pf-hosted .pf-dialog-icon { font-size: 29px; }
+.pf-hosted .pf-dialog h2 { font-size: 37px; }
+.pf-hosted .pf-dialog p { font-size: 27px; }
+.pf-hosted .pf-content { padding: 18px 20px; }
+.pf-hosted .exp-wrap { gap: 16px; }
+.pf-hosted .exp-info,
+.pf-hosted .exp-card { border-radius: 12px; }
+.pf-hosted .exp-info { padding: 14px 18px; gap: 8px 18px; }
+.pf-hosted .exp-card { padding: 14px 16px 18px; box-shadow: 0 4px 14px rgba(26,64,100,.05); }
+.pf-hosted .exp-card > h2,
+.pf-hosted .exp-teach summary { font-size: 15px; margin-bottom: 12px; padding-left: 10px; border-left-width: 3px; }
+.pf-hosted .exp-card > h2 .exp-hint { font-size: 12px; }
+.pf-hosted .exp-canvas-box { min-height: 360px; border-radius: 9px; }
+.pf-hosted .exp-stage .exp-canvas-box {
+  flex: 1 1 auto;
+  aspect-ratio: auto;
+  min-height: 420px;
+}
+.pf-hosted .exp-read .v { font-size: 23px; }
+.pf-hosted .pf-footer { padding: 14px 18px; font-size: 12px; }
+
+@media (max-width: 1100px) {
+  .pf-hosted .exp-read { flex-basis: calc(50% - 7px); }
+  .pf-hosted .exp-stage .exp-canvas-box { min-height: 340px; }
 }

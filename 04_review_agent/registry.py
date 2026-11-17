@@ -133,9 +133,69 @@ SCENES = {
         "name": "浮力测量", "subject": "物理", "engine": "measurement",
         "required": ["弹簧测力计", "量筒", "水"], "facts": ["PHY-F-004"],
     },
+    "buoyancy": {
+        "name": "浮力与浮沉", "subject": "物理", "engine": "measurement",
+        "required": ["液体", "物块", "测力计", "浮力"], "facts": ["PHY-F-004"],
+    },
     "lens_imaging": {
         "name": "凸透镜成像规律", "subject": "物理", "engine": "ray_optics",
         "required": ["凸透镜", "光屏", "光具座"], "facts": ["PHY-F-005"],
+    },
+    "thin_lens": {
+        "name": "凸透镜成像", "subject": "物理", "engine": "ray_optics",
+        "required": ["凸透镜", "光屏", "光具座"], "facts": ["PHY-F-005"],
+    },
+    "plane_mirror": {
+        "name": "平面镜成像", "subject": "物理", "engine": "ray_optics",
+        "required": ["平面镜", "观察者", "反射光线"], "facts": ["PHY-F-003"],
+    },
+    "wave_propagation": {
+        "name": "波的传播与声速", "subject": "物理", "engine": "physics_general",
+        "required": ["声源", "波前", "探测器"], "facts": [],
+    },
+    "pulley_system": {
+        "name": "滑轮组", "subject": "物理", "engine": "mechanics",
+        "required": ["绳路", "定滑轮", "动滑轮", "载荷"], "facts": [],
+    },
+    "lever": {
+        "name": "杠杆平衡", "subject": "物理", "engine": "mechanics",
+        "required": ["杠杆"], "facts": [],
+    },
+    "pressure": {
+        "name": "液体压强", "subject": "物理", "engine": "measurement",
+        "required": ["液体压强"], "facts": [],
+    },
+    "heat": {
+        "name": "比热容", "subject": "物理", "engine": "thermodynamics",
+        "required": ["比热容"], "facts": [],
+    },
+    "motion": {
+        "name": "匀变速直线运动", "subject": "物理", "engine": "mechanics",
+        "required": ["匀变速直线运动"], "facts": [],
+    },
+    "projectile": {
+        "name": "平抛运动", "subject": "物理", "engine": "mechanics",
+        "required": ["平抛运动"], "facts": [],
+    },
+    "refraction": {
+        "name": "折射与全反射", "subject": "物理", "engine": "ray_optics",
+        "required": ["折射与全反射"], "facts": [],
+    },
+    "horizontalForce": {
+        "name": "一维受力与摩擦", "subject": "物理", "engine": "mechanics",
+        "required": ["一维受力与摩擦"], "facts": [],
+    },
+    "workPower": {
+        "name": "功与功率", "subject": "物理", "engine": "mechanics",
+        "required": ["功与功率"], "facts": [],
+    },
+    "mechanicalEnergy": {
+        "name": "机械能变化与守恒", "subject": "物理", "engine": "mechanics",
+        "required": ["机械能变化与守恒"], "facts": [],
+    },
+    "inclinedPlane": {
+        "name": "斜面", "subject": "物理", "engine": "mechanics",
+        "required": ["斜面"], "facts": [],
     },
     "fe_cuso4": {
         "name": "铁与硫酸铜溶液的置换反应", "subject": "化学", "engine": "virtual_reaction",

@@ -29,6 +29,8 @@
 
 `skip` 不给分是有意的：**"不适用"不等于"通过"**，否则缺几何量的页面会白拿几何分。
 
+数学“平面截正方体/长方体/三棱柱/正四棱锥”还会触发 G4-14：浏览器采集初始和交互后的截面顶点、边数、面积及 `__GEO__`，再由对应的 Python 适配器独立复算；未暴露求解结果、图形与求解结果不一致或独立复算失败都会判为严重不通过。
+
 ## 二、目录
 
 ```
@@ -58,7 +60,7 @@ python reviewer.py --html xxx.html --no-browser                             # �
 |---|---|---|---|
 | J1 数值复算 | 解析代入式，按四则运算重算；检查极值、单位、除零、值域 | 首屏一行代入式 + 滑块 | 无代入式 → fail |
 | J2 几何复算 | 内角和、反射角=入射角、两点距离、太阳高度角 | `__GEO__` 或页面角度文本 | skip |
-| J3 计数守恒 | 左右原子数、前后计数、概率和=1、1:2:1 / 3:1 | `__DATA__.atoms/counts/probabilities/ratio` | skip |
+| J3 计数守恒 | 左右原子数；反应计量的进度、限量试剂、剩余/生成量；溶液混合的 n=cV 换算；强酸强碱滴定的 pH、当量点及单位变形；气体制取的 PV=nRT 与水蒸气压修正；沉淀反应的模板识别、沉淀质量、净离子方程式和限量比例临界点变形；氧化还原的酸/碱介质切换、离子方程、氧化数与电子守恒及真实物种换序；溶解平衡的 Ksp 质量作用、共同离子效应及 Q/Ksp 临界三态 | `__DATA__`；化学页暴露 `__CHEM_BALANCE_*` / `__CHEM_STOICH_*` / `__CHEM_MIX_*` / `__CHEM_TITRATION_*` / `__CHEM_GAS_*` / `__CHEM_PRECIP_*` / `__CHEM_REDOX_*` / `__CHEM_KSP_*` 请求、结果和实际可见控件/读数 | skip（主题不适用时） |
 | J4 空间拓扑 | 体积可加、截面边数 3–6、欧拉公式 V−E+F=2、顶点共面 | `__GEO__.v_up/v_down/sides/V/E/F` | skip |
 | J5 序列状态 | 单步不重复、末态有序、与**独立写的**冒泡参考实现逐步对拍 | `__DATA__.steps` + 单步按钮 | skip |
 | J6 要素齐备 | 场景注册表里的 required 清单逐项在页面文本中查找 | 场景 `scene_id` | 未注册 → review |
@@ -197,3 +199,22 @@ cd ../03_generator_agent && python generator_agent.py --feedback "$(cat feedback
 滑块和按钮的响应指纹现在包含页面文字、机读状态和 Canvas 像素采样，因而只有画面变化的交互也能被识别。
 生成器会要求并校验 `data-visual-type`，避免把所有学科的图都按实验器材的 2.5D 材质阈值打分。
 完整的教学交互、绘图、发布阻断与人工复核口径见根目录 [优质页面标准.md](../优质页面标准.md)。
+
+## 十一、教材事实库与来源追踪
+
+事实库与旧版 `facts.json` 并存，旧表继续服务 J8 兼容判据；新流水线使用：
+
+- `facts_registry.json`：统一事实声明、必含/禁用表述、安全边界、版本和审核状态；
+- `source_registry.json`：来源类型、标题和定位信息。旧表中没有页码或网址的来源保持空值并标记「待核验」，不凭空补写；
+- `scene_fact_map.json`：场景与事实的覆盖映射；没有足够事实的场景标记「待补事实」。
+
+生成覆盖报告：
+
+```powershell
+python facts_coverage.py
+```
+
+输出 `facts_coverage_report.json` 和 `facts_coverage_report.md`。审查器会新增
+`facts_pass`、`facts_missing`、`source_missing`、`forbidden_term_found`、
+`safety_missing`、`teacher_review_pending`、`publish_allowed` 状态；机器匹配成功
+不会自动变成教师审核通过或发布许可。
